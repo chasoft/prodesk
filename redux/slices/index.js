@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegent & Powerful Ticket System          ║ *
+ * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -30,6 +30,7 @@ import { combineReducers } from "redux"
 
 import authReducer from "./auth"
 import pageMetaReducer from "./pageMeta"
+import newTicketReducer from "./newTicket"
 
 /*****************************************************************
  * INIT                                                          *
@@ -37,7 +38,8 @@ import pageMetaReducer from "./pageMeta"
 
 const rootReducer = combineReducers({
 	authState: authReducer,
-	pageMetaState: pageMetaReducer
+	pageMetaState: pageMetaReducer,
+	newTicket: newTicketReducer
 })
 
 export default rootReducer

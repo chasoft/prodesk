@@ -22,34 +22,70 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
+import Head from "next/head"
+import PropTypes from "prop-types"
 import React from "react"
-
+import { makeStyles } from "@material-ui/core/styles"
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+import Header from "./Header"
+import Footer from "./Footer"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+// const useStyles = makeStyles((theme) => ({
+// 	grow: {
+// 		flexGrow: 1,
+// 	}
+// }))
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		minHeight: "100vh",
+	},
+	main: {
+		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(2),
+	},
+	footer: {
+		padding: theme.spacing(3, 2),
+		marginTop: "auto",
+		backgroundColor:
+			theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
+	},
+}))
 
-function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-
+function RootLayout({ children }) {
+	const classes = useStyles()
 	return (
 		<>
-			<SearchBox />
-			<FrontAccordions />
+			<Head>
+				<title>Site Layout</title>
+				<meta name="description" content="Site Layout Description" />
+			</Head>
+
+			<div className={classes.root}>
+				<Header />
+
+				{children}
+
+				<Footer />
+			</div>
 		</>
 	)
 }
 
-Home.getLayout = getLayout
-export default Home
+RootLayout.propTypes = { children: PropTypes.node }
+
+export const getLayout = page => <RootLayout>{page}</RootLayout>
+
+export default RootLayout

@@ -22,34 +22,55 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
+//import { Breadcrumbs } from "@blueprintjs/core"
+import Head from "next/head"
 import React from "react"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+import { getLayout } from "./../../components/RootLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Home() {
+/* TODO: thêm file [id] => tự động redirect các URL sai... ví dụ: client/service => client/services
+*/
+
+
+// import { useDispatch } from 'react-redux'
+// import { setTitle, setSubTitle } from './../../slices/pageMeta'
+// import { useEffect } from "react";
+
+function Client() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
+	//const queryClient = useQueryClient()
+
+	// updatePageMeta({
+	// 	title: "Client Dashboard",
+	// 	subTitle: "Your place for quick look and actions"
+	// })
 
 	return (
 		<>
-			<SearchBox />
-			<FrontAccordions />
+			<Head>
+				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+				<title>Dashboard - ClientArea - ProDesk</title>
+			</Head>
+
+			<div className="children-mb-15">
+
+			</div>
 		</>
 	)
 }
 
-Home.getLayout = getLayout
-export default Home
+Client.getLayout = getLayout
+export default Client

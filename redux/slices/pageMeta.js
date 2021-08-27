@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegent & Powerful Ticket System          ║ *
+ * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -22,7 +22,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
 	title: "ProDesk",
-	subTitle: "Your Elegent & Powerful Ticket System"
+	subTitle: "Your Elegant & Powerful Ticket System"
 }
 
 const pageMetaSlice = createSlice({

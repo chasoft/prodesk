@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegent & Powerful Ticket System          ║ *
+ * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -20,3 +20,4 @@
 
 export const getAuth = (state) => state.authState
 export const getPageMeta = (state) => state.pageMetaState
+export const getNewTicket = (state) => state.newTicketState

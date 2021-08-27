@@ -22,34 +22,75 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
+import Head from "next/head"
+import PropTypes from "prop-types"
 import React from "react"
-
+import { makeStyles } from "@material-ui/core/styles"
+import { Grid } from "@material-ui/core"
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+import Header from "./Header"
+import Footer from "./Footer"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+// const useStyles = makeStyles((theme) => ({
+// 	grow: {
+// 		flexGrow: 1,
+// 	}
+// }))
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		minHeight: "100vh",
+	},
+	mobile: {
+		[theme.breakpoints.down("xs")]: {
+			display: "none"
+		},
+	},
+	fixFooter: {
+		marginTop: "auto",
+	}
+}))
 
-function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-
+function NewTicketLayout({ children }) {
+	const classes = useStyles()
 	return (
 		<>
-			<SearchBox />
-			<FrontAccordions />
+			<Head>
+				<title>Site Layout</title>
+				<meta name="description" content="Site Layout Description" />
+			</Head>
+
+			<div className={classes.root} disableGutters={true}>
+				<div className={classes.mobile}>
+					<Header />
+				</div>
+
+				{children}
+
+				<Grid container className={classes.fixFooter}>
+					<Grid item xs={12} sm={11} md={10} className={classes.red}>
+						<Footer />
+					</Grid>
+				</Grid>
+			</div>
 		</>
 	)
 }
 
-Home.getLayout = getLayout
-export default Home
+NewTicketLayout.propTypes = { children: PropTypes.node }
+
+export const getLayout = page => <NewTicketLayout>{page}</NewTicketLayout>
+
+export default NewTicketLayout

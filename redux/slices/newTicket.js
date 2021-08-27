@@ -18,38 +18,77 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
+import { createSlice } from "@reduxjs/toolkit"
+import merge from "lodash.merge"
 
-import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+export const initialState = {
+	newTicket: {
+		/* Unique Ticket ID */
+		tid: "",
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+		/* User Inputed value */
+		subject: "",
+		message: "<p></p>",
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+		/* Selection */
+		category: {},
+		priority: [],
+		department: [],
 
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
+		/* SelectedValue */
+		selectedCategory: {
+			cat: "",
+			subCat: ""
+		},
+		selectedPriority: "",
+		selectedDepartment: "",
 
-function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-
-	return (
-		<>
-			<SearchBox />
-			<FrontAccordions />
-		</>
-	)
+		/* defaultValue */
+		defaultCategory: "",
+		defaultSubCategory: {},
+		defaultPriority: "",
+		defaultDepartment: ""
+	}
 }
 
-Home.getLayout = getLayout
-export default Home
+const newTicketSlice = createSlice({
+	name: "newTicket",
+	initialState,
+	reducers: {
+
+		/**
+		 * Use this function for all updating activities
+		 * @param {*} state 
+		 * @param {object} payload 
+		 */
+		setNewTicketData: (state, { payload }) => { merge(state.newTicket, payload) },
+
+		/**
+		 * set selected Category
+		 * @param {*} state 
+		 * @param {object} payload - { cat:"", subCat: ""}
+		 */
+		setSelectedCategory: (state, { payload }) => { state.newTicket.selectedCategory = { ...payload } }
+	},
+
+	/**
+	 * set default Sub Category
+	 * @param {*} state 
+	 * @param {array of Objects} payload
+	 * @note:	{
+	 *				"domain": ".org",
+	 *				"Hosting": "Dedicated Server",
+	 *				"SSL": "TypeB",
+	 * 				"DNS": "CNAME RECORD",
+	 *			}
+	 */
+	setDefaultSubCategory: (state, { payload }) => { state.newTicket.defaultCategory = { ...payload } }
+
+})
+
+export const {
+	setNewTicketData, setSelectedCategory, setDefaultSubCategory, setTid
+} = newTicketSlice.actions
+
+export default newTicketSlice.reducer

@@ -28,9 +28,9 @@ import React from "react"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+import { getLayout } from "./../components/RootLayout"
+import Article from "./../components/Article"
+
 
 /*****************************************************************
  * INIT                                                          *
@@ -40,16 +40,15 @@ import FrontAccordions from "./../components/FrontAccordions"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 
+
+
+function AnArticle() {
+	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
-		<>
-			<SearchBox />
-			<FrontAccordions />
-		</>
+		<Article />
 	)
 }
 
-Home.getLayout = getLayout
-export default Home
+AnArticle.getLayout = getLayout
+export default AnArticle

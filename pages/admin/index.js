@@ -23,33 +23,38 @@
  *****************************************************************/
 
 import React from "react"
+import Head from "next/head"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
-import FrontAccordions from "./../components/FrontAccordions"
+// import updatePageMeta from "./../helpers/updatePageMeta"
+import { getLayout } from "./../../components/RootLayout"
+// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-
+function Admin() {
 	return (
 		<>
-			<SearchBox />
-			<FrontAccordions />
+			<Head>
+				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+				<title>Admin Dashboard - DomainHub</title>
+				<meta name="description" content="page description" />
+			</Head>
+
+			<p>This is the Admin Page</p>
 		</>
 	)
 }
 
-Home.getLayout = getLayout
-export default Home
+Admin.getLayout = getLayout
+export default Admin
