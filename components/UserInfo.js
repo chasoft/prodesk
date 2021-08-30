@@ -18,32 +18,67 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { createSlice } from "@reduxjs/toolkit"
+/*****************************************************************
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ *****************************************************************/
 
-export const initialState = {
-	id: "",
-	title: "ProDesk",
-	subTitle: "Your Elegant & Powerful Ticket System"
-}
+import React from "react"
+import { Avatar, makeStyles, Typography } from "@material-ui/core"
+import FingerprintIcon from "@material-ui/icons/Fingerprint"
 
-const pageMetaSlice = createSlice({
-	name: "pageMeta",
-	initialState,
-	reducers: {
-		setPageId: (state, { payload }) => {
-			state.id = payload
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		alignItems: "center"
+	},
+	leftAvatar: {
+		marginRight: theme.spacing(1)
+	},
+	rightContent: {
+		display: "flex",
+		flexDirection: "column",
+		[theme.breakpoints.down("md")]: {
+			display: "none",
 		},
-		setTitle: (state, { payload }) => {
-			state.title = payload
-		},
-		setSubTitle: (state, { payload }) => {
-			state.subTitle = payload
+	},
+	MuiTypography: {
+		caption: {
+			whiteSpace: "nowrap"
 		}
 	},
-})
+	MuiAvatar: {
+		root: {
+			width: theme.spacing(3),
+			height: theme.spacing(3),
+		}
+	}
+}))
 
-export const {
-	setTitle, setSubTitle
-} = pageMetaSlice.actions
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
 
-export default pageMetaSlice.reducer
+const UserInfo = () => {
+	const classes = useStyles()
+	return (
+		<div className={classes.root}>
+			<div item className={classes.leftAvatar}>
+				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.small} />
+			</div>
+			<div item className={classes.rightContent}>
+				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">Camille V.</Typography>
+				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">Techical Supporter</Typography>
+			</div>
+		</div>
+	)
+}
+
+export default UserInfo

@@ -18,32 +18,41 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { createSlice } from "@reduxjs/toolkit"
+/*****************************************************************
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ *****************************************************************/
 
-export const initialState = {
-	id: "",
-	title: "ProDesk",
-	subTitle: "Your Elegant & Powerful Ticket System"
+import React from "react"
+
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
+
+import { getLayout } from "./../../components/RootLayout"
+import Dashboard from "./../../components/Dashboard"
+import MainNav from "../../components/MainNav"
+
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
+
+
+
+
+function ClientDashboard() {
+	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
+	return (
+		<>
+			<MainNav />
+			<Dashboard />
+		</>
+	)
 }
 
-const pageMetaSlice = createSlice({
-	name: "pageMeta",
-	initialState,
-	reducers: {
-		setPageId: (state, { payload }) => {
-			state.id = payload
-		},
-		setTitle: (state, { payload }) => {
-			state.title = payload
-		},
-		setSubTitle: (state, { payload }) => {
-			state.subTitle = payload
-		}
-	},
-})
-
-export const {
-	setTitle, setSubTitle
-} = pageMetaSlice.actions
-
-export default pageMetaSlice.reducer
+ClientDashboard.getLayout = getLayout
+export default ClientDashboard

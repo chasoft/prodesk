@@ -30,6 +30,7 @@ import React from "react"
 
 import { getLayout } from "./../components/RootLayout"
 import Article from "./../components/Article"
+import MainNav from "../components/MainNav"
 
 
 /*****************************************************************
@@ -46,7 +47,10 @@ import Article from "./../components/Article"
 function AnArticle() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
-		<Article />
+		<>
+			<MainNav />
+			<Article />
+		</>
 	)
 }
 

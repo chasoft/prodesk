@@ -90,6 +90,9 @@ const ProAccordionSummary = withStyles((theme) => ({
 		// "& > :hover": {
 		// 	backgroundColor: "rgba(0, 0, 0, .03)",
 		// },
+		"&:hover": {
+			backgroundColor: theme.palette.action.hover
+		}
 	},
 	content: {
 		"&$expanded": {

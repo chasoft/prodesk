@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
 	footer: {
 		marginTop: "auto",
 		padding: theme.spacing(4),
+		fontFamily: "\"Google Sans\", Roboto, sans-serif"
 	},
 }))
 
@@ -17,7 +18,7 @@ export default function Footer() {
 	return (
 		<footer className={classes.footer}>
 			<Container align="center">
-				<Typography variant="body2" color="textSecondary">
+				<Typography color="textSecondary">
 					{"Copyright © "}
 					{new Date().getFullYear()}
 					{" - "}

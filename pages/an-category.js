@@ -24,6 +24,7 @@
 
 import React from "react"
 import Category from "../components/Category"
+import MainNav from "../components/MainNav"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -46,7 +47,10 @@ import { getLayout } from "./../components/RootLayout"
 function ACategory() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
-		<Category />
+		<>
+			<MainNav />
+			<Category />
+		</>
 	)
 }
 

@@ -58,7 +58,7 @@ const ThreadMessageDetails = () => {
 	const classes = useStyles()
 	return (
 		<div className={classes.root}>
-			<Typography>Details</Typography>
+			<Typography style={{ fontWeight: "500" }}>Details</Typography>
 			<div className={classes.content}>
 				<Chip size="small" avatar={<Avatar>M</Avatar>} label="Clickable" onClick={() => { }} />
 				<Chip size="small" label="Deletable Primary" onDelete={() => { }} color="primary" />

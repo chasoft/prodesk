@@ -28,7 +28,7 @@ import { Icon } from "@material-ui/core"
 
 import FingerprintIcon from "@material-ui/icons/Fingerprint"
 import MoreVertIcon from "@material-ui/icons/MoreVert"
-import LinkIcon from '@material-ui/icons/Link';
+import LinkIcon from "@material-ui/icons/Link"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -86,7 +86,7 @@ const ThreadMessageHeader = () => {
 		<Grid container className={classes.root}>
 			<Grid item className={classes.leftAvatar}>
 				{/* <div className={classes.logoContainer}> */}
-				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.large} />
+				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
 				{/* </div> */}
 			</Grid>
 			<Grid item className={classes.middleContent}>
@@ -107,11 +107,14 @@ const ThreadMessageHeader = () => {
 				<Menu
 					id="long-menu"
 					anchorEl={anchorEl}
-					keepMounted
+					// keepMounted
 					open={open}
 					onClose={handleClose}
+					getContentAnchorEl={null}
+					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+					transformOrigin={{ horizontal: "right" }}
 				>
-					<MenuItem>
+					<MenuItem onClick={handleClose}>
 						<LinkIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />
 						<Typography variant="inherit" style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>Get Link</Typography>
 					</MenuItem>

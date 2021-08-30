@@ -12,7 +12,8 @@ import {
 const useStyles = makeStyles((theme) => ({
 	formControl: {
 		margin: theme.spacing(1),
-		minWidth: 120
+		minWidth: 120,
+		// border: '1px solid #ced4da',
 	}
 }))
 
@@ -59,6 +60,13 @@ const NewTicketStep2 = () => {
 									dispatch(setSelectedDepartment(e.target.value))
 								}}
 								displayEmpty
+								MenuProps={{
+									anchorOrigin: {
+										vertical: "bottom",
+										horizontal: "left"
+									},
+									getContentAnchorEl: null
+								}}
 							>
 								{
 									departments?.map(
@@ -87,6 +95,13 @@ const NewTicketStep2 = () => {
 									dispatch(setSelectedPriority(e.target.value))
 								}}
 								displayEmpty
+								MenuProps={{
+									anchorOrigin: {
+										vertical: "bottom",
+										horizontal: "left"
+									},
+									getContentAnchorEl: null
+								}}
 							>
 								{
 									priorities?.map(priority => <MenuItem key={priority} value={priority}>{priority}</MenuItem>)
@@ -114,6 +129,13 @@ const NewTicketStep2 = () => {
 										dispatch(setSelectedCategory(e.target.value))
 									}}
 									displayEmpty
+									MenuProps={{
+										anchorOrigin: {
+											vertical: "bottom",
+											horizontal: "left"
+										},
+										getContentAnchorEl: null
+									}}
 								>
 									{
 										Object.entries(categories)?.map(
@@ -141,6 +163,13 @@ const NewTicketStep2 = () => {
 									dispatch(setSelectedSubCategory(e.target.value))
 								}}
 								displayEmpty
+								MenuProps={{
+									anchorOrigin: {
+										vertical: "bottom",
+										horizontal: "left"
+									},
+									getContentAnchorEl: null
+								}}
 							>
 								{
 									categories[currentCategory]?.map(

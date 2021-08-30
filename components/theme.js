@@ -8,7 +8,6 @@ export const theme = createTheme({
 		primary: {
 			// main: "#556cd6",
 			main: "#1a73e8",
-
 		},
 		secondary: {
 			main: "#19857b",
@@ -93,7 +92,7 @@ export const theme = createTheme({
 				color: "#fff",
 				backgroundColor: "#1a73e8",
 				"&:hover": {
-					background: "-webkit-linear-gradient(top,#4387fd,#4683ea)",
+					backgroundColor: "-webkit-linear-gradient(top,#4387fd,#4683ea)",
 					"-webkit-box-shadow": "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)",
 					boxShadow: "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)"
 				},
@@ -102,19 +101,32 @@ export const theme = createTheme({
 		MuiOutlinedInput: {
 			root: {
 				borderRadius: "0.25rem",
-				// "& fieldset": {
-				// 	borderColor: "red" // default
-				// },
 			},
 		},
-		// MuiInputBase: {
-		// 	root: {
-		// 		"&:hover:not($disabled):before": {
-		// 			backgroundColor: "red",
-		// 		},
+		MuiAccordion: {
+			root: {
+				"&$expanded": {
+					marginTop: 0,
+					marginBottom: 0,
+				}
+			}
+		},
+		MuiAccordionSummary: {
+			root: {
+				"&$expanded": {
+					minHeight: 0
+				}
+			}
+		},
+		MuiInput: {
+			underline: {
+				"&:hover:not(.Mui-disabled):before": {
+					borderBottom: "2px solid rgba(0, 0, 0, 0.5)"
+				},
+				// padddingLeft: "15px"
+			}
+		},
 
-		// 	}
-		// }
 	},
 	shape: {
 		borderRadius: "0.5rem"

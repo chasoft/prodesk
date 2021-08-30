@@ -51,14 +51,21 @@ function ListArticles() {
 	const listRef = useRef(null)
 
 	const fixedPosition = () => {
+		// setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? (window.scrollY > 20) ? true : false : false)
 		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? true : false)
-		console.log({ window })
 	}
 
+	/* Activate resize listener */
 	useEffect(() => {
 		fixedPosition()
 		window.addEventListener("resize", fixedPosition)
 		return () => window.removeEventListener("resize", fixedPosition)
+	}, [])
+
+	/* Activate resize listener */
+	useEffect(() => {
+		window.addEventListener("scroll", fixedPosition)
+		return () => window.removeEventListener("scroll", fixedPosition)
 	}, [])
 
 	return (
