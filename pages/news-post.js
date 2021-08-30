@@ -23,13 +23,13 @@
  *****************************************************************/
 
 import React from "react"
+import Post from "../components/Post"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
+import { getLayout } from "./../components/RootLayout"
 
 
 /*****************************************************************
@@ -40,13 +40,15 @@ import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+
+
+
+function ANewsPost() {
+	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
-		</div>
+		<Post />
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+ANewsPost.getLayout = getLayout
+export default ANewsPost

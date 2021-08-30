@@ -23,30 +23,64 @@
  *****************************************************************/
 
 import React from "react"
+import { Avatar, Chip, makeStyles, Typography } from "@material-ui/core"
+
+import FaceIcon from "@material-ui/icons/Face"
+import DoneIcon from "@material-ui/icons/Done"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		marginTop: theme.spacing(2)
+	},
+	content: {
+		display: "flex",
+		justifyContent: "flex-start",
+		flexWrap: "wrap",
+		"& > *": {
+			margin: theme.spacing(0.5),
+		},
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const ThreadMessageDetails = () => {
+	const classes = useStyles()
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
+		<div className={classes.root}>
+			<Typography>Details</Typography>
+			<div className={classes.content}>
+				<Chip size="small" avatar={<Avatar>M</Avatar>} label="Clickable" onClick={() => { }} />
+				<Chip size="small" label="Deletable Primary" onDelete={() => { }} color="primary" />
+				<Chip
+					size="small"
+					icon={<FaceIcon />}
+					label="Clickable Deletable"
+				// onClick={handleClick}
+				// onDelete={handleDelete}
+				/>
+				<Chip
+					size="small"
+					icon={<FaceIcon />}
+					label="Primary Clickable"
+					clickable
+					color="primary"
+					// onDelete={handleDelete}
+					deleteIcon={<DoneIcon />}
+				/>
+			</div>
 		</div>
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+export default ThreadMessageDetails

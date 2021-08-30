@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { alpha, makeStyles } from "@material-ui/core/styles"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
@@ -20,10 +20,12 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: theme.spacing(2),
 	},
 	title: {
-		display: "none",
-		[theme.breakpoints.up("sm")]: {
-			display: "block",
-		},
+		// display: "none",
+		// [theme.breakpoints.up("sm")]: {
+		// 	display: "block",
+		// },
+		fontWeight: 400,
+		fontSize: "1.25rem"
 	},
 	search: {
 		position: "relative",
@@ -64,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	sectionDesktop: {
 		display: "none",
+		alignItems: "center",
 		[theme.breakpoints.up("md")]: {
 			display: "flex",
 		},
@@ -78,8 +81,19 @@ const useStyles = makeStyles((theme) => ({
 
 function Footer() {
 	const classes = useStyles()
+	const [scrolled, setScrolled] = useState(false)
+
+	const animateHeader = () => {
+		setScrolled(window.scrollY > 50 ? true : false)
+	}
+
+	useEffect(() => {
+		window.addEventListener("scroll", animateHeader)
+		return () => window.removeEventListener("scroll", animateHeader)
+	}, [])
+
 	return (
-		<AppBar position="static" color="transparent" elevation={0}>
+		<AppBar position="sticky" color="inherit" elevation={scrolled ? 4 : 0}>
 			<Toolbar>
 				<IconButton
 					edge="start"
@@ -89,8 +103,8 @@ function Footer() {
 				>
 					<MenuIcon />
 				</IconButton>
-				<Typography className={classes.title} variant="h6" noWrap>
-					ProDesk
+				<Typography className={classes.title} noWrap>
+					ProDesk - Your Elegant &amp; Powerful Ticket System
 				</Typography>
 				<div className={classes.search}>
 					<div className={classes.searchIcon}>

@@ -8,8 +8,6 @@ const useStyles = makeStyles((theme) => ({
 		paddingRight: theme.spacing(8),
 		paddingBottom: theme.spacing(4),
 		paddingTop: theme.spacing(4),
-
-		// marginTop: theme.spacing(5),
 		[theme.breakpoints.down("sm")]: {
 			padding: theme.spacing(1),
 		},
@@ -41,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
 		},
 		"& > :first-child": {
 			marginRight: "0.5rem"
+		},
+		"&>button": {
+			width: theme.spacing(11)
 		}
 	}
 }))
@@ -50,7 +51,7 @@ function HelpfulSurvey() {
 		<div className={classes.root}>
 			<div className={classes.content}>
 				<div className={classes.item}>
-					<Typography>
+					<Typography style={{ fontWeight: 700 }}>
 						Was this helpful?
 					</Typography>
 				</div>

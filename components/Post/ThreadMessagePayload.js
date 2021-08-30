@@ -23,30 +23,33 @@
  *****************************************************************/
 
 import React from "react"
+import { makeStyles } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		// margin: theme.spacing(1),
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const ThreadMessagePayload = () => {
+	const classes = useStyles()
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
+		<div className={classes.root}>
+			Payload
 		</div>
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+export default ThreadMessagePayload

@@ -1,10 +1,14 @@
 import { red } from "@material-ui/core/colors"
 import { createTheme } from "@material-ui/core"
 
+//TODO: THêm 1 breakpoint ở mực 7xx pixel
+
 export const theme = createTheme({
 	palette: {
 		primary: {
-			main: "#556cd6",
+			// main: "#556cd6",
+			main: "#1a73e8",
+
 		},
 		secondary: {
 			main: "#19857b",
@@ -17,8 +21,102 @@ export const theme = createTheme({
 		},
 	},
 	typography: {
+		htmlFontSize: 14,
+		h1: {
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			fontSize: "1.75rem",
+			fontWeight: 400,
+			lineHeight: "2rem",
+			margin: "0 0 .5rem",
+		},
+		h2: {
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			fontSize: "1.25rem",
+			fontWeight: 500,
+			lineHeight: "2rem",
+			margin: "0 0 .25rem",
+		},
+		h3: {
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			fontSize: "1.25rem",
+			lineHeight: "2rem",
+			margin: "1.5rem 0 .5rem",
+		},
+		h4: {
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			fontSize: "1rem",
+			fontWeight: 500,
+			lineHeight: "1.5rem",
+			margin: ".5rem 0",
+		},
+		h5: {
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			fontSize: ".875rem",
+			fontWeight: 700,
+			lineHeight: "1.5rem",
+			margin: ".25rem 0",
+		},
+		h6: {
+			fontSize: "inherit",
+			fontWeight: "inherit",
+			margin: "0",
+		},
+		body1: {
+			fontSize: "0.9rem",
+			lineHeight: "1.25rem"
+		},
+		body2: {
+			lineHeight: "1.25rem"
+		},
 		button: {
 			textTransform: "none",
+			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
+			borderRadius: "0.25rem",
 		}
+	},
+	overrides: {
+		MuiButton: {
+			root: {
+				"&:hover": {
+					backgroundColor: "#EDF4FD"
+				},
+				color: "#1a73e8",
+				borderRadius: "0.25rem",
+			},
+			contained: {
+				"&$disabled": {
+					backgroundColor: "transparent",
+					border: ".0625rem solid #dadce0"
+				}
+			},
+			containedPrimary: {
+				color: "#fff",
+				backgroundColor: "#1a73e8",
+				"&:hover": {
+					background: "-webkit-linear-gradient(top,#4387fd,#4683ea)",
+					"-webkit-box-shadow": "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)",
+					boxShadow: "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)"
+				},
+			},
+		},
+		MuiOutlinedInput: {
+			root: {
+				borderRadius: "0.25rem",
+				// "& fieldset": {
+				// 	borderColor: "red" // default
+				// },
+			},
+		},
+		// MuiInputBase: {
+		// 	root: {
+		// 		"&:hover:not($disabled):before": {
+		// 			backgroundColor: "red",
+		// 		},
+
+		// 	}
+		// }
+	},
+	shape: {
+		borderRadius: "0.5rem"
 	}
 })

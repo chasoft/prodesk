@@ -21,22 +21,32 @@
 import { createSlice } from "@reduxjs/toolkit"
 import merge from "lodash.merge"
 
+const isReadyNextStep = (currentStep, subject, message) => {
+	switch (currentStep) {
+		case 0: return (subject.length >= 10)
+		case 1: return true
+		case 2: return (message.length >= 20)
+		default: return false
+	}
+}
 
 export const initialState = {
 	newTicket: {
-		/* Unique Ticket ID */
+		currentStep: 0,	//to keep current step
+		isReadyNextStep: false,
+		/* Unique Ticket ID ================================= */
 		tid: "",
 
-		/* User Inputed value */
+		/* User Inputed value =============================== */
 		subject: "",
 		message: "<p></p>",
 
-		/* Selection */
-		category: {},
-		priority: [],
-		department: [],
+		/* Selection ======================================== */
+		categories: {},
+		priorities: [],
+		departments: [],
 
-		/* SelectedValue */
+		/* SelectedValue ==================================== */
 		selectedCategory: {
 			cat: "",
 			subCat: ""
@@ -44,8 +54,17 @@ export const initialState = {
 		selectedPriority: "",
 		selectedDepartment: "",
 
-		/* defaultValue */
+		/* defaultValue ===================================== */
 		defaultCategory: "",
+
+		/* Structure for defaultSubCategory as below
+			{
+				"domain": ".org",
+				"Hosting": "Dedicated Server",
+				"SSL": "TypeB",
+				"DNS": "CNAME RECORD",
+			}
+		*/
 		defaultSubCategory: {},
 		defaultPriority: "",
 		defaultDepartment: ""
@@ -56,39 +75,52 @@ const newTicketSlice = createSlice({
 	name: "newTicket",
 	initialState,
 	reducers: {
+		setCurrentStep: (state, { payload }) => {
+			state.newTicket.currentStep = payload
+			state.newTicket.isReadyNextStep = isReadyNextStep(state.newTicket.currentStep, state.newTicket.subject, state.newTicket.message)
 
-		/**
-		 * Use this function for all updating activities
-		 * @param {*} state 
-		 * @param {object} payload 
-		 */
-		setNewTicketData: (state, { payload }) => { merge(state.newTicket, payload) },
+			if (payload === 2) {
+				if (state.newTicket.selectedDepartment === "") state.newTicket.selectedDepartment = state.newTicket.defaultDepartment
+				if (state.newTicket.selectedPriority === "") state.newTicket.selectedPriority = state.newTicket.defaultPriority
 
-		/**
-		 * set selected Category
-		 * @param {*} state 
-		 * @param {object} payload - { cat:"", subCat: ""}
-		 */
-		setSelectedCategory: (state, { payload }) => { state.newTicket.selectedCategory = { ...payload } }
-	},
+				let selectedCategoryCat = state.newTicket.selectedCategory.cat
+				if (state.newTicket.selectedCategory.cat === "") {
+					state.newTicket.selectedCategory.cat = state.newTicket.defaultCategory
+					selectedCategoryCat = state.newTicket.defaultCategory
+				}
 
-	/**
-	 * set default Sub Category
-	 * @param {*} state 
-	 * @param {array of Objects} payload
-	 * @note:	{
-	 *				"domain": ".org",
-	 *				"Hosting": "Dedicated Server",
-	 *				"SSL": "TypeB",
-	 * 				"DNS": "CNAME RECORD",
-	 *			}
-	 */
-	setDefaultSubCategory: (state, { payload }) => { state.newTicket.defaultCategory = { ...payload } }
-
+				if (state.newTicket.selectedCategory.subCat === "") {
+					state.newTicket.selectedCategory.subCat = state.newTicket.defaultSubCategory[selectedCategoryCat] ?? ""
+				} else {
+					if (state.newTicket.categories[selectedCategoryCat].indexOf(state.newTicket.selectedCategory.subCat) === -1)
+						state.newTicket.selectedCategory.subCat = (state.newTicket.defaultSubCategory[selectedCategoryCat] ?? "")
+				}
+			}
+		},
+		setInitNewTicketData: (state, { payload }) => { merge(state.newTicket, payload) },
+		setSubject: (state, { payload }) => {
+			state.newTicket.subject = payload
+			state.newTicket.isReadyNextStep = isReadyNextStep(state.newTicket.currentStep, state.newTicket.subject, state.newTicket.message)
+		},
+		setMessage: (state, { payload }) => {
+			state.newTicket.message = payload
+			state.newTicket.isReadyNextStep = isReadyNextStep(state.newTicket.currentStep, state.newTicket.subject, state.newTicket.message)
+		},
+		setSelectedCategory: (state, { payload }) => { state.newTicket.selectedCategory.cat = payload },
+		setSelectedSubCategory: (state, { payload }) => { state.newTicket.selectedCategory.subCat = payload },
+		setSelectedPriority: (state, { payload }) => { state.newTicket.selectedPriority = payload },
+		setSelectedDepartment: (state, { payload }) => { state.newTicket.selectedDepartment = payload },
+	}
 })
 
 export const {
-	setNewTicketData, setSelectedCategory, setDefaultSubCategory, setTid
+	setCurrentStep,
+	setInitNewTicketData,
+	setSubject,
+	setMessage,
+	setSelectedCategory, setSelectedSubCategory,
+	setSelectedPriority,
+	setSelectedDepartment
 } = newTicketSlice.actions
 
 export default newTicketSlice.reducer

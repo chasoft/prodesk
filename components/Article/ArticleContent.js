@@ -1,6 +1,6 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { Typography } from "@material-ui/core"
+import { Link, Typography } from "@material-ui/core"
 import HelpfulSurvey from "./HelpfulSurvey"
 
 
@@ -16,6 +16,16 @@ const useStyles = makeStyles((theme) => ({
 		[theme.breakpoints.down("xs")]: {
 			padding: theme.spacing(3),
 		},
+		"& > h1": {
+			fontSize: "2rem",
+			lineHeight: "2.5rem",
+			margin: "0 0 .5rem"
+		},
+		"& > h2": {
+			fontSize: "1.5rem",
+			lineHeight: "2rem",
+			margin: "2rem 0 .5rem"
+		}
 	},
 	spacer: {
 		borderTop: "1px solid",
@@ -28,8 +38,72 @@ function ArticleContent() {
 	return (
 		<main className={classes.main}>
 			<div className={classes.content}>
-				<Typography>
-					Article Content
+				<Typography variant="h1">Listen to music, calls &amp; more on your Pixel phone</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography variant="h2">
+					You can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography variant="h2">
+					You can listen to music.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
+				</Typography>
+				<Typography paragraph={true}>
+					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
+				</Typography>
+				<Typography paragraph={true}>
+					On Pixel 4a (5G) and later, to improve sound quality from your phone’s speaker, you can turn on <Link href="#ss">Adaptive Sound</Link>.
 				</Typography>
 			</div>
 			<div className={classes.spacer}></div>

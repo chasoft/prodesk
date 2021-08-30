@@ -23,30 +23,37 @@
  *****************************************************************/
 
 import React from "react"
+import { makeStyles, Typography } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		margin: theme.spacing(1),
+		marginLeft: theme.spacing(8),
+		[theme.breakpoints.down("xs")]: {
+			marginLeft: theme.spacing(0),
+		},
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const ReplyNotice = () => {
+	const classes = useStyles()
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
+		<div className={classes.root}>
+			<Typography variant="caption" color="textSecondary">Last edited 6 hr ago</Typography>
 		</div>
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+export default ReplyNotice

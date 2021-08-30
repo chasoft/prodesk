@@ -29,8 +29,9 @@ import React from "react"
  *****************************************************************/
 
 import { getLayout } from "../components/RootLayout"
-import SearchBox from "./../components/SearchBox"
+import PromotedSearch from "../components/PromotedSearch"
 import FrontAccordions from "./../components/FrontAccordions"
+import MainNav from "../components/MainNav"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,7 +46,8 @@ function Home() {
 
 	return (
 		<>
-			<SearchBox />
+			<MainNav />
+			<PromotedSearch />
 			<FrontAccordions />
 		</>
 	)

@@ -1,6 +1,6 @@
 import React from "react"
 import { Container, Grid } from "@material-ui/core"
-import NewTicketStepper from "./NewTicketStepper"
+import TicketStepper from "./TicketStepper"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
 import { Button, Typography, IconButton } from "@material-ui/core"
 import ArrowBackOutlinedIcon from "@material-ui/icons/ArrowBackOutlined"
@@ -72,6 +72,10 @@ const useStyles = makeStyles((theme) => ({
 			marginLeft: theme.spacing(1),
 			marginRight: theme.spacing(1),
 			color: theme.palette.primary.contrastText,
+		},
+		"& > h1": {
+			fontSize: "1.125rem",
+			marginBottom: 0
 		}
 	}
 }))
@@ -84,7 +88,7 @@ function CreateNewTicket() {
 	return (
 		<Container disableGutters={smallScreen}>
 			<Grid container>
-				<Grid item xs={12} sm={11} md={10}>
+				<Grid item xs={12} sm={12} md={10}>
 					<nav className={`${classes.nav} ${classes.bigScreen}`}>
 						<Button color="primary" startIcon={<ArrowBackOutlinedIcon />}>Back</Button>
 					</nav>
@@ -93,12 +97,12 @@ function CreateNewTicket() {
 						<IconButton aria-label="back" size="small">
 							<ArrowBackOutlinedIcon />
 						</IconButton>
-						<Typography variant="h6">Ask the Community</Typography>
+						<Typography variant="h1">Ask the Community</Typography>
 					</nav>
 
 					<div className={classes.main}>
 						<div className={`${classes.title} ${classes.bigScreen}`}>
-							<Typography variant="h4">
+							<Typography variant="h1">
 								Ask the Community
 							</Typography>
 						</div>
@@ -108,7 +112,7 @@ function CreateNewTicket() {
 							</Typography>
 						</div>
 						<div className={classes.content}>
-							<NewTicketStepper />
+							<TicketStepper />
 						</div>
 					</div>
 				</Grid>

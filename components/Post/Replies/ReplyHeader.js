@@ -23,30 +23,101 @@
  *****************************************************************/
 
 import React from "react"
+import { Avatar, Grid, IconButton, ListItemIcon, makeStyles, Menu, MenuItem, Typography } from "@material-ui/core"
+import { Icon } from "@material-ui/core"
+
+import FingerprintIcon from "@material-ui/icons/Fingerprint"
+import MoreVertIcon from "@material-ui/icons/MoreVert"
+import LinkIcon from "@material-ui/icons/Link"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		margin: theme.spacing(1),
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center"
+	},
+	leftAvatar: {
+
+	},
+	middleContent: {
+		display: "flex",
+		alignItems: "center",
+		flexGrow: 1,
+		paddingLeft: theme.spacing(2),
+		"& > *": {
+			marginRight: theme.spacing(1)
+		}
+	},
+	rightMenu: {
+		display: "flex",
+		alignItems: "center"
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const ReplyHeader = () => {
+	const classes = useStyles()
+	const [anchorEl, setAnchorEl] = React.useState(null)
+	const open = Boolean(anchorEl)
+
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget)
+	}
+
+	const handleClose = () => {
+		setAnchorEl(null)
+	}
+
+
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
-		</div>
+		<Grid container className={classes.root}>
+			<Grid item className={classes.leftAvatar}>
+				{/* <div className={classes.logoContainer}> */}
+				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.large} />
+				{/* </div> */}
+			</Grid>
+			<Grid item className={classes.middleContent}>
+				<Typography variant="caption">Camille V.</Typography>
+				<div style={{ marginTop: "0.3rem" }}><FingerprintIcon style={{ fontSize: "1.2rem" }} /></div>
+				<Typography variant="caption">Community Manager</Typography>
+			</Grid>
+			<Grid item className={classes.rightMenu}>
+				<Typography variant="caption">28/08/2021</Typography>
+				<IconButton
+					aria-label="more"
+					aria-controls="long-menu"
+					aria-haspopup="true"
+					onClick={handleClick}
+				>
+					<MoreVertIcon />
+				</IconButton>
+				<Menu
+					id="long-menu"
+					anchorEl={anchorEl}
+					keepMounted
+					open={open}
+					onClose={handleClose}
+				>
+					<MenuItem>
+						<LinkIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />
+						<Typography variant="inherit" style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>Get Link</Typography>
+					</MenuItem>
+				</Menu>
+			</Grid>
+		</Grid >
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+export default ReplyHeader

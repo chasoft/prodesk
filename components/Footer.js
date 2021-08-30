@@ -8,7 +8,7 @@ import Link from "@material-ui/core/Link"
 const useStyles = makeStyles((theme) => ({
 	footer: {
 		marginTop: "auto",
-		padding: theme.spacing(2),
+		padding: theme.spacing(4),
 	},
 }))
 

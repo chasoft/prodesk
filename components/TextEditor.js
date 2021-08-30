@@ -24,7 +24,6 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic"
 export default function TextEditor({ data, handleData }) {
 	return (
 		<>
-
 			<CKEditor
 				editor={ClassicEditor}
 				data={data}

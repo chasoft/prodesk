@@ -23,30 +23,37 @@
  *****************************************************************/
 
 import React from "react"
+import { makeStyles, Typography } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../../components/NewTicketLayout"
-import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		margin: theme.spacing(1),
+		marginLeft: theme.spacing(8),
+		[theme.breakpoints.down("xs")]: {
+			marginLeft: theme.spacing(0),
+		},
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const ReplyPayload = () => {
+	const classes = useStyles()
 	return (
-		<div style={{ maxWidth: "1440px", left: 0 }}>
-			<CreateNewTicket />
-		</div>
+		<Typography variant="body1" className={classes.root}>
+			The 5a is the first Pixel that does not use CDMA service at all, so for Verizon the line needs to be configured as a CDMAless device. This is a fairly known issue with Verizon Tech support so you should be able to get it resolved quickly. They may not have known that regarding the Pixel 5A since there really isnt a ton of information ahead of the full release.
+		</Typography>
 	)
 }
 
-NewTicket.getLayout = getLayout
-export default NewTicket
+export default ReplyPayload

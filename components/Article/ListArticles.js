@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import { Typography } from "@material-ui/core"
+import { LaptopWindows } from "@material-ui/icons"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 			}
 
 		}
-	}
+	},
 }))
 
 
@@ -46,43 +47,54 @@ const ItemIcon = (props) => {
 
 function ListArticles() {
 	const classes = useStyles()
+	const [fixed, setFixed] = useState(false)
+	const listRef = useRef(null)
+
+	const fixedPosition = () => {
+		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? true : false)
+		console.log({ window })
+	}
+
+	useEffect(() => {
+		fixedPosition()
+		window.addEventListener("resize", fixedPosition)
+		return () => window.removeEventListener("resize", fixedPosition)
+	}, [])
 
 	return (
-		<div className={classes.root}>
+		<div ref={listRef} className={classes.root} style={{ position: fixed ? "fixed" : "static" }}>
 			<nav className={classes.nav}>
-				<div className={classes.item}>
-					<Typography variant="h6">Google services &amp; your child&apos;s Google Account</Typography>
-					<ul className={classes.list}>
-						<li>
-							<ItemIcon />
-							<Typography>Chrome &amp; your child&apos;s Google Account</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>Maps &amp; your child&apos;s Google Account</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>dd</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>dd</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>dd</Typography>
-						</li>
-						<li>
-							<ItemIcon />
-							<Typography>dd</Typography>
-						</li>
-					</ul>
-				</div>
+				<Typography variant="h2">Google services &amp; your child&apos;s Google Account</Typography>
+				<ul className={classes.list}>
+					<li>
+						<ItemIcon />
+						<Typography>Chrome &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Maps &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<ItemIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+				</ul>
 			</nav>
 		</div>
 	)

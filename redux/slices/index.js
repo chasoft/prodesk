@@ -39,7 +39,7 @@ import newTicketReducer from "./newTicket"
 const rootReducer = combineReducers({
 	authState: authReducer,
 	pageMetaState: pageMetaReducer,
-	newTicket: newTicketReducer
+	newTicketState: newTicketReducer
 })
 
 export default rootReducer
