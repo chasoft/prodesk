@@ -23,8 +23,10 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, Grid, Link, makeStyles, Typography } from "@material-ui/core"
-import DocItem from "./DocItem"
+import { Link, makeStyles, Paper, Typography } from "@material-ui/core"
+import PostListItemShorten from "../Post/PostListItemShorten"
+
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -36,78 +38,74 @@ import DocItem from "./DocItem"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		width: "100%",
+		margin: theme.spacing(1),
+		[theme.breakpoints.down("xs")]: {
+			marginLeft: theme.spacing(0),
+			marginRight: theme.spacing(0),
+		},
 	},
-	paper: {
-		// marginTop: theme.spacing(0),
-		// [theme.breakpoints.down("xs")]: {
-		// marginTop: theme.spacing(3),
-		// },
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
+	// content: {
+	// 	padding: theme.spacing(8),
+	// 	[theme.breakpoints.down("xs")]: {
+	// 		padding: theme.spacing(3),
+	// 	},
+	// },
+	docHeading: {
+		paddingLeft: theme.spacing(3),
+		paddingRight: theme.spacing(3),
+		paddingTop: theme.spacing(2),
+		paddingBottom: theme.spacing(2),
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontSize: "1rem",
+		fontWeight: 500,
+		lineHeight: "1.25rem"
+	},
+	docFooter: {
+		paddingLeft: theme.spacing(3),
+		paddingRight: theme.spacing(3),
+		paddingTop: theme.spacing(2),
+		paddingBottom: theme.spacing(2),
 	},
 	viewAll: {
 		display: "flex",
 		alignItems: "center",
-		paddingTop: theme.spacing(6),
-		paddingBottom: theme.spacing(3),
-		paddingLeft: theme.spacing(1),
-		paddingRight: theme.spacing(1),
+		"& > :first-child": {
+			marginRight: theme.spacing(1)
+		},
+		"& > *": {
+			color: theme.palette.primary.main
+		},
+		borderTop: "1px solid",
+		borderColor: theme.palette.divider,
 	}
-
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const CatGroup = () => {
+const DocItem = () => {
 	const classes = useStyles()
 	return (
-		<Container maxWidth="md">
-			<div className={classes.paper}>
-				<div className={classes.root} >
 
+		<Paper elevation={1}>
 
-					<div className={classes.viewAll}>
+			<div className={classes.docHeading}>Device Performace</div>
+			<PostListItemShorten />
+			<PostListItemShorten />
+			<PostListItemShorten />
 
-						<Typography variant="h2">Categories</Typography>
-						<div style={{ flexGrow: 1 }}></div>
-						<Link href="/">
-							<Typography>View all post</Typography>
-						</Link>
-
-					</div>
-
-
-					<Grid container spacing={4}>
-
-						<Grid item xs={12} sm={6}>
-
-							<DocItem />
-
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-
-					</Grid>
-
-				</div>
+			<div className={`${classes.viewAll} ${classes.docFooter}`}>
+				<Link href="/">
+					<Typography>View all post</Typography>
+				</Link>
+				<ArrowForwardIcon fontSize="small" />
 			</div>
-		</Container >
+
+		</Paper>
+
+
 	)
 }
 
-export default CatGroup
+export default DocItem

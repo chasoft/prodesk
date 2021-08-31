@@ -40,16 +40,27 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		marginTop: theme.spacing(4),
 		marginBottom: theme.spacing(4),
+		[theme.breakpoints.down("xs")]: {
+			marginTop: theme.spacing(2),
+			marginBottom: theme.spacing(2),
+		}
 	},
 	paper: {
-		paddingLeft: theme.spacing(8),
-		paddingRight: theme.spacing(8),
-		paddingTop: theme.spacing(2),
-		paddingBottom: theme.spacing(2),
 		display: "flex",
 		alignItems: "center",
 		"& > *:not(:last-child)": {
 			marginRight: theme.spacing(4)
+		},
+
+		paddingLeft: theme.spacing(8),
+		paddingRight: theme.spacing(8),
+		paddingTop: theme.spacing(3),
+		paddingBottom: theme.spacing(3),
+		[theme.breakpoints.down("xs")]: {
+			paddingLeft: theme.spacing(4),
+			paddingRight: theme.spacing(4),
+			paddingTop: theme.spacing(5),
+			paddingBottom: theme.spacing(4),
 		}
 	},
 	ask: {

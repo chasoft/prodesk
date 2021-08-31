@@ -26,16 +26,13 @@ const useStyles = makeStyles((theme) => ({
 		[theme.breakpoints.down("xs")]: {
 			flexDirection: "column",
 			alignItems: "flex-start",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
 		},
 	},
 	content: {
+		overflow: "hidden",
 		marginRight: theme.spacing(2),
-		// [theme.breakpoints.down("xs")]: {
-		// 	marginRight: theme.spacing(2),
-		// },
-	},
-	subject: {
-
 	},
 	details: {
 		[theme.breakpoints.down("xs")]: {
@@ -82,10 +79,10 @@ function PostListItem({ isFirst = false, isLast = false }) {
 				<div className={classes.paper}>
 
 					<div className={classes.content}>
-						<Typography variant="h5" className={classes.subject}>
+						<Typography variant="h5" className={classes.subject} noWrap>
 							Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!
 						</Typography>
-						<Typography className={classes.details}>
+						<Typography className={classes.details} noWrap>
 							Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!
 						</Typography>
 					</div>

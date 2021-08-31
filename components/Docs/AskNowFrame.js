@@ -23,8 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, Grid, Link, makeStyles, Typography } from "@material-ui/core"
-import DocItem from "./DocItem"
+import { Container, Link, makeStyles } from "@material-ui/core"
+import AskNow from "./AskNow"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -38,76 +38,24 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		width: "100%",
 	},
-	paper: {
-		// marginTop: theme.spacing(0),
-		// [theme.breakpoints.down("xs")]: {
-		// marginTop: theme.spacing(3),
-		// },
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		paddingTop: theme.spacing(6),
-		paddingBottom: theme.spacing(3),
-		paddingLeft: theme.spacing(1),
-		paddingRight: theme.spacing(1),
+	[theme.breakpoints.down("xs")]: {
+		// paddingTop: theme.spacing(2),
+		// paddingBottom: theme.spacing(2),
+		// marginTop: 0
 	}
-
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const CatGroup = () => {
+const AskNowFrame = () => {
 	const classes = useStyles()
 	return (
-		<Container maxWidth="md">
-			<div className={classes.paper}>
-				<div className={classes.root} >
-
-
-					<div className={classes.viewAll}>
-
-						<Typography variant="h2">Categories</Typography>
-						<div style={{ flexGrow: 1 }}></div>
-						<Link href="/">
-							<Typography>View all post</Typography>
-						</Link>
-
-					</div>
-
-
-					<Grid container spacing={4}>
-
-						<Grid item xs={12} sm={6}>
-
-							<DocItem />
-
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-
-					</Grid>
-
-				</div>
-			</div>
+		<Container maxWidth="md" className={classes.root}>
+			<AskNow />
 		</Container >
 	)
 }
 
-export default CatGroup
+export default AskNowFrame

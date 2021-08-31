@@ -23,7 +23,10 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, makeStyles, Typography } from "@material-ui/core"
+import { Container, Link, makeStyles, Paper, Typography } from "@material-ui/core"
+import PostListItem from "../Post/PostListItem"
+
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -46,22 +49,23 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		alignItems: "center",
 	},
-
-
-	box: {
-		border: "1px solid",
-		borderRadius: "0.5rem",
-		borderColor: theme.palette.divider,
-		// margin: "2.625rem 0 0"
-	},
-	content: {
-		padding: theme.spacing(8),
+	group: {
+		margin: "1.5rem 0",
 		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(3),
+			margin: "1.625rem 0",
 		},
+		marginBottom: 0
 	},
-
-
+	viewAll: {
+		display: "flex",
+		alignItems: "center",
+		"& > :first-child": {
+			marginRight: theme.spacing(1)
+		},
+		"& > *": {
+			color: theme.palette.primary.main
+		}
+	}
 }))
 
 /*****************************************************************
@@ -75,22 +79,21 @@ const DocGroup = () => {
 			<div className={classes.paper}>
 				<div className={classes.root}>
 
+					<Typography variant="h2">Featured posts</Typography>
+					<Link href="/" className={classes.viewAll}>
+						<Typography>View all featured posts</Typography>
+						<ArrowForwardIcon fontSize="small" />
+					</Link>
 
-
-					<div className={classes.box}>
-						<div className={classes.content}>
-
-							<Typography>
-								Something here!!!
-							</Typography>
-
-						</div>
-
-					</div>
+					<Paper elevation={2} className={classes.group}>
+						<PostListItem isFirst={true} />
+						<PostListItem />
+						<PostListItem isLast={true} />
+					</Paper>
 
 				</div>
 			</div>
-		</Container>
+		</Container >
 	)
 }
 

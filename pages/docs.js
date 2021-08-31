@@ -23,8 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import CatGroup from "../components/Docs/CatGroup"
 import DocGroup from "../components/Docs/DocGroup"
+import CatGroup from "../components/Docs/CatGroup"
 import AskNow from "../components/Docs/AskNow"
 
 /*****************************************************************
@@ -34,6 +34,7 @@ import AskNow from "../components/Docs/AskNow"
 import { getLayout } from "../components/RootLayout"
 import MainNav from "../components/MainNav"
 import PromotedSearch from "../components/PromotedSearch"
+import AskNowFrame from "../components/Docs/AskNowFrame"
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,10 +50,9 @@ function Docs() {
 		<>
 			<MainNav />
 			<PromotedSearch />
-			<CatGroup />
 			<DocGroup />
-			<AskNow />
-
+			<AskNowFrame />
+			<CatGroup />
 		</>
 	)
 }
