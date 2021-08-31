@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	heading: {
 		fontSize: theme.typography.pxToRem(15),
-		// flexBasis: "33.33%",
 		flexShrink: 1,
 	},
 	secondaryHeading: {
@@ -44,13 +43,16 @@ const useStyles = makeStyles((theme) => ({
 			paddingRight: theme.spacing(4),
 			paddingTop: theme.spacing(1),
 			paddingBottom: theme.spacing(1),
+
+			padding: theme.spacing(1, 4, 1, 8)
+
 			[theme.breakpoints.down("xs")]: {
-				paddingLeft: theme.spacing(3),
-			},
+	paddingLeft: theme.spacing(3),
+},
 		},
-		"&>li:hover": {
-			backgroundColor: "#D2E3FC"
-		},
+"&>li:hover": {
+	backgroundColor: "#D2E3FC"
+},
 
 	}
 }))
