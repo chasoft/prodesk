@@ -23,14 +23,14 @@
  *****************************************************************/
 
 import React from "react"
+import Category from "../components/Category"
+import MainNav from "../components/MainNav"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/RootLayout"
-import Article from "./../components/Article"
-import MainNav from "../components/MainNav"
+import { getLayout } from "../components/RootLayout"
 
 
 /*****************************************************************
@@ -44,15 +44,15 @@ import MainNav from "../components/MainNav"
 
 
 
-function AnArticle() {
+function ACategory() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
 		<>
 			<MainNav borderBottom={true} />
-			<Article />
+			<Category />
 		</>
 	)
 }
 
-AnArticle.getLayout = getLayout
-export default AnArticle
+ACategory.getLayout = getLayout
+export default ACategory

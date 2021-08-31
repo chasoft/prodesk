@@ -5,14 +5,12 @@ import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
 import { Grid, IconButton, Typography } from "@material-ui/core"
 import NavLink from "./NavLink"
+import PropTypes from "prop-types"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		// margin: theme.spacing(1),
-		// marginBottom: theme.spacing(2),
 		display: "flex",
 		alignItems: "center",
-		borderBottom: ".0625rem solid #dadce0",
 		padding: "0 1rem",
 		"a[aria-current]": {
 			backgroundColor: "#E4E9ED"
@@ -58,14 +56,17 @@ const useStyles = makeStyles((theme) => ({
 		borderBottom: "2px solid #1a73e8",
 		padding: theme.spacing(2) - 2,
 
+	},
+	borderBottom: {
+		borderBottom: ".0625rem solid #dadce0",
 	}
 }))
 
-const MainNav = () => {
+const MainNav = ({ borderBottom = false }) => {
 	const classes = useStyles()
 
 	return (
-		<Grid container className={classes.root}>
+		<Grid container className={`${classes.root} ${borderBottom ? classes.borderBottom : null}`} >
 			<Grid item className={classes.leftAvatar}>
 				<NavLink href="" passHref ><span className={classes.linkCurrent}><span className={classes.iii}>Help Center</span></span></NavLink>
 				<NavLink href="/community" passHref ><span className={classes.link}>Community</span></NavLink>
@@ -79,10 +80,8 @@ const MainNav = () => {
 
 			</Grid>
 		</Grid >
-
-
-
 	)
 }
+MainNav.propTypes = { borderBottom: PropTypes.bool }
 
 export default MainNav

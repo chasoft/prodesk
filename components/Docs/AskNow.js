@@ -23,36 +23,78 @@
  *****************************************************************/
 
 import React from "react"
-import Category from "../components/Category"
-import MainNav from "../components/MainNav"
+import { Button, makeStyles, Paper, Typography } from "@material-ui/core"
+
+import ForumIcon from "@material-ui/icons/Forum"
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/RootLayout"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		marginTop: theme.spacing(4),
+		marginBottom: theme.spacing(4),
+	},
+	paper: {
+		paddingLeft: theme.spacing(8),
+		paddingRight: theme.spacing(8),
+		paddingTop: theme.spacing(2),
+		paddingBottom: theme.spacing(2),
+		display: "flex",
+		alignItems: "center",
+		"& > *:not(:last-child)": {
+			marginRight: theme.spacing(4)
+		}
+	},
+	ask: {
+		display: "flex",
+		alignItems: "center",
+		flexGrow: 1,
+		"& > *": {
+			marginRight: theme.spacing(2)
+		},
+		[theme.breakpoints.down("xs")]: {
+			flexDirection: "column",
+			alignItems: "flex-start"
+		}
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-
-
-
-function ACategory() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
+const AskNow = () => {
+	const classes = useStyles()
 	return (
-		<>
-			<MainNav />
-			<Category />
-		</>
+		<div className={classes.root}>
+			<Paper elevation={2} className={classes.paper}>
+				<div>
+					<ForumIcon color="primary" />
+				</div>
+				<div className={classes.ask} >
+
+					<Typography><span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.</Typography>
+
+					<Button
+						color="primary"
+						size="small"
+						// className={classes.button}
+						endIcon={<ArrowForwardIcon />}
+						style={{ whiteSpace: "nowrap" }}
+					>
+						Ask now
+					</Button>
+				</div>
+			</Paper>
+		</div>
 	)
 }
 
-ACategory.getLayout = getLayout
-export default ACategory
+export default AskNow

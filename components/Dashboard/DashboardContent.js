@@ -1,28 +1,53 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { Link, Paper, Typography } from "@material-ui/core"
+import { Fab, Link, Paper, Typography } from "@material-ui/core"
 import PostListItem from "../Post/PostListItem"
+import AskNow from "./../Docs/AskNow"
+import AddIcon from "@material-ui/icons/Add"
 
 // import HelpfulSurvey from "./HelpfulSurvey"
 
 
 const useStyles = makeStyles((theme) => ({
 	group: {
-		margin: "1.5rem 0 0",
+		margin: "1.5rem 0 2rem",
 		[theme.breakpoints.down("xs")]: {
-			margin: "1.625rem 0 0",
+			margin: "1.625rem 0 2rem",
 		},
 	},
 	header: {
 		marginLeft: theme.spacing(3),
-		marginTop: "3rem",
-	}
+		marginTop: "1rem",
+		[theme.breakpoints.down("xs")]: {
+			marginTop: "0.5rem",
+		},
+	},
+	heading: {
+		marginTop: theme.spacing(5),
+		textAlign: "center",
+		fontSize: "2rem",
+		lineHeight: "2.5rem",
+		color: theme.palette.primary.main,
+		[theme.breakpoints.down("xs")]: {
+			marginTop: theme.spacing(3),
+			color: "#1a73e8",
+			fontSize: "1.5rem",
+		}
+	},
+	fab: {
+		position: "fixed",
+		bottom: theme.spacing(2),
+		right: theme.spacing(2),
+	},
+
 }))
 
+//TODO: Float button - design the position
 function DashboardContent() {
 	const classes = useStyles()
 	return (
 		<>
+			<Typography className={classes.heading}>Browse the Support Desk</Typography>
 			<div>
 				<Typography variant="h4" className={classes.header}>Open</Typography>
 				<Paper elevation={2} className={classes.group}>
@@ -39,6 +64,11 @@ function DashboardContent() {
 					<PostListItem isLast={true} />
 				</Paper>
 			</div>
+
+			<AskNow />
+			<Fab color="primary" aria-label="add" className={classes.fab}>
+				<AddIcon />
+			</Fab>
 		</>
 	)
 }

@@ -23,36 +23,35 @@
  *****************************************************************/
 
 import React from "react"
+import { makeStyles, Paper } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/RootLayout"
-import Article from "./../components/Article"
-import MainNav from "../components/MainNav"
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		margin: theme.spacing(1),
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-
-
-
-function AnArticle() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
+const Banner = () => {
+	const classes = useStyles()
 	return (
-		<>
-			<MainNav borderBottom={true} />
-			<Article />
-		</>
+		<div className={classes.root}>
+			<Paper elevation={2}>
+				This is a banner
+			</Paper>
+		</div>
 	)
 }
 
-AnArticle.getLayout = getLayout
-export default AnArticle
+export default Banner

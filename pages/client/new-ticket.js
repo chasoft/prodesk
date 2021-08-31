@@ -41,6 +41,9 @@ import CreateNewTicket from "../../components/Ticket/CreateNewTicket"
  *****************************************************************/
 
 function NewTicket() {
+	//TODO: trong ticket hỗ trợ upload file document/image
+	//TODO: support custom field, ví dụ như nhu cầu cung cấp Username/password...   Key bản quyền
+	//TODO: hỗ trợ check key bản quyền cho themeforest! ^__^ target to developer ở Themeforest luôn! ^__^
 	return (
 		<div style={{ maxWidth: "1440px", left: 0 }}>
 			<CreateNewTicket />

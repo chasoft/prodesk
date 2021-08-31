@@ -1,6 +1,6 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { Grid, Typography } from "@material-ui/core"
+import { Grid, Typography, Link } from "@material-ui/core"
 import { LINK_TYPE } from "../constants"
 
 
@@ -32,7 +32,10 @@ const useStyles = makeStyles((theme) => ({
 			[theme.breakpoints.down("xs")]: {
 				marginBottom: theme.spacing(2),
 			},
-		}
+		},
+		// "& li > a": {
+		// 	fontSize: theme.typography.button.fontSize
+		// }
 	}
 
 }))
@@ -83,7 +86,7 @@ function CategoryContent() {
 		<main className={classes.main}>
 			<div className={classes.content}>
 				<Typography variant="h1" style={{ marginBottom: "1rem" }}>
-					Article ContentGet help with apps on your phone
+					Get help with apps on your phone
 				</Typography>
 				<Grid container spacing={2}>
 
@@ -95,7 +98,7 @@ function CategoryContent() {
 									<ul className={classes.list}>
 										{
 											block.items.map((link, idx) => {
-												return <li key={idx}>{link.subject}</li>
+												return <li key={idx}><Link href="/{link}">{link.subject}</Link></li>
 											})
 										}
 									</ul>

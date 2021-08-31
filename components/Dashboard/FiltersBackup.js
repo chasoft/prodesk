@@ -9,11 +9,9 @@ import CheckBoxOutlineBlankSharpIcon from "@material-ui/icons/CheckBoxOutlineBla
 import CheckBoxSharpIcon from "@material-ui/icons/CheckBoxSharp"
 import SearchIcon from "@material-ui/icons/Search"
 
-import css from "./Filters.module.css"
-
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: "9rem 0 0",
+		margin: "2.625rem 0 0",
 		width: "12rem",
 	},
 	nav: {
@@ -66,6 +64,14 @@ const useStyles = makeStyles((theme) => ({
 		}
 	}
 }))
+
+
+const ItemIcon = (props) => {
+	return <svg {...props} viewBox="0 0 24 24">
+		<path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"></path><path d="M0 0h24v24H0z" fill="none"></path>
+	</svg>
+
+}
 
 const FilterCategory = withStyles((theme) => ({
 	root: {
@@ -173,7 +179,7 @@ FilterFrame.propTypes = { title: PropTypes.string, children: PropTypes.any }
 
 
 
-function Filters() {
+function FiltersBackup() {
 	const classes = useStyles()
 	const [fixed, setFixed] = useState(false)
 	const listRef = useRef(null)
@@ -192,7 +198,7 @@ function Filters() {
 	const error = [gilad, jason, antoine].filter((v) => v).length !== 2
 
 	const fixedPosition = () => {
-		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? (listRef.current.offsetTop - window.scrollY) <= 100 ? true : false : false)
+		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? true : false)
 	}
 
 	/* Activate resize listener */
@@ -209,7 +215,7 @@ function Filters() {
 	}, [])
 
 	return (
-		<div ref={listRef} className={`${classes.root} ${fixed ? css.sticky : null}`}>
+		<div ref={listRef} className={classes.root} style={{ position: fixed ? "fixed" : "static" }}>
 			<form className={classes.nav}>
 				<div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }} >
 					<Typography style={{ flexGrow: 1, fontWeight: 500 }}>Filter</Typography>
@@ -271,6 +277,25 @@ function Filters() {
 					</FormControl>
 				</FilterFrame>
 
+				<FilterFrame title="Article Type">
+					<FormControl component="fieldset" className={classes.formControl}>
+						<FormGroup>
+							<FormControlLabel
+								control={<FilterCheckbox checked={gilad} onChange={handleChange} name="gilad" />}
+								label="Annoucement"
+							/>
+							<FormControlLabel
+								control={<FilterCheckbox checked={jason} onChange={handleChange} name="jason" />}
+								label="Your ticket"
+							/>
+							<FormControlLabel
+								control={<FilterCheckbox checked={antoine} onChange={handleChange} name="antoine" />}
+								label="FAQs"
+							/>
+						</FormGroup>
+					</FormControl>
+				</FilterFrame>
+
 				<FilterFrame title="Has words">
 					<FormControl variant="outlined">
 						<OutlinedInput
@@ -293,4 +318,4 @@ function Filters() {
 	)
 }
 
-export default Filters
+export default FiltersBackup

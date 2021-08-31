@@ -48,7 +48,7 @@ function ClientDashboard() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
 		<>
-			<MainNav />
+			<MainNav borderBottom={true} />
 			<Dashboard />
 		</>
 	)

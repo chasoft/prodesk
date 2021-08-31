@@ -23,15 +23,17 @@
  *****************************************************************/
 
 import React from "react"
+import CatGroup from "../components/Docs/CatGroup"
+import DocGroup from "../components/Docs/DocGroup"
+import AskNow from "../components/Docs/AskNow"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/RootLayout"
-import Article from "./../components/Article"
+import { getLayout } from "../components/RootLayout"
 import MainNav from "../components/MainNav"
-
+import PromotedSearch from "../components/PromotedSearch"
 
 /*****************************************************************
  * INIT                                                          *
@@ -41,18 +43,19 @@ import MainNav from "../components/MainNav"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-
-
-
-function AnArticle() {
+function Docs() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
 		<>
-			<MainNav borderBottom={true} />
-			<Article />
+			<MainNav />
+			<PromotedSearch />
+			<CatGroup />
+			<DocGroup />
+			<AskNow />
+
 		</>
 	)
 }
 
-AnArticle.getLayout = getLayout
-export default AnArticle
+Docs.getLayout = getLayout
+export default Docs

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 		border: "1px solid",
 		borderRadius: "0.5rem",
 		borderColor: theme.palette.divider,
-		margin: "2.625rem 0 0"
+		// margin: "2.625rem 0 0"
 	},
 	heading: {
 		paddingTop: theme.spacing(2),
