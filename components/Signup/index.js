@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SignInLink = () => <Typography>Already a member? <Link href="#">Sign in</Link></Typography>
 
-export default function SignUp() {
+export default function SignupHome() {
 	const classes = useStyles()
 
 	return (

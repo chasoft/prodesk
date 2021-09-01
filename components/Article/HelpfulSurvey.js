@@ -4,10 +4,7 @@ import { Button, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		paddingLeft: theme.spacing(8),
-		paddingRight: theme.spacing(8),
-		paddingBottom: theme.spacing(4),
-		paddingTop: theme.spacing(4),
+		padding: theme.spacing(4, 8),
 		[theme.breakpoints.down("sm")]: {
 			padding: theme.spacing(1),
 		},

@@ -20,10 +20,6 @@ const useStyles = makeStyles((theme) => ({
 		marginRight: theme.spacing(2),
 	},
 	title: {
-		// display: "none",
-		// [theme.breakpoints.up("sm")]: {
-		// 	display: "block",
-		// },
 		fontWeight: 400,
 		fontSize: "1.25rem"
 	},
@@ -56,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
 		paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
 		transition: theme.transitions.create("width"),
 		width: "100%",

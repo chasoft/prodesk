@@ -23,10 +23,7 @@
  *****************************************************************/
 
 import React from "react"
-import { Link, makeStyles, Paper, Typography } from "@material-ui/core"
-import PostListItemShorten from "../Post/PostListItemShorten"
-
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import { makeStyles } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -39,38 +36,6 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
-			marginLeft: theme.spacing(0),
-			marginRight: theme.spacing(0),
-		},
-	},
-	// content: {
-	// 	padding: theme.spacing(8),
-	// 	[theme.breakpoints.down("xs")]: {
-	// 		padding: theme.spacing(3),
-	// 	},
-	// },
-	docHeading: {
-		padding: theme.spacing(2, 3),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "1rem",
-		fontWeight: 500,
-		lineHeight: "1.25rem"
-	},
-	docFooter: {
-		padding: theme.spacing(2, 3)
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		},
-		borderTop: "1px solid",
-		borderColor: theme.palette.divider,
 	}
 }))
 
@@ -78,28 +43,11 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DocItem = () => {
+const SignupForm = () => {
 	const classes = useStyles()
 	return (
-
-		<Paper elevation={1}>
-
-			<div className={classes.docHeading}>Device Performace</div>
-			<PostListItemShorten />
-			<PostListItemShorten />
-			<PostListItemShorten />
-
-			<div className={`${classes.viewAll} ${classes.docFooter}`}>
-				<Link href="/">
-					<Typography>View all post</Typography>
-				</Link>
-				<ArrowForwardIcon fontSize="small" />
-			</div>
-
-		</Paper>
-
-
+		<div className={classes.root}>Template</div>
 	)
 }
 
-export default DocItem
+export default SignupForm

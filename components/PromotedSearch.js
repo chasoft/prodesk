@@ -59,13 +59,11 @@ const useStyles = makeStyles((theme) => ({
 		borderRadius: "0.5rem",
 		margin: "0 auto",
 		maxWidth: "32.5rem",
-		paddingTop: theme.spacing(1),
-		paddingBottom: theme.spacing(1),
-		paddingLeft: theme.spacing(4),
-		paddingRight: theme.spacing(3),
+		padding: theme.spacing(1, 3, 1, 4),
+
 		[theme.breakpoints.down("xs")]: {
 			marginRight: theme.spacing(2),
-			marginLeft: theme.spacing(2)
+			marginLeft: theme.spacing(2),
 		},
 	},
 	input: {

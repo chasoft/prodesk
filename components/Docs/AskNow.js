@@ -51,16 +51,9 @@ const useStyles = makeStyles((theme) => ({
 		"& > *:not(:last-child)": {
 			marginRight: theme.spacing(4)
 		},
-
-		paddingLeft: theme.spacing(8),
-		paddingRight: theme.spacing(8),
-		paddingTop: theme.spacing(3),
-		paddingBottom: theme.spacing(3),
+		padding: theme.spacing(3, 8),
 		[theme.breakpoints.down("xs")]: {
-			paddingLeft: theme.spacing(4),
-			paddingRight: theme.spacing(4),
-			paddingTop: theme.spacing(5),
-			paddingBottom: theme.spacing(4),
+			padding: theme.spacing(5, 4, 4, 4)
 		}
 	},
 	ask: {

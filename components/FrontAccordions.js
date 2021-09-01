@@ -38,21 +38,14 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: theme.spacing(2),
 		width: "100%",
 		"&>li": {
-			// width: "100%",
-			paddingLeft: theme.spacing(8),
-			paddingRight: theme.spacing(4),
-			paddingTop: theme.spacing(1),
-			paddingBottom: theme.spacing(1),
-
-			padding: theme.spacing(1, 4, 1, 8)
-
+			padding: theme.spacing(1, 4, 1, 8),
 			[theme.breakpoints.down("xs")]: {
-	paddingLeft: theme.spacing(3),
-},
+				paddingLeft: theme.spacing(3),
+			},
 		},
-"&>li:hover": {
-	backgroundColor: "#D2E3FC"
-},
+		"&>li:hover": {
+			backgroundColor: "#D2E3FC"
+		},
 
 	}
 }))
@@ -89,9 +82,6 @@ const ProAccordionSummary = withStyles((theme) => ({
 		[theme.breakpoints.down("xs")]: {
 			paddingLeft: theme.spacing(3),
 		},
-		// "& > :hover": {
-		// 	backgroundColor: "rgba(0, 0, 0, .03)",
-		// },
 		"&:hover": {
 			backgroundColor: theme.palette.action.hover
 		}

@@ -14,14 +14,9 @@ const useStyles = makeStyles((theme) => ({
 		"&:hover": {
 			background: theme.palette.action.hover
 		},
-		paddingLeft: theme.spacing(3),
-		paddingRight: theme.spacing(3),
-		paddingTop: theme.spacing(2),
-		paddingBottom: theme.spacing(2),
+		padding: theme.spacing(2, 3),
 		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(1),
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(2),
+			padding: theme.spacing(1, 2)
 		},
 	},
 	paper: {

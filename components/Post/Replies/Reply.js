@@ -13,9 +13,7 @@ const useStyles = makeStyles((theme) => ({
 		borderColor: theme.palette.divider
 	},
 	content: {
-		padding: theme.spacing(2),
-		paddingLeft: theme.spacing(8),
-		paddingRight: theme.spacing(8),
+		padding: theme.spacing(2, 8),
 		[theme.breakpoints.down("xs")]: {
 			padding: theme.spacing(3),
 		},

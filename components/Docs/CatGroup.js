@@ -50,10 +50,7 @@ const useStyles = makeStyles((theme) => ({
 	viewAll: {
 		display: "flex",
 		alignItems: "center",
-		paddingTop: theme.spacing(6),
-		paddingBottom: theme.spacing(3),
-		paddingLeft: theme.spacing(1),
-		paddingRight: theme.spacing(1),
+		padding: theme.spacing(6, 1, 3)
 	}
 
 }))

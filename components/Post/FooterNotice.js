@@ -4,18 +4,12 @@ import { Button, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		paddingLeft: theme.spacing(8),
-		paddingRight: theme.spacing(8),
-		paddingBottom: theme.spacing(2),
-		paddingTop: theme.spacing(2),
+		padding: theme.spacing(2, 8)
 		backgroundColor: "#F8F9FA",
 		borderBottomLeftRadius: "0.5rem",
 		borderBottomRightRadius: "0.5rem",
 		[theme.breakpoints.down("xs")]: {
-			paddingLeft: theme.spacing(3),
-			paddingRight: theme.spacing(3),
-			paddingBottom: theme.spacing(1),
-			paddingTop: theme.spacing(1),
+			padding: theme.spacing(1, 3)
 		},
 		borderTop: "1px solid",
 		borderTopColor: theme.palette.divider

@@ -35,8 +35,7 @@ import { makeStyles, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: theme.spacing(1),
-		marginLeft: theme.spacing(8),
+		margin: theme.spacing(1, 1, 1, 8),
 		[theme.breakpoints.down("xs")]: {
 			marginLeft: theme.spacing(0),
 		},

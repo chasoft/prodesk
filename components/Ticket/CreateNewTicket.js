@@ -30,14 +30,10 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	title: {
-		padding: theme.spacing(4),
-		paddingBottom: theme.spacing(1),
+		padding: theme.spacing(4, 4, 1, 4)
 	},
 	description: {
-		paddingLeft: theme.spacing(4),
-		paddingRight: theme.spacing(4),
-		paddingTop: theme.spacing(1),
-		paddingBottom: theme.spacing(1),
+		padding: theme.spacing(1, 4)
 	},
 	content: {
 		paddingLeft: theme.spacing(4),
@@ -60,8 +56,8 @@ const useStyles = makeStyles((theme) => ({
 		display: "none",
 		backgroundColor: theme.palette.primary.main,
 		color: theme.palette.primary.contrastText,
-		marginBottom: 0,
 		marginTop: 0,
+		marginBottom: 0,
 		paddingTop: theme.spacing(2),
 		paddingBottom: theme.spacing(2),
 		[theme.breakpoints.down("xs")]: {

@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
 		},
 		padding: theme.spacing(3),
 		[theme.breakpoints.down("xs")]: {
-			// flexDirection: "column",
 			padding: theme.spacing(1),
 			paddingLeft: theme.spacing(2),
 			paddingRight: theme.spacing(2),
