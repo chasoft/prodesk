@@ -18,7 +18,24 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
+import { createSlice } from "@reduxjs/toolkit"
+
+export const initialState = {
+	flexDirection: "row",
+}
+
+const uiSettingsSlice = createSlice({
+	name: "uiSettings",
+	initialState,
+	reducers: {
+		setflexDirection: (state, { payload }) => {
+			state.flexDirection = payload
+		}
+	},
+})
+
+export const {
+	setflexDirection,
+} = uiSettingsSlice.actions
+
+export default uiSettingsSlice.reducer

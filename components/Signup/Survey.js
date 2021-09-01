@@ -23,108 +23,69 @@
  *****************************************************************/
 
 import React from "react"
-import Avatar from "@material-ui/core/Avatar"
-import Button from "@material-ui/core/Button"
-
-import TextField from "@material-ui/core/TextField"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Checkbox from "@material-ui/core/Checkbox"
-import Link from "@material-ui/core/Link"
-import Grid from "@material-ui/core/Grid"
-import { makeStyles } from "@material-ui/core/styles"
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
-import Typography from "@material-ui/core/Typography"
+import {
+	Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio
+} from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { SignUpLink } from "./../components/common"
-import SideImage from "./../components/Layout/SideImage"
-import { getLayout } from "./../components/Layout/BlankLayout"
-import SideContent from "./../components/Layout/SideContent"
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		justifyContent: "center"
+	},
+	options: {
+		display: "flex",
+		flexWrap: "wrap",
+		justifyContent: "center",
+		"& > *": {
+			margin: theme.spacing(1),
+			width: theme.spacing(16),
+			height: theme.spacing(16),
+		},
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Login() {
-	const classes = useStyles()
+const AnOption = () => {
 	return (
-		<>
-			<SideImage />
-			<SideContent topRightContent={<SignUpLink />} >
-
-
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component="h1" variant="h5">
-					Sign in
-				</Typography>
-				<form className={classes.form} noValidate>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-					/>
-					<FormControlLabel
-						control={<Checkbox value="remember" color="primary" />}
-						label="Remember me"
-					/>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Sign In
-					</Button>
-					<Grid container>
-						<Grid item xs>
-							<Link href="#" variant="body2">
-								Forgot password?
-							</Link>
-						</Grid>
-						<Grid item>
-							<Link href="#" variant="body2">
-								{"Don't have an account? Sign Up"}
-							</Link>
-						</Grid>
-					</Grid>
-				</form>
-
-
-
-			</SideContent>
-		</>
+		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
+			<FormControlLabel value="female" control={<Radio />} />
+		</RadioGroup>
 	)
 }
 
-Login.getLayout = getLayout
+const Survey = () => {
+	const classes = useStyles()
+	return (
+		<Paper className={classes.root} elevation={0}>
 
-export default Login
+			<Typography variant="h1">What brings you to ProDesk</Typography>
+			<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
+
+			<div className={classes.options}>
+				<Paper><AnOption /></Paper>
+				<Paper><AnOption /></Paper>
+				<Paper><AnOption /></Paper>
+			</div>
+
+			<Button variant="contained" color="primary">
+				Finish
+			</Button>
+
+
+		</Paper>
+	)
+}
+
+export default Survey

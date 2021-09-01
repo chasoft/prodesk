@@ -31,6 +31,7 @@ import { combineReducers } from "redux"
 import authReducer from "./auth"
 import pageMetaReducer from "./pageMeta"
 import newTicketReducer from "./newTicket"
+import uiSettingsReducer from "./uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -39,7 +40,8 @@ import newTicketReducer from "./newTicket"
 const rootReducer = combineReducers({
 	authState: authReducer,
 	pageMetaState: pageMetaReducer,
-	newTicketState: newTicketReducer
+	newTicketState: newTicketReducer,
+	uiSettingsState: uiSettingsReducer
 })
 
 export default rootReducer

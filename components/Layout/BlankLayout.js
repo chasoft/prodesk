@@ -18,7 +18,25 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
+/*****************************************************************
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ *****************************************************************/
+
+import React from "react"
+import PropTypes from "prop-types"
+
+/*****************************************************************
+* MAIN RENDER                                                   *
+*****************************************************************/
+
+function BlankLayout({ children }) {
+	return (
+		<div style={{ display: "flex" }}>
+			{children}
+		</div >
+	)
+}
+
+BlankLayout.propTypes = { children: PropTypes.any }
+export const getLayout = page => <BlankLayout>{page}</BlankLayout>
+export default BlankLayout

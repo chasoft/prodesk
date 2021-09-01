@@ -23,31 +23,43 @@
  *****************************************************************/
 
 import React from "react"
-import { makeStyles } from "@material-ui/core"
+// import { makeStyles } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
+import { Logo } from "../../components/common"
+import SideImage from "../../components/Layout/SideImage"
+import SideContent from "../../components/Layout/SideContent"
+import ProfileForm from "../../components/Signup/ProfileForm"
+import { getLayout } from "../../components/Layout/BlankLayout"
+
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
+// const useStyles = makeStyles((theme) => ({}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AvatarChooser = () => {
-	const classes = useStyles()
+function InitProfile() {
+	// const classes = useStyles()
 	return (
-		<div className={classes.root}>Template</div>
+		<>
+			<SideContent topLeftContent={<Logo />} >
+
+				<ProfileForm />
+
+			</SideContent>
+
+			<SideImage />
+		</>
 	)
 }
 
-export default AvatarChooser
+InitProfile.getLayout = getLayout
+
+export default InitProfile

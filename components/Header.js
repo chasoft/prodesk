@@ -11,6 +11,7 @@ import MenuIcon from "@material-ui/icons/Menu"
 import SearchIcon from "@material-ui/icons/Search"
 import MoreIcon from "@material-ui/icons/MoreVert"
 import AppsIcon from "@material-ui/icons/Apps"
+import { Logo } from "./common"
 
 const useStyles = makeStyles((theme) => ({
 	grow: {
@@ -18,6 +19,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 	menuButton: {
 		marginRight: theme.spacing(2),
+		[theme.breakpoints.up("sm")]: {
+			display: "none"
+		}
+	},
+	logo: {
+		[theme.breakpoints.down("xs")]: {
+			display: "none"
+		}
 	},
 	title: {
 		fontWeight: 400,
@@ -74,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }))
 
-function Footer() {
+function Header() {
 	const classes = useStyles()
 	const [scrolled, setScrolled] = useState(false)
 
@@ -90,6 +99,7 @@ function Footer() {
 	return (
 		<AppBar position="sticky" color="inherit" elevation={scrolled ? 4 : 0}>
 			<Toolbar>
+
 				<IconButton
 					edge="start"
 					className={classes.menuButton}
@@ -98,9 +108,15 @@ function Footer() {
 				>
 					<MenuIcon />
 				</IconButton>
+
+				<div className={classes.logo}>
+					<Logo />
+				</div>
+
 				<Typography className={classes.title} noWrap>
-					ProDesk - Your Elegant &amp; Powerful Ticket System
+					Your Elegant &amp; Powerful Ticket System
 				</Typography>
+
 				<div className={classes.search}>
 					<div className={classes.searchIcon}>
 						<SearchIcon />
@@ -143,4 +159,4 @@ function Footer() {
 	)
 }
 
-export default Footer
+export default Header

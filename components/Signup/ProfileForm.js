@@ -23,108 +23,98 @@
  *****************************************************************/
 
 import React from "react"
-import Avatar from "@material-ui/core/Avatar"
-import Button from "@material-ui/core/Button"
-
-import TextField from "@material-ui/core/TextField"
-import FormControlLabel from "@material-ui/core/FormControlLabel"
-import Checkbox from "@material-ui/core/Checkbox"
-import Link from "@material-ui/core/Link"
-import Grid from "@material-ui/core/Grid"
-import { makeStyles } from "@material-ui/core/styles"
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
-import Typography from "@material-ui/core/Typography"
+import {
+	Button, Grid, Paper, TextField, Typography, makeStyles
+} from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { SignUpLink } from "./../components/common"
-import SideImage from "./../components/Layout/SideImage"
-import { getLayout } from "./../components/Layout/BlankLayout"
-import SideContent from "./../components/Layout/SideContent"
+import { MyAvatar, SimpleTogglePanel, DefaultAvatarPanel } from "../common"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({
+	root: {
+		// maxWidth: "400px"
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	higherPanel: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		padding: theme.spacing(0, 0, 4)
+	},
+	form: {
+
+	},
+	hideAtBigScreen: {
+		[theme.breakpoints.up("md")]: { display: "none" },
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+	},
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Login() {
+const ProfileForm = () => {
 	const classes = useStyles()
 	return (
-		<>
-			<SideImage />
-			<SideContent topRightContent={<SignUpLink />} >
+		<Paper className={classes.root} elevation={0}>
 
 
+			{/* <div className={classes.higherPanel}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
 				</Avatar>
-				<Typography component="h1" variant="h5">
-					Sign in
+				<Typography component="h1" variant="h1">
+					Sign up
 				</Typography>
-				<form className={classes.form} noValidate>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
-					/>
-					<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-					/>
-					<FormControlLabel
-						control={<Checkbox value="remember" color="primary" />}
-						label="Remember me"
-					/>
-					<Button
-						type="submit"
-						fullWidth
-						variant="contained"
-						color="primary"
-						className={classes.submit}
-					>
-						Sign In
-					</Button>
-					<Grid container>
-						<Grid item xs>
-							<Link href="#" variant="body2">
-								Forgot password?
-							</Link>
-						</Grid>
-						<Grid item>
-							<Link href="#" variant="body2">
-								{"Don't have an account? Sign Up"}
-							</Link>
-						</Grid>
+			</div> */}
+
+			<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
+			<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
+
+			<Typography variant="h2">Add an avatar</Typography>
+			<Grid container spacing={2}>
+				<Grid item>
+					<MyAvatar size="128px" />
+				</Grid>
+				<Grid item>
+					<Button>Choose Image</Button>
+					<SimpleTogglePanel title="or choose one of our defaults">
+						<DefaultAvatarPanel size="48px" />
+					</SimpleTogglePanel>
+				</Grid>
+			</Grid>
+
+			<Typography variant="h2">Add your location</Typography>
+			<form className={classes.form} noValidate>
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							autoComplete="location" name="location" variant="outlined" required
+							fullWidth id="location" label="Location" autoFocus margin="dense"
+						/>
 					</Grid>
-				</form>
+				</Grid>
+				<Button type="submit" variant="contained" color="primary" className={classes.submit}>
+					Continue
+				</Button>
+			</form>
 
 
-
-			</SideContent>
-		</>
+		</Paper>
 	)
 }
 
-Login.getLayout = getLayout
-
-export default Login
+export default ProfileForm
