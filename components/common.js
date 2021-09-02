@@ -24,7 +24,8 @@
 
 import React, { useState } from "react"
 import PropTypes from "prop-types"
-import { Grid, Link, Typography } from "@material-ui/core"
+import Link from "next/link"
+import { Avatar, Collapse, Grid, makeStyles, Paper, Typography } from "@material-ui/core"
 
 import ExpandLessIcon from "@material-ui/icons/ExpandLess"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
@@ -32,6 +33,22 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 /*****************************************************************
 * LIBRARY IMPORT                                                *
 *****************************************************************/
+
+/*****************************************************************
+* HELPERS                                                        *
+*****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	avatar: {
+		cursor: "pointer",
+		border: "1px solid transparent",
+		"&:hover": {
+			border: "1px solid",
+			borderColor: theme.palette.divider,
+			borderRadius: "50%"
+		}
+	}
+}))
 
 /*****************************************************************
  * CONTENT                                                       *
@@ -51,7 +68,11 @@ export function Copyright({ title = null, url = null }) {
 }
 Copyright.propTypes = { title: PropTypes.string, url: PropTypes.string }
 
-export const SignInLink = () => {
+export const ForgotPasswordLink = () => {
+	return <Typography><Link href="/forgot-password">Forgot password?</Link></Typography>
+}
+
+export const LoginLink = () => {
 	return <Typography>Already a member? <Link href="/login">Log in</Link></Typography>
 }
 
@@ -64,43 +85,20 @@ export const Logo = ({ height = "30px" }) => {
 }
 Logo.propTypes = { height: PropTypes.string, width: PropTypes.string }
 
-
-export const MyAvatar = ({ size = "32px", url = "/img/default-avatar.png" }) => {
-	return (
-		<>
-			<div style={{
-				display: "block",
-				position: "relative",
-				backgroundImage: `url("${url}")`,
-				width: { size },
-				height: { size },
-				backgroundSize: "cover",
-				backgroundPosition: "top center",
-				borderRadius: "50%",
-			}}>
-				<img src={url} alt="" height={size} width={size} style={{ visibility: "hidden" }} />
-			</div>
-		</>
-	)
-
-}
-MyAvatar.propTypes = { size: PropTypes.string, url: PropTypes.string }
-
-
 export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
-		<div>
+		<div style={{ marginTop: "0.5rem" }}>
 			<div
-				style={{ display: "flex", alignItems: "center" }}
+				style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
 				onClick={() => setExpanded(p => !p)}
 			>
 				{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				{title}
 			</div>
-			<div style={{ display: expanded ? "block" : "none", paddingLeft: "24px" }}>
+			<Collapse in={expanded} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
 				{children}
-			</div>
+			</Collapse>
 		</div>
 	)
 }
@@ -110,32 +108,29 @@ SimpleTogglePanel.propTypes = {
 	children: PropTypes.any,
 }
 
-
-export const DefaultAvatarPanel = ({ size = "16px" }) => {
+export const DefaultAvatarPanel = ({ size = 32, callback }) => {
+	const classes = useStyles()
 	const DefaultAvatarList = [
-		{ alt: "default avatar", url: "/default-avatar/1.png" },
-		{ alt: "default avatar", url: "/default-avatar/2.png" },
-		{ alt: "default avatar", url: "/default-avatar/3.png" },
-		{ alt: "default avatar", url: "/default-avatar/4.png" },
-		{ alt: "default avatar", url: "/default-avatar/5.png" },
-		{ alt: "default avatar", url: "/default-avatar/6.png" },
-		{ alt: "default avatar", url: "/default-avatar/7.png" },
-		{ alt: "default avatar", url: "/default-avatar/8.png" },
-		{ alt: "default avatar", url: "/default-avatar/9.png" },
-		{ alt: "default avatar", url: "/default-avatar/10.png" }
+		{ id: 1, alt: "default avatar", url: "/default-avatar/1.png" },
+		{ id: 2, alt: "default avatar", url: "/default-avatar/2.png" },
+		{ id: 3, alt: "default avatar", url: "/default-avatar/3.png" },
+		{ id: 4, alt: "default avatar", url: "/default-avatar/4.png" },
+		{ id: 5, alt: "default avatar", url: "/default-avatar/5.png" },
 	]
 	return (
-		<Grid container spacing={2} style={{ width: "350px" }}>
+
+		<Grid container spacing={1} alignContent="space-between">
 			{
-				DefaultAvatarList.map((avatar, idx) => {
+				DefaultAvatarList.map((avatar) => {
 					return (
-						<Grid item key={idx}>
-							<MyAvatar size={size} url={avatar.url} />
+						<Grid item key={avatar.id} onClick={() => callback(avatar.id)} className={classes.avatar}>
+							<Avatar alt={avatar.alt} url={avatar.url} style={{ width: size, height: size }} />
 						</Grid>
 					)
 				})
 			}
 		</Grid>
+
 	)
 }
-DefaultAvatarPanel.propTypes = { size: PropTypes.string }
+DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func }

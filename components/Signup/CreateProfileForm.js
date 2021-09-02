@@ -23,43 +23,96 @@
  *****************************************************************/
 
 import React from "react"
-// import { makeStyles } from "@material-ui/core"
+import {
+	Button, Grid, Paper, TextField, Typography, makeStyles, Avatar, Hidden
+} from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { Logo } from "../../components/common"
-import SideImage from "../../components/Layout/SideImage"
-import SideContent from "../../components/Layout/SideContent"
-import ProfileForm from "../../components/Signup/ProfileForm"
-import { getLayout } from "../../components/Layout/BlankLayout"
+import { SimpleTogglePanel, DefaultAvatarPanel, Logo } from "../common"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-// const useStyles = makeStyles((theme) => ({}))
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		flexGrow: 1,
+		justifyContent: "center",
+		marginBottom: theme.spacing(4),
+		"& > h2": {
+			marginTop: "2rem",
+			marginBottom: "1rem"
+		}
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	higherPanel: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		padding: theme.spacing(0, 0, 4)
+	},
+	form: {
+
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+	},
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function InitProfile() {
-	// const classes = useStyles()
+const CreateProfileForm = () => {
+	const classes = useStyles()
 	return (
 		<>
-			<SideContent topLeftContent={<Logo />} >
+			<Paper className={classes.root} elevation={0}>
 
-				<ProfileForm />
+				<div style={{ marginBottom: "2rem" }}>
+					<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
+					<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
+				</div>
 
-			</SideContent>
+				<Typography variant="h2">Add an avatar</Typography>
+				<Grid container spacing={2}>
+					<Grid item>
+						<Avatar style={{ width: 128, height: 128 }} />
+					</Grid>
+					<Grid item>
+						<Button variant="outlined" color="secondary">Choose Image</Button>
+						<SimpleTogglePanel title="or choose one of our defaults">
+							<DefaultAvatarPanel callback={(id) => { console.log(id) }} />
+						</SimpleTogglePanel>
+					</Grid>
+				</Grid>
 
-			<SideImage />
+				<Typography variant="h2">Add your location</Typography>
+				<form className={classes.form} noValidate>
+					<Grid container spacing={2}>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								autoComplete="location" name="location" variant="outlined" required
+								fullWidth id="location" label="Location" autoFocus margin="dense"
+							/>
+						</Grid>
+					</Grid>
+					<Button type="submit" variant="contained" color="primary" className={classes.submit}>
+						Continue
+					</Button>
+				</form>
+
+			</Paper>
 		</>
 	)
 }
 
-InitProfile.getLayout = getLayout
-
-export default InitProfile
+export default CreateProfileForm

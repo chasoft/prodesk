@@ -24,12 +24,16 @@
 
 import React from "react"
 import {
-	Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio
+	Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles
 } from "@material-ui/core"
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
+
+import { ForgotPasswordLink, LoginLink } from "../common"
+import { updateFlexDirection } from "../Layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -39,53 +43,95 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
 		flexDirection: "column",
-		justifyContent: "center"
-	},
-	options: {
-		display: "flex",
-		flexWrap: "wrap",
+		flexGrow: 1,
 		justifyContent: "center",
-		"& > *": {
-			margin: theme.spacing(1),
-			width: theme.spacing(16),
-			height: theme.spacing(16),
-		},
-	}
+		maxWidth: "400px",
+		marginBottom: theme.spacing(4)
+	},
+	avatar: {
+		margin: theme.spacing(1),
+		backgroundColor: theme.palette.secondary.main,
+	},
+	higherPanel: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		padding: theme.spacing(0, 0, 4)
+	},
+	form: {
+
+	},
+	submit: {
+		margin: theme.spacing(3, 0, 2),
+	},
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AnOption = () => {
-	return (
-		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
-			<FormControlLabel value="female" control={<Radio />} />
-		</RadioGroup>
-	)
-}
-
-const Survey = () => {
+const LoginForm = () => {
 	const classes = useStyles()
+	updateFlexDirection({ payload: "row" })
 	return (
 		<Paper className={classes.root} elevation={0}>
 
-			<Typography variant="h1">What brings you to ProDesk</Typography>
-			<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
-
-			<div className={classes.options}>
-				<Paper><AnOption /></Paper>
-				<Paper><AnOption /></Paper>
-				<Paper><AnOption /></Paper>
+			<div className={classes.higherPanel}>
+				<Avatar className={classes.avatar}>
+					<LockOutlinedIcon />
+				</Avatar>
+				<Typography component="h1" variant="h1">
+					Login
+				</Typography>
 			</div>
 
-			<Button variant="contained" color="primary">
-				Finish
-			</Button>
-
-
+			<form className={classes.form} noValidate>
+				<TextField
+					variant="outlined"
+					margin="normal"
+					required
+					fullWidth
+					id="email"
+					label="Email Address"
+					name="email"
+					autoComplete="email"
+					autoFocus
+				/>
+				<TextField
+					variant="outlined"
+					margin="normal"
+					required
+					fullWidth
+					name="password"
+					label="Password"
+					type="password"
+					id="password"
+					autoComplete="current-password"
+				/>
+				<FormControlLabel
+					control={<Checkbox value="remember" color="primary" />}
+					label="Remember me"
+				/>
+				<Button
+					type="submit"
+					fullWidth
+					variant="contained"
+					color="primary"
+					className={classes.submit}
+				>
+					Login
+				</Button>
+				<Grid container>
+					<Grid item xs>
+						<ForgotPasswordLink />
+					</Grid>
+					<Grid item>
+						<LoginLink />
+					</Grid>
+				</Grid>
+			</form>
 		</Paper>
 	)
 }
 
-export default Survey
+export default LoginForm

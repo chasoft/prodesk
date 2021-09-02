@@ -31,8 +31,10 @@ import { Container, makeStyles } from "@material-ui/core"
  *****************************************************************/
 
 import Footer from "../Footer"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "../../redux/selectors"
+import { useEffect } from "react"
+import { setflexDirection } from "../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -40,94 +42,28 @@ import { getUiSettings } from "../../redux/selectors"
 
 const useStyles = makeStyles((theme) => ({
 	content: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-		width: "100%",
-		[theme.breakpoints.down("md")]: { width: "60%" },
-		[theme.breakpoints.down("sm")]: { width: "100%" },
 	},
-	sideImage: {
-		backgroundRepeat: "no-repeat",
-		backgroundColor: theme.palette.type === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
-		backgroundSize: "cover",
-		backgroundPosition: "center",
-		width: "500px",
-		height: "100vh",
-		[theme.breakpoints.down("md")]: { width: "40%" },
-		[theme.breakpoints.down("sm")]: { display: "none" },
-	},
-	hideAtSmallScreen: {
-		[theme.breakpoints.down("sm")]: { display: "none" },
+	centerAlignAtSmallScreen: {
+		[theme.breakpoints.down("sm")]: { textAlign: "center", },
 	},
 }))
-
-const SideImage = ({ imageUrl = null, children }) => {
-	const classes = useStyles()
-	return (
-		<div
-			className={classes.sideImage}
-			style={{ backgroundImage: imageUrl ?? "url(https://source.unsplash.com/random)" }}
-		>
-			{children}
-		</div>
-	)
-}
-SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
-
-export const TopLeftContent = ({ children }) => {
-	return (
-		<div
-			style={{
-				width: "100%",
-				textAlign: "left",
-				paddingTop: "2rem",
-			}}
-		>
-			{children}
-		</div>
-	)
-}
-TopLeftContent.propTypes = { children: PropTypes.any }
-
-export const TopRightContent = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div
-			className={classes.hideAtSmallScreen}
-			style={{
-				width: "100%",
-				textAlign: "right",
-				paddingTop: "2rem",
-				paddingRight: "3rem",
-			}}
-		>
-			{children}
-		</div>
-	)
-}
-TopRightContent.propTypes = { children: PropTypes.any }
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function RegLayout({ children }) {
+function AdminLayout({ children }) {
 	const classes = useStyles()
 	const { flexDirection } = useSelector(getUiSettings)
 	return (
-		<div style={{ display: "flex", flexDirection: flexDirection }}>
-			<SideImage />
-			<Container className={classes.content} >
-				{children}
-				<Footer />
-			</Container>
+		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
+
+			{children}
 		</div>
 	)
 }
-RegLayout.propTypes = { children: PropTypes.any }
+AdminLayout.propTypes = { children: PropTypes.any }
 
-export const getLayout = page => <RegLayout>{page}</RegLayout>
+export const getLayout = page => <AdminLayout>{page}</AdminLayout>
 
-export default RegLayout
+export default AdminLayout

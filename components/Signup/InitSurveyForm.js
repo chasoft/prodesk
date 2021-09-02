@@ -23,37 +23,76 @@
  *****************************************************************/
 
 import React from "react"
+import {
+	Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio, Grid, Hidden
+} from "@material-ui/core"
+import { Logo } from "../common"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import SignupForm from "../../components/Signup/SignupForm"
-import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../components/Layout/RegLayout"
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		flexGrow: 1,
+		justifyContent: "center",
+		marginBottom: theme.spacing(4),
+	},
+	options: {
+		display: "flex",
+		flexWrap: "wrap",
+		justifyContent: "center",
+		"& > *": {
+			margin: theme.spacing(1),
+			width: theme.spacing(16),
+			height: theme.spacing(16),
+		},
+		padding: theme.spacing(4, 2, 4)
+	},
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Signup() {
+const AnOption = () => {
+	return (
+		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
+			<FormControlLabel value="female" control={<Radio />} />
+		</RadioGroup>
+	)
+}
+
+const InitSurveyForm = () => {
+	const classes = useStyles()
 	return (
 		<>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-				right={<LoginLink />}
-			/>
+			<Paper className={classes.root} elevation={0}>
 
-			<SignupForm />
+				<div style={{ marginBottom: "2rem" }}>
+					<Typography variant="h1">What brings you to ProDesk</Typography>
+					<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
+				</div>
+
+				<div className={classes.options}>
+					<Paper><AnOption /></Paper>
+					<Paper><AnOption /></Paper>
+					<Paper><AnOption /></Paper>
+				</div>
+
+				<Button variant="contained" color="primary">
+					Finish
+				</Button>
+
+			</Paper>
 		</>
 	)
 }
 
-Signup.getLayout = getLayout
-
-export default Signup
+export default InitSurveyForm

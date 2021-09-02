@@ -24,7 +24,7 @@
 
 import React from "react"
 import {
-	Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles
+	Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles, Hidden
 } from "@material-ui/core"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 
@@ -32,7 +32,8 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { SignInLink } from "../common"
+import { LoginLink } from "../common"
+import { updateFlexDirection } from "../Layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -40,7 +41,12 @@ import { SignInLink } from "../common"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		maxWidth: "400px"
+		display: "flex",
+		flexDirection: "column",
+		flexGrow: 1,
+		justifyContent: "center",
+		maxWidth: "400px",
+		marginBottom: theme.spacing(4)
 	},
 	avatar: {
 		margin: theme.spacing(1),
@@ -55,9 +61,6 @@ const useStyles = makeStyles((theme) => ({
 	form: {
 
 	},
-	hideAtBigScreen: {
-		[theme.breakpoints.up("md")]: { display: "none" },
-	},
 	submit: {
 		margin: theme.spacing(3, 0, 2),
 	},
@@ -69,10 +72,9 @@ const useStyles = makeStyles((theme) => ({
 
 const SignupForm = () => {
 	const classes = useStyles()
+	updateFlexDirection({ payload: "row" })
 	return (
 		<Paper className={classes.root} elevation={0}>
-
-
 			<div className={classes.higherPanel}>
 				<Avatar className={classes.avatar}>
 					<LockOutlinedIcon />
@@ -81,32 +83,31 @@ const SignupForm = () => {
 					Sign up
 				</Typography>
 			</div>
-
 			<form className={classes.form} noValidate>
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							autoComplete="name" name="name" variant="outlined" required
-							fullWidth id="name" label="Name" autoFocus margin="dense"
+							fullWidth id="name" label="Name" autoFocus
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
 							variant="outlined" required fullWidth id="userName"
-							label="Username" name="username" autoComplete="username" margin="dense"
+							label="Username" name="username" autoComplete="username"
 						/>
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							variant="outlined" required fullWidth id="email" label="Email Address" name="email"
-							autoComplete="email" margin="dense"
+							autoComplete="email"
 						/>
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
 							variant="outlined" required fullWidth name="password"
 							label="Password" type="password" id="password"
-							autoComplete="current-password" margin="dense"
+							autoComplete="current-password"
 						/>
 					</Grid>
 					<Grid item xs={12}>
@@ -121,13 +122,13 @@ const SignupForm = () => {
 					Create Account
 				</Button>
 
-				<Grid container justifyContent="flex-end" className={classes.hideAtBigScreen}>
-					<Grid item>
-
-						<SignInLink />
-
+				<Hidden mdUp>
+					<Grid container justifyContent="flex-end">
+						<Grid item>
+							<LoginLink />
+						</Grid>
 					</Grid>
-				</Grid>
+				</Hidden>
 
 			</form>
 		</Paper>

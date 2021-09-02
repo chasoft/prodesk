@@ -30,36 +30,31 @@ import React from "react"
  *****************************************************************/
 
 import { Logo } from "../../components/common"
-import SideImage from "../../components/Layout/SideImage"
-import SideContent from "../../components/Layout/SideContent"
-import { getLayout } from "../../components/Layout/BlankLayout"
-import Survey from "../../components/Signup/Survey"
+import { getLayout, TopLine, TopRightContent, updateFlexDirection } from "../../components/Layout/RegLayout"
+import InitSurveyForm from "../../components/Signup/InitSurveyForm"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-// const useStyles = makeStyles((theme) => ({}))
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function InitSurvey() {
-	// const classes = useStyles()
+function NewUserSurvey() {
+	updateFlexDirection({ payload: "row" })
 	return (
 		<>
-			<SideContent topLeftContent={<Logo />} >
+			<TopLine
+				left={<Logo />}
+				center={<Logo />}
+			/>
 
-				<Survey />
-
-			</SideContent>
-
-			<SideImage />
+			<InitSurveyForm />
 		</>
 	)
 }
 
-InitSurvey.getLayout = getLayout
+NewUserSurvey.getLayout = getLayout
 
-export default InitSurvey
+export default NewUserSurvey
