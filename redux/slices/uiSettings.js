@@ -19,9 +19,18 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
+import { BACKGROUND_ID } from "../../helpers/constants"
 
 export const initialState = {
+	/*
+		used for RegLayout
+		help to switch the imageSideBar to the right of left of the main content
+	*/
 	flexDirection: "row",
+	/*
+		customize the background for each page used AdminLayout
+	*/
+	adminBackgroundId: BACKGROUND_ID.ADMIN_INDEX
 }
 
 const uiSettingsSlice = createSlice({
@@ -30,12 +39,16 @@ const uiSettingsSlice = createSlice({
 	reducers: {
 		setflexDirection: (state, { payload }) => {
 			state.flexDirection = payload
+		},
+		setAdminBackgroundId: (state, { payload }) => {
+			state.adminBackgroundId = payload
 		}
 	},
 })
 
 export const {
 	setflexDirection,
+	setAdminBackgroundId
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

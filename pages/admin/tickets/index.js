@@ -22,38 +22,41 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect } from "react"
+import Head from "next/head"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import SignupForm from "../../components/Signup/SignupForm"
-import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../layout/RegLayout"
+// import updatePageMeta from "./../helpers/updatePageMeta"
+import { getLayout } from "./../../../layout/AdminLayout"
+import { BACKGROUND_ID } from "./../../../helpers/constants"
+import updateAdminBackground from "./../../../helpers/updateAdminBackground"
+import { Grid } from "@material-ui/core"
+import DashboardContent from "../../../components/Dashboard/DashboardContent"
+import Filters from "../../../components/Dashboard/Filters"
+// import Dashboard from "./../../../components/Dashboard"
+// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Signup() {
+function Tickets() {
+	updateAdminBackground({ id: BACKGROUND_ID.EMPTY })
 	return (
-		<>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-				right={<LoginLink />}
-			/>
+		<Grid container>
+			<DashboardContent />
 
-			<SignupForm />
-		</>
+		</Grid>
 	)
 }
 
-Signup.getLayout = getLayout
-
-export default Signup
+Tickets.getLayout = getLayout
+export default Tickets

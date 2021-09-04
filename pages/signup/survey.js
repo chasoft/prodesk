@@ -30,7 +30,7 @@ import React from "react"
  *****************************************************************/
 
 import { Logo } from "../../components/common"
-import { getLayout, TopLine, TopRightContent, updateFlexDirection } from "../../components/Layout/RegLayout"
+import { getLayout, TopLine, TopRightContent, updateFlexDirection } from "../../layout/RegLayout"
 import InitSurveyForm from "../../components/Signup/InitSurveyForm"
 
 /*****************************************************************

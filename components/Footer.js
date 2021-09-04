@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
 	footer: {
 		marginTop: "auto",
 		padding: theme.spacing(4),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif"
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontSize: "0.875rem"
 	},
 }))
 

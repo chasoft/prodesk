@@ -30,8 +30,9 @@ import Head from "next/head"
  *****************************************************************/
 
 // import updatePageMeta from "./../helpers/updatePageMeta"
-import { getLayout } from "./../../components/RootLayout"
-// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
+import { getLayout } from "./../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../helpers/constants"
+import updateAdminBackground from "../../helpers/updateAdminBackground"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,63 +44,59 @@ import { getLayout } from "./../../components/RootLayout"
  *****************************************************************/
 
 function Admin() {
+
+	updateAdminBackground({ id: BACKGROUND_ID.ADMIN_INDEX })
+
 	return (
 		<>
-			<Head>
-				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
-				<title>Admin Dashboard - DomainHub</title>
-				<meta name="description" content="page description" />
-			</Head>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
 
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
 
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
 
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
+			<p>hello world</p>
 
-
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
 			<p>hello world</p>
 		</>
 	)

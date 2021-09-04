@@ -18,6 +18,9 @@ export const theme = createTheme({
 			default: "#fff",
 		},
 	},
+	navbar: {
+		hoverColor: "#ffffff14",
+	},
 	typography: {
 		htmlFontSize: 14,
 		h1: {

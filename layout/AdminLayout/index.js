@@ -19,34 +19,70 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect, useState } from "react"
+
 import PropTypes from "prop-types"
+
+// MATERIAL-UI
 import { Container, makeStyles } from "@material-ui/core"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
-import Footer from "../Footer"
+//THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
+
+//PROJECT IMPORT
+import Header from "./Header"
+import SideBar from "./SideBar"
+import clsx from "clsx"
+import Footer from "../../components/Footer"
 import { getUiSettings } from "../../redux/selectors"
-import { useEffect } from "react"
-import { setflexDirection } from "../../redux/slices/uiSettings"
+import { BACKGROUND_ID } from "./../../helpers/constants"
+
+//ASSETS
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex"
+	},
 	content: {
+		width: "100%",
+		marginLeft: "68px",
+		transition: "margin .3s cubic-bezier(0.4, 0, 0.2, 1)"
 	},
-	centerAlignAtSmallScreen: {
-		[theme.breakpoints.down("sm")]: { textAlign: "center", },
-	},
+	contentShift: {
+		marginLeft: "256px"
+	}
 }))
+
+const backgroundInfo = {
+	"Empty": {
+		backgroundImage: "",
+		backgroundRepeat: "",
+	},
+	"AdminIndex": {
+		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0.5' y='0.5' width='2500' height='600'/%3E%3C/svg%3E")`,
+		backgroundRepeat: "no-repeat",
+	},
+	"AdminProfile": {
+		backgroundImage: "",
+		backgroundRepeat: "",
+	},
+	"AdminTicket": {
+		backgroundImage: "",
+		backgroundRepeat: "",
+	},
+	"AdminUsers": {
+		backgroundImage: "",
+		backgroundRepeat: "",
+	}
+}
 
 /*****************************************************************
  * MAIN RENDER                                                   *
@@ -54,11 +90,30 @@ const useStyles = makeStyles((theme) => ({
 
 function AdminLayout({ children }) {
 	const classes = useStyles()
-	const { flexDirection } = useSelector(getUiSettings)
-	return (
-		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
+	const [isSideBarExpanded, setLeftDrawerExpanded] = useState(true)
+	const { adminBackgroundId } = useSelector(getUiSettings)
 
-			{children}
+	return (
+		<div
+			className={classes.root}
+			style={{
+				backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
+				backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
+			}}
+		>
+			<SideBar isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded} />
+			<div className={clsx([classes.content, { [classes.contentShift]: isSideBarExpanded }])}>
+
+				<Header isSideBarExpanded={isSideBarExpanded} />
+
+				<Container maxWidth="md" style={{ minHeight: "calc(100vh - 200px)", marginTop: "100px" }}>
+
+					{children}
+
+				</Container>
+
+				<Footer />
+			</div>
 		</div>
 	)
 }

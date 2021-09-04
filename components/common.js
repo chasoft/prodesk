@@ -25,8 +25,8 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
-import { Avatar, Collapse, Grid, makeStyles, Paper, Typography } from "@material-ui/core"
-
+import { Avatar, Grid, makeStyles, Typography } from "@material-ui/core"
+import { motion } from "framer-motion"
 import ExpandLessIcon from "@material-ui/icons/ExpandLess"
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 export function Copyright({ title = null, url = null }) {
 	return (
-		<Typography variant="body2" color="textSecondary" align="center">
+		<Typography color="textSecondary" align="center">
 			{"Copyright © "}
 			{new Date().getFullYear()}
 			{" - "}
@@ -80,10 +80,10 @@ export const SignUpLink = () => {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-export const Logo = ({ height = "30px" }) => {
-	return <img src="/ProDesk-logo.png" height={height} width={height * 5.25} />
+export const Logo = ({ theme = "light", height = "30px" }) => {
+	return <img src={`/ProDesk-logo-${theme}.png`} height={height} width={height * 5.25} />
 }
-Logo.propTypes = { height: PropTypes.string, width: PropTypes.string }
+Logo.propTypes = { theme: PropTypes.string, height: PropTypes.string }
 
 export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 	const [expanded, setExpanded] = useState(isExpanded)
@@ -96,9 +96,13 @@ export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 				{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				{title}
 			</div>
-			<Collapse in={expanded} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
+			{/* <Collapse in={expanded} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
 				{children}
-			</Collapse>
+			</Collapse> */}
+
+			<motion.div animate={{ opacity: expanded ? 1 : 0 }}>
+				{children}
+			</motion.div>
 		</div>
 	)
 }

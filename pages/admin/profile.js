@@ -22,38 +22,39 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect } from "react"
+import Head from "next/head"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import SignupForm from "../../components/Signup/SignupForm"
-import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../layout/RegLayout"
+// import updatePageMeta from "./../helpers/updatePageMeta"
+import { getLayout } from "./../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../helpers/constants"
+import updateAdminBackground from "../../helpers/updateAdminBackground"
+// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Signup() {
+function Profile() {
+
+	updateAdminBackground({ id: BACKGROUND_ID.ADMIN_PROFILE })
+
 	return (
 		<>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-				right={<LoginLink />}
-			/>
-
-			<SignupForm />
+			<p>hello world</p>
+			<p>hello world</p>
 		</>
 	)
 }
 
-Signup.getLayout = getLayout
-
-export default Signup
+Profile.getLayout = getLayout
+export default Profile

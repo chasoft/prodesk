@@ -19,19 +19,28 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import {
-	Button, Grid, Paper, TextField, Typography, makeStyles, Avatar
-} from "@material-ui/core"
+import React, { useEffect, useState } from "react"
+import PropTypes from "prop-types"
+import Link from "next/link"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//MATERIAL-UI
+import { IconButton, makeStyles, Paper, Typography } from "@material-ui/core"
+import { Avatar } from "@material-ui/core"
+import { AppBar } from "@material-ui/core"
 
-import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
+//THIRD-PARTY
+import clsx from "clsx"
+
+
+//PROJECT IMPORT
+
+
+//ASSETS
+import NotificationsIcon from "@material-ui/icons/Notifications"
+import NotificationDrawer from "./NotificationDrawer"
 
 /*****************************************************************
  * INIT                                                          *
@@ -40,30 +49,41 @@ import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		marginBottom: theme.spacing(4),
-		"& > h2": {
-			marginTop: "2rem",
-			marginBottom: "1rem"
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		padding: theme.spacing(0.5, 2, 0.5, 2),
+		width: `calc(100% - ${68}px)`,
+		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
+	},
+	contentShift: {
+		width: `calc(100% - ${256}px)`
+	},
+	headerLeft: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-start",
+	},
+	headerRight: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-end",
+		"& > *": {
+			marginLeft: theme.spacing(1)
 		}
 	},
 	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
+		height: theme.spacing(4),
+		width: theme.spacing(4),
 	},
-	higherPanel: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		padding: theme.spacing(0, 0, 4)
-	},
-	form: {
-
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
+	avatarOutline: {
+		border: "1px dashed ",
+		borderRadius: "50%",
+		padding: theme.spacing(0.4),
+		"&:hover": {
+			cursor: "pointer",
+			borderColor: "blue"
+		}
 	},
 }))
 
@@ -71,48 +91,54 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const CreateProfileForm = () => {
+const Header = ({ isSideBarExpanded }) => {
 	const classes = useStyles()
+	const [scrolled, setScrolled] = useState(false)
+	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+
+	const animateHeader = () => {
+		setScrolled(window.scrollY > 50 ? true : false)
+	}
+
+	useEffect(() => {
+		window.addEventListener("scroll", animateHeader)
+		return () => window.removeEventListener("scroll", animateHeader)
+	}, [])
+
 	return (
-		<>
-			<Paper className={classes.root} elevation={0}>
+		<AppBar
+			position="fixed"
+			className={clsx([classes.root, classes.nav_bg, { [classes.contentShift]: isSideBarExpanded }])}
+			elevation={scrolled ? 4 : 0}
+		>
+			<div className={classes.headerLeft}>
+				LeftAAA
+			</div>
 
-				<div style={{ marginBottom: "2rem" }}>
-					<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
-					<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
-				</div>
+			<div style={{ flexGrow: 1 }}></div>
 
-				<Typography variant="h2">Add an avatar</Typography>
-				<Grid container spacing={2}>
-					<Grid item>
-						<Avatar style={{ width: 128, height: 128 }} />
-					</Grid>
-					<Grid item>
-						<Button variant="outlined" color="secondary">Choose Image</Button>
-						<SimpleTogglePanel title="or choose one of our defaults">
-							<DefaultAvatarPanel callback={(id) => { console.log(id) }} />
-						</SimpleTogglePanel>
-					</Grid>
-				</Grid>
+			<div className={classes.headerRight}>
+				<Link href="/"><Typography>Go to docs</Typography></Link>
 
-				<Typography variant="h2">Add your location</Typography>
-				<form className={classes.form} noValidate>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								autoComplete="location" name="location" variant="outlined" required
-								fullWidth id="location" label="Location" autoFocus margin="dense"
-							/>
-						</Grid>
-					</Grid>
-					<Button type="submit" variant="contained" color="primary" className={classes.submit}>
-						Continue
-					</Button>
-				</form>
+				<IconButton
+					aria-label="delete" color="inherit"
+					onClick={() => setShowNotificationDraw(p => !p)}
+				>
+					<NotificationsIcon />
+				</IconButton>
+				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
 
-			</Paper>
-		</>
+				<Link href="/admin/profile">
+					<IconButton aria-label="delete" color="primary" className={classes.avatarOutline}>
+						<Avatar className={classes.avatar} src="/img/default-avatar.png" />
+					</IconButton>
+				</Link>
+			</div>
+
+
+		</AppBar>
 	)
 }
+Header.propTypes = { isSideBarExpanded: PropTypes.bool }
 
-export default CreateProfileForm
+export default Header

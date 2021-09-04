@@ -19,41 +19,64 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core"
 
-import SignupForm from "../../components/Signup/SignupForm"
-import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../layout/RegLayout"
+//THIRD-PARTY
+
+
+//PROJECT IMPORT
+
+
+//ASSETS
+import InboxIcon from "@material-ui/icons/MoveToInbox"
+import MailIcon from "@material-ui/icons/Mail"
+
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const useStyles = makeStyles((theme) => ({
+	drawerPaper: {
+		width: "400px",
+		[theme.breakpoints.down("xs")]: {
+			width: "100%",
+		}
+	},
+}))
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Signup() {
+const NotificationDrawer = ({ isOpen, toggle }) => {
+	const classes = useStyles()
 	return (
-		<>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-				right={<LoginLink />}
-			/>
-
-			<SignupForm />
-		</>
+		<Drawer
+			anchor="right"
+			classes={{ paper: classes.drawerPaper }}
+			open={isOpen}
+			onClose={() => toggle(false)}
+		>
+			<List>
+				{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+					<ListItem button key={text}>
+						<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+						<ListItemText primary={text} />
+					</ListItem>
+				))}
+			</List>
+		</Drawer>
 	)
 }
+NotificationDrawer.propTypes = { isOpen: PropTypes.bool, toggle: PropTypes.func }
 
-Signup.getLayout = getLayout
-
-export default Signup
+export default NotificationDrawer

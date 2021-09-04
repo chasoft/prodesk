@@ -45,8 +45,7 @@ const useStyles = makeStyles((theme) => ({
 		},
 		"&>li:hover": {
 			backgroundColor: "#D2E3FC"
-		},
-
+		}
 	}
 }))
 

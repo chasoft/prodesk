@@ -19,41 +19,63 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Button, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core"
 
-import SignupForm from "../../components/Signup/SignupForm"
-import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../layout/RegLayout"
+//THIRD-PARTY
+
+
+//PROJECT IMPORT
+
+
+//ASSETS
+import InboxIcon from "@material-ui/icons/MoveToInbox"
+import MailIcon from "@material-ui/icons/Mail"
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const useStyles = makeStyles((theme) => ({
+	root: {
+		margin: theme.spacing(1),
+	}
+}))
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Signup() {
+const Test = () => {
+	const classes = useStyles()
+	const [isOpen, setIsOpen] = useState(false)
 	return (
-		<>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-				right={<LoginLink />}
-			/>
+		<div className={classes.root}>
+			<Button onClick={() => { setIsOpen(true) }}>Show Drawer</Button>
+			<Drawer
+				anchor="right"
+				classes={{ paper: classes.drawerPaper }}
+				open={isOpen}
+				onClose={() => setIsOpen(false)}
 
-			<SignupForm />
-		</>
+			>
+				<List>
+					{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
+						<ListItem button key={text}>
+							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+							<ListItemText primary={text} />
+						</ListItem>
+					))}
+				</List>
+			</Drawer>
+		</div>
 	)
 }
 
-Signup.getLayout = getLayout
-
-export default Signup
+export default Test

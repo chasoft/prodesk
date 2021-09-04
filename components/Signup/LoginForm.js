@@ -33,7 +33,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
  *****************************************************************/
 
 import { ForgotPasswordLink, LoginLink } from "../common"
-import { updateFlexDirection } from "../Layout/RegLayout"
+import { updateFlexDirection } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
