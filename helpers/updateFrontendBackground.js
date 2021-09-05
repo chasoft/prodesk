@@ -7,7 +7,7 @@ import { setAdminBackgroundId } from "../redux/slices/uiSettings"
  * Details is hardcoded in AdminLayout.js
  * @param {object} props
  */
-export default function updateAdminBackground(props) {
+export default function updateFrontendBackground(props) {
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(setAdminBackgroundId(props.id))

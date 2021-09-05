@@ -22,22 +22,25 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import PropTypes from "prop-types"
+import Link from "next/link"
 
-// MATERIAL-UI
-import { Collapse, makeStyles, Typography } from "@material-ui/core"
-import ExpandLessIcon from "@material-ui/icons/ExpandLess"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+//MATERIAL-UI
+import { IconButton, makeStyles, Paper, Typography } from "@material-ui/core"
+import { Avatar } from "@material-ui/core"
+import { AppBar } from "@material-ui/core"
 
 //THIRD-PARTY
 import clsx from "clsx"
+
 
 //PROJECT IMPORT
 
 
 //ASSETS
-
+import NotificationsIcon from "@material-ui/icons/Notifications"
+import NotificationDrawer from "./NotificationDrawer"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,92 +48,94 @@ import clsx from "clsx"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		borderBottom: "1px solid #2A4257",
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		padding: theme.spacing(0.5, 2, 0.5, 2),
+		// width: `calc(100% - ${68}px)`,
+		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
 	},
-	rootExpanded: {
-		backgroundColor: "#47628233"
-	},
-	heading: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "1rem"
-	},
-	headingExpanded: {
-		// paddingTop: theme.spacing(3),
-		// paddingBottom: theme.spacing(3),
-	},
-	headingDescription: {
-		fontSize: "0.75rem",
-		color: "#ffffff80",
-		width: "90%"
-	},
-	groupHeader: {
+	headerLeft: {
 		display: "flex",
 		alignItems: "center",
-		cursor: "pointer",
-		padding: theme.spacing(3, 1, 3, 3),
-		"&:hover": {
-			backgroundColor: theme.navbar.hoverColor
-		},
-		"& .rightIcon .MuiSvgIcon-root": {
-			visibility: "hidden"
-		},
-		"&:hover .rightIcon .MuiSvgIcon-root": {
-			visibility: "visible",
-			color: "#669df6"
-		},
-		width: "256px",
+		justifyContent: "flex-start",
 	},
-	header: {
-
-	}
+	headerRight: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-end",
+		"& > *": {
+			marginLeft: theme.spacing(1)
+		}
+	},
+	avatar: {
+		height: theme.spacing(4),
+		width: theme.spacing(4),
+	},
+	avatarOutline: {
+		border: "1px dashed ",
+		borderRadius: "50%",
+		padding: theme.spacing(0.4),
+		"&:hover": {
+			cursor: "pointer",
+			borderColor: "blue"
+		}
+	},
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const NavCollapse = ({ title, description, children, isLongDisplay = false, callback }) => {
+const Header = ({ isSideBarExpanded, scrolled }) => {
 	const classes = useStyles()
-	const [expanded, setExpanded] = useState(false)
-	return (
-		<div className={clsx({ [classes.root]: true, [classes.rootExpanded]: expanded })}>
-			<div
-				className={classes.groupHeader}
-				onClick={() => setExpanded(p => !p)}
-			>
-				<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-					<div style={{ display: "flex", alignItems: "center" }}>
-						<Typography
-							className={clsx({ [classes.headingExpanded]: expanded, [classes.heading]: true })}
-							style={{ color: "#fff", flexGrow: 1 }}
-						>
-							{title}
-						</Typography>
-						<div className="rightIcon">
-							{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-						</div>
-					</div>
-					<Typography
-						className={classes.headingDescription}
-						variant="caption"
-						style={{ display: expanded ? "none" : "block" }}
-						noWrap
-					>{description}</Typography>
-				</div>
+	// const [scrolled, setScrolled] = useState(false)
+	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 
+	// const animateHeader = () => {
+	// 	setScrolled(window.scrollY > 50 ? true : false)
+	// }
+
+	// useEffect(() => {
+	// 	window.addEventListener("scroll", animateHeader)
+	// 	return () => window.removeEventListener("scroll", animateHeader)
+	// }, [])
+
+	return (
+		<AppBar
+			position="sticky"
+			className={clsx([classes.root, classes.nav_bg])}
+			elevation={scrolled ? 4 : 0}
+		>
+			<div className={classes.headerLeft}>
+				LeftAAA
 			</div>
-			<Collapse in={expanded} timeout="auto" style={{ color: "#ffffffcc" }} unmountOnExit>
-				{children}
-			</Collapse>
-		</div>
+
+			<div style={{ flexGrow: 1 }}></div>
+
+			<div className={classes.headerRight}>
+				<Link href="/"><Typography>Go to docs</Typography></Link>
+
+				<IconButton
+					aria-label="delete" color="inherit"
+					onClick={() => setShowNotificationDraw(p => !p)}
+				>
+					<NotificationsIcon />
+				</IconButton>
+				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
+
+				<Link href="/admin/profile">
+					<IconButton aria-label="delete" color="primary" className={classes.avatarOutline}>
+						<Avatar className={classes.avatar} src="/img/default-avatar.png" />
+					</IconButton>
+				</Link>
+			</div>
+
+
+		</AppBar>
 	)
 }
-NavCollapse.propTypes = {
-	title: PropTypes.string,
-	description: PropTypes.string,
-	isLongDisplay: PropTypes.bool,
-	callback: PropTypes.func,
-	children: PropTypes.any,
-}
+Header.propTypes = { isSideBarExpanded: PropTypes.bool, scrolled: PropTypes.bool }
 
-export default NavCollapse
+export default Header

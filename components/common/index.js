@@ -81,7 +81,7 @@ export const SignUpLink = () => {
 }
 
 export const Logo = ({ theme = "light", height = "30px" }) => {
-	return <img src={`/ProDesk-logo-${theme}.png`} height={height} width={height * 5.25} />
+	return <img src={`/ProDesk-logo-${theme}.png`} height={height} width={Math.round(height * 5.25).toString()} />
 }
 Logo.propTypes = { theme: PropTypes.string, height: PropTypes.string }
 

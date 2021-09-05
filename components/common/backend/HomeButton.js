@@ -22,36 +22,65 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
 import React from "react"
+import PropTypes from "prop-types"
+import Link from "next/link"
 
-// MATERIAL-UI
+//MATERIAL-UI
+import { IconButton, makeStyles, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
+
+
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
+
 
 //ASSETS
+import SettingsIcon from "@material-ui/icons/Settings"
+import HomeIcon from "@material-ui/icons/Home"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
+const useStyles = makeStyles((theme) => ({
+	dashboard: {
+		display: "flex",
+		alignItems: "center",
+		color: "#669df6",
+		padding: theme.spacing(1, 0.5, 1, 3),
+		"&:hover": {
+			backgroundColor: "#ffffff14",
+			cursor: "pointer",
+		},
+		borderTop: "1px solid #2A4257",
+		borderBottom: "1px solid #2A4257",
+	},
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+const HomeButton = ({ homeUrl, settingsUrl }) => {
+	const classes = useStyles()
+
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
-		</Container>
+		<div className={classes.dashboard}>
+			<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
+			<Link href={homeUrl}><Typography style={{ flexGrow: 1 }}>Dashboard</Typography></Link>
+			<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
+			<div style={{ display: "flex", alignItems: "center" }}>
+				<Link href={settingsUrl}>
+					<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
+						<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
+					</IconButton>
+				</Link>
+			</div>
+		</div>
 	)
 }
+HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string }
 
-NewTicket.getLayout = getLayout
-
-export default NewTicket
+export default HomeButton

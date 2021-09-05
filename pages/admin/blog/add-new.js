@@ -22,15 +22,17 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
 import React from "react"
 
 // MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
+import { getLayout } from "./../../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../../helpers/constants"
+import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
 
 //ASSETS
 
@@ -39,19 +41,20 @@ import { getLayout } from "./../../layout/ClientLayout"
  *****************************************************************/
 
 
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+function AddNewBlogPost() {
+
+	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
+			<Typography variant="h1">Add new blog post</Typography>
 		</Container>
 	)
 }
 
-NewTicket.getLayout = getLayout
-
-export default NewTicket
+AddNewBlogPost.getLayout = getLayout
+export default AddNewBlogPost

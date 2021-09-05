@@ -34,7 +34,8 @@ import "firebase/storage"
 import dayjs from "dayjs"
 import { nanoid } from "nanoid"
 import router from "next/router"
-import toast from "react-hot-toast"
+import { useSnackbar } from "notistack"
+
 
 /*****************************************************************
  * FIREBASE CONFIGURATION                                        *
@@ -95,6 +96,7 @@ export function fixDateTickets(data) {
  */
 
 export const reAuthenticateProviderPassword = async (uid, email, password, newEmail) => {
+	const { enqueueSnackbar } = useSnackbar()
 	try {
 		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
 		await auth.currentUser.reauthenticateWithCredential(credential)
@@ -103,19 +105,20 @@ export const reAuthenticateProviderPassword = async (uid, email, password, newEm
 		db.doc(`users/${uid}`).set({ email: newEmail }, { merge: true })
 		return true
 	} catch (e) {
-		toast.error(e.message)
+		enqueueSnackbar(e.message, { variant: "error" })
 		return false
 	}
 }
 
 export const changePassword = async (uid, email, password, newPassword) => {
+	const { enqueueSnackbar } = useSnackbar()
 	try {
 		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
 		await auth.currentUser.reauthenticateWithCredential(credential)
 		await auth.currentUser.updatePassword(newPassword)
 		return true
 	} catch (e) {
-		toast.error(e.message)
+		enqueueSnackbar(e.message, { variant: "error" })
 		return false
 	}
 }
@@ -189,6 +192,14 @@ export const getUsernameDocByUsername = async (username) => {
 	}
 }
 
+export const isUsernameAvailable = async (username) => {
+	const { exists } = await db.doc(`usernames/${username}`).get()
+	if (exists) {
+		return false
+	}
+	return true
+}
+
 /**
  * User can set username once, after that, username cannot be changed
  * Anyway, user can adjust his/her displayName for decoration
@@ -197,9 +208,11 @@ export const getUsernameDocByUsername = async (username) => {
  * @returns Nothing
  */
 export const setUsername = async (uid, username) => {
-	const { exists } = await db.doc(`usernames/${username}`).get()
-	if (exists) {
-		toast.error("Username is existed. Please choose another one!")
+	const { enqueueSnackbar } = useSnackbar()
+
+	// const { exists } = await db.doc(`usernames/${username}`).get()
+	if (!isUsernameAvailable(username)) {
+		enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
 		return
 	}
 
@@ -208,11 +221,11 @@ export const setUsername = async (uid, username) => {
 		batch.set(db.doc(`users/${uid}`), { username }, { merge: true })
 		batch.set(db.doc(`usernames/${username}`), { uid })
 		await batch.commit()
-		toast.success("Username created successfully")
+		enqueueSnackbar("Username created successfully", { variant: "success" })
 	}
 	catch (e) {
 		console.log(e.message)
-		toast.error(`Something is wrong! Error message: ${e.message}`)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
 }
 
@@ -241,13 +254,14 @@ export const getUserDisplayInfo = (uid) => {
  * @param {string} displayName
  */
 export const updateDisplayName = async (username, displayName) => {
+	const { enqueueSnackbar } = useSnackbar()
 	try {
 		db.doc(`usernames/${username}`).set({ displayName }, { merge: true })
-		toast.success("Display name updated successfully")
+		enqueueSnackbar("Display name updated successfully", { variant: "success" })
 	}
 	catch (e) {
 		console.log(e.message)
-		toast.error(e.message)
+		enqueueSnackbar("Display name updated successfully", { variant: "error" })
 	}
 }
 
@@ -290,6 +304,7 @@ export const ticketRepliesRef = (uid, ticketId) => {
  */
 export const updateTicketsStatus = async (idArray, uid, newStatus) => {
 	const batch = db.batch()
+	const { enqueueSnackbar } = useSnackbar()
 
 	try {
 		idArray.forEach((id) => {
@@ -302,11 +317,11 @@ export const updateTicketsStatus = async (idArray, uid, newStatus) => {
 			)
 		})
 		await batch.commit()
-		toast.success(`Ticket's status updated to ${newStatus}`)
+		enqueueSnackbar(`Ticket's status updated to ${newStatus}`, { variant: "success" })
 	}
 	catch (e) {
 		console.log(e.message)
-		toast.error(`Something is wrong! Error message: ${e.message}`)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
 }
 
@@ -316,17 +331,18 @@ export const updateTicketsStatus = async (idArray, uid, newStatus) => {
  * @param {string} uid - uid of current logged in user
  */
 export const deleteTickets = async (idArray, uid) => {
+	const { enqueueSnackbar } = useSnackbar()
 	const batch = db.batch()
 	try {
 		idArray.forEach((id) => {
 			batch.delete(db.doc(`users/${uid}/tickets/${id}`))
 		})
 		await batch.commit()
-		toast.success("Tickets removed from database successfully")
+		enqueueSnackbar("Tickets removed from database successfully", { variant: "success" })
 	}
 	catch (e) {
 		console.log(e.message)
-		toast.error(`Something is wrong! Error message: ${e.message}`)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
 }
 
@@ -339,13 +355,14 @@ export const deleteTickets = async (idArray, uid) => {
  * @returns Nothing
  */
 export const createNewTicket = async (currentUser, metaData, ticketContent) => {
+	const { enqueueSnackbar } = useSnackbar()
 	/* validate input */
 	if (metaData.subject.length < 10) {
-		toast.error("Please enter meaningful subject for your new ticket!")
+		enqueueSnackbar("Please enter meaningful subject for your new ticket!", { variant: "error" })
 		return
 	}
 	if (ticketContent.length < 15) {
-		toast.error("Please provide more details about your problem!")
+		enqueueSnackbar("Please provide more details about your problem!", { variant: "error" })
 		return
 	}
 
@@ -365,20 +382,20 @@ export const createNewTicket = async (currentUser, metaData, ticketContent) => {
 			authorUid: currentUser.uid
 		}
 		await ref.set(ticketData)
-
-		toast.success("Ticket created! We will check and reply to you soon!")
+		enqueueSnackbar("Ticket created! We will check and reply to you soon!", { variant: "success" })
 		router.push("/client/tickets")
 	} catch (e) {
 		console.log(e.message)
-		toast.error(`Something is wrong! Error message: ${e.message}`)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
 }
 
 
 export const createNewTicketReply = async (currentUser, ticketId, replyContent) => {
 	/* validate input */
+	const { enqueueSnackbar } = useSnackbar()
 	if (replyContent.length < 5) {
-		toast.error("Too short for a reply!")
+		enqueueSnackbar("Too short for a reply!", { variant: "error" })
 		return
 	}
 
@@ -403,11 +420,10 @@ export const createNewTicketReply = async (currentUser, ticketId, replyContent) 
 		})
 
 		await batch.commit()
-
-		toast.success("Your reply has been added! We will check and reply to you soon!")
+		enqueueSnackbar("Your reply has been added! We will check and reply to you soon!", { variant: "success" })
 	} catch (e) {
 		console.log(e.message)
-		toast.error(`Something is wrong! Error message: ${e.message}`)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
 }
 

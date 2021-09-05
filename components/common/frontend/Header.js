@@ -11,7 +11,7 @@ import MenuIcon from "@material-ui/icons/Menu"
 import SearchIcon from "@material-ui/icons/Search"
 import MoreIcon from "@material-ui/icons/MoreVert"
 import AppsIcon from "@material-ui/icons/Apps"
-import { Logo } from "./common"
+import { Logo } from ".."
 
 const useStyles = makeStyles((theme) => ({
 	grow: {

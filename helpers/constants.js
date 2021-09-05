@@ -17,3 +17,8 @@ export const BACKGROUND_ID = {
 	ADMIN_TICKETS: "AdminTicket",
 	ADMIN_USERS: "AdminUsers"
 }
+
+export const MENU_ITEM_TYPE = {
+	ITEM: "Single Item",
+	GROUP: "Group of Items",
+}

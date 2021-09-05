@@ -44,14 +44,14 @@ import { getLayout } from "./../../layout/ClientLayout"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+function Tickets() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
+			<Typography variant="h1">Tickets</Typography>
 		</Container>
 	)
 }
 
-NewTicket.getLayout = getLayout
+Tickets.getLayout = getLayout
 
-export default NewTicket
+export default Tickets

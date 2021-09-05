@@ -19,25 +19,22 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect } from "react"
-import Head from "next/head"
+import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
-// import updatePageMeta from "./../helpers/updatePageMeta"
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "./../../../helpers/constants"
-import updateAdminBackground from "./../../../helpers/updateAdminBackground"
-import { Grid } from "@material-ui/core"
-import DashboardContent from "../../../components/Dashboard/DashboardContent"
-import Filters from "../../../components/Dashboard/Filters"
-// import Dashboard from "./../../../components/Dashboard"
-// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
+import { BACKGROUND_ID } from "../../../helpers/constants"
+import updateFrontendBackground from "./../../../helpers/updateFrontendBackground"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -48,15 +45,16 @@ import Filters from "../../../components/Dashboard/Filters"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Tickets() {
-	updateAdminBackground({ id: BACKGROUND_ID.EMPTY })
-	return (
-		<Grid container>
-			<DashboardContent />
+function Blog() {
 
-		</Grid>
+	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+
+	return (
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Blog Admin</Typography>
+		</Container>
 	)
 }
 
-Tickets.getLayout = getLayout
-export default Tickets
+Blog.getLayout = getLayout
+export default Blog

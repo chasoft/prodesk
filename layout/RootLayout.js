@@ -19,39 +19,73 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
+import Head from "next/head"
+import PropTypes from "prop-types"
 import React from "react"
+import { makeStyles } from "@material-ui/core/styles"
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
-// MATERIAL-UI
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
+import Header from "../components/common/frontend/Header"
+import Footer from "../components/common/Footer"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
+// const useStyles = makeStyles((theme) => ({
+// 	grow: {
+// 		flexGrow: 1,
+// 	}
+// }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		minHeight: "100vh",
+	},
+	main: {
+		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(2),
+	},
+	footer: {
+		padding: theme.spacing(3, 2),
+		marginTop: "auto",
+		backgroundColor:
+			theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
+	},
+}))
 
-function NewTicket() {
+function RootLayout({ children }) {
+	const classes = useStyles()
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
-		</Container>
+		<>
+			<Head>
+				<title>Site Layout</title>
+				<meta name="description" content="Site Layout Description" />
+			</Head>
+
+			<div className={classes.root}>
+				<Header />
+
+				{children}
+
+				<Footer />
+			</div>
+		</>
 	)
 }
 
-NewTicket.getLayout = getLayout
+RootLayout.propTypes = { children: PropTypes.node }
 
-export default NewTicket
+export const getLayout = page => <RootLayout>{page}</RootLayout>
+
+export default RootLayout

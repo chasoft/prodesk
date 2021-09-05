@@ -22,123 +22,39 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
-import PropTypes from "prop-types"
-import Link from "next/link"
+import React from "react"
 
-//MATERIAL-UI
-import { IconButton, makeStyles, Paper, Typography } from "@material-ui/core"
-import { Avatar } from "@material-ui/core"
-import { AppBar } from "@material-ui/core"
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
-import clsx from "clsx"
-
 
 //PROJECT IMPORT
-
+import { getLayout } from "./../../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../../helpers/constants"
+import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
 
 //ASSETS
-import NotificationsIcon from "@material-ui/icons/Notifications"
-import NotificationDrawer from "./NotificationDrawer"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		padding: theme.spacing(0.5, 2, 0.5, 2),
-		width: `calc(100% - ${68}px)`,
-		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
-	},
-	contentShift: {
-		width: `calc(100% - ${256}px)`
-	},
-	headerLeft: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "flex-start",
-	},
-	headerRight: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "flex-end",
-		"& > *": {
-			marginLeft: theme.spacing(1)
-		}
-	},
-	avatar: {
-		height: theme.spacing(4),
-		width: theme.spacing(4),
-	},
-	avatarOutline: {
-		border: "1px dashed ",
-		borderRadius: "50%",
-		padding: theme.spacing(0.4),
-		"&:hover": {
-			cursor: "pointer",
-			borderColor: "blue"
-		}
-	},
-}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const Header = ({ isSideBarExpanded }) => {
-	const classes = useStyles()
-	const [scrolled, setScrolled] = useState(false)
-	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+function AddNewKB() {
 
-	const animateHeader = () => {
-		setScrolled(window.scrollY > 50 ? true : false)
-	}
-
-	useEffect(() => {
-		window.addEventListener("scroll", animateHeader)
-		return () => window.removeEventListener("scroll", animateHeader)
-	}, [])
+	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
 
 	return (
-		<AppBar
-			position="fixed"
-			className={clsx([classes.root, classes.nav_bg, { [classes.contentShift]: isSideBarExpanded }])}
-			elevation={scrolled ? 4 : 0}
-		>
-			<div className={classes.headerLeft}>
-				LeftAAA
-			</div>
-
-			<div style={{ flexGrow: 1 }}></div>
-
-			<div className={classes.headerRight}>
-				<Link href="/"><Typography>Go to docs</Typography></Link>
-
-				<IconButton
-					aria-label="delete" color="inherit"
-					onClick={() => setShowNotificationDraw(p => !p)}
-				>
-					<NotificationsIcon />
-				</IconButton>
-				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
-
-				<Link href="/admin/profile">
-					<IconButton aria-label="delete" color="primary" className={classes.avatarOutline}>
-						<Avatar className={classes.avatar} src="/img/default-avatar.png" />
-					</IconButton>
-				</Link>
-			</div>
-
-
-		</AppBar>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Add New KB</Typography>
+		</Container>
 	)
 }
-Header.propTypes = { isSideBarExpanded: PropTypes.bool }
 
-export default Header
+AddNewKB.getLayout = getLayout
+export default AddNewKB

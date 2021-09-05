@@ -19,39 +19,43 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
 import React from "react"
+import Container from "@material-ui/core/Container"
+import { makeStyles } from "@material-ui/core/styles"
 
-// MATERIAL-UI
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
+import { Copyright } from "."
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
+const useStyles = makeStyles((theme) => ({
+	footer: {
+		marginTop: "auto",
+		padding: theme.spacing(4),
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontSize: "0.875rem"
+	},
+}))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
+* MAIN RENDER                                                   *
+*****************************************************************/
 
-function NewTicket() {
+export default function Footer() {
+	const classes = useStyles()
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
-		</Container>
+		<footer className={classes.footer}>
+			<Container align="center">
+				<Copyright />
+			</Container>
+		</footer>
 	)
 }
-
-NewTicket.getLayout = getLayout
-
-export default NewTicket

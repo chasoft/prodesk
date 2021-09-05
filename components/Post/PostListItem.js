@@ -69,9 +69,9 @@ function PostListItem({ isFirst = false, isLast = false }) {
 	const classes = useStyles()
 
 	return (
-		<div className={(!isFirst) ? classes.border : null} >
+		<div className={(!isFirst) ? classes.border : ""} >
 			<div
-				className={`${classes.main} ${isFirst ? classes.isFirst : null} ${isLast ? classes.isLast : null}`}
+				className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}
 				onClick={() => alert("ok!")}
 			>
 

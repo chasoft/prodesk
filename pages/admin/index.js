@@ -19,20 +19,22 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-import Head from "next/head"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
-// import updatePageMeta from "./../helpers/updatePageMeta"
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { getLayout } from "./../../layout/AdminLayout"
 import { BACKGROUND_ID } from "../../helpers/constants"
-import updateAdminBackground from "../../helpers/updateAdminBackground"
+import updateFrontendBackground from "../../helpers/updateFrontendBackground"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,60 +47,12 @@ import updateAdminBackground from "../../helpers/updateAdminBackground"
 
 function Admin() {
 
-	updateAdminBackground({ id: BACKGROUND_ID.ADMIN_INDEX })
+	updateFrontendBackground({ id: BACKGROUND_ID.ADMIN_INDEX })
 
 	return (
-		<>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-			<p>hello world</p>
-
-			<p>hello world</p>
-		</>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Admin Index</Typography>
+		</Container>
 	)
 }
 

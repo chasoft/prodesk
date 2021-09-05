@@ -19,21 +19,22 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect } from "react"
-import Head from "next/head"
+import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
-// import updatePageMeta from "./../helpers/updatePageMeta"
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { getLayout } from "./../../layout/AdminLayout"
 import { BACKGROUND_ID } from "../../helpers/constants"
-import updateAdminBackground from "../../helpers/updateAdminBackground"
-// import { getLayout as getAdminLayout } from "../../components/layouts/AdminLayout"
+import updateFrontendBackground from "../../helpers/updateFrontendBackground"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -46,13 +47,12 @@ import updateAdminBackground from "../../helpers/updateAdminBackground"
 
 function Profile() {
 
-	updateAdminBackground({ id: BACKGROUND_ID.ADMIN_PROFILE })
+	updateFrontendBackground({ id: BACKGROUND_ID.ADMIN_PROFILE })
 
 	return (
-		<>
-			<p>hello world</p>
-			<p>hello world</p>
-		</>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Admin Profile</Typography>
+		</Container>
 	)
 }
 

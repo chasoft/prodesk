@@ -19,39 +19,41 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
 import React from "react"
 
-// MATERIAL-UI
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
+import { LoginLink, Logo } from "../../components/common"
+import { getLayout, TopLine } from "../../layout/RegLayout"
+import SocialLoginForm from "../../components/Signup/SocialLoginForm"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function NewTicket() {
+function SocialSignup() {
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
-		</Container>
+		<>
+			<TopLine
+				left={<Logo />}
+				center={<Logo />}
+				right={<LoginLink />}
+			/>
+
+			<SocialLoginForm />
+		</>
 	)
 }
 
-NewTicket.getLayout = getLayout
+SocialSignup.getLayout = getLayout
 
-export default NewTicket
+export default SocialSignup

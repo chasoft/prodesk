@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -19,42 +19,80 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
+//import { useDispatch, useSelector } from "react-redux"
 
-// MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "../../../helpers/constants"
-import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
-
-//ASSETS
+import { auth, db, googleAuthProvider } from "./firebase"
+import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-function Users() {
-
-	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
-
-	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Users</Typography>
-		</Container>
-	)
+export const signInWithGoogle = async () => {
+	const { enqueueSnackbar } = useSnackbar()
+	try {
+		await auth.signInWithPopup(googleAuthProvider)
+	} catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(e.message, { variant: "error" })
+	}
 }
 
-Users.getLayout = getLayout
-export default Users
+export const signInWithEmail = async (email, password) => {
+	const { enqueueSnackbar } = useSnackbar()
+	enqueueSnackbar("Connecting with Authentication Server...", { key: "signInWithEmail", variant: "info" })
+	try {
+		await auth.signInWithEmailAndPassword(email, password)
+		enqueueSnackbar("Logged in successfully!", { key: "signInWithEmail", variant: "success" })
+	}
+	catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(e.message, { key: "signInWithEmail", variant: "error" })
+	}
+}
+
+export const signOut = () => {
+	const { enqueueSnackbar } = useSnackbar()
+	auth.signOut()
+	enqueueSnackbar("Signed out successfully!", { variant: "success" })
+}
+
+export const signUpWithEmail = async (email, password, name, username) => {
+	const { enqueueSnackbar } = useSnackbar()
+	try {
+		enqueueSnackbar("Connecting with Authentication Server...", { key: "signUpWithEmail", variant: "info" })
+		const userCredential = await auth.createUserWithEmailAndPassword(email, password)
+
+		const batch = db.batch()
+		enqueueSnackbar("Updating the database...", { key: "signUpWithEmail", variant: "info" })
+
+		batch.set(db.doc(`users/${userCredential.user.uid}`), {
+			email: userCredential.user.email,
+			username: username
+		})
+		batch.set(db.doc(`usernames/${username}`), {
+			uid: userCredential.user.uid,
+			displayName: name,
+			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+			username: username
+		})
+		await batch.commit()
+
+		// userCredential.user.sendEmailVerification()
+		enqueueSnackbar("Logged in successfully!", { key: "signUpWithEmail", variant: "success" })
+	}
+	catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(e.message, { key: "signUpWithEmail", variant: "error" })
+	}
+}
+
+
+

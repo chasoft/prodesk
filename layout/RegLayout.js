@@ -30,7 +30,7 @@ import { Container, Hidden, makeStyles } from "@material-ui/core"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import Footer from "../components/Footer"
+import Footer from "./../components/common/Footer"
 import { useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "../redux/selectors"
 import { useEffect } from "react"

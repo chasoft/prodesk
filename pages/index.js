@@ -28,10 +28,10 @@ import React from "react"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
-import PromotedSearch from "../components/PromotedSearch"
-import FrontAccordions from "./../components/FrontAccordions"
-import MainNav from "../components/MainNav"
+import { getLayout } from "./../layout/RootLayout"
+import PromotedSearch from "./../components/common/frontend/PromotedSearch"
+import FrontAccordions from "./../components/common/frontend/FrontAccordions"
+import MainNav from "./../components/common/frontend/MainNav"
 
 /*****************************************************************
  * INIT                                                          *

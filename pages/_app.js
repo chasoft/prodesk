@@ -31,6 +31,7 @@ import { Provider } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
 import { Toaster } from "react-hot-toast"
 import { CssBaseline, ThemeProvider } from "@material-ui/core"
+import { SnackbarProvider } from "notistack"
 
 
 /*****************************************************************
@@ -99,8 +100,10 @@ function MyApp({ Component, pageProps }) {
 			<Provider store={store}>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					{getLayout(<Component {...pageProps} />)}
-					<Toaster position="bottom-right" toastOptions={toastOptions} />
+					<SnackbarProvider maxSnack={3}>
+						{getLayout(<Component {...pageProps} />)}
+					</SnackbarProvider>
+
 				</ThemeProvider>
 			</Provider>
 		</>

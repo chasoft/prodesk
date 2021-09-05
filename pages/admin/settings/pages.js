@@ -19,40 +19,42 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
-import { getLayout } from "./../../components/RootLayout"
-import Dashboard from "./../../components/Dashboard"
-import MainNav from "../../components/MainNav"
+//THIRD-PARTY
 
+//PROJECT IMPORT
+import { getLayout } from "./../../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../../helpers/constants"
+import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
+function Pages() {
 
+	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
 
-
-function ClientDashboard() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
-		<>
-			<MainNav borderBottom={true} />
-			<Dashboard />
-		</>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Admin Pages</Typography>
+		</Container>
 	)
 }
 
-ClientDashboard.getLayout = getLayout
-export default ClientDashboard
+Pages.getLayout = getLayout
+export default Pages

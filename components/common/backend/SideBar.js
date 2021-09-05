@@ -28,26 +28,27 @@ import Link from "next/link"
 
 // MATERIAL-UI
 import { IconButton, makeStyles, Typography } from "@material-ui/core"
-import { Logo } from "../../components/common"
+import { Logo } from ".."
 import NavCollapse from "./NavCollapse"
 import clsx from "clsx"
 
 //THIRD-PARTY
+import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
 
 
 //ASSETS
 import AssessmentIcon from "@material-ui/icons/Assessment"
-import SettingsIcon from "@material-ui/icons/Settings"
-import HomeIcon from "@material-ui/icons/Home"
 import "react-perfect-scrollbar/dist/css/styles.css"
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import AccountTreeIcon from '@material-ui/icons/AccountTree';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import CategoryIcon from '@material-ui/icons/Category';
-import CreditCardIcon from '@material-ui/icons/CreditCard';
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
+import AccountTreeIcon from "@material-ui/icons/AccountTree"
+import BarChartIcon from "@material-ui/icons/BarChart"
+import CategoryIcon from "@material-ui/icons/Category"
+import CreditCardIcon from "@material-ui/icons/CreditCard"
+import HomeButton from "./HomeButton"
+import { MENU_ITEM_TYPE } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		width: "68px",
 		height: "100vh",
-		position: "fixed"
+		// position: "fixed"
 	},
 	sideBarExpanded: {
 		width: "256px",
@@ -103,46 +104,53 @@ const useStyles = makeStyles((theme) => ({
 		}
 	},
 	ScrollHeight: {
-		// height: "100%",
-		// maxHeight: "calc(100vh - 205px)",
-		overflowX: "hidden"
-	},
-	dashboard: {
-		display: "flex",
-		alignItems: "center",
-		color: "#669df6",
-		padding: theme.spacing(1, 0.5, 1, 3),
-		"&:hover": {
-			backgroundColor: "#ffffff14",
-			cursor: "pointer",
-		},
-		borderTop: "1px solid #2A4257",
-		borderBottom: "1px solid #2A4257",
+		height: "calc(100vh - 88px)",
+		//paddingRight: "8px",
 	},
 	minimizer: {
 		display: "flex",
 		justifyContent: "flex-end",
 		marginTop: "auto",
 		padding: theme.spacing(2),
-	}
+		borderTop: "1px solid #2A4257",
+	},
+	singleItem: {
+		display: "flex",
+		alignItems: "center",
+		color: "#fff",
+		padding: theme.spacing(1.5, 0.5, 1.5, 3),
+		"&:hover": {
+			backgroundColor: "#ffffff14",
+			cursor: "pointer",
+		},
+		borderBottom: "1px solid #2A4257",
+		"& > :first-child": {
+			height: "20px",
+			width: "20px",
+			marginRight: theme.spacing(1),
+		}
+	},
+	heading: {
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontSize: "1rem"
+	},
+	headingDescription: {
+		fontSize: "0.75rem",
+		color: "#ffffff80",
+		width: "90%"
+	},
+	itemHeader: {
+		display: "flex",
+		alignItems: "center",
+		cursor: "pointer",
+		padding: theme.spacing(3, 1, 3, 3),
+		"&:hover": {
+			backgroundColor: theme.navbar.hoverColor
+		},
+		width: "256px",
+		borderBottom: "1px solid #2A4257",
+	},
 }))
-
-const DUMMYDATA = [
-	{
-		id: "1",
-		icon: "0",
-		title: "Build",
-		description: "Authentication, Firestore database, Realtime Database",
-		items: [
-			{ id: 1, icon: "1", text: "Authentication" },
-			{ id: 2, icon: "2", text: "Firestore Database" },
-			{ id: 3, icon: "3", text: "Realtime Database" },
-			{ id: 4, icon: "4", text: "Storage" },
-			{ id: 5, icon: "5", text: "Hosting" },
-			{ id: 6, icon: "6", text: "Functions" },
-		]
-	}
-]
 
 const IconLib = {
 	"0": <AssessmentIcon />,
@@ -158,7 +166,7 @@ const IconLib = {
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const SideBar = ({ isExpanded = true, toggle }) => {
+const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] }) => {
 	const classes = useStyles()
 	return (
 		<div className={clsx([classes.root, classes.nav_bg, { [classes.sideBarExpanded]: isExpanded }])}>
@@ -167,39 +175,58 @@ const SideBar = ({ isExpanded = true, toggle }) => {
 				<Logo theme="dark" />
 			</div>
 
-			<div className={classes.dashboard}>
-				<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-				<Link href="/admin"><Typography style={{ flexGrow: 1 }}>Dashboard</Typography></Link>
-				<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
-				<div style={{ display: "flex", alignItems: "center" }}>
-					<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
-						<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-					</IconButton>
-				</div>
-			</div>
+			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} />
 
-			{
-				DUMMYDATA.map((group) => {
-					return (
-						<NavCollapse
-							key={group.id}
-							title={group.title}
-							description={group.description}
-							isLongDisplay={isExpanded}
-						>
-							<ul className={classes.list}>
-								{
-									group.items.map((item) => {
-										return (
-											<li key={item.id}>{IconLib[item.icon]}{item.text}</li>
-										)
-									})
-								}
-							</ul>
-						</NavCollapse>
-					)
-				})
-			}
+			<PerfectScrollbar component="div" className={classes.ScrollHeight}>
+				{
+					data.map((group) => {
+						if (group.type === MENU_ITEM_TYPE.ITEM)
+							return (
+								<Link href={group.url} >
+									<div className={classes.itemHeader}>
+										<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+											<div style={{ display: "flex", alignItems: "center" }}>
+												<Typography
+													className={classes.heading}
+													style={{ color: "#fff", flexGrow: 1 }}
+												>
+													{group.title}
+												</Typography>
+											</div>
+											<Typography
+												className={classes.headingDescription}
+												variant="caption"
+												noWrap
+											>{group.description}</Typography>
+										</div>
+									</div>
+								</Link>
+							)
+						else if (group.type === MENU_ITEM_TYPE.GROUP)
+							return (
+								<NavCollapse
+									key={group.id}
+									title={group.title}
+									isExpanded={group.expanded}
+									description={group.description}
+									isLongDisplay={isExpanded}
+								>
+									<ul className={classes.list}>
+										{
+											group.items.map((item) => {
+												return (
+													<Link key={item.id} href={item.url}><li>{IconLib[item.icon]}{item.text}</li></Link>
+												)
+											})
+										}
+									</ul>
+								</NavCollapse>
+							)
+						else
+							throw new Error("Wrong-Menu-DataType")
+					})
+				}
+			</PerfectScrollbar >
 
 			<div className={classes.minimizer}>
 				<IconButton
@@ -216,6 +243,12 @@ const SideBar = ({ isExpanded = true, toggle }) => {
 		</div >
 	)
 }
-SideBar.propTypes = { isExpanded: PropTypes.bool, toggle: PropTypes.func }
+SideBar.propTypes = {
+	isExpanded: PropTypes.bool,
+	toggle: PropTypes.func,
+	homeUrl: PropTypes.string,
+	settingsUrl: PropTypes.string,
+	data: PropTypes.array
+}
 
 export default SideBar

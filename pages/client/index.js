@@ -19,58 +19,39 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-//import { Breadcrumbs } from "@blueprintjs/core"
-import Head from "next/head"
+import { Container, Typography } from "@material-ui/core"
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
 
-import { getLayout } from "./../../components/RootLayout"
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { getLayout } from "./../../layout/ClientLayout"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-/* TODO: thêm file [id] => tự động redirect các URL sai... ví dụ: client/service => client/services
-*/
-
-
-// import { useDispatch } from 'react-redux'
-// import { setTitle, setSubTitle } from './../../slices/pageMeta'
-// import { useEffect } from "react";
-
 function Client() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-	//const queryClient = useQueryClient()
-
-	// updatePageMeta({
-	// 	title: "Client Dashboard",
-	// 	subTitle: "Your place for quick look and actions"
-	// })
-
 	return (
-		<>
-			<Head>
-				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
-				<title>Dashboard - ClientArea - ProDesk</title>
-			</Head>
-
-			<div className="children-mb-15">
-
-			</div>
-		</>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Client Index</Typography>
+		</Container>
 	)
 }
 
 Client.getLayout = getLayout
+
 export default Client

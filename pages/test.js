@@ -25,10 +25,11 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core"
+import { Button, Container, Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, TextField } from "@material-ui/core"
 
 //THIRD-PARTY
-
+import { useFormik } from "formik"
+import * as yup from "yup"
 
 //PROJECT IMPORT
 
@@ -44,9 +45,16 @@ import MailIcon from "@material-ui/icons/Mail"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: theme.spacing(1),
+		margin: theme.spacing(10),
 	}
 }))
+
+const validationSchema = yup.object({
+	name: yup
+		.string("Enter your name, you can change later")
+		.min(5, "min 5 characters")
+		.required("Name is required"),
+})
 
 /*****************************************************************
  * MAIN RENDER                                                   *
@@ -54,27 +62,37 @@ const useStyles = makeStyles((theme) => ({
 
 const Test = () => {
 	const classes = useStyles()
-	const [isOpen, setIsOpen] = useState(false)
-	return (
-		<div className={classes.root}>
-			<Button onClick={() => { setIsOpen(true) }}>Show Drawer</Button>
-			<Drawer
-				anchor="right"
-				classes={{ paper: classes.drawerPaper }}
-				open={isOpen}
-				onClose={() => setIsOpen(false)}
 
-			>
-				<List>
-					{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-						<ListItem button key={text}>
-							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-							<ListItemText primary={text} />
-						</ListItem>
-					))}
-				</List>
-			</Drawer>
-		</div>
+	const formik = useFormik({
+		initialValues: {
+			name: "",
+		},
+		validationSchema: validationSchema,
+		onSubmit: (values) => {
+			alert(JSON.stringify(values, null, 2))
+		},
+	})
+
+	return (
+		<Container maxWidth="xs" className={classes.root}>
+			<form onSubmit={formik.handleSubmit}>
+				<TextField
+					fullWidth
+					id="name"
+					name="name"
+					label="Name"
+					value={formik.values.name}
+					onChange={formik.handleChange}
+					error={formik.touched.name && Boolean(formik.errors.name)}
+					variant="outlined"
+					autoFocus
+					required
+				/>
+				<Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+					Create Account
+				</Button>
+			</form>
+		</Container>
 	)
 }
 

@@ -19,43 +19,42 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-import Container from "@material-ui/core/Container"
-import { makeStyles } from "@material-ui/core/styles"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
 
-import { Copyright } from "./common"
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { getLayout } from "./../../layout/AdminLayout"
+import { BACKGROUND_ID } from "../../helpers/constants"
+import updateFrontendBackground from "../../helpers/updateFrontendBackground"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	footer: {
-		marginTop: "auto",
-		padding: theme.spacing(4),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "0.875rem"
-	},
-}))
 
 /*****************************************************************
-* MAIN RENDER                                                   *
-*****************************************************************/
+ * MAIN RENDER                                                   *
+ *****************************************************************/
 
-export default function Footer() {
-	const classes = useStyles()
+function Faqs() {
+
+	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+
 	return (
-		<footer className={classes.footer}>
-			<Container align="center">
-				<Copyright />
-			</Container>
-		</footer>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Admin Faqs</Typography>
+		</Container>
 	)
 }
+
+Faqs.getLayout = getLayout
+export default Faqs

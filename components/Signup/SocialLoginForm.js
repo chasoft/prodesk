@@ -86,13 +86,6 @@ const validationSchema = yup.object({
 		.string("Enter your email")
 		.email("Enter a valid email")
 		.required("Email is required"),
-	password: yup
-		.string("Enter your password")
-		.min(8, "Password should be of minimum 8 characters length")
-		.required("Password is required"),
-	password2: yup
-		.string("Confirm your password")
-		.oneOf([yup.ref("password"), null], "Passwords must match"),
 	agreement: yup
 		.boolean().isTrue("You must agree with our Terms & services")
 })
@@ -101,7 +94,7 @@ const validationSchema = yup.object({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const SignupForm = () => {
+const SocialLoginForm = () => {
 	const classes = useStyles()
 	updateFlexDirection({ payload: "row" })
 
@@ -110,8 +103,6 @@ const SignupForm = () => {
 			name: "",
 			username: "",
 			email: "",
-			password: "",
-			password2: "",
 			agreement: false
 		},
 		validationSchema: validationSchema,
@@ -122,7 +113,7 @@ const SignupForm = () => {
 				return
 			}
 
-			signUpWithEmail(values.email, values.password, values.name, values.username)
+			signUpWithEmail(values.email, values.password)
 			console.log("ok to go!!!")
 		},
 	})
@@ -186,38 +177,6 @@ const SignupForm = () => {
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							id="password"
-							name="password"
-							label="Password"
-							value={formik.values.password}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.password && Boolean(formik.errors.password)}
-							helperText={formik.touched.password && formik.errors.password}
-							variant="outlined"
-							type="password"
-							required
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							fullWidth
-							id="password2"
-							name="password2"
-							label="Confirm Password"
-							value={formik.values.password2}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.password2 && Boolean(formik.errors.password2)}
-							helperText={formik.touched.password2 && formik.errors.password2}
-							variant="outlined"
-							type="password"
-							required
-						/>
-					</Grid>
-					<Grid item xs={12}>
 						<FormControlLabel
 							control={
 								<Checkbox
@@ -254,4 +213,4 @@ const SignupForm = () => {
 	)
 }
 
-export default SignupForm
+export default SocialLoginForm

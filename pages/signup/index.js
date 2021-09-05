@@ -30,7 +30,7 @@ import React from "react"
 
 import SignupForm from "../../components/Signup/SignupForm"
 import { LoginLink, Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, TopRightContent } from "../../layout/RegLayout"
+import { getLayout, TopLine } from "../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

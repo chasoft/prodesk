@@ -9,6 +9,11 @@ import AddIcon from "@material-ui/icons/Add"
 
 
 const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		width: "100%",
+	},
 	group: {
 		margin: "1.5rem 0 2rem",
 		[theme.breakpoints.down("xs")]: {
@@ -46,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 function DashboardContent() {
 	const classes = useStyles()
 	return (
-		<>
+		<div className={classes.root}>
 			<Typography className={classes.heading}>Browse the Support Desk</Typography>
 			<div>
 				<Typography variant="h4" className={classes.header}>Open</Typography>
@@ -69,7 +74,7 @@ function DashboardContent() {
 			<Fab color="primary" aria-label="add" className={classes.fab}>
 				<AddIcon />
 			</Fab>
-		</>
+		</div>
 	)
 }
 
