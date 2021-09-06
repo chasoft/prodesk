@@ -28,7 +28,7 @@ import React from "react"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../layout/RootLayout"
+import { getLayout } from "./../layout/BlankLayout"
 import PromotedSearch from "./../components/common/frontend/PromotedSearch"
 import FrontAccordions from "./../components/common/frontend/FrontAccordions"
 import MainNav from "./../components/common/frontend/MainNav"

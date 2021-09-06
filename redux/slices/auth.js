@@ -23,7 +23,7 @@ import { createSlice } from "@reduxjs/toolkit"
 export const initialState = {
 	/* Authentication */
 	currentUser: {},
-	isAuthenticated: false,
+	isAuthenticated: null,
 	error: "",
 	loading: true,
 }
@@ -68,6 +68,23 @@ const authSlice = createSlice({
 		},
 
 		/*****************************************************************
+		 * Temp action for Social login & Sign Up steps                  *
+		 *****************************************************************/
+
+		loginTemp: (state, { payload }) => {
+			state.currentUser = payload
+			state.isAuthenticated = false
+			state.loading = false
+		},
+
+		updateAvatarAndLocation: (state, { payload }) => {
+			state.currentUser = {
+				...state.currentUser,
+				...payload
+			}
+		},
+
+		/*****************************************************************
 		 * User                                                          *
 		 *****************************************************************/
 		/**
@@ -104,6 +121,7 @@ const authSlice = createSlice({
 export const {
 	login, loginError, loginSuccess,
 	logout, logoutSuccess,
+	loginTemp, updateAvatarAndLocation,
 	reduxSetUsername, reduxUpdateDisplayName, reduxUpdateEmail
 } = authSlice.actions
 

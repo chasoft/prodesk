@@ -19,73 +19,100 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
+//CORE SYSTEM
 import Head from "next/head"
 import PropTypes from "prop-types"
-import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+import { useRouter } from "next/router"
+import React, { useEffect } from "react"
 
-import Header from "../components/common/frontend/Header"
-import Footer from "../components/common/Footer"
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-// const useStyles = makeStyles((theme) => ({
-// 	grow: {
-// 		flexGrow: 1,
-// 	}
-// }))
+//PROJECT IMPORT
+import { REG_NEXT_STEP, USERGROUP } from "./../helpers/constants"
+import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
+import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase"
+import AuthCheck from "../components/AuthCheck"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minHeight: "100vh",
-	},
-	main: {
-		marginTop: theme.spacing(8),
-		marginBottom: theme.spacing(2),
-	},
-	footer: {
-		padding: theme.spacing(3, 2),
-		marginTop: "auto",
-		backgroundColor:
-			theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
-	},
-}))
 
 function RootLayout({ children }) {
-	const classes = useStyles()
+	const router = useRouter()
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		console.log("RootLayout useEffect")
+		const unsubscribe = auth.onAuthStateChanged(async (user) => {
+			if (user) {
+
+				//Whether a social user, redirect if not yet created in db
+				if (user.providerData[0].providerId !== "password") {
+					//these information will be loaded in next step @ /signup/account
+					dispatch(loginTemp({
+						uid: user.uid,
+						displayName: user.displayName,
+						email: user.email,
+						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
+					}))
+
+					const res = await getUserDocByUid(user.uid)
+					if (res === undefined) {
+						router.push("/signup/account")
+						return
+					}
+				}
+
+				//Load settings to Redux
+				const userDoc = await getUserDocByUid(user.uid)
+				const userProperties = await getUsernameDocByUsername(userDoc.username)
+
+				dispatch(loginSuccess({
+					emailVerified: user.emailVerified,
+					creationTime: user.metadata.creationTime,
+					lastSignInTime: user.metadata.lastSignInTime,
+					providerId: user.providerData[0].providerId,
+					...userProperties
+				}))
+
+				//redirect to any uncompleted steps
+				if (userProperties.nextStep !== REG_NEXT_STEP.DONE) {
+					router.push(userProperties.nextStep)
+					return
+				}
+
+				//if user is not admin but loggin at /admin, then redirect to /client
+				if ((router.pathname.slice(0, 6) === "/admin") && (userProperties.group === USERGROUP.USER))
+					router.push("/client")
+			} else {
+				//Clear loggedin data
+				dispatch(logoutSuccess())
+			}
+		})
+		//Close connection with Firebase!
+		return unsubscribe
+	}, [dispatch])
+
 	return (
 		<>
 			<Head>
-				<title>Site Layout</title>
-				<meta name="description" content="Site Layout Description" />
+				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
+				<meta name="description" content="Elegant &amp; Powerful Ticket System, Documentation, Blog" />
+				<meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
 			</Head>
 
-			<div className={classes.root}>
-				<Header />
-
-				{children}
-
-				<Footer />
-			</div>
+			{children}
 		</>
 	)
 }
 
 RootLayout.propTypes = { children: PropTypes.node }
 
-export const getLayout = page => <RootLayout>{page}</RootLayout>
+export const getRootLayout = page => <RootLayout>{page}</RootLayout>
 
 export default RootLayout

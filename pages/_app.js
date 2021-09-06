@@ -29,7 +29,6 @@ import PropTypes from "prop-types"
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
-import { Toaster } from "react-hot-toast"
 import { CssBaseline, ThemeProvider } from "@material-ui/core"
 import { SnackbarProvider } from "notistack"
 
@@ -60,22 +59,6 @@ Router.events.on("routeChangeStart", () => { NProgress.start() })
 Router.events.on("routeChangeComplete", () => NProgress.done())
 Router.events.on("routeChangeError", () => NProgress.done())
 
-/* */
-const toastOptions = {
-	duration: 13000,
-	className: "bp3-toast bp3-intent-primary",
-	success: {
-		className: "bp3-toast bp3-intent-success",
-		duration: 3000,
-		position: "bottom right"
-	},
-	error: {
-		className: "bp3-toast bp3-intent-danger",
-		duration: 4000,
-		position: "top right"
-	},
-}
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
@@ -103,7 +86,6 @@ function MyApp({ Component, pageProps }) {
 					<SnackbarProvider maxSnack={3}>
 						{getLayout(<Component {...pageProps} />)}
 					</SnackbarProvider>
-
 				</ThemeProvider>
 			</Provider>
 		</>

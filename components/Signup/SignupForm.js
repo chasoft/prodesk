@@ -41,6 +41,7 @@ import { regRule } from "../../helpers/regex"
 import { isUsernameAvailable } from "../../helpers/firebase"
 import { useSnackbar } from "notistack"
 import { signUpWithEmail } from "../../helpers/userAuthentication"
+import { useRouter } from "next/router"
 
 //ASSETS
 
@@ -103,6 +104,9 @@ const validationSchema = yup.object({
 
 const SignupForm = () => {
 	const classes = useStyles()
+	const { enqueueSnackbar } = useSnackbar()
+	const router = useRouter()
+
 	updateFlexDirection({ payload: "row" })
 
 	const formik = useFormik({
@@ -116,14 +120,17 @@ const SignupForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			const { enqueueSnackbar } = useSnackbar()
 			if (!isUsernameAvailable(values.username)) {
 				enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
 				return
 			}
 
-			signUpWithEmail(values.email, values.password, values.name, values.username)
-			console.log("ok to go!!!")
+			signUpWithEmail({
+				email: values.email,
+				password: values.password,
+				name: values.name,
+				username: values.username
+			}, { router, enqueueSnackbar })
 		},
 	})
 

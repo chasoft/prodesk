@@ -31,7 +31,7 @@ import AskNow from "../components/Docs/AskNow"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
+import { getLayout } from "../components/BlankLayout"
 import MainNav from "../components/MainNav"
 import PromotedSearch from "../components/PromotedSearch"
 import AskNowFrame from "../components/Docs/AskNowFrame"

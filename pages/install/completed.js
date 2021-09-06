@@ -19,36 +19,59 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
+//CORE SYSTEM
 import React from "react"
-import Post from "../components/Post"
+import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Button, Typography } from "@material-ui/core"
 
-import { getLayout } from "./../components/BlankLayout"
-
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+//PROJECT IMPORT
+import { Logo } from "./../../components/common"
+import { getInstallLayout } from "./InstallLayout"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-
-
-
-function ANewsPost() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
+function InstallCompleted() {
+	const router = useRouter()
 	return (
-		<Post />
+		<>
+			<div style={{ padding: "3rem" }}>
+				<Logo />
+			</div>
+			<Typography variant="h1">
+				Welcome to ProDesk
+			</Typography>
+			<Typography variant="button">
+				Your Elegant &amp; Powerful Blog / Documentation / Ticket System
+			</Typography>
+
+			<div style={{ padding: "3rem" }}>
+				<Typography variant="body1">
+					Your Superadmin account has been created successfully.<br />
+					Go to the admin dashboard to start setting up your great site!
+				</Typography>
+				<Button
+					variant="contained" color="primary"
+					style={{ paddingTop: "3rem", paddingLeft: "3rem", paddingRight: "3rem" }}
+					onClick={() => {
+						router.push("/admin")
+					}}
+				>
+					Admin Dashboard
+				</Button>
+			</div>
+		</>
 	)
 }
+InstallCompleted.propTypes = { children: PropTypes.any }
 
-ANewsPost.getLayout = getLayout
-export default ANewsPost
+InstallCompleted.getLayout = getInstallLayout
+
+export default InstallCompleted

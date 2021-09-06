@@ -22,21 +22,71 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
+import Head from "next/head"
 import PropTypes from "prop-types"
+import React from "react"
+import { makeStyles } from "@material-ui/core/styles"
+import { getRootLayout } from "./RootLayout"
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
+
+import Header from "../components/common/frontend/Header"
+import Footer from "../components/common/Footer"
 
 /*****************************************************************
-* MAIN RENDER                                                   *
-*****************************************************************/
+ * INIT                                                          *
+ *****************************************************************/
+
+// const useStyles = makeStyles((theme) => ({
+// 	grow: {
+// 		flexGrow: 1,
+// 	}
+// }))
+
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
+const useStyles = makeStyles((theme) => ({
+	root: {
+		display: "flex",
+		flexDirection: "column",
+		minHeight: "100vh",
+	},
+	main: {
+		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(2),
+	},
+	footer: {
+		padding: theme.spacing(3, 2),
+		marginTop: "auto",
+		backgroundColor:
+			theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
+	},
+}))
 
 function BlankLayout({ children }) {
+	const classes = useStyles()
 	return (
-		<div style={{ display: "flex" }}>
-			{children}
-		</div >
+		<>
+			<Head>
+				<title>Site Layout</title>
+				<meta name="description" content="Site Layout Description" />
+			</Head>
+
+			<div className={classes.root}>
+				<Header />
+
+				{children}
+
+				<Footer />
+			</div>
+		</>
 	)
 }
 
-BlankLayout.propTypes = { children: PropTypes.any }
-export const getLayout = page => <BlankLayout>{page}</BlankLayout>
+BlankLayout.propTypes = { children: PropTypes.node }
+
+export const getLayout = page => getRootLayout(<BlankLayout>{page}</BlankLayout>)
+
 export default BlankLayout

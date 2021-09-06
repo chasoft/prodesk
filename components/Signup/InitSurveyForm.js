@@ -23,10 +23,13 @@
  *****************************************************************/
 
 import React from "react"
-import {
-	Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio, Grid, Hidden
-} from "@material-ui/core"
-import { Logo } from "../common"
+import { Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio } from "@material-ui/core"
+import { doInitSurvey } from "../../helpers/firebase"
+import { useDispatch, useSelector } from "react-redux"
+import { getAuth } from "../../redux/selectors"
+import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+import { useRouter } from "next/router"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -71,6 +74,25 @@ const AnOption = () => {
 
 const InitSurveyForm = () => {
 	const classes = useStyles()
+	const { currentUser } = useSelector(getAuth)
+	const { enqueueSnackbar } = useSnackbar()
+	const dispatch = useDispatch()
+	const router = useRouter()
+
+	const formik = useFormik({
+		initialValues: {
+			purpose: "1"
+		},
+		// validationSchema: validationSchema,
+		onSubmit: async (values) => {
+			doInitSurvey({
+				username: currentUser.username,
+				payload: values
+			}, { enqueueSnackbar, dispatch, router })
+		},
+	})
+
+
 	return (
 		<>
 			<Paper className={classes.root} elevation={0}>
@@ -80,15 +102,15 @@ const InitSurveyForm = () => {
 					<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
 				</div>
 
-				<div className={classes.options}>
-					<Paper><AnOption /></Paper>
-					<Paper><AnOption /></Paper>
-					<Paper><AnOption /></Paper>
-				</div>
+				<form className={classes.form} onSubmit={formik.handleSubmit}>
+					<div className={classes.options}>
+						<Paper><AnOption /></Paper>
+						<Paper><AnOption /></Paper>
+						<Paper><AnOption /></Paper>
+					</div>
 
-				<Button variant="contained" color="primary">
-					Finish
-				</Button>
+					<Button type="submit" variant="contained" color="primary">Finish</Button>
+				</form>
 
 			</Paper>
 		</>

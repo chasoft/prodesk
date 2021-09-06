@@ -29,8 +29,8 @@ import React from "react"
  *****************************************************************/
 
 import LoginForm from "../components/Signup/LoginForm"
-import { SignUpLink } from "./../components/common"
-import { getLayout, TopRightContent } from "./../layout/RegLayout"
+import { Logo, SignUpLink } from "./../components/common"
+import { getLayout, TopLine } from "./../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,9 +43,11 @@ import { getLayout, TopRightContent } from "./../layout/RegLayout"
 function Login() {
 	return (
 		<>
-			<TopRightContent>
-				<SignUpLink />
-			</TopRightContent>
+			<TopLine
+				left={<Logo />}
+				center={<Logo />}
+				right={<SignUpLink />}
+			/>
 			<LoginForm />
 		</>
 	)

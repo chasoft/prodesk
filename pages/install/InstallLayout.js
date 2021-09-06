@@ -19,119 +19,72 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
-import {
-	Button, Grid, Paper, TextField, Typography, makeStyles, Avatar
-} from "@material-ui/core"
+//CORE SYSTEM
+import React, { useEffect, useState } from "react"
+import PropTypes from "prop-types"
+import DefaultErrorPage from "next/error"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { CircularProgress, Container, makeStyles } from "@material-ui/core"
 
-import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
-import { useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
-import { createProfileRegStep } from "../../helpers/firebase"
+//PROJECT IMPORT
+import Footer from "../../components/common/Footer"
+import { getInstallStatus } from "../../helpers/firebase"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
 	root: {
 		display: "flex",
 		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		marginBottom: theme.spacing(4),
-		"& > h2": {
-			marginTop: "2rem",
-			marginBottom: "1rem"
-		}
+		minHeight: "100vh",
 	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
-	higherPanel: {
+	content: {
 		display: "flex",
 		flexDirection: "column",
+		justifyContent: "center",
 		alignItems: "center",
-		padding: theme.spacing(0, 0, 4)
-	},
-	form: {
-
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
-	},
-}))
+		flexGrow: 1
+	}
+})
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const CreateProfileForm = () => {
+function InstallLayout({ children }) {
 	const classes = useStyles()
-	const { currentUser } = useSelector(getAuth)
-	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
-	const [location, setLocation] = useState("")
+	const [isInstalled, setIsInstalled] = useState(null)
+
+	useEffect(async () => {
+		const installStatus = await getInstallStatus()
+		setIsInstalled(installStatus)
+	})
+
+	if (isInstalled)
+		return <DefaultErrorPage statusCode={404} />
+
 	return (
-		<>
-			<Paper className={classes.root} elevation={0}>
+		<div className={classes.root} >
+			<Container maxWidth="md" className={classes.content}>
+				{
+					(isInstalled === null) ? <CircularProgress />
+						: children
+				}
+			</Container>
 
-				<div style={{ marginBottom: "2rem" }}>
-					<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
-					<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
-				</div>
+			<Footer />
 
-				<Typography variant="h2">Add an avatar</Typography>
-				<Grid container spacing={2}>
-					<Grid item>
-						<Avatar url={avatar} style={{ width: 128, height: 128 }} />
-					</Grid>
-					<Grid item>
-						<Button variant="outlined" color="secondary">Choose Image</Button>
-						<SimpleTogglePanel title="or choose one of our defaults">
-							<DefaultAvatarPanel callback={(url) => { setAvatar(url) }} defaultAvatar={currentUser.photoURL} />
-						</SimpleTogglePanel>
-					</Grid>
-				</Grid>
-
-				<Typography variant="h2">Add your location</Typography>
-				<form className={classes.form}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								id="location"
-								name="location"
-								label="Location"
-								variant="outlined"
-								margin="dense"
-								value={location}
-								onChange={(e) => setLocation(e.target.value)}
-								fullWidth
-								autoFocus
-								required
-							/>
-						</Grid>
-					</Grid>
-					<Button
-						type="submit" variant="contained" color="primary" className={classes.submit}
-						onClick={() => {
-							createProfileRegStep(currentUser.username, avatar, location)
-						}}
-					>
-						Continue
-					</Button>
-				</form>
-
-			</Paper>
-		</>
+		</div>
 	)
 }
+InstallLayout.propTypes = { children: PropTypes.any }
 
-export default CreateProfileForm
+export const getInstallLayout = page => <InstallLayout>{page}</InstallLayout>
+
+export default InstallLayout

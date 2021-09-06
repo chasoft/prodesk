@@ -35,6 +35,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "../redux/selectors"
 import { useEffect } from "react"
 import { setflexDirection } from "../redux/slices/uiSettings"
+import { getRootLayout } from "./../layout/RootLayout"
+import AuthCheck from "../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
@@ -78,29 +80,6 @@ const SideImage = ({ imageUrl = null, children }) => {
 }
 SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
 
-export const TopLeftContent = ({ children }) => {
-	return (
-		<Hidden smDown>
-			<div style={{ width: "100%", textAlign: "left", paddingTop: "2rem" }}>
-				{children}
-			</div>
-		</Hidden>
-	)
-}
-TopLeftContent.propTypes = { children: PropTypes.any }
-
-export const TopRightContent = ({ children }) => {
-	return (
-		<Hidden smDown>
-			<div style={{ width: "100%", textAlign: "right", paddingTop: "2rem", paddingRight: "3rem", }}>
-				{children}
-			</div>
-		</Hidden>
-	)
-}
-TopRightContent.propTypes = { children: PropTypes.any }
-
-
 export const TopLine = ({ left, center, right }) => {
 	return (
 		<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "2rem" }}>
@@ -126,8 +105,6 @@ export const TopLine = ({ left, center, right }) => {
 }
 TopLine.propTypes = { left: PropTypes.any, center: PropTypes.any, right: PropTypes.any }
 
-
-
 export const updateFlexDirection = (props) => {
 	const dispatch = useDispatch()
 	useEffect(() => {
@@ -142,18 +119,21 @@ export const updateFlexDirection = (props) => {
 function RegLayout({ children }) {
 	const classes = useStyles()
 	const { flexDirection } = useSelector(getUiSettings)
+	console.log("started RegLayout")
 	return (
 		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
 			<SideImage />
 			<Container className={classes.content} >
-				{children}
-				<Footer />
+				<AuthCheck>
+					{children}
+					<Footer />
+				</AuthCheck>
 			</Container>
 		</div>
 	)
 }
 RegLayout.propTypes = { children: PropTypes.any }
 
-export const getLayout = page => <RegLayout>{page}</RegLayout>
+export const getLayout = page => getRootLayout(<RegLayout>{page}</RegLayout>)
 
 export default RegLayout

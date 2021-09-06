@@ -19,21 +19,28 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
+//CORE SYSTEM
 import React from "react"
-import {
-	Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles
-} from "@material-ui/core"
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles } from "@material-ui/core"
 
+//THIRD-PARTY
+import * as yup from "yup"
+import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+
+//PROJECT IMPORT
 import { ForgotPasswordLink, LoginLink } from "../common"
 import { updateFlexDirection } from "./../../layout/RegLayout"
+
+//ASSETS
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
+import { signInWithEmail } from "./../../helpers/userAuthentication"
+import { useRouter } from "next/router"
 
 /*****************************************************************
  * INIT                                                          *
@@ -62,9 +69,19 @@ const useStyles = makeStyles((theme) => ({
 
 	},
 	submit: {
-		margin: theme.spacing(3, 0, 2),
+		margin: theme.spacing(0, 0, 2),
 	},
 }))
+
+
+const validationSchema = yup.object({
+	username: yup
+		.string("Enter your username or Email address")
+		.required("Username or Email address is required"),
+	password: yup
+		.string("Enter your password")
+		.required("Password is required")
+})
 
 /*****************************************************************
  * MAIN RENDER                                                   *
@@ -72,7 +89,25 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginForm = () => {
 	const classes = useStyles()
+	const { enqueueSnackbar } = useSnackbar()
+	const router = useRouter()
+
+	const formik = useFormik({
+		initialValues: {
+			username: "",
+			password: ""
+		},
+		validationSchema: validationSchema,
+		onSubmit: async (values) => {
+			signInWithEmail({
+				username: values.username,
+				password: values.password
+			}, { enqueueSnackbar, router })
+		},
+	})
+
 	updateFlexDirection({ payload: "row" })
+
 	return (
 		<Paper className={classes.root} elevation={0}>
 
@@ -85,51 +120,71 @@ const LoginForm = () => {
 				</Typography>
 			</div>
 
-			<form className={classes.form} noValidate>
-				<TextField
-					variant="outlined"
-					margin="normal"
-					required
-					fullWidth
-					id="email"
-					label="Email Address"
-					name="email"
-					autoComplete="email"
-					autoFocus
-				/>
-				<TextField
-					variant="outlined"
-					margin="normal"
-					required
-					fullWidth
-					name="password"
-					label="Password"
-					type="password"
-					id="password"
-					autoComplete="current-password"
-				/>
-				<FormControlLabel
-					control={<Checkbox value="remember" color="primary" />}
-					label="Remember me"
-				/>
-				<Button
-					type="submit"
-					fullWidth
-					variant="contained"
-					color="primary"
-					className={classes.submit}
-				>
-					Login
-				</Button>
-				<Grid container>
-					<Grid item xs>
-						<ForgotPasswordLink />
+			<form className={classes.form} onSubmit={formik.handleSubmit}>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextField
+							id="username"
+							name="username"
+							label="Username or Email address"
+							variant="outlined"
+							autoComplete="username"
+							value={formik.values.username}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.username && Boolean(formik.errors.username)}
+							helperText={formik.touched.username && formik.errors.username}
+							fullWidth
+							required
+							autoFocus
+						/>
 					</Grid>
-					<Grid item>
-						<LoginLink />
+					<Grid item xs={12}>
+						<TextField
+							id="password"
+							name="password"
+							label="Password"
+							type="password"
+							variant="outlined"
+							autoComplete="current-password"
+							value={formik.values.password}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.password && Boolean(formik.errors.password)}
+							helperText={formik.touched.password && formik.errors.password}
+							required
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<FormControlLabel
+							control={<Checkbox value="remember" color="primary" />}
+							label="Remember me"
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<Button
+							fullWidth
+							type="submit"
+							variant="contained"
+							color="primary"
+							className={classes.submit}
+							disabled={!(formik.isValid && formik.dirty)}
+						>
+							Login
+						</Button>
 					</Grid>
 				</Grid>
 			</form>
+			<Grid container>
+				<Grid item xs>
+					<ForgotPasswordLink />
+				</Grid>
+				<Grid item>
+					<LoginLink />
+				</Grid>
+			</Grid>
+
 		</Paper>
 	)
 }

@@ -40,7 +40,10 @@ import { updateFlexDirection } from "./../../layout/RegLayout"
 import { regRule } from "../../helpers/regex"
 import { isUsernameAvailable } from "../../helpers/firebase"
 import { useSnackbar } from "notistack"
-import { signUpWithEmail } from "../../helpers/userAuthentication"
+import { signUpViaSocialAccount } from "../../helpers/userAuthentication"
+import { getAuth } from "../../redux/selectors"
+import { useSelector } from "react-redux"
+import { useRouter } from "next/router"
 
 //ASSETS
 
@@ -96,25 +99,38 @@ const validationSchema = yup.object({
 
 const SocialLoginForm = () => {
 	const classes = useStyles()
+	const { enqueueSnackbar } = useSnackbar()
+	const router = useRouter()
+	const { currentUser } = useSelector(getAuth)
+
 	updateFlexDirection({ payload: "row" })
 
 	const formik = useFormik({
 		initialValues: {
-			name: "",
+			name: currentUser.displayName,
 			username: "",
-			email: "",
+			email: currentUser.email,
 			agreement: false
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			const { enqueueSnackbar } = useSnackbar()
-			if (!isUsernameAvailable(values.username)) {
-				enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
-				return
+			try {
+				if (!(await isUsernameAvailable(values.username))) {
+					enqueueSnackbar("Username is existed. Please choose another one!", { variant: "warning" })
+					return
+				}
+				await signUpViaSocialAccount({
+					uid: currentUser.uid,
+					email: values.email,
+					name: values.name,
+					username: values.username,
+					photoURL: currentUser.photoURL
+				}, { enqueueSnackbar, router })
 			}
-
-			signUpWithEmail(values.email, values.password)
-			console.log("ok to go!!!")
+			catch (e) {
+				console.log(e.message)
+				enqueueSnackbar(e.message, { variant: "error" })
+			}
 		},
 	})
 
@@ -168,12 +184,8 @@ const SocialLoginForm = () => {
 							name="email"
 							label="Email Address"
 							value={formik.values.email}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.email && Boolean(formik.errors.email)}
-							helperText={formik.touched.email && formik.errors.email}
 							variant="outlined"
-							required
+							disabled
 						/>
 					</Grid>
 					<Grid item xs={12}>

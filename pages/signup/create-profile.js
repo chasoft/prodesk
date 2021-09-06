@@ -29,7 +29,7 @@ import React from "react"
  *****************************************************************/
 
 import { Logo } from "../../components/common"
-import { getLayout, TopLeftContent, TopLine, updateFlexDirection } from "../../layout/RegLayout"
+import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
 import CreateProfileForm from "../../components/Signup/CreateProfileForm"
 
 /*****************************************************************

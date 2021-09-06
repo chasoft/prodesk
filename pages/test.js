@@ -32,67 +32,36 @@ import { useFormik } from "formik"
 import * as yup from "yup"
 
 //PROJECT IMPORT
-
+import { useSnackbar } from "notistack"
 
 //ASSETS
 import InboxIcon from "@material-ui/icons/MoveToInbox"
 import MailIcon from "@material-ui/icons/Mail"
 
+import { getUserDocByUid } from "./../helpers/firebase"
+import { useRouter } from "next/router"
+import { useDispatch } from "react-redux"
+import { logout } from "../redux/slices/auth"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(10),
-	}
-}))
+function aFunc() {
 
-const validationSchema = yup.object({
-	name: yup
-		.string("Enter your name, you can change later")
-		.min(5, "min 5 characters")
-		.required("Name is required"),
-})
+}
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 const Test = () => {
-	const classes = useStyles()
 
-	const formik = useFormik({
-		initialValues: {
-			name: "",
-		},
-		validationSchema: validationSchema,
-		onSubmit: (values) => {
-			alert(JSON.stringify(values, null, 2))
-		},
-	})
 
 	return (
-		<Container maxWidth="xs" className={classes.root}>
-			<form onSubmit={formik.handleSubmit}>
-				<TextField
-					fullWidth
-					id="name"
-					name="name"
-					label="Name"
-					value={formik.values.name}
-					onChange={formik.handleChange}
-					error={formik.touched.name && Boolean(formik.errors.name)}
-					variant="outlined"
-					autoFocus
-					required
-				/>
-				<Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
-					Create Account
-				</Button>
-			</form>
-		</Container>
+		<Container maxWidth="xs">
+			<Button>Clickme</Button>
+		</Container >
 	)
 }
 

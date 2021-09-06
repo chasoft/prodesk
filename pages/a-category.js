@@ -30,7 +30,7 @@ import MainNav from "../components/MainNav"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/RootLayout"
+import { getLayout } from "../components/BlankLayout"
 
 
 /*****************************************************************

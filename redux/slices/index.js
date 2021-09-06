@@ -19,15 +19,12 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import { combineReducers } from "redux"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
 import authReducer from "./auth"
 import pageMetaReducer from "./pageMeta"
 import newTicketReducer from "./newTicket"

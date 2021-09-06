@@ -63,9 +63,9 @@ const ProAccordion = withStyles((theme) => ({
 		"&:before": {
 			display: "none",
 		},
-		"&$expanded": {
-			margin: "auto",
-		},
+		// "&$expanded": {
+		// 	margin: "auto",
+		// },
 	}
 }))(Accordion)
 

@@ -1,42 +1,89 @@
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
 
-import { Spinner } from "@blueprintjs/core"
-import React from "react"
+//CORE SYSTEM
+import { useRouter } from "next/router"
+import React, { useEffect, useState } from "react"
+
+// MATERIAL-UI
+import { CircularProgress } from "@material-ui/core"
+
+//THIRD-PARTY
 import { useSelector } from "react-redux"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
+import { getAuth } from "./../redux/selectors"
+import { USERGROUP } from "../helpers/constants"
+import { regBackendURL, regLoginSignUpURL } from "../helpers/regex"
 
-import { getAuth } from "./../../../selectors"
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 const LoadingIndicator = () => {
-	// updatePageMeta({
-	// 	title: "Loading...",
-	// 	subTitle: "Please hold your seat tight!"
-	// })
 	return (
-
 		<div style={{ margin: "100px 0 150px 0", display: "flex", flexDirection: "row", justifyContent: "center" }}>
-			Workers are working hard... &nbsp; <Spinner size={20} />
+			Workers are working hard... &nbsp; <CircularProgress size={20} />
 		</div>
-
 	)
 }
 
 /**
- * Display `children` when logged in or display <SingleLoginForm />
+ * AuthCheck does 2 things
+ * 1. If not loggin and trying to access `/admin` or `/client` then,
+ *    - Save current path
+ *    - redirect to `/login`
+ * 2. If logged and trying to access `/login` or `/signup` then,
+ *    - redirect to `/admin` or `/client` based on UserGroup
+ *    else, show `children`
  */
 export default function AuthCheck(props) {
-	const { loading, isAuthenticated } = useSelector(getAuth)
-	if (loading) return <LoadingIndicator />
-	return isAuthenticated ? props.children : props.fallback || <p>SingleLoginForm</p>
+	const { loading, isAuthenticated, currentUser } = useSelector(getAuth)
+	const [display, setDisplay] = useState(false)
+	const router = useRouter()
+
+	useEffect(() => {
+
+		if (isAuthenticated === true) {
+			if (regLoginSignUpURL.test(router.pathname)) {
+				if (currentUser.group === USERGROUP.USER)
+					router.push("/client")
+				else
+					router.push("/admin")
+			} else {
+				setDisplay(true)
+			}
+		} else {
+			if (regBackendURL.test(router.pathname)) {
+				router.push("/login")
+			} else {
+				setDisplay(true)
+			}
+		}
+
+	}, [isAuthenticated])
+
+	if (loading || (isAuthenticated === null) || (display === false)) return <LoadingIndicator />
+	return props.children
 }
 
 /**

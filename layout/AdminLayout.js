@@ -38,6 +38,7 @@ import SideBar from "../components/common/backend/SideBar"
 import Footer from "../components/common/Footer"
 import { getUiSettings } from "../redux/selectors"
 import { MENU_ITEM_TYPE } from "../helpers/constants"
+import AuthCheck from "../components/AuthCheck"
 
 //ASSETS
 
@@ -164,33 +165,35 @@ function AdminLayout({ children }) {
 	const { adminBackgroundId } = useSelector(getUiSettings)
 
 	return (
-		<div
-			className={classes.root}
-			style={{
-				backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-				backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
-			}}
-		>
-			<SideBar
-				isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
-				homeUrl="/admin" settingsUrl=""
-				data={ADMIN_MENUS}
-			/>
-
-			<PerfectScrollbar
-				component="div" className={classes.content}
-				onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
+		<AuthCheck>
+			<div
+				className={classes.root}
+				style={{
+					backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
+					backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
+				}}
 			>
+				<SideBar
+					isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
+					homeUrl="/admin" settingsUrl=""
+					data={ADMIN_MENUS}
+				/>
 
-				<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
+				<PerfectScrollbar
+					component="div" className={classes.content}
+					onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
+				>
 
-				{children}
+					<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 
-				<Footer />
+					{children}
 
-			</PerfectScrollbar>
+					<Footer />
 
-		</div>
+				</PerfectScrollbar>
+
+			</div>
+		</AuthCheck>
 	)
 }
 AdminLayout.propTypes = { children: PropTypes.any }

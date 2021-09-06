@@ -112,7 +112,7 @@ SimpleTogglePanel.propTypes = {
 	children: PropTypes.any,
 }
 
-export const DefaultAvatarPanel = ({ size = 32, callback }) => {
+export const DefaultAvatarPanel = ({ size = 32, callback, defaultAvatar }) => {
 	const classes = useStyles()
 	const DefaultAvatarList = [
 		{ id: 1, alt: "default avatar", url: "/default-avatar/1.png" },
@@ -124,10 +124,13 @@ export const DefaultAvatarPanel = ({ size = 32, callback }) => {
 	return (
 
 		<Grid container spacing={1} alignContent="space-between">
+			<Grid item onClick={() => callback(defaultAvatar)} className={classes.avatar}>
+				<Avatar alt="defaultAvatar" url={defaultAvatar} style={{ width: size, height: size }} />
+			</Grid>
 			{
 				DefaultAvatarList.map((avatar) => {
 					return (
-						<Grid item key={avatar.id} onClick={() => callback(avatar.id)} className={classes.avatar}>
+						<Grid item key={avatar.id} onClick={() => callback(avatar.url)} className={classes.avatar}>
 							<Avatar alt={avatar.alt} url={avatar.url} style={{ width: size, height: size }} />
 						</Grid>
 					)
@@ -137,4 +140,4 @@ export const DefaultAvatarPanel = ({ size = 32, callback }) => {
 
 	)
 }
-DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func }
+DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }

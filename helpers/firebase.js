@@ -26,6 +26,7 @@ import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/firestore"
 import "firebase/storage"
+//import { getAnalytics } from "firebase/analytics"
 
 /*****************************************************************
  * THIRD-PARTY LIBRARY                                           *
@@ -33,8 +34,9 @@ import "firebase/storage"
 
 import dayjs from "dayjs"
 import { nanoid } from "nanoid"
-import router from "next/router"
-import { useSnackbar } from "notistack"
+import { useDispatch } from "react-redux"
+import { updateAvatarAndLocation } from "../redux/slices/auth"
+import { REG_NEXT_STEP, TICKET_STATUS } from "./constants"
 
 
 /*****************************************************************
@@ -47,12 +49,14 @@ const firebaseConfig = {
 	projectId: "prodesk-83cfe",
 	storageBucket: "prodesk-83cfe.appspot.com",
 	messagingSenderId: "183315432788",
-	appId: "1:183315432788:web:44dc8c573f1bca61fc34c1"
+	appId: "1:183315432788:web:44dc8c573f1bca61fc34c1",
+	// measurementId: "G-GNGHNS1VEJ"
 }
 
 //this condition is to prevent double initializing for nextjs
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
+	//const analytics = getAnalytics(app)
 }
 
 /*****************************************************************
@@ -95,8 +99,7 @@ export function fixDateTickets(data) {
  * @param {string} newEmail
  */
 
-export const reAuthenticateProviderPassword = async (uid, email, password, newEmail) => {
-	const { enqueueSnackbar } = useSnackbar()
+export const reAuthenticateProviderPassword = async ({ uid, email, password, newEmail }, { enqueueSnackbar }) => {
 	try {
 		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
 		await auth.currentUser.reauthenticateWithCredential(credential)
@@ -110,8 +113,7 @@ export const reAuthenticateProviderPassword = async (uid, email, password, newEm
 	}
 }
 
-export const changePassword = async (uid, email, password, newPassword) => {
-	const { enqueueSnackbar } = useSnackbar()
+export const changePassword = async ({ email, password, newPassword }, { enqueueSnackbar }) => {
 	try {
 		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
 		await auth.currentUser.reauthenticateWithCredential(credential)
@@ -126,6 +128,16 @@ export const changePassword = async (uid, email, password, newPassword) => {
 /*****************************************************************
  * ADMIN                                                         *
  *****************************************************************/
+
+export const getInstallStatus = async () => {
+	const res = await db.doc("usernames/superadmin").get()
+	console.log(res.exists)
+	if (res.exists) {
+		return true
+	} else {
+		return false
+	}
+}
 
 /**
  * get admin's document from `adminUsers/${uid}`
@@ -146,6 +158,7 @@ export const getAdminDocByUid = async (uid) => {
  * USERS                                                         *
  *****************************************************************/
 
+
 /**
  * Get user's document (`users/${uid}`) by username
  * @param {string} username
@@ -162,7 +175,7 @@ export async function getUserDocByUsername(username) {
 /**
  * Get user's document (`users/${uid}`) by uid
  * @param {string} uid
- * @returns Object
+ * @returns Promise
  */
 export const getUserDocByUid = async (uid) => {
 	const res = await db.doc(`users/${uid}`).get()
@@ -176,13 +189,6 @@ export const getUserDocByUid = async (uid) => {
  * @returns Object
  */
 export const getUsernameDocByUsername = async (username) => {
-	if (!username) {
-		console.log("username is empty")
-		return ({
-			username: ""
-		})
-	}
-
 	const query = await db.doc(`usernames/${username}`).get()
 	if (query.exists) {
 		const res = query.data()
@@ -191,6 +197,57 @@ export const getUsernameDocByUsername = async (username) => {
 		return ({})
 	}
 }
+
+export const createProfileRegStep = async ({ username, avatar, location }, { router, enqueueSnackbar }) => {
+	const dispatch = useDispatch()
+	const batch = db.batch()
+	try {
+		batch.set(db.doc(`usernames/${username}`), {
+			photoURL: avatar,
+			location: location,
+			nextStep: REG_NEXT_STEP.SURVEY
+		})
+		await batch.commit()
+
+		//Update redux
+		dispatch(updateAvatarAndLocation({
+			photoURL: avatar,
+			location: location,
+			nextStep: REG_NEXT_STEP.SURVEY
+		}))
+
+		router.push(REG_NEXT_STEP.SURVEY)
+	}
+	catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
+	}
+}
+
+export const doInitSurvey = async ({ username, payload }, { enqueueSnackbar, dispatch, router }) => {
+	const batch = db.batch()
+	try {
+		batch.set(db.doc(`usernames/${username}`), {
+			survey: JSON.stringify(payload),
+			nextStep: REG_NEXT_STEP.DONE
+		})
+		await batch.commit()
+
+		//Update redux
+		dispatch(updateAvatarAndLocation({
+			survey: JSON.stringify(payload),
+			nextStep: REG_NEXT_STEP.DONE
+		}))
+
+		router.push("/client")
+	}
+	catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
+	}
+}
+
+
 
 export const isUsernameAvailable = async (username) => {
 	const { exists } = await db.doc(`usernames/${username}`).get()
@@ -207,9 +264,7 @@ export const isUsernameAvailable = async (username) => {
  * @param {*} username 
  * @returns Nothing
  */
-export const setUsername = async (uid, username) => {
-	const { enqueueSnackbar } = useSnackbar()
-
+export const setUsername = async ({ uid, username }, { enqueueSnackbar }) => {
 	// const { exists } = await db.doc(`usernames/${username}`).get()
 	if (!isUsernameAvailable(username)) {
 		enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
@@ -253,8 +308,7 @@ export const getUserDisplayInfo = (uid) => {
  * @param {string} username
  * @param {string} displayName
  */
-export const updateDisplayName = async (username, displayName) => {
-	const { enqueueSnackbar } = useSnackbar()
+export const updateDisplayName = async ({ username, displayName }, { enqueueSnackbar }) => {
 	try {
 		db.doc(`usernames/${username}`).set({ displayName }, { merge: true })
 		enqueueSnackbar("Display name updated successfully", { variant: "success" })
@@ -302,9 +356,8 @@ export const ticketRepliesRef = (uid, ticketId) => {
  * @param {string} uid - uid of current logged in user
  * @param {string} newStatus - limited in STATUS_FILTER const
  */
-export const updateTicketsStatus = async (idArray, uid, newStatus) => {
+export const updateTicketsStatus = async ({ idArray, uid, newStatus }, { enqueueSnackbar }) => {
 	const batch = db.batch()
-	const { enqueueSnackbar } = useSnackbar()
 
 	try {
 		idArray.forEach((id) => {
@@ -330,8 +383,7 @@ export const updateTicketsStatus = async (idArray, uid, newStatus) => {
  * @param {string[]} idArray
  * @param {string} uid - uid of current logged in user
  */
-export const deleteTickets = async (idArray, uid) => {
-	const { enqueueSnackbar } = useSnackbar()
+export const deleteTickets = async ({ idArray, uid }, { enqueueSnackbar }) => {
 	const batch = db.batch()
 	try {
 		idArray.forEach((id) => {
@@ -354,8 +406,7 @@ export const deleteTickets = async (idArray, uid) => {
  * @param {string} ticketContent 
  * @returns Nothing
  */
-export const createNewTicket = async (currentUser, metaData, ticketContent) => {
-	const { enqueueSnackbar } = useSnackbar()
+export const createNewTicket = async ({ currentUser, metaData, ticketContent }, { router, enqueueSnackbar }) => {
 	/* validate input */
 	if (metaData.subject.length < 10) {
 		enqueueSnackbar("Please enter meaningful subject for your new ticket!", { variant: "error" })
@@ -391,9 +442,8 @@ export const createNewTicket = async (currentUser, metaData, ticketContent) => {
 }
 
 
-export const createNewTicketReply = async (currentUser, ticketId, replyContent) => {
+export const createNewTicketReply = async ({ currentUser, ticketId, replyContent }, { enqueueSnackbar }) => {
 	/* validate input */
-	const { enqueueSnackbar } = useSnackbar()
 	if (replyContent.length < 5) {
 		enqueueSnackbar("Too short for a reply!", { variant: "error" })
 		return
