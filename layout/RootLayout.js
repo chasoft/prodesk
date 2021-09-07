@@ -25,7 +25,6 @@
 //CORE SYSTEM
 import Head from "next/head"
 import PropTypes from "prop-types"
-import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
 //THIRD-PARTY
@@ -35,7 +34,10 @@ import { useDispatch } from "react-redux"
 import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
 import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase"
-import AuthCheck from "../components/AuthCheck"
+import { ReduxRedirect } from "../components/AuthCheck"
+import { setRedirect } from "./../redux/slices/redirect"
+import { regAdminURL } from "../helpers/regex"
+import { useRouter } from "next/router"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
@@ -48,23 +50,6 @@ function RootLayout({ children }) {
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
 			if (user) {
-				//Whether a social user, redirect if not yet created in db
-				if (user.providerData[0].providerId !== "password") {
-					//these information will be loaded in next step @ /signup/account
-					dispatch(loginTemp({
-						uid: user.uid,
-						displayName: user.displayName,
-						email: user.email,
-						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
-					}))
-
-					const res = await getUserDocByUid(user.uid)
-					if (res === undefined) {
-						router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
-						return
-					}
-				}
-
 				//Load settings to Redux
 				const userDoc = await getUserDocByUid(user.uid)
 				const userProperties = await getUsernameDocByUsername(userDoc.username)
@@ -77,15 +62,34 @@ function RootLayout({ children }) {
 					...userProperties
 				}))
 
-				//redirect to any uncompleted steps
-				// if (userProperties.nextStep !== REDIRECT_URL.DONE) {
-				// 	router.push(userProperties.nextStep)
-				// 	return
-				// }
+				//Whether a social user, redirect if not yet created in db
+				if (user.providerData[0].providerId !== "password") {
+					//these information will be loaded in next step @ /signup/account
+					dispatch(loginTemp({
+						uid: user.uid,
+						displayName: user.displayName,
+						email: user.email,
+						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
+					}))
 
-				//if user is not admin but loggin at /admin, then redirect to /client
-				// if ((router.pathname.slice(0, 6) === "/admin") && (userProperties.group === USERGROUP.USER))
-				// 	router.push("/client")
+					const res = await getUserDocByUid(user.uid)
+					if (res === undefined) {
+						// router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
+						dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
+						return
+					}
+				}
+
+				//redirect to any uncompleted steps
+				if (userProperties.nextStep !== REDIRECT_URL.DONE) {
+					// router.push(userProperties.nextStep)
+					dispatch(setRedirect(userProperties.nextStep))
+					// 	return
+				} else {
+					// if user is not admin but loggin at / admin, then redirect to / client
+					if (regAdminURL.test(router.pathname) && (userProperties.group === USERGROUP.USER))
+						dispatch(setRedirect(REDIRECT_URL.CLIENT))
+				}
 			} else {
 				//Clear loggedin data
 				dispatch(logoutSuccess())
@@ -104,9 +108,9 @@ function RootLayout({ children }) {
 				<meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
 			</Head>
 
-			<AuthCheck>
+			<ReduxRedirect>
 				{children}
-			</AuthCheck>
+			</ReduxRedirect>
 		</>
 	)
 }

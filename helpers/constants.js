@@ -30,6 +30,9 @@ export const REDIRECT_URL = {
 	SURVEY: "/signup/survey",
 	SOCIAL_CREATE_ACCOUNT: "/signup/account",
 	CREATE_PROFILE: "/signup/create-profile",
+	CREATE_COMPLETED: "/signup/completed",
+	INSTALL_COMPLETED: "/install/completed",
+	INSTALL_CREATE: "/install/create",
 	DONE: "DONE",
 }
 

@@ -106,7 +106,6 @@ const validationSchema = yup.object({
 const SignupForm = () => {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
-	const router = useRouter()
 	const dispatch = useDispatch()
 
 	updateFlexDirection({ payload: "row" })
@@ -132,7 +131,7 @@ const SignupForm = () => {
 				password: values.password,
 				name: values.name,
 				username: values.username
-			}, { router, enqueueSnackbar, dispatch })
+			}, { enqueueSnackbar, dispatch })
 		},
 	})
 

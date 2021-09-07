@@ -31,6 +31,7 @@ import React from "react"
 import { LoginLink, Logo } from "../../components/common"
 import { getLayout, TopLine } from "../../layout/RegLayout"
 import SocialLoginForm from "../../components/Signup/SocialLoginForm"
+import AuthCheck from "../../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
@@ -42,7 +43,7 @@ import SocialLoginForm from "../../components/Signup/SocialLoginForm"
 
 function SocialSignup() {
 	return (
-		<>
+		<AuthCheck>
 			<TopLine
 				left={<Logo />}
 				center={<Logo />}
@@ -50,7 +51,7 @@ function SocialSignup() {
 			/>
 
 			<SocialLoginForm />
-		</>
+		</AuthCheck>
 	)
 }
 

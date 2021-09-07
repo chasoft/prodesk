@@ -33,13 +33,16 @@ import { Button, Typography } from "@material-ui/core"
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
+import { REDIRECT_URL } from "../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function Install() {
-	const router = useRouter()
+	const dispatch = useDispatch()
 	return (
 		<>
 			<div style={{ padding: "3rem" }}>
@@ -56,7 +59,8 @@ function Install() {
 				<Button
 					variant="contained" color="primary" style={{ paddingLeft: "3rem", paddingRight: "3rem" }}
 					onClick={() => {
-						router.push("/install/create")
+						// router.push("/install/create")
+						dispatch(setRedirect(REDIRECT_URL.INSTALL_CREATE))
 					}}
 				>
 					Start

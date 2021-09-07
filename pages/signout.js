@@ -18,42 +18,16 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
-
+import { useSnackbar } from "notistack"
 import React from "react"
+import { useDispatch } from "react-redux"
+import { signOut } from "../helpers/userAuthentication"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
-import { Logo } from "../../components/common"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
-import CreateProfileForm from "../../components/Signup/CreateProfileForm"
-import AuthCheck from "../../components/AuthCheck"
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-function InitProfile() {
-	updateFlexDirection({ payload: "row-reverse" })
-	return (
-		<AuthCheck>
-			<TopLine
-				left={<Logo />}
-				center={<Logo />}
-			/>
-			<CreateProfileForm />
-		</AuthCheck>
-	)
+function SignOut() {
+	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
+	signOut({ enqueueSnackbar, dispatch })
+	return (<></>)
 }
 
-InitProfile.getLayout = getLayout
-
-export default InitProfile
+export default SignOut

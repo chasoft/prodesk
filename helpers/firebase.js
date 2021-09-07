@@ -37,7 +37,8 @@ import { nanoid } from "nanoid"
 import { useDispatch } from "react-redux"
 import { updateAvatarAndLocation } from "../redux/slices/auth"
 import { REDIRECT_URL, TICKET_STATUS } from "./constants"
-
+import { setRedirect } from "../redux/slices/redirect"
+import { batch as reduxBatch } from "react-redux"
 
 /*****************************************************************
  * FIREBASE CONFIGURATION                                        *
@@ -198,25 +199,27 @@ export const getUsernameDocByUsername = async (username) => {
 	}
 }
 
-export const createProfileRegStep = async ({ username, avatar, location }, { router, enqueueSnackbar }) => {
-	const dispatch = useDispatch()
+export const createProfileRegStep = async ({ username, avatar, location }, { dispatch, enqueueSnackbar }) => {
 	const batch = db.batch()
 	try {
 		batch.set(db.doc(`usernames/${username}`), {
 			photoURL: avatar,
 			location: location,
 			nextStep: REDIRECT_URL.SURVEY
-		})
+		}, { merge: true })
 		await batch.commit()
 
 		//Update redux
-		dispatch(updateAvatarAndLocation({
-			photoURL: avatar,
-			location: location,
-			nextStep: REDIRECT_URL.SURVEY
-		}))
+		reduxBatch(() => {
+			dispatch(updateAvatarAndLocation({
+				photoURL: avatar,
+				location: location,
+				// nextStep: REDIRECT_URL.SURVEY
+			}))
+			dispatch(setRedirect(REDIRECT_URL.SURVEY))
+		})
 
-		router.push(REDIRECT_URL.SURVEY)
+		// router.push(REDIRECT_URL.SURVEY)
 	}
 	catch (e) {
 		console.log(e.message)
@@ -224,22 +227,23 @@ export const createProfileRegStep = async ({ username, avatar, location }, { rou
 	}
 }
 
-export const doInitSurvey = async ({ username, payload }, { enqueueSnackbar, dispatch, router }) => {
+export const doInitSurvey = async ({ username, payload }, { enqueueSnackbar, dispatch }) => {
 	const batch = db.batch()
 	try {
 		batch.set(db.doc(`usernames/${username}`), {
 			survey: JSON.stringify(payload),
 			nextStep: REDIRECT_URL.DONE
-		})
+		}, { merge: true })
 		await batch.commit()
 
 		//Update redux
-		dispatch(updateAvatarAndLocation({
-			survey: JSON.stringify(payload),
-			nextStep: REDIRECT_URL.DONE
-		}))
-
-		router.push("/client")
+		reduxBatch(() => {
+			dispatch(updateAvatarAndLocation({
+				survey: JSON.stringify(payload),
+				nextStep: REDIRECT_URL.DONE
+			}))
+			dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))
+		})
 	}
 	catch (e) {
 		console.log(e.message)

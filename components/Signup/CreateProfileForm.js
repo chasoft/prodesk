@@ -32,9 +32,10 @@ import {
  *****************************************************************/
 
 import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { getAuth } from "../../redux/selectors"
 import { createProfileRegStep } from "../../helpers/firebase"
+import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * INIT                                                          *
@@ -76,6 +77,8 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateProfileForm = () => {
 	const classes = useStyles()
+	const { enqueueSnackbar } = useSnackbar()
+	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
 	const [location, setLocation] = useState("")
@@ -121,8 +124,13 @@ const CreateProfileForm = () => {
 					</Grid>
 					<Button
 						type="submit" variant="contained" color="primary" className={classes.submit}
-						onClick={() => {
-							createProfileRegStep(currentUser.username, avatar, location)
+						onClick={(e) => {
+							e.preventDefault()
+							createProfileRegStep({
+								username: currentUser.username,
+								avatar,
+								location
+							}, { enqueueSnackbar, dispatch })
 						}}
 					>
 						Continue

@@ -39,7 +39,8 @@ import SideBar from "../components/common/backend/SideBar"
 import Footer from "../components/common/Footer"
 import { getUiSettings } from "../redux/selectors"
 import { BACKGROUND_ID, MENU_ITEM_TYPE } from "../helpers/constants"
-import AuthCheck from "../components/AuthCheck"
+import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
+import { getRootLayout } from "./RootLayout"
 
 //ASSETS
 
@@ -124,37 +125,39 @@ function ClientLayout({ children }) {
 	const { adminBackgroundId } = useSelector(getUiSettings)
 
 	return (
-		<AuthCheck>
-			<div
-				className={classes.root}
-				style={{
-					backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-					backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
-				}}
-			>
-				<SideBar
-					isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
-					homeUrl="/client" settingsUrl=""
-					data={CLIENT_MENU}
-				/>
-
-				<PerfectScrollbar
-					component="div" className={classes.content}
-					onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
+		<ReduxRedirect>
+			<AuthCheck>
+				<div
+					className={classes.root}
+					style={{
+						backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
+						backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
+					}}
 				>
+					<SideBar
+						isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
+						homeUrl="/client" settingsUrl=""
+						data={CLIENT_MENU}
+					/>
 
-					<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
+					<PerfectScrollbar
+						component="div" className={classes.content}
+						onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
+					>
 
-					{children}
+						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 
-					<Footer />
-				</PerfectScrollbar>
-			</div>
-		</AuthCheck>
+						{children}
+
+						<Footer />
+					</PerfectScrollbar>
+				</div>
+			</AuthCheck>
+		</ReduxRedirect>
 	)
 }
 ClientLayout.propTypes = { children: PropTypes.any }
 
-export const getLayout = page => <ClientLayout>{page}</ClientLayout>
+export const getLayout = page => getRootLayout(<ClientLayout>{page}</ClientLayout>)
 
 export default ClientLayout

@@ -125,7 +125,7 @@ const SocialLoginForm = () => {
 					name: values.name,
 					username: values.username,
 					photoURL: currentUser.photoURL
-				}, { enqueueSnackbar, router })
+				}, { enqueueSnackbar })
 			}
 			catch (e) {
 				console.log(e.message)

@@ -22,18 +22,20 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
-import { Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio } from "@material-ui/core"
-import { doInitSurvey } from "../../helpers/firebase"
-import { useDispatch, useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
-import { useFormik } from "formik"
-import { useSnackbar } from "notistack"
-import { useRouter } from "next/router"
+import React, { useEffect, useRef } from "react"
+// import { makeStyles } from "@material-ui/core"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
+
+import { Logo } from "../../components/common"
+import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
+import { LinearProgress, makeStyles, Paper, Typography } from "@material-ui/core"
+import { REDIRECT_URL } from "../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
+import { useDispatch } from "react-redux"
+import AuthCheck from "../../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
@@ -46,74 +48,61 @@ const useStyles = makeStyles((theme) => ({
 		flexGrow: 1,
 		justifyContent: "center",
 		marginBottom: theme.spacing(4),
-	},
-	options: {
-		display: "flex",
-		flexWrap: "wrap",
-		justifyContent: "center",
-		"& > *": {
-			margin: theme.spacing(1),
-			width: theme.spacing(16),
-			height: theme.spacing(16),
-		},
-		padding: theme.spacing(4, 2, 4)
-	},
+	}
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AnOption = () => {
-	return (
-		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
-			<FormControlLabel value="female" control={<Radio />} />
-		</RadioGroup>
-	)
-}
-
-const InitSurveyForm = () => {
+function SignUpCompleted() {
 	const classes = useStyles()
-	const { currentUser } = useSelector(getAuth)
-	const { enqueueSnackbar } = useSnackbar()
+	const [progress, setProgress] = React.useState(0)
+	const [buffer, setBuffer] = React.useState(10)
+	const progressRef = useRef(() => { })
 	const dispatch = useDispatch()
 
-	const formik = useFormik({
-		initialValues: {
-			purpose: "1"
-		},
-		// validationSchema: validationSchema,
-		onSubmit: async (values) => {
-			doInitSurvey({
-				username: currentUser.username,
-				payload: values
-			}, { enqueueSnackbar, dispatch })
-		},
+	updateFlexDirection({ payload: "row" })
+
+	useEffect(() => {
+		progressRef.current = () => {
+			if (progress > 100) {
+				dispatch(setRedirect(REDIRECT_URL.CLIENT))
+			} else {
+				const diff = Math.random() * 10
+				const diff2 = Math.random() * 10
+				setProgress(progress + diff)
+				setBuffer(progress + diff + diff2)
+			}
+		}
 	})
 
+	useEffect(() => {
+		const timer = setInterval(() => { progressRef.current() }, 500)
+		return () => { clearInterval(timer) }
+	}, [])
 
 	return (
-		<>
+		<AuthCheck>
+			<TopLine
+				left={<Logo />}
+				center={<Logo />}
+			/>
+
 			<Paper className={classes.root} elevation={0}>
 
 				<div style={{ marginBottom: "2rem" }}>
-					<Typography variant="h1">What brings you to ProDesk</Typography>
-					<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
+					<Typography variant="h1">ACCOUNT CREATION COMPLETED</Typography>
+					<Typography variant="body1">Thank you! You will be redirected to the Dashboard.</Typography>
 				</div>
 
-				<form className={classes.form} onSubmit={formik.handleSubmit}>
-					<div className={classes.options}>
-						<Paper><AnOption /></Paper>
-						<Paper><AnOption /></Paper>
-						<Paper><AnOption /></Paper>
-					</div>
-
-					<Button type="submit" variant="contained" color="primary">Finish</Button>
-				</form>
+				<LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
 
 			</Paper>
-		</>
+		</AuthCheck>
 	)
 }
 
-export default InitSurveyForm
+SignUpCompleted.getLayout = getLayout
+
+export default SignUpCompleted

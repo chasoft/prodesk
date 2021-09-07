@@ -25,7 +25,6 @@
 //CORE SYSTEM
 import React from "react"
 import PropTypes from "prop-types"
-import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Button, Typography } from "@material-ui/core"
@@ -33,13 +32,17 @@ import { Button, Typography } from "@material-ui/core"
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
+import { setRedirect } from "./../../redux/slices/redirect"
+import { REDIRECT_URL } from "./../../helpers/constants"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function InstallCompleted() {
-	const router = useRouter()
+	// const router = useRouter()
+	const dispatch = useDispatch()
 	return (
 		<>
 			<div style={{ padding: "3rem" }}>
@@ -61,7 +64,8 @@ function InstallCompleted() {
 					variant="contained" color="primary"
 					style={{ paddingTop: "3rem", paddingLeft: "3rem", paddingRight: "3rem" }}
 					onClick={() => {
-						router.push("/admin")
+						// router.push("/admin")
+						dispatch(setRedirect(REDIRECT_URL.ADMIN))
 					}}
 				>
 					Admin Dashboard

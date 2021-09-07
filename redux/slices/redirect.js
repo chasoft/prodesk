@@ -33,8 +33,8 @@ const redirectSlice = createSlice({
 			state.redirectURL = payload
 		},
 
-		clearRedirect: (state, { payload }) => {
-			state.redirectURL = payload
+		clearRedirect: (state) => {
+			state.redirectURL = ""
 		},
 	},
 })

@@ -24,8 +24,10 @@
 
 //PROJECT IMPORT
 import { loginSuccess, logoutSuccess } from "../redux/slices/auth"
+import { setRedirect } from "../redux/slices/redirect"
 import { REDIRECT_URL, USERGROUP } from "./constants"
 import { auth, db, getUserDocByUid, getUsernameDocByUsername, googleAuthProvider } from "./firebase"
+import { batch as reduxBatch } from "react-redux"
 
 /*****************************************************************
  * LIBRARY                                                       *
@@ -43,7 +45,7 @@ export const signInWithGoogle = async ({ enqueueSnackbar }) => {
 /**
  * TODO: there are repeated code! would be optimized (DRY) in the next release
  */
-export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, router, dispatch }) => {
+export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, dispatch }) => {
 	enqueueSnackbar("Connecting with Authentication Server...", { variant: "info" })
 	try {
 		if (username.includes("@")) {
@@ -65,8 +67,12 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 			}))
 
 			//Check usergroup and redirect after logged in
-			if (usernameDoc.group === USERGROUP.USER) router.push(REDIRECT_URL.CLIENT)
-			else router.push(REDIRECT_URL.ADMIN)
+			if (usernameDoc.group === USERGROUP.USER)
+				// router.push(REDIRECT_URL.CLIENT)
+				dispatch(setRedirect(REDIRECT_URL.CLIENT))
+			else
+				// router.push(REDIRECT_URL.ADMIN)
+				dispatch(setRedirect(REDIRECT_URL.ADMIN))
 
 		} else {
 			const usernameDoc = await getUsernameDocByUsername(username)
@@ -87,8 +93,13 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 				}))
 
 				//Check usergroup and redirect
-				if (usernameDoc.group === USERGROUP.USER) router.push(REDIRECT_URL.CLIENT)
-				else router.push(REDIRECT_URL.ADMIN)
+				if (usernameDoc.group === USERGROUP.USER)
+					// router.push(REDIRECT_URL.CLIENT)
+					dispatch(setRedirect(REDIRECT_URL.CLIENT))
+				else
+					// router.push(REDIRECT_URL.ADMIN)
+					dispatch(setRedirect(REDIRECT_URL.ADMIN))
+
 			} else {
 				throw new Error("Invalid username or not existed!")
 			}
@@ -102,7 +113,10 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 
 export const signOut = ({ enqueueSnackbar, dispatch }) => {
 	auth.signOut()
-	dispatch(logoutSuccess())
+	reduxBatch(() => {
+		dispatch(logoutSuccess())
+		dispatch(setRedirect(REDIRECT_URL.LOGIN))
+	})
 	enqueueSnackbar("Signed out successfully!", { variant: "success" })
 }
 
@@ -113,7 +127,7 @@ export const signOut = ({ enqueueSnackbar, dispatch }) => {
  * @param {*} name 
  * @param {*} username 
  */
-export const signUpWithEmail = async ({ email, password, name, username }, { router, enqueueSnackbar, dispatch }) => {
+export const signUpWithEmail = async ({ email, password, name, username }, { enqueueSnackbar, dispatch }) => {
 	try {
 		enqueueSnackbar("Connecting with Authentication Server...", { key: "signUpWithEmail", variant: "info" })
 		const userCredential = await auth.createUserWithEmailAndPassword(email, password)
@@ -128,6 +142,7 @@ export const signUpWithEmail = async ({ email, password, name, username }, { rou
 		batch.set(db.doc(`usernames/${username}`), {
 			uid: JSON.stringify([userCredential.user.uid]),	//all associated account will be stored here in an Array
 			displayName: name,
+			email: userCredential.user.email,
 			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
 			username: username,
 			group: USERGROUP.USER, //default usergroup
@@ -138,19 +153,19 @@ export const signUpWithEmail = async ({ email, password, name, username }, { rou
 		//TODO: verify email!!! userCredential.user.sendEmailVerification()
 
 		//Update Redux before doing the redirecting
-		const userDoc = await getUserDocByUid(userCredential.user.uid)
-		const userProperties = await getUsernameDocByUsername(userDoc.username)
+		// const userDoc = await getUserDocByUid(userCredential.user.uid)
+		// const userProperties = await getUsernameDocByUsername(userDoc.username)
 
-		dispatch(loginSuccess({
-			emailVerified: userCredential.user.emailVerified,
-			creationTime: userCredential.user.metadata.creationTime,
-			lastSignInTime: userCredential.user.metadata.lastSignInTime,
-			providerId: userCredential.user.providerData[0].providerId,
-			...userProperties
-		}))
+		// dispatch(loginSuccess({
+		// 	emailVerified: userCredential.user.emailVerified,
+		// 	creationTime: userCredential.user.metadata.creationTime,
+		// 	lastSignInTime: userCredential.user.metadata.lastSignInTime,
+		// 	providerId: userCredential.user.providerData[0].providerId,
+		// 	...userProperties
+		// }))
 
-
-		router.push(REDIRECT_URL.CREATE_PROFILE)
+		// router.push(REDIRECT_URL.CREATE_PROFILE)
+		dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
 	}
 	catch (e) {
 		console.log(e.message)
@@ -166,7 +181,7 @@ export const signUpWithEmail = async ({ email, password, name, username }, { rou
  * @param {*} username 
  * @param {*} photoURL 
  */
-export const signUpViaSocialAccount = async ({ uid, email, name, username, photoURL }, { enqueueSnackbar, router }) => {
+export const signUpViaSocialAccount = async ({ uid, email, name, username, photoURL }, { enqueueSnackbar, dispatch }) => {
 	try {
 		enqueueSnackbar("Creating your account with us...", { key: "signUpViaSocialAccount", variant: "info" })
 
@@ -186,7 +201,8 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 		await batch.commit()
 
 		//Go to next step -> /signup/create-profile  (to update avatar & location)
-		router.push(REDIRECT_URL.CREATE_PROFILE)
+		// router.push(REDIRECT_URL.CREATE_PROFILE)
+		dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
 	}
 	catch (e) {
 		console.log(e.message)
@@ -201,7 +217,7 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
  * @param {*} password 
  * @param {*} name 
  */
-export const createAdminAccount = async ({ email, password, name }, { enqueueSnackbar, router }) => {
+export const createAdminAccount = async ({ email, password, name }, { enqueueSnackbar, dispatch }) => {
 	const username = "superadmin"
 	try {
 		enqueueSnackbar("Connecting with Authentication Server...", { variant: "info" })
@@ -223,7 +239,8 @@ export const createAdminAccount = async ({ email, password, name }, { enqueueSna
 			nextStep: REDIRECT_URL.DONE
 		})
 		await batch.commit()
-		router.push("/install/completed")
+		// router.push("/install/completed")
+		dispatch(setRedirect(REDIRECT_URL.INSTALL_COMPLETED))
 	}
 	catch (e) {
 		console.log(e.message)

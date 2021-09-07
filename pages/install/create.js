@@ -39,6 +39,7 @@ import { getInstallLayout } from "./InstallLayout"
 import { createAdminAccount } from "../../helpers/userAuthentication"
 import { useSnackbar } from "notistack"
 import { useRouter } from "next/router"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
@@ -86,7 +87,7 @@ const validationSchema = yup.object({
 function CreateSuperAdmin() {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
-	const router = useRouter()
+	const dispatch = useDispatch()
 
 	const formik = useFormik({
 		initialValues: {
@@ -102,11 +103,7 @@ function CreateSuperAdmin() {
 				email: values.email,
 				password: values.password,
 				name: values.name
-			}, {
-				enqueueSnackbar: enqueueSnackbar,
-				router: router
-			})
-
+			}, { enqueueSnackbar, dispatch })
 		},
 	})
 

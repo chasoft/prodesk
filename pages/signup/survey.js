@@ -32,6 +32,7 @@ import React from "react"
 import { Logo } from "../../components/common"
 import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
 import InitSurveyForm from "../../components/Signup/InitSurveyForm"
+import AuthCheck from "../../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,14 +45,14 @@ import InitSurveyForm from "../../components/Signup/InitSurveyForm"
 function NewUserSurvey() {
 	updateFlexDirection({ payload: "row" })
 	return (
-		<>
+		<AuthCheck>
 			<TopLine
 				left={<Logo />}
 				center={<Logo />}
 			/>
 
 			<InitSurveyForm />
-		</>
+		</AuthCheck>
 	)
 }
 

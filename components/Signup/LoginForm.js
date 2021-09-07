@@ -91,7 +91,6 @@ const validationSchema = yup.object({
 const LoginForm = () => {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
-	const router = useRouter()
 	const dispatch = useDispatch()
 
 	const formik = useFormik({
@@ -104,7 +103,7 @@ const LoginForm = () => {
 			signInWithEmail({
 				username: values.username,
 				password: values.password
-			}, { enqueueSnackbar, router, dispatch })
+			}, { enqueueSnackbar, dispatch })
 		},
 	})
 
