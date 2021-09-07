@@ -86,7 +86,7 @@ const ThreadMessageHeader = () => {
 		<Grid container className={classes.root}>
 			<Grid item className={classes.leftAvatar}>
 				{/* <div className={classes.logoContainer}> */}
-				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
 				{/* </div> */}
 			</Grid>
 			<Grid item className={classes.middleContent}>

@@ -41,6 +41,7 @@ import { updateFlexDirection } from "./../../layout/RegLayout"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import { signInWithEmail } from "./../../helpers/userAuthentication"
 import { useRouter } from "next/router"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
@@ -91,6 +92,7 @@ const LoginForm = () => {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
 	const router = useRouter()
+	const dispatch = useDispatch()
 
 	const formik = useFormik({
 		initialValues: {
@@ -102,7 +104,7 @@ const LoginForm = () => {
 			signInWithEmail({
 				username: values.username,
 				password: values.password
-			}, { enqueueSnackbar, router })
+			}, { enqueueSnackbar, router, dispatch })
 		},
 	})
 

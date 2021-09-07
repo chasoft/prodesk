@@ -23,8 +23,8 @@
  *****************************************************************/
 
 //PROJECT IMPORT
-import { logoutSuccess } from "../redux/slices/auth"
-import { REG_NEXT_STEP, USERGROUP } from "./constants"
+import { loginSuccess, logoutSuccess } from "../redux/slices/auth"
+import { REDIRECT_URL, USERGROUP } from "./constants"
 import { auth, db, getUserDocByUid, getUsernameDocByUsername, googleAuthProvider } from "./firebase"
 
 /*****************************************************************
@@ -40,7 +40,10 @@ export const signInWithGoogle = async ({ enqueueSnackbar }) => {
 	}
 }
 
-export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, router }) => {
+/**
+ * TODO: there are repeated code! would be optimized (DRY) in the next release
+ */
+export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, router, dispatch }) => {
 	enqueueSnackbar("Connecting with Authentication Server...", { variant: "info" })
 	try {
 		if (username.includes("@")) {
@@ -50,20 +53,42 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 
 			//Check usergroup and redirect
 			const userDoc = await getUserDocByUid(loggedin.user.uid)
+			const userProperties = await getUsernameDocByUsername(userDoc.username)
 			const usernameDoc = await getUsernameDocByUsername(userDoc.username)
-			//Check usergroup and redirect
-			if (usernameDoc.group === USERGROUP.USER) router.push("/client")
-			else router.push("/admin")
+			//Update Redux before do the redirecting
+			dispatch(loginSuccess({
+				emailVerified: loggedin.user.emailVerified,
+				creationTime: loggedin.user.metadata.creationTime,
+				lastSignInTime: loggedin.user.metadata.lastSignInTime,
+				providerId: loggedin.user.providerData[0].providerId,
+				...userProperties
+			}))
+
+			//Check usergroup and redirect after logged in
+			if (usernameDoc.group === USERGROUP.USER) router.push(REDIRECT_URL.CLIENT)
+			else router.push(REDIRECT_URL.ADMIN)
 
 		} else {
 			const usernameDoc = await getUsernameDocByUsername(username)
 			if (usernameDoc?.email) {
-				await auth.signInWithEmailAndPassword(usernameDoc.email, password)
+				const loggedin = await auth.signInWithEmailAndPassword(usernameDoc.email, password)
 				enqueueSnackbar("Logged in successfully!", { variant: "success" })
 
 				//Check usergroup and redirect
-				if (usernameDoc.group === USERGROUP.USER) router.push("/client")
-				else router.push("/admin")
+				const userDoc = await getUserDocByUid(loggedin.user.uid)
+				const userProperties = await getUsernameDocByUsername(userDoc.username)
+				//Update Redux before doing the redirecting
+				dispatch(loginSuccess({
+					emailVerified: loggedin.user.emailVerified,
+					creationTime: loggedin.user.metadata.creationTime,
+					lastSignInTime: loggedin.user.metadata.lastSignInTime,
+					providerId: loggedin.user.providerData[0].providerId,
+					...userProperties
+				}))
+
+				//Check usergroup and redirect
+				if (usernameDoc.group === USERGROUP.USER) router.push(REDIRECT_URL.CLIENT)
+				else router.push(REDIRECT_URL.ADMIN)
 			} else {
 				throw new Error("Invalid username or not existed!")
 			}
@@ -88,7 +113,7 @@ export const signOut = ({ enqueueSnackbar, dispatch }) => {
  * @param {*} name 
  * @param {*} username 
  */
-export const signUpWithEmail = async ({ email, password, name, username }, { router, enqueueSnackbar }) => {
+export const signUpWithEmail = async ({ email, password, name, username }, { router, enqueueSnackbar, dispatch }) => {
 	try {
 		enqueueSnackbar("Connecting with Authentication Server...", { key: "signUpWithEmail", variant: "info" })
 		const userCredential = await auth.createUserWithEmailAndPassword(email, password)
@@ -105,19 +130,27 @@ export const signUpWithEmail = async ({ email, password, name, username }, { rou
 			displayName: name,
 			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
 			username: username,
-			group: "user", //default usergroup
-			nextStep: REG_NEXT_STEP.CREATE_PROFILE
+			group: USERGROUP.USER, //default usergroup
+			nextStep: REDIRECT_URL.CREATE_PROFILE
 		})
 		await batch.commit()
 
 		//TODO: verify email!!! userCredential.user.sendEmailVerification()
 
-		//Go to next step -> /signup/create-profile  (to update avatar & location)
-		//Nothing to do update with Redux here,
-		//at this time, user logged successfully and just redirect to other page,
-		//then... RootLayout would be activated and redux will be updated
-		//so... next page will have all information in Redux!
-		router.push(REG_NEXT_STEP.CREATE_PROFILE)
+		//Update Redux before doing the redirecting
+		const userDoc = await getUserDocByUid(userCredential.user.uid)
+		const userProperties = await getUsernameDocByUsername(userDoc.username)
+
+		dispatch(loginSuccess({
+			emailVerified: userCredential.user.emailVerified,
+			creationTime: userCredential.user.metadata.creationTime,
+			lastSignInTime: userCredential.user.metadata.lastSignInTime,
+			providerId: userCredential.user.providerData[0].providerId,
+			...userProperties
+		}))
+
+
+		router.push(REDIRECT_URL.CREATE_PROFILE)
 	}
 	catch (e) {
 		console.log(e.message)
@@ -148,12 +181,12 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 			username: username,
 			photoURL: photoURL,
 			group: "user", //default usergroup
-			nextStep: REG_NEXT_STEP.CREATE_PROFILE
+			nextStep: REDIRECT_URL.CREATE_PROFILE
 		})
 		await batch.commit()
 
 		//Go to next step -> /signup/create-profile  (to update avatar & location)
-		router.push(REG_NEXT_STEP.CREATE_PROFILE)
+		router.push(REDIRECT_URL.CREATE_PROFILE)
 	}
 	catch (e) {
 		console.log(e.message)
@@ -187,7 +220,7 @@ export const createAdminAccount = async ({ email, password, name }, { enqueueSna
 			photoURL: "/img/default-admin-avatar.png",
 			username: username,
 			group: username, //default usergroup
-			nextStep: REG_NEXT_STEP.DONE
+			nextStep: REDIRECT_URL.DONE
 		})
 		await batch.commit()
 		router.push("/install/completed")

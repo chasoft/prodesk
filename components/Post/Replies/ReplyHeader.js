@@ -85,7 +85,7 @@ const ReplyHeader = () => {
 		<Grid container className={classes.root}>
 			<Grid item className={classes.leftAvatar}>
 				{/* <div className={classes.logoContainer}> */}
-				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.large} />
+				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" className={classes.large} />
 				{/* </div> */}
 			</Grid>
 			<Grid item className={classes.middleContent}>

@@ -22,3 +22,4 @@ export const getAuth = (state) => state.authState
 export const getPageMeta = (state) => state.pageMetaState
 export const getNewTicket = (state) => state.newTicketState
 export const getUiSettings = (state) => state.uiSettingsState
+export const getRedirect = (state) => state.redirectState

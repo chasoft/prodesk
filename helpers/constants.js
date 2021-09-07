@@ -23,8 +23,12 @@ export const MENU_ITEM_TYPE = {
 	GROUP: "Group of Items",
 }
 
-export const REG_NEXT_STEP = {
+export const REDIRECT_URL = {
+	ADMIN: "/admin",
+	CLIENT: "/client",
+	LOGIN: "/login",
 	SURVEY: "/signup/survey",
+	SOCIAL_CREATE_ACCOUNT: "/signup/account",
 	CREATE_PROFILE: "/signup/create-profile",
 	DONE: "DONE",
 }

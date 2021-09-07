@@ -32,7 +32,7 @@ import React, { useEffect } from "react"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { REG_NEXT_STEP, USERGROUP } from "./../helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
 import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase"
 import AuthCheck from "../components/AuthCheck"
@@ -46,10 +46,8 @@ function RootLayout({ children }) {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		console.log("RootLayout useEffect")
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
 			if (user) {
-
 				//Whether a social user, redirect if not yet created in db
 				if (user.providerData[0].providerId !== "password") {
 					//these information will be loaded in next step @ /signup/account
@@ -62,7 +60,7 @@ function RootLayout({ children }) {
 
 					const res = await getUserDocByUid(user.uid)
 					if (res === undefined) {
-						router.push("/signup/account")
+						router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
 						return
 					}
 				}
@@ -80,14 +78,14 @@ function RootLayout({ children }) {
 				}))
 
 				//redirect to any uncompleted steps
-				if (userProperties.nextStep !== REG_NEXT_STEP.DONE) {
-					router.push(userProperties.nextStep)
-					return
-				}
+				// if (userProperties.nextStep !== REDIRECT_URL.DONE) {
+				// 	router.push(userProperties.nextStep)
+				// 	return
+				// }
 
 				//if user is not admin but loggin at /admin, then redirect to /client
-				if ((router.pathname.slice(0, 6) === "/admin") && (userProperties.group === USERGROUP.USER))
-					router.push("/client")
+				// if ((router.pathname.slice(0, 6) === "/admin") && (userProperties.group === USERGROUP.USER))
+				// 	router.push("/client")
 			} else {
 				//Clear loggedin data
 				dispatch(logoutSuccess())
@@ -106,7 +104,9 @@ function RootLayout({ children }) {
 				<meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
 			</Head>
 
-			{children}
+			<AuthCheck>
+				{children}
+			</AuthCheck>
 		</>
 	)
 }

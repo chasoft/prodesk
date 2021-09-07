@@ -36,7 +36,7 @@ import dayjs from "dayjs"
 import { nanoid } from "nanoid"
 import { useDispatch } from "react-redux"
 import { updateAvatarAndLocation } from "../redux/slices/auth"
-import { REG_NEXT_STEP, TICKET_STATUS } from "./constants"
+import { REDIRECT_URL, TICKET_STATUS } from "./constants"
 
 
 /*****************************************************************
@@ -205,7 +205,7 @@ export const createProfileRegStep = async ({ username, avatar, location }, { rou
 		batch.set(db.doc(`usernames/${username}`), {
 			photoURL: avatar,
 			location: location,
-			nextStep: REG_NEXT_STEP.SURVEY
+			nextStep: REDIRECT_URL.SURVEY
 		})
 		await batch.commit()
 
@@ -213,10 +213,10 @@ export const createProfileRegStep = async ({ username, avatar, location }, { rou
 		dispatch(updateAvatarAndLocation({
 			photoURL: avatar,
 			location: location,
-			nextStep: REG_NEXT_STEP.SURVEY
+			nextStep: REDIRECT_URL.SURVEY
 		}))
 
-		router.push(REG_NEXT_STEP.SURVEY)
+		router.push(REDIRECT_URL.SURVEY)
 	}
 	catch (e) {
 		console.log(e.message)
@@ -229,14 +229,14 @@ export const doInitSurvey = async ({ username, payload }, { enqueueSnackbar, dis
 	try {
 		batch.set(db.doc(`usernames/${username}`), {
 			survey: JSON.stringify(payload),
-			nextStep: REG_NEXT_STEP.DONE
+			nextStep: REDIRECT_URL.DONE
 		})
 		await batch.commit()
 
 		//Update redux
 		dispatch(updateAvatarAndLocation({
 			survey: JSON.stringify(payload),
-			nextStep: REG_NEXT_STEP.DONE
+			nextStep: REDIRECT_URL.DONE
 		}))
 
 		router.push("/client")

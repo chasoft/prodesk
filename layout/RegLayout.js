@@ -35,7 +35,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "../redux/selectors"
 import { useEffect } from "react"
 import { setflexDirection } from "../redux/slices/uiSettings"
-import { getRootLayout } from "./../layout/RootLayout"
 import AuthCheck from "../components/AuthCheck"
 
 /*****************************************************************
@@ -121,19 +120,19 @@ function RegLayout({ children }) {
 	const { flexDirection } = useSelector(getUiSettings)
 	console.log("started RegLayout")
 	return (
-		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
-			<SideImage />
-			<Container className={classes.content} >
-				<AuthCheck>
+		<AuthCheck>
+			<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
+				<SideImage />
+				<Container className={classes.content} >
 					{children}
 					<Footer />
-				</AuthCheck>
-			</Container>
-		</div>
+				</Container>
+			</div>
+		</AuthCheck>
 	)
 }
 RegLayout.propTypes = { children: PropTypes.any }
 
-export const getLayout = page => getRootLayout(<RegLayout>{page}</RegLayout>)
+export const getLayout = page => <RegLayout>{page}</RegLayout>
 
 export default RegLayout

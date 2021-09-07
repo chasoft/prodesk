@@ -18,29 +18,30 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
+import { createSlice } from "@reduxjs/toolkit"
 
-import { combineReducers } from "redux"
+export const initialState = {
+	redirectURL: "",
+}
 
-//PROJECT IMPORT
-import authReducer from "./auth"
-import pageMetaReducer from "./pageMeta"
-import newTicketReducer from "./newTicket"
-import uiSettingsReducer from "./uiSettings"
-import redirectReducer from "./redirect"
+const redirectSlice = createSlice({
+	name: "redirect",
+	initialState,
+	reducers: {
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+		setRedirect: (state, { payload }) => {
+			state.redirectURL = payload
+		},
 
-const rootReducer = combineReducers({
-	authState: authReducer,
-	pageMetaState: pageMetaReducer,
-	newTicketState: newTicketReducer,
-	uiSettingsState: uiSettingsReducer,
-	redirectState: redirectReducer
+		clearRedirect: (state, { payload }) => {
+			state.redirectURL = payload
+		},
+	},
 })
 
-export default rootReducer
+export const {
+	setRedirect,
+	clearRedirect
+} = redirectSlice.actions
+
+export default redirectSlice.reducer

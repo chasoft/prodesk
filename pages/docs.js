@@ -23,18 +23,18 @@
  *****************************************************************/
 
 import React from "react"
-import DocGroup from "../components/Docs/DocGroup"
-import CatGroup from "../components/Docs/CatGroup"
-import AskNow from "../components/Docs/AskNow"
+import DocGroup from "./../components/Docs/DocGroup"
+import CatGroup from "./../components/Docs/CatGroup"
+import AskNow from "./../components/Docs/AskNow"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/BlankLayout"
-import MainNav from "../components/MainNav"
+import { getLayout } from "./../layout/BlankLayout"
+import MainNav from "./../components/common/frontend/MainNav"
 import PromotedSearch from "../components/PromotedSearch"
-import AskNowFrame from "../components/Docs/AskNowFrame"
+import AskNowFrame from "./../components/Docs/AskNowFrame"
 
 /*****************************************************************
  * INIT                                                          *

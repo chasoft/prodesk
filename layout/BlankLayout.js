@@ -26,7 +26,6 @@ import Head from "next/head"
 import PropTypes from "prop-types"
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { getRootLayout } from "./RootLayout"
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
@@ -87,6 +86,6 @@ function BlankLayout({ children }) {
 
 BlankLayout.propTypes = { children: PropTypes.node }
 
-export const getLayout = page => getRootLayout(<BlankLayout>{page}</BlankLayout>)
+export const getLayout = page => <BlankLayout>{page}</BlankLayout>
 
 export default BlankLayout

@@ -71,7 +71,7 @@ const UserInfo = () => {
 	return (
 		<div className={classes.root}>
 			<div item className={classes.leftAvatar}>
-				<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.small} />
+				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" className={classes.small} />
 			</div>
 			<div item className={classes.rightContent}>
 				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">Camille V.</Typography>

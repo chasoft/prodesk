@@ -41,7 +41,8 @@ import SettingsIcon from "@material-ui/icons/Settings"
 import HomeIcon from "@material-ui/icons/Home"
 import { useSnackbar } from "notistack"
 import { signOut } from "../../../helpers/userAuthentication"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { getAuth } from "../../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -70,6 +71,7 @@ const HomeButton = ({ homeUrl, settingsUrl }) => {
 	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
 	return (
 		<>
 			<div className={classes.dashboard}>
@@ -89,7 +91,8 @@ const HomeButton = ({ homeUrl, settingsUrl }) => {
 				<Typography
 					style={{ flexGrow: 1 }}
 					onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}
-				>Logout</Typography>
+				>Logout {currentUser.email}
+				</Typography>
 			</div>
 		</>
 	)

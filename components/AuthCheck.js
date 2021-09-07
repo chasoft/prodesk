@@ -20,7 +20,7 @@
 
 //CORE SYSTEM
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { CircularProgress } from "@material-ui/core"
@@ -30,7 +30,7 @@ import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../redux/selectors"
-import { USERGROUP } from "../helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "../helpers/constants"
 import { regBackendURL, regLoginSignUpURL } from "../helpers/regex"
 
 //ASSETS
@@ -48,41 +48,76 @@ const LoadingIndicator = () => {
 }
 
 /**
- * AuthCheck does 2 things
- * 1. If not loggin and trying to access `/admin` or `/client` then,
- *    - Save current path
- *    - redirect to `/login`
- * 2. If logged and trying to access `/login` or `/signup` then,
- *    - redirect to `/admin` or `/client` based on UserGroup
- *    else, show `children`
+ * AuthCheck
+ * Use this checker to validate the content to show
+ * then, just use this for backend pages & login/logout process
+ *
+ * we take 2 entry points
+ * 		1. you are at login/signup pages
+ * 			1.1 you are logged in (authentication = `true`)
+ * 				1.1.1 REDIRECT_URL === DONE
+ * 					=> REDIRECT based on USERGROUP
+ * 				1.1.2 has a redirect URL
+ * 					  1.1.2.1 Already at redirect URL
+ * 							  => PASSED
+ * 					  1.1.2.2 Not yet at redirect URL
+ * 							  => REDIRECT to redirect URL
+ * 	>>		1.2 you are not logged in (`not true` aka `false` or `null` )
+ * 	>>			=> PASSED
+ *		2. you are at client/admin page
+ *			2.1 you are logged in (authentication = `true`)
+ *				2.1.1 REDIRECT_URL === DONE
+ *					=> PASSED
+ *				2.1.2 has a redirect URL
+ *					=> REDIRECT to redirect URL
+ *					   because redirect URL for now, not apply for any backend URL
+ *	>>		2.2 you are not logged in (`not true` aka `false` or `null` )
+ *	>>			=> REDIRECT to Login Page!
  */
 export default function AuthCheck(props) {
-	const { loading, isAuthenticated, currentUser } = useSelector(getAuth)
+	const { isAuthenticated, currentUser } = useSelector(getAuth)
+	/*
+		we use `display` variable with default is `false` at the beginning
+		to ensure that... there is no flickering, just show the content
+		when it is.
+	*/
 	const [display, setDisplay] = useState(false)
 	const router = useRouter()
 
-	useEffect(() => {
-
-		if (isAuthenticated === true) {
-			if (regLoginSignUpURL.test(router.pathname)) {
-				if (currentUser.group === USERGROUP.USER)
-					router.push("/client")
-				else
-					router.push("/admin")
-			} else {
-				setDisplay(true)
-			}
+	if (regLoginSignUpURL.test(router.pathname)) {
+		if (isAuthenticated !== true) {
+			return props.children
 		} else {
-			if (regBackendURL.test(router.pathname)) {
-				router.push("/login")
+			if (currentUser.nextStep === REDIRECT_URL.DONE) {
+				if (currentUser.group === USERGROUP.USER)
+					router.push(REDIRECT_URL.CLIENT)
+				else
+					router.push(REDIRECT_URL.ADMIN)
 			} else {
-				setDisplay(true)
+				if (router.pathname !== currentUser.nextStep)
+					router.push(currentUser.nextStep)
+				else
+					setDisplay(true)
 			}
 		}
+	}
 
-	}, [isAuthenticated])
+	if (regBackendURL.test(router.pathname)) {
+		if (isAuthenticated !== true) {
+			router.push(REDIRECT_URL.LOGIN)
+		} else {
 
-	if (loading || (isAuthenticated === null) || (display === false)) return <LoadingIndicator />
+			if (currentUser.nextStep === REDIRECT_URL.DONE) {
+				setDisplay(true)
+			} else {
+				router.push(currentUser.nextStep)
+			}
+
+		}
+	}
+
+	if (display === false) return <LoadingIndicator />
+
 	return props.children
 }
 
