@@ -82,7 +82,6 @@ function RootLayout({ children }) {
 
 				//redirect to any uncompleted steps
 				if (userProperties.nextStep !== REDIRECT_URL.DONE) {
-					// router.push(userProperties.nextStep)
 					dispatch(setRedirect(userProperties.nextStep))
 					// 	return
 				} else {

@@ -30,7 +30,7 @@ import React from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
+import { getLayout } from "../../../layout/ClientLayout"
 
 //ASSETS
 
@@ -48,6 +48,10 @@ function NewTicket() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">New Ticket</Typography>
+
+
+
+
 		</Container>
 	)
 }

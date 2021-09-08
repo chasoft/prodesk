@@ -18,40 +18,19 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
-import { Container, Typography } from "@material-ui/core"
+import { useSnackbar } from "notistack"
 import React from "react"
+import { useDispatch } from "react-redux"
+import { ReduxRedirect } from "../components/AuthCheck"
+import { signOut } from "../helpers/userAuthentication"
 
-// MATERIAL-UI
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-
-
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-function Tickets() {
+function Logout() {
+	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
+	signOut({ enqueueSnackbar, dispatch })
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Tickets</Typography>
-		</Container>
+		<ReduxRedirect>&nbsp;</ReduxRedirect>
 	)
 }
 
-Tickets.getLayout = getLayout
-
-export default Tickets
+export default Logout

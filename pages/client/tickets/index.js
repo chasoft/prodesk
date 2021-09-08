@@ -22,72 +22,40 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-//CORE SYSTEM
-import React, { useEffect, useState } from "react"
-import PropTypes from "prop-types"
-import DefaultErrorPage from "next/error"
+import { Container, Typography } from "@material-ui/core"
+import React from "react"
+import Link from "next/link"
 
 // MATERIAL-UI
-import { CircularProgress, Container, makeStyles } from "@material-ui/core"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
-import Footer from "../../components/common/Footer"
-import { getInstallStatus } from "../../helpers/firebase"
-import { ReduxRedirect } from "../../components/AuthCheck"
+import { getLayout } from "../../../layout/ClientLayout"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minHeight: "100vh",
-	},
-	content: {
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "center",
-		flexGrow: 1
-	}
-})
+
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function InstallLayout({ children }) {
-	const classes = useStyles()
-	const [isInstalled, setIsInstalled] = useState(null)
-
-	useEffect(async () => {
-		const installStatus = await getInstallStatus()
-		setIsInstalled(installStatus)
-	})
-
-	if (isInstalled)
-		return <DefaultErrorPage statusCode={404} />
-
+function Tickets() {
 	return (
-		<ReduxRedirect>
-			<div className={classes.root} >
-				<Container maxWidth="sm" className={classes.content}>
-					{
-						(isInstalled === null) ? <CircularProgress />
-							: children
-					}
-				</Container>
-
-				<Footer />
-
-			</div>
-		</ReduxRedirect>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Link href="/client/tickets/jfldkfd">
+				<Typography>Tickets</Typography>
+			</Link>
+			dsadsada
+		</Container>
 	)
 }
-InstallLayout.propTypes = { children: PropTypes.any }
 
-export const getInstallLayout = page => <InstallLayout>{page}</InstallLayout>
+Tickets.getLayout = getLayout
 
-export default InstallLayout
+export default Tickets

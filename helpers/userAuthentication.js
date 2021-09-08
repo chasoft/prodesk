@@ -232,15 +232,30 @@ export const createAdminAccount = async ({ email, password, name }, { enqueueSna
 		})
 		batch.set(db.doc(`usernames/${username}`), {
 			uid: JSON.stringify([userCredential.user.uid]),	//all associated account will be stored here in an Array
+			email: userCredential.user.email,
 			displayName: name,
 			photoURL: "/img/default-admin-avatar.png",
 			username: username,
 			group: username, //default usergroup
-			nextStep: REDIRECT_URL.DONE
+			nextStep: REDIRECT_URL.INSTALL_COMPLETED
 		})
 		await batch.commit()
-		// router.push("/install/completed")
 		dispatch(setRedirect(REDIRECT_URL.INSTALL_COMPLETED))
+	}
+	catch (e) {
+		console.log(e.message)
+		enqueueSnackbar(e.message, { variant: "error" })
+	}
+}
+
+export const installCompleted = async ({ enqueueSnackbar, dispatch }) => {
+	try {
+		const batch = db.batch()
+		batch.set(db.doc("usernames/superadmin"), {
+			nextStep: REDIRECT_URL.DONE
+		}, { merge: true })
+		await batch.commit()
+		dispatch(setRedirect(REDIRECT_URL.ADMIN))
 	}
 	catch (e) {
 		console.log(e.message)

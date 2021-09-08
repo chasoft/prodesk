@@ -94,7 +94,8 @@ const validationSchema = yup.object({
 		.required("Password is required"),
 	password2: yup
 		.string("Confirm your password")
-		.oneOf([yup.ref("password"), null], "Passwords must match"),
+		.oneOf([yup.ref("password"), null], "Passwords must match")
+		.required("Confirm your password"),
 	agreement: yup
 		.boolean().isTrue("You must agree with our Terms & services")
 })

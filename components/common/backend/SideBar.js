@@ -22,12 +22,12 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { IconButton, makeStyles, Typography } from "@material-ui/core"
+import { IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
 import { Logo } from ".."
 import NavCollapse from "./NavCollapse"
 import clsx from "clsx"
@@ -66,7 +66,17 @@ const useStyles = makeStyles((theme) => ({
 		width: "256px",
 	},
 	logo: {
+		height: "59px",
+		display: "flex",
+		alignItems: "center",
 		padding: theme.spacing(1, 1, 0.5, 3)
+	},
+	miniLogo: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		height: "56px",
+		padding: theme.spacing(1, 0, 0.5, 0)
 	},
 	nav_bg: {
 		backgroundAttachment: "fixed",
@@ -78,11 +88,10 @@ const useStyles = makeStyles((theme) => ({
 		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
 	},
 	list: {
-		listStyle: "none",
-		padding: 0,
 		margin: 0,
-		// marginTop: theme.spacing(2),
+		padding: 0,
 		width: "100%",
+		listStyle: "none",
 		"&>li": {
 			display: "flex",
 			alignItems: "center",
@@ -103,9 +112,31 @@ const useStyles = makeStyles((theme) => ({
 			paddingBottom: theme.spacing(2)
 		}
 	},
+	miniList: {
+		margin: 0,
+		padding: 0,
+		width: "100%",
+		listStyle: "none",
+		textAlign: "center",
+		backgroundColor: "#ffffff14",
+		"&>li": {
+			display: "flex",
+			justifyContent: "center",
+			padding: theme.spacing(1, 2, 1),
+			color: "#ffffffcc",
+			"& >:first-child": {
+				height: "20px",
+				weight: "20px",
+			}
+		},
+		"&>li:hover": {
+			backgroundColor: "#ffffff14",
+			cursor: "pointer",
+		},
+		borderTop: "1px solid #2A4257",
+	},
 	ScrollHeight: {
 		height: "calc(100vh - 88px)",
-		//paddingRight: "8px",
 	},
 	minimizer: {
 		display: "flex",
@@ -145,11 +176,28 @@ const useStyles = makeStyles((theme) => ({
 		cursor: "pointer",
 		padding: theme.spacing(3, 1, 3, 3),
 		"&:hover": {
-			backgroundColor: theme.navbar.hoverColor
+			backgroundColor: "#ffffff14"
 		},
 		width: "256px",
 		borderBottom: "1px solid #2A4257",
 	},
+	miniItemHeader: {
+		display: "flex",
+		justifyContent: "center",
+		textAlign: "center",
+		padding: theme.spacing(1, 2, 1),
+		"&:hover": {
+			backgroundColor: "#ffffff14"
+		},
+		borderTop: "1px solid #2A4257",
+		color: "#ffffffcc",
+		cursor: "pointer",
+		"& >:first-child": {
+			height: "20px",
+			weight: "20px",
+		},
+		margin: theme.spacing(0.5, 0, 0.5)
+	}
 }))
 
 const IconLib = {
@@ -171,62 +219,103 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 	return (
 		<div className={clsx([classes.root, classes.nav_bg, { [classes.sideBarExpanded]: isExpanded }])}>
 
-			<div className={classes.logo}>
-				<Logo theme="dark" />
+			<div className={isExpanded ? classes.logo : classes.miniLogo}>
+				<Logo theme="dark" isSmall={!isExpanded} />
 			</div>
 
-			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} />
+			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} isExpanded={isExpanded} />
 
-			<PerfectScrollbar component="div" className={classes.ScrollHeight}>
-				{
-					data.map((group) => {
-						if (group.type === MENU_ITEM_TYPE.ITEM)
-							return (
-								<Link href={group.url} >
-									<div className={classes.itemHeader}>
-										<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-											<div style={{ display: "flex", alignItems: "center" }}>
-												<Typography
-													className={classes.heading}
-													style={{ color: "#fff", flexGrow: 1 }}
-												>
-													{group.title}
-												</Typography>
+			{
+				isExpanded ?
+					<PerfectScrollbar component="div" className={classes.ScrollHeight}>
+						{
+							data.map((group) => {
+								if (group.type === MENU_ITEM_TYPE.ITEM)
+									return (
+										<Link href={group.url} >
+											<div className={classes.itemHeader}>
+												<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+													<div style={{ display: "flex", alignItems: "center" }}>
+														<Typography
+															className={classes.heading}
+															style={{ color: "#fff", flexGrow: 1 }}
+														>
+															{group.title}
+														</Typography>
+													</div>
+													<Typography
+														className={classes.headingDescription}
+														variant="caption"
+														noWrap
+													>{group.description}</Typography>
+												</div>
 											</div>
-											<Typography
-												className={classes.headingDescription}
-												variant="caption"
-												noWrap
-											>{group.description}</Typography>
-										</div>
-									</div>
-								</Link>
-							)
-						else if (group.type === MENU_ITEM_TYPE.GROUP)
-							return (
-								<NavCollapse
-									key={group.id}
-									title={group.title}
-									isExpanded={group.expanded}
-									description={group.description}
-									isLongDisplay={isExpanded}
-								>
-									<ul className={classes.list}>
-										{
-											group.items.map((item) => {
-												return (
-													<Link key={item.id} href={item.url}><li>{IconLib[item.icon]}{item.text}</li></Link>
-												)
-											})
-										}
-									</ul>
-								</NavCollapse>
-							)
-						else
-							throw new Error("Wrong-Menu-DataType")
-					})
-				}
-			</PerfectScrollbar >
+										</Link>
+									)
+								else if (group.type === MENU_ITEM_TYPE.GROUP)
+									return (
+										<NavCollapse
+											key={group.id}
+											title={group.title}
+											isExpanded={group.expanded}
+											description={group.description}
+											isLongDisplay={isExpanded}
+										>
+											<ul className={classes.list}>
+												{
+													group.items.map((item) => {
+														return (
+															<Link key={item.id} href={item.url}><li>{IconLib[item.icon]}{item.text}</li></Link>
+														)
+													})
+												}
+											</ul>
+										</NavCollapse>
+									)
+								else
+									throw new Error("Wrong-Menu-DataType")
+							})
+						}
+					</PerfectScrollbar >
+
+					:
+					<PerfectScrollbar component="div" className={classes.ScrollHeight}>
+						{
+							data.map((group) => {
+								if (group.type === MENU_ITEM_TYPE.ITEM)
+									return (
+										<Link href={group.url} >
+											<Tooltip title={group.description} placement="right">
+												<div className={classes.miniItemHeader}>
+													{IconLib[group.icon]}
+												</div>
+											</Tooltip>
+										</Link>
+									)
+								else if (group.type === MENU_ITEM_TYPE.GROUP)
+									return (
+										<ul className={classes.miniList}>
+											{
+												group.items.map((item) => {
+													return (
+														<Tooltip key={item.id} title={item.text} placement="right">
+															<li>
+																<Link href={item.url}  >
+																	{IconLib[item.icon]}
+																</Link>
+															</li>
+														</Tooltip>
+													)
+												})
+											}
+										</ul>
+									)
+								else
+									throw new Error("Wrong-Menu-DataType")
+							})
+						}
+					</PerfectScrollbar>
+			}
 
 			<div className={classes.minimizer}>
 				<IconButton

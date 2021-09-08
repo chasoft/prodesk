@@ -18,16 +18,44 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { useSnackbar } from "notistack"
-import React from "react"
-import { useDispatch } from "react-redux"
-import { signOut } from "../helpers/userAuthentication"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
-function SignOut() {
-	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
-	signOut({ enqueueSnackbar, dispatch })
-	return (<></>)
+import React from "react"
+import { useRouter } from "next/router"
+
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { getLayout } from "../../../layout/ClientLayout"
+
+//ASSETS
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+
+
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
+
+function SingleTicket() {
+	const router = useRouter()
+	const { tid } = router.query
+
+	return (
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">You are reading ticket ID: {tid}</Typography>
+		</Container>
+	)
 }
 
-export default SignOut
+SingleTicket.getLayout = getLayout
+
+export default SingleTicket

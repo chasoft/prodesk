@@ -36,6 +36,7 @@ import { REDIRECT_URL } from "../../helpers/constants"
 import { setRedirect } from "../../redux/slices/redirect"
 import { useDispatch } from "react-redux"
 import AuthCheck from "../../components/AuthCheck"
+import { once } from "../../helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -62,12 +63,14 @@ function SignUpCompleted() {
 	const progressRef = useRef(() => { })
 	const dispatch = useDispatch()
 
+	const onceDispatch = once(dispatch)
+
 	updateFlexDirection({ payload: "row" })
 
 	useEffect(() => {
 		progressRef.current = () => {
-			if (progress > 100) {
-				dispatch(setRedirect(REDIRECT_URL.CLIENT))
+			if (progress > 95) {
+				onceDispatch(setRedirect(REDIRECT_URL.CLIENT))
 			} else {
 				const diff = Math.random() * 10
 				const diff2 = Math.random() * 10
@@ -78,7 +81,7 @@ function SignUpCompleted() {
 	})
 
 	useEffect(() => {
-		const timer = setInterval(() => { progressRef.current() }, 500)
+		const timer = setInterval(() => { progressRef.current() }, 300)
 		return () => { clearInterval(timer) }
 	}, [])
 

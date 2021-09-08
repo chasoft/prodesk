@@ -34,7 +34,6 @@ import "firebase/storage"
 
 import dayjs from "dayjs"
 import { nanoid } from "nanoid"
-import { useDispatch } from "react-redux"
 import { updateAvatarAndLocation } from "../redux/slices/auth"
 import { REDIRECT_URL, TICKET_STATUS } from "./constants"
 import { setRedirect } from "../redux/slices/redirect"
@@ -131,10 +130,13 @@ export const changePassword = async ({ email, password, newPassword }, { enqueue
  *****************************************************************/
 
 export const getInstallStatus = async () => {
-	const res = await db.doc("usernames/superadmin").get()
-	console.log(res.exists)
-	if (res.exists) {
-		return true
+	const query = await db.doc("usernames/superadmin").get()
+	if (query.exists) {
+		const res = query.data()
+		if (res.nextStep === REDIRECT_URL.DONE)
+			return true
+		else
+			return false
 	} else {
 		return false
 	}

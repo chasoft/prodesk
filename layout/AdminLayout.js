@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
@@ -67,8 +67,9 @@ const backgroundInfo = {
 		backgroundRepeat: "",
 	},
 	"AdminIndex": {
-		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0.5' y='0.5' width='2500' height='600'/%3E%3C/svg%3E")`,
+		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0' y='0' width='2500' height='600'/%3E%3C/svg%3E")`,
 		backgroundRepeat: "no-repeat",
+		backgroundAttachment: "scroll"
 	},
 	"AdminProfile": {
 		backgroundImage: "",
@@ -161,22 +162,26 @@ const ADMIN_MENUS = [
 
 function AdminLayout({ children }) {
 	const classes = useStyles()
-	const [isSideBarExpanded, setLeftDrawerExpanded] = useState(true)
+	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const [scrolled, setScrolled] = useState(false)
 	const { adminBackgroundId } = useSelector(getUiSettings)
+
+	const sideBarExpanding = () => {
+		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
+	}
+
+	useEffect(() => {
+		sideBarExpanding()
+		window.addEventListener("resize", sideBarExpanding)
+		return () => window.removeEventListener("resize", sideBarExpanding)
+	}, [])
 
 	return (
 		<ReduxRedirect>
 			<AuthCheck>
-				<div
-					className={classes.root}
-					style={{
-						backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-						backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
-					}}
-				>
+				<div className={classes.root}>
 					<SideBar
-						isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
+						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
 						homeUrl="/admin" settingsUrl=""
 						data={ADMIN_MENUS}
 					/>
@@ -188,10 +193,16 @@ function AdminLayout({ children }) {
 
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 
-						{children}
-
-						<Footer />
-
+						<div
+							style={{
+								backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
+								backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat,
+								backgroundAttachment: "scroll"
+							}}
+						>
+							{children}
+							<Footer />
+						</div>
 					</PerfectScrollbar>
 
 				</div>

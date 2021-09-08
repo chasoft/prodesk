@@ -29,7 +29,7 @@ import Post from "../components/Post"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/BlankLayout"
+import { getLayout } from "./../layout/BlankLayout"
 
 
 /*****************************************************************

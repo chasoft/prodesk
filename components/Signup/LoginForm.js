@@ -40,7 +40,6 @@ import { updateFlexDirection } from "./../../layout/RegLayout"
 //ASSETS
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import { signInWithEmail } from "./../../helpers/userAuthentication"
-import { useRouter } from "next/router"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************

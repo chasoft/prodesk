@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { IconButton, makeStyles, Typography } from "@material-ui/core"
+import { IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
@@ -61,42 +61,54 @@ const useStyles = makeStyles((theme) => ({
 		borderTop: "1px solid #2A4257",
 		borderBottom: "1px solid #2A4257",
 	},
+	miniDashboard: {
+		display: "flex",
+		justifyContent: "center",
+		textAlign: "center",
+		color: "#669df6",
+		padding: theme.spacing(1, 0, 1, 0),
+		"&:hover": {
+			backgroundColor: "#ffffff14",
+			cursor: "pointer",
+		},
+		borderTop: "1px solid #2A4257",
+	},
 }))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const HomeButton = ({ homeUrl, settingsUrl }) => {
+const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 	const classes = useStyles()
-	const { enqueueSnackbar } = useSnackbar()
-	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
 	return (
 		<>
-			<div className={classes.dashboard}>
-				<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-				<Link href={homeUrl}><Typography style={{ flexGrow: 1 }}>Dashboard</Typography></Link>
-				<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
-				<div style={{ display: "flex", alignItems: "center" }}>
-					<Link href={settingsUrl}>
-						<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
-							<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-						</IconButton>
+			{
+				isExpanded ?
+					<div className={classes.dashboard}>
+						<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
+						<Link href={homeUrl}><Typography style={{ flexGrow: 1 }}>Dashboard</Typography></Link>
+						<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
+						<div style={{ display: "flex", alignItems: "center" }}>
+							<Link href={settingsUrl}>
+								<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
+									<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
+								</IconButton>
+							</Link>
+						</div>
+					</div>
+					:
+					<Link href={homeUrl}>
+						<Tooltip title="Dashboard" placement="right">
+							<div className={classes.miniDashboard}>
+								<HomeIcon style={{ height: "20px", width: "20px" }} />
+							</div>
+						</Tooltip>
 					</Link>
-				</div>
-			</div>
-
-			<div className={classes.dashboard}>
-				<Typography
-					style={{ flexGrow: 1 }}
-					onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}
-				>Logout {currentUser.email}
-				</Typography>
-			</div>
+			}
 		</>
 	)
 }
-HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string }
+HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string, isExpanded: PropTypes.bool }
 
 export default HomeButton

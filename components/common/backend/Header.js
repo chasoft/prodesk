@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { IconButton, makeStyles, Paper, Typography } from "@material-ui/core"
+import { IconButton, makeStyles, Paper, Tooltip, Typography } from "@material-ui/core"
 import { Avatar } from "@material-ui/core"
 import { AppBar } from "@material-ui/core"
 
@@ -36,6 +36,7 @@ import clsx from "clsx"
 
 
 //PROJECT IMPORT
+import UserIcon from "./UserIcon"
 
 
 //ASSETS
@@ -55,6 +56,12 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(0.5, 2, 0.5, 2),
 		// width: `calc(100% - ${68}px)`,
 		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
+	},
+	link: {
+		cursor: "pointer",
+		"&:hover": {
+			fontWeight: 500
+		}
 	},
 	headerLeft: {
 		display: "flex",
@@ -90,17 +97,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = ({ isSideBarExpanded, scrolled }) => {
 	const classes = useStyles()
-	// const [scrolled, setScrolled] = useState(false)
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
-
-	// const animateHeader = () => {
-	// 	setScrolled(window.scrollY > 50 ? true : false)
-	// }
-
-	// useEffect(() => {
-	// 	window.addEventListener("scroll", animateHeader)
-	// 	return () => window.removeEventListener("scroll", animateHeader)
-	// }, [])
 
 	return (
 		<AppBar
@@ -115,21 +112,24 @@ const Header = ({ isSideBarExpanded, scrolled }) => {
 			<div style={{ flexGrow: 1 }}></div>
 
 			<div className={classes.headerRight}>
-				<Link href="/"><Typography>Go to docs</Typography></Link>
+				<Tooltip title="Go to Docs" placement="bottom">
+					<Typography className={classes.link}><Link href="/">Go to docs</Link></Typography>
+				</Tooltip>
 
-				<IconButton
-					aria-label="delete" color="inherit"
-					onClick={() => setShowNotificationDraw(p => !p)}
-				>
-					<NotificationsIcon />
-				</IconButton>
+				<Tooltip title="Recent Notifications" placement="bottom">
+					<IconButton
+						aria-label="delete" color="inherit"
+						onClick={() => setShowNotificationDraw(p => !p)}
+					>
+						<NotificationsIcon fontSize="small" />
+					</IconButton>
+				</Tooltip>
+
 				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
 
-				<Link href="/admin/profile">
-					<IconButton aria-label="delete" color="primary" className={classes.avatarOutline}>
-						<Avatar className={classes.avatar} src="/img/default-avatar.png" />
-					</IconButton>
-				</Link>
+
+				<UserIcon />
+
 			</div>
 
 

@@ -2,7 +2,7 @@ import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import { Button, IconButton, Container, Grid, Hidden, Typography } from "@material-ui/core"
 import CategoryContent from "./CategoryContent"
-import Banner from "../Banner"
+import Banner from "../widget/Banner"
 
 
 const useStyles = makeStyles((theme) => ({

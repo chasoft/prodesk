@@ -38,8 +38,6 @@ import { getLayout } from "./../../layout/ClientLayout"
  * INIT                                                          *
  *****************************************************************/
 
-
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
@@ -48,6 +46,16 @@ function Client() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Client Index</Typography>
+			<Typography variant="body1">hello</Typography>
+
+			<Typography variant="body1">hello</Typography>
+			<Typography variant="body1">hello</Typography>
+
+
+			<Typography variant="body1">hello</Typography>
+			<Typography variant="body1">hello</Typography>
+			<Typography variant="body1">hello</Typography>
+
 		</Container>
 	)
 }

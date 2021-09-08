@@ -23,15 +23,14 @@
  *****************************************************************/
 
 import React from "react"
-import Category from "../components/Category"
-import MainNav from "../components/MainNav"
+import Category from "./../components/Category"
+import MainNav from "./../components/common/frontend/MainNav"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "../components/BlankLayout"
-
+import { getLayout } from "./../layout/BlankLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -40,9 +39,6 @@ import { getLayout } from "../components/BlankLayout"
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
-
-
-
 
 function ACategory() {
 	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })

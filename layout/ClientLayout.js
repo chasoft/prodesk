@@ -23,12 +23,12 @@
  *****************************************************************/
 
 import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
 
 // MATERIAL-UI
-import { Container, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -38,7 +38,7 @@ import Header from "../components/common/backend/Header"
 import SideBar from "../components/common/backend/SideBar"
 import Footer from "../components/common/Footer"
 import { getUiSettings } from "../redux/selectors"
-import { BACKGROUND_ID, MENU_ITEM_TYPE } from "../helpers/constants"
+import { MENU_ITEM_TYPE } from "../helpers/constants"
 import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
 
@@ -68,7 +68,7 @@ const backgroundInfo = {
 		backgroundRepeat: "",
 	},
 	"AdminIndex": {
-		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0.5' y='0.5' width='2500' height='600'/%3E%3C/svg%3E")`,
+		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0' y='0' width='2500' height='600'/%3E%3C/svg%3E")`,
 		backgroundRepeat: "no-repeat",
 	},
 	"AdminProfile": {
@@ -95,7 +95,7 @@ const CLIENT_MENU = [
 		title: "Support",
 		description: "Getting supports",
 		items: [
-			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/new-ticket" },
+			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/tickets/new-ticket" },
 			{ id: "submenu_tickets", icon: "1", text: "All tickets", url: "/client/tickets" },
 		]
 	},
@@ -120,40 +120,50 @@ const CLIENT_MENU = [
 function ClientLayout({ children }) {
 	const classes = useStyles()
 	const [scrolled, setScrolled] = useState(false)
-	const [isSideBarExpanded, setLeftDrawerExpanded] = useState(true)
+	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 
 	const { adminBackgroundId } = useSelector(getUiSettings)
+
+	const sideBarExpanding = () => {
+		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
+	}
+
+	useEffect(() => {
+		sideBarExpanding()
+		window.addEventListener("resize", sideBarExpanding)
+		return () => window.removeEventListener("resize", sideBarExpanding)
+	}, [])
 
 	return (
 		<ReduxRedirect>
 			<AuthCheck>
-				<div
-					className={classes.root}
-					style={{
-						backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-						backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat
-					}}
-				>
+				<div className={classes.root}>
 					<SideBar
-						isExpanded={isSideBarExpanded} toggle={setLeftDrawerExpanded}
+						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
 						homeUrl="/client" settingsUrl=""
 						data={CLIENT_MENU}
 					/>
 
 					<PerfectScrollbar
 						component="div" className={classes.content}
+						options={{ wheelSpeed: 1, wheelPropagation: true }}
 						onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
 					>
-
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
-
-						{children}
-
-						<Footer />
+						<div
+							style={{
+								backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
+								backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat,
+								backgroundAttachment: "scroll"
+							}}
+						>
+							{children}
+							<Footer />
+						</div>
 					</PerfectScrollbar>
 				</div>
 			</AuthCheck>
-		</ReduxRedirect>
+		</ReduxRedirect >
 	)
 }
 ClientLayout.propTypes = { children: PropTypes.any }

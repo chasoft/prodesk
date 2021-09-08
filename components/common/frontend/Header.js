@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import Link from "next/link"
 import { alpha, makeStyles } from "@material-ui/core/styles"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
@@ -12,6 +13,8 @@ import SearchIcon from "@material-ui/icons/Search"
 import MoreIcon from "@material-ui/icons/MoreVert"
 import AppsIcon from "@material-ui/icons/Apps"
 import { Logo } from ".."
+import { AuthFalse, AuthTrue } from "../../AuthCheck"
+import UserIcon from "../backend/UserIcon"
 
 const useStyles = makeStyles((theme) => ({
 	grow: {
@@ -137,10 +140,22 @@ function Header() {
 					<IconButton aria-label="show 17 new notifications" color="inherit">
 						<AppsIcon />
 					</IconButton>
-					<Button variant="contained" color="primary">
-						Sign in
-					</Button>
+
+					<AuthFalse>
+						<Link href="/login">
+							<Button variant="contained" color="primary">
+								Sign in
+							</Button>
+						</Link>
+					</AuthFalse>
+
+					<AuthTrue>
+						<UserIcon />
+					</AuthTrue>
+
 				</div>
+
+
 
 				<div className={classes.sectionMobile}>
 					<IconButton

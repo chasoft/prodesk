@@ -33,7 +33,7 @@ import AskNow from "./../components/Docs/AskNow"
 
 import { getLayout } from "./../layout/BlankLayout"
 import MainNav from "./../components/common/frontend/MainNav"
-import PromotedSearch from "../components/PromotedSearch"
+import PromotedSearch from "./../components/common/frontend/PromotedSearch"
 import AskNowFrame from "./../components/Docs/AskNowFrame"
 
 /*****************************************************************

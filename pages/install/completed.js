@@ -23,54 +23,68 @@
  *****************************************************************/
 
 //CORE SYSTEM
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Typography } from "@material-ui/core"
+import { LinearProgress, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
-import { setRedirect } from "./../../redux/slices/redirect"
-import { REDIRECT_URL } from "./../../helpers/constants"
 import { useDispatch } from "react-redux"
+import { once } from "../../helpers/utils"
+import { installCompleted } from "../../helpers/userAuthentication"
+import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function InstallCompleted() {
-	// const router = useRouter()
+	const [progress, setProgress] = React.useState(0)
+	const [buffer, setBuffer] = React.useState(10)
+	const progressRef = useRef(() => { })
+	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
+	const onceInstallCompleted = once(installCompleted)
+
+	useEffect(() => {
+		progressRef.current = () => {
+			if (progress > 95) {
+				onceInstallCompleted({ enqueueSnackbar, dispatch })
+			} else {
+				const diff = Math.random() * 10
+				const diff2 = Math.random() * 10
+				setProgress(progress + diff)
+				setBuffer(progress + diff + diff2)
+			}
+		}
+	})
+
+	useEffect(() => {
+		const timer = setInterval(() => { progressRef.current() }, 500)
+		return () => { clearInterval(timer) }
+	}, [])
+
 	return (
 		<>
 			<div style={{ padding: "3rem" }}>
 				<Logo />
 			</div>
-			<Typography variant="h1">
-				Welcome to ProDesk
-			</Typography>
-			<Typography variant="button">
-				Your Elegant &amp; Powerful Blog / Documentation / Ticket System
-			</Typography>
+			<Typography variant="h1">Welcome to ProDesk</Typography>
+			<Typography variant="button">Your Elegant &amp; Powerful Blog / Documentation / Ticket System</Typography>
 
-			<div style={{ padding: "3rem" }}>
+			<div style={{ padding: "2rem" }}>
+				<Typography variant="h2">Superadmin account has been created successfully.</Typography>
 				<Typography variant="body1">
-					Your Superadmin account has been created successfully.<br />
-					Go to the admin dashboard to start setting up your great site!
+					You will be redirected to the dashboard to start setting up your great site!
 				</Typography>
-				<Button
-					variant="contained" color="primary"
-					style={{ paddingTop: "3rem", paddingLeft: "3rem", paddingRight: "3rem" }}
-					onClick={() => {
-						// router.push("/admin")
-						dispatch(setRedirect(REDIRECT_URL.ADMIN))
-					}}
-				>
-					Admin Dashboard
-				</Button>
+				<div style={{ paddingTop: "2rem" }}>
+					<LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
+				</div>
 			</div>
+
 		</>
 	)
 }

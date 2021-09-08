@@ -38,7 +38,6 @@ import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
 import { createAdminAccount } from "../../helpers/userAuthentication"
 import { useSnackbar } from "notistack"
-import { useRouter } from "next/router"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************
@@ -78,6 +77,7 @@ const validationSchema = yup.object({
 	password2: yup
 		.string("Confirm your password")
 		.oneOf([yup.ref("password"), null], "Passwords must match")
+		.required("Confirm your password")
 })
 
 /*****************************************************************

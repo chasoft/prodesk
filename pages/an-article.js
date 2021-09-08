@@ -28,9 +28,9 @@ import React from "react"
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../components/BlankLayout"
+import { getLayout } from "./../layout/BlankLayout"
 import Article from "./../components/Article"
-import MainNav from "../components/MainNav"
+import MainNav from "./../components/common/frontend/MainNav"
 
 
 /*****************************************************************

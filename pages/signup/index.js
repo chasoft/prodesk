@@ -31,6 +31,7 @@ import React from "react"
 import SignupForm from "../../components/Signup/SignupForm"
 import { LoginLink, Logo } from "../../components/common"
 import { getLayout, TopLine } from "../../layout/RegLayout"
+import { GuestOnly } from "../../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
@@ -42,7 +43,7 @@ import { getLayout, TopLine } from "../../layout/RegLayout"
 
 function Signup() {
 	return (
-		<>
+		<GuestOnly>
 			<TopLine
 				left={<Logo />}
 				center={<Logo />}
@@ -50,7 +51,7 @@ function Signup() {
 			/>
 
 			<SignupForm />
-		</>
+		</GuestOnly>
 	)
 }
 

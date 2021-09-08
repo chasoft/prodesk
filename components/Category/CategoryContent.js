@@ -1,7 +1,7 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import { Grid, Typography, Link } from "@material-ui/core"
-import { LINK_TYPE } from "../constants"
+import { LINK_TYPE } from "./../../helpers/constants"
 
 
 const useStyles = makeStyles((theme) => ({

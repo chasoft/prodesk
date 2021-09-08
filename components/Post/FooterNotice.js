@@ -4,7 +4,7 @@ import { Button, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		padding: theme.spacing(2, 8)
+		padding: theme.spacing(2, 8),
 		backgroundColor: "#F8F9FA",
 		borderBottomLeftRadius: "0.5rem",
 		borderBottomRightRadius: "0.5rem",

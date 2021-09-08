@@ -21,21 +21,20 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
-	redirectURL: "",
+	redirectURL: ""
 }
 
 const redirectSlice = createSlice({
 	name: "redirect",
 	initialState,
 	reducers: {
-
 		setRedirect: (state, { payload }) => {
 			state.redirectURL = payload
 		},
 
 		clearRedirect: (state) => {
 			state.redirectURL = ""
-		},
+		}
 	},
 })
 

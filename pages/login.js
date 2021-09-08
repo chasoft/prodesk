@@ -23,6 +23,7 @@
  *****************************************************************/
 
 import React from "react"
+import { GuestOnly } from "../components/AuthCheck"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -42,14 +43,14 @@ import { getLayout, TopLine } from "./../layout/RegLayout"
 
 function Login() {
 	return (
-		<>
+		<GuestOnly>
 			<TopLine
 				left={<Logo />}
 				center={<Logo />}
 				right={<SignUpLink />}
 			/>
 			<LoginForm />
-		</>
+		</GuestOnly>
 	)
 }
 

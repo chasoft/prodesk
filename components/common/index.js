@@ -80,10 +80,24 @@ export const SignUpLink = () => {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-export const Logo = ({ theme = "light", height = "30px" }) => {
-	return <img src={`/ProDesk-logo-${theme}.png`} height={height} width={Math.round(height * 5.25).toString()} />
+export const Logo = ({ isSmall = false, theme = "light", height = "30px" }) => {
+	return (
+		<Link href="/">
+			{
+				isSmall ? <img
+					src={`/ProDesk-logo-${theme}-square.png`}
+					height={height} width={height}
+					style={{ cursor: "pointer" }} />
+					: <img
+						src={`/ProDesk-logo-${theme}.png`}
+						height={height} width={Math.round(height * 5.25).toString()}
+						style={{ cursor: "pointer" }} />
+			}
+
+		</Link>
+	)
 }
-Logo.propTypes = { theme: PropTypes.string, height: PropTypes.string }
+Logo.propTypes = { isSmall: PropTypes.bool, theme: PropTypes.string, height: PropTypes.string }
 
 export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 	const [expanded, setExpanded] = useState(isExpanded)

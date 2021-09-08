@@ -22,6 +22,7 @@
 import React, { useEffect } from "react"
 import { useRouter } from "next/router"
 import PropTypes from "prop-types"
+import DefaultErrorPage from "next/error"
 
 // MATERIAL-UI
 import { CircularProgress } from "@material-ui/core"
@@ -31,8 +32,9 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth, getRedirect } from "./../redux/selectors"
-import { REDIRECT_URL } from "../helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "../helpers/constants"
 import { clearRedirect, setRedirect } from "../redux/slices/redirect"
+import { regAdminURL } from "../helpers/regex"
 
 //ASSETS
 
@@ -65,18 +67,24 @@ export function ReduxRedirect(props) {
 }
 
 /**
- * Display `children` when logged in or display <SingleLoginForm />
+ * AuthCheck is used to protect restricted area! (loggedin)
+ * so, if you are not loggedin, you will be redirected to `login page`
  */
 export default function AuthCheck(props) {
-	const { loading, isAuthenticated } = useSelector(getAuth)
+	const { loading, isAuthenticated, currentUser } = useSelector(getAuth)
 	const dispatch = useDispatch()
+	const router = useRouter()
 
-	useEffect(() => {
-		if (isAuthenticated !== true)
-			dispatch(setRedirect(REDIRECT_URL.LOGIN))
-	}, [dispatch, isAuthenticated])
+	// useEffect(() => {
+	//if (isAuthenticated !== true)
+	//dispatch(setRedirect(REDIRECT_URL.LOGIN))
+	// }, [isAuthenticated])
 
 	if (loading) return < LoadingIndicator />
+
+	//A logged-in user but try to access `/admin`
+	if (currentUser.group === USERGROUP.USER
+		&& regAdminURL.test(router.pathname)) return <DefaultErrorPage statusCode={404} />
 
 	return (
 		isAuthenticated
@@ -85,6 +93,32 @@ export default function AuthCheck(props) {
 	)
 }
 AuthCheck.propTypes = { children: PropTypes.node }
+
+/**
+ * GuestOnly
+ * so, if you are Already loggedin, you will be redirected to dashboard
+ */
+export function GuestOnly(props) {
+	const { isAuthenticated, currentUser } = useSelector(getAuth)
+	const dispatch = useDispatch()
+
+	if (isAuthenticated) {
+		//Only redirect when there is no required step ahead
+		if (currentUser.nextStep === REDIRECT_URL.DONE) {
+			if (currentUser.group === USERGROUP.USER)
+				dispatch(setRedirect(REDIRECT_URL.CLIENT))
+			else
+				dispatch(setRedirect(REDIRECT_URL.ADMIN))
+		}
+	}
+
+	return (
+		!isAuthenticated
+			? props.children
+			: <></>
+	)
+}
+GuestOnly.propTypes = { children: PropTypes.node }
 
 /**
  * Only display `children` when LOGGED IN or nothing would be showed up
