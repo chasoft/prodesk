@@ -24,6 +24,8 @@
 
 import { Container, Typography } from "@material-ui/core"
 import React from "react"
+import CreateNewTicket from "../../../components/Ticket/CreateNewTicket"
+import updatePageMeta from "../../../helpers/updatePageMeta"
 
 // MATERIAL-UI
 
@@ -45,13 +47,10 @@ import { getLayout } from "../../../layout/ClientLayout"
  *****************************************************************/
 
 function NewTicket() {
+	updatePageMeta({ title: "Open New Ticket" })
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">New Ticket</Typography>
-
-
-
-
+		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+			<CreateNewTicket />
 		</Container>
 	)
 }

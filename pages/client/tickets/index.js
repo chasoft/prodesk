@@ -32,6 +32,8 @@ import Link from "next/link"
 
 //PROJECT IMPORT
 import { getLayout } from "../../../layout/ClientLayout"
+import updatePageMeta from "../../../helpers/updatePageMeta"
+import Dashboard from "../../../components/Dashboard"
 
 //ASSETS
 
@@ -46,12 +48,10 @@ import { getLayout } from "../../../layout/ClientLayout"
  *****************************************************************/
 
 function Tickets() {
+	updatePageMeta({ title: "All tickets" })
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Link href="/client/tickets/jfldkfd">
-				<Typography>Tickets</Typography>
-			</Link>
-			dsadsada
+		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Dashboard />
 		</Container>
 	)
 }

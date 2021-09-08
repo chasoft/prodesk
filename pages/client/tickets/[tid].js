@@ -32,6 +32,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "../../../layout/ClientLayout"
+import Post from "../../../components/Post"
 
 //ASSETS
 
@@ -50,8 +51,8 @@ function SingleTicket() {
 	const { tid } = router.query
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">You are reading ticket ID: {tid}</Typography>
+		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Post />
 		</Container>
 	)
 }

@@ -10,8 +10,8 @@ import ArrowBackOutlinedIcon from "@material-ui/icons/ArrowBackOutlined"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		maxWidth: "1440px",
-		left: 0
+		// maxWidth: "1440px",
+		// left: 0
 	},
 	nav: {
 		display: "flex",
@@ -34,9 +34,9 @@ function Post() {
 			<Container>
 				<Grid container>
 					<Grid item xs={12} sm={12} md={8} >
-						<nav className={classes.nav}>
+						{/* <nav className={classes.nav}>
 							<Button color="primary" startIcon={<ArrowBackOutlinedIcon />}>Back</Button>
-						</nav>
+						</nav> */}
 
 						<main className={classes.main}>
 							<PostContent />

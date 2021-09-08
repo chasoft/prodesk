@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { IconButton, makeStyles, Paper, Tooltip, Typography } from "@material-ui/core"
+import { Badge, IconButton, makeStyles, Paper, Tooltip, Typography, withStyles } from "@material-ui/core"
 import { Avatar } from "@material-ui/core"
 import { AppBar } from "@material-ui/core"
 
@@ -42,6 +42,8 @@ import UserIcon from "./UserIcon"
 //ASSETS
 import NotificationsIcon from "@material-ui/icons/Notifications"
 import NotificationDrawer from "./NotificationDrawer"
+import { getPageMeta } from "../../../redux/selectors"
+import { useSelector } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
@@ -58,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
 	},
 	link: {
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
 		cursor: "pointer",
 		"&:hover": {
 			fontWeight: 500
@@ -67,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "flex-start",
+		fontFamily: "\"Google Sans\", Roboto, sans-serif"
 	},
 	headerRight: {
 		display: "flex",
@@ -91,6 +95,17 @@ const useStyles = makeStyles((theme) => ({
 	},
 }))
 
+const StyledBadge = withStyles((theme) => ({
+	badge: {
+		right: 1,
+		top: 6,
+		border: `1px solid ${theme.palette.background.paper}`,
+		padding: "0 4px",
+		color: "white",
+		backgroundColor: theme.palette.warning.dark
+	},
+}))(Badge)
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
@@ -98,6 +113,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = ({ isSideBarExpanded, scrolled }) => {
 	const classes = useStyles()
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+	const { title } = useSelector(getPageMeta)
 
 	return (
 		<AppBar
@@ -105,23 +121,23 @@ const Header = ({ isSideBarExpanded, scrolled }) => {
 			className={clsx([classes.root, classes.nav_bg])}
 			elevation={scrolled ? 4 : 0}
 		>
-			<div className={classes.headerLeft}>
-				LeftAAA
-			</div>
+			<div className={classes.headerLeft}>{scrolled ? title : null}</div>
 
 			<div style={{ flexGrow: 1 }}></div>
 
 			<div className={classes.headerRight}>
 				<Tooltip title="Go to Docs" placement="bottom">
-					<Typography className={classes.link}><Link href="/">Go to docs</Link></Typography>
+					<Typography className={classes.link}><Link href="/docs">Go to Docs</Link></Typography>
 				</Tooltip>
 
 				<Tooltip title="Recent Notifications" placement="bottom">
-					<IconButton
-						aria-label="delete" color="inherit"
-						onClick={() => setShowNotificationDraw(p => !p)}
-					>
-						<NotificationsIcon fontSize="small" />
+					<IconButton size="medium" color="inherit" >
+						<StyledBadge
+							badgeContent={4}
+							onClick={() => setShowNotificationDraw(p => !p)}
+						>
+							<NotificationsIcon />
+						</StyledBadge>
 					</IconButton>
 				</Tooltip>
 

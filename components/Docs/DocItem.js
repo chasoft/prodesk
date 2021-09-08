@@ -23,7 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import { Link, makeStyles, Paper, Typography } from "@material-ui/core"
+import Link from "next/link"
+import { makeStyles, Paper, Typography } from "@material-ui/core"
 import PostListItemShorten from "../Post/PostListItemShorten"
 
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
@@ -91,9 +92,11 @@ const DocItem = () => {
 
 			<div className={`${classes.viewAll} ${classes.docFooter}`}>
 				<Link href="/">
-					<Typography>View all post</Typography>
+					<div>
+						<Typography>View all post</Typography>
+						<ArrowForwardIcon fontSize="small" />
+					</div>
 				</Link>
-				<ArrowForwardIcon fontSize="small" />
 			</div>
 
 		</Paper>

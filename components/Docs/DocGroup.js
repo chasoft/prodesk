@@ -23,7 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, Link, makeStyles, Paper, Typography } from "@material-ui/core"
+import Link from "next/link"
+import { Container, makeStyles, Paper, Typography } from "@material-ui/core"
 import PostListItem from "../Post/PostListItem"
 
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
@@ -81,8 +82,10 @@ const DocGroup = () => {
 
 					<Typography variant="h2">Featured posts</Typography>
 					<Link href="/" className={classes.viewAll}>
-						<Typography>View all featured posts</Typography>
-						<ArrowForwardIcon fontSize="small" />
+						<div>
+							<Typography>View all featured posts</Typography>
+							<ArrowForwardIcon fontSize="small" />
+						</div>
 					</Link>
 
 					<Paper elevation={2} className={classes.group}>

@@ -23,7 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, Grid, Link, makeStyles, Typography } from "@material-ui/core"
+import Link from "next/link"
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core"
 import DocItem from "./DocItem"
 
 /*****************************************************************

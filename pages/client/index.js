@@ -22,15 +22,19 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
+import { Card, CardContent, Container, Grid, Paper, Typography } from "@material-ui/core"
 import React from "react"
 
 // MATERIAL-UI
-
+import { makeStyles } from "@material-ui/core/styles"
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
+import Dashboard from "./../../components/Dashboard"
+import updatePageMeta from "../../helpers/updatePageMeta"
+import ClientStats from "../../components/common/backend/client/ClientStats"
+import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
 
 //ASSETS
 
@@ -38,23 +42,56 @@ import { getLayout } from "./../../layout/ClientLayout"
  * INIT                                                          *
  *****************************************************************/
 
+
+const useStyles = makeStyles((theme) => ({
+	root: {
+
+	},
+	boxTitle: {
+		padding: theme.spacing(8, 0, 4),
+		color: "white",
+	},
+	siteTitle: {
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontWeight: "500",
+		fontSize: "2.5rem",
+		lineHeight: "2.5rem",
+		[theme.breakpoints.down("sm")]: {
+			fontSize: "2.2rem",
+			lineHeight: "2.2rem",
+		},
+		[theme.breakpoints.down("xs")]: {
+			fontSize: "2rem",
+			lineHeight: "2rem",
+		}
+	}
+}))
+
+
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function Client() {
+	const classes = useStyles()
+	updatePageMeta({ title: "" })
+
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Client Index</Typography>
-			<Typography variant="body1">hello</Typography>
 
-			<Typography variant="body1">hello</Typography>
-			<Typography variant="body1">hello</Typography>
+			<div className={classes.boxTitle}>
+				<Typography className={classes.siteTitle}>
+					prodesk
+				</Typography>
 
+				<Typography variant="subtitle1">
+					Your Elegant &amp; Powerful Ticket System
+				</Typography>
+			</div>
 
-			<Typography variant="body1">hello</Typography>
-			<Typography variant="body1">hello</Typography>
-			<Typography variant="body1">hello</Typography>
+			<ClientStats />
+
+			<LatestTicketFeedback />
 
 		</Container>
 	)

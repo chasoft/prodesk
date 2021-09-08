@@ -4,9 +4,10 @@
  *****************************************************************/
 
 import React, { useState } from "react"
+import Link from "next/link"
 
 // MATERIAL-UI
-import { Avatar, Box, Tooltip, Chip, ClickAwayListener, Divider, Grid, IconButton, Link, List, ListItemIcon, ListItemText, makeStyles, Paper, Popover, Popper, Typography } from "@material-ui/core"
+import { Avatar, Box, Tooltip, Chip, ClickAwayListener, Divider, Grid, IconButton, List, ListItemIcon, ListItemText, makeStyles, Paper, Popover, Popper, Typography } from "@material-ui/core"
 import { useDispatch, useSelector } from "react-redux"
 import { getAuth } from "../../../redux/selectors"
 

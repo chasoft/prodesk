@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { Container, Grid } from "@material-ui/core"
 import TicketStepper from "./TicketStepper"
 import { makeStyles, useTheme } from "@material-ui/core/styles"
@@ -28,9 +29,11 @@ const useStyles = makeStyles((theme) => ({
 			borderRadius: 0,
 			border: 0,
 		},
+		paddingTop: theme.spacing(2)
 	},
 	title: {
-		padding: theme.spacing(4, 4, 1, 4)
+		padding: theme.spacing(4, 4, 1, 4),
+		color: "white"
 	},
 	description: {
 		padding: theme.spacing(1, 4)
@@ -84,31 +87,31 @@ function CreateNewTicket() {
 	return (
 		<Container disableGutters={smallScreen}>
 			<Grid container>
-				<Grid item xs={12} sm={12} md={10}>
-					<nav className={`${classes.nav} ${classes.bigScreen}`}>
-						<Button color="primary" startIcon={<ArrowBackOutlinedIcon />}>Back</Button>
-					</nav>
+				<Grid item xs={12} sm={12} md={10} >
+					<div className={`${classes.title} ${classes.bigScreen}`}>
+						<Typography variant="h1">
+							Open New Ticket
+						</Typography>
+					</div>
+					<div style={{ backgroundColor: "white", borderTopLeftRadius: "8px", borderTopRightRadius: "8px" }} >
+						<Link href="/client/tickets">
+							<nav className={`${classes.nav} ${classes.smallScreen}`}>
+								<IconButton aria-label="back" size="small">
+									<ArrowBackOutlinedIcon />
+								</IconButton>
+								<Typography variant="h1">Tickets</Typography>
+							</nav>
+						</Link>
 
-					<nav className={`${classes.nav} ${classes.smallScreen}`}>
-						<IconButton aria-label="back" size="small">
-							<ArrowBackOutlinedIcon />
-						</IconButton>
-						<Typography variant="h1">Ask the Community</Typography>
-					</nav>
-
-					<div className={classes.main}>
-						<div className={`${classes.title} ${classes.bigScreen}`}>
-							<Typography variant="h1">
-								Ask the Community
-							</Typography>
-						</div>
-						<div className={`${classes.description} ${classes.bigScreen}`}>
-							<Typography variant="body2">
-								Post your question and get answers from other users like you
-							</Typography>
-						</div>
-						<div className={classes.content}>
-							<TicketStepper />
+						<div className={classes.main}>
+							<div className={`${classes.description} ${classes.bigScreen}`}>
+								<Typography variant="body2">
+									Post your question and get answer from our dedicated staffs
+								</Typography>
+							</div>
+							<div className={classes.content}>
+								<TicketStepper />
+							</div>
 						</div>
 					</div>
 				</Grid>

@@ -43,7 +43,7 @@ const pageMetaSlice = createSlice({
 })
 
 export const {
-	setTitle, setSubTitle
+	setPageId, setTitle, setSubTitle
 } = pageMetaSlice.actions
 
 export default pageMetaSlice.reducer

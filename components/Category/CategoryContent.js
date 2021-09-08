@@ -1,6 +1,7 @@
 import React from "react"
+import Link from "next/link"
 import { makeStyles } from "@material-ui/core/styles"
-import { Grid, Typography, Link } from "@material-ui/core"
+import { Grid, Typography } from "@material-ui/core"
 import { LINK_TYPE } from "./../../helpers/constants"
 
 

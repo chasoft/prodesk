@@ -23,7 +23,8 @@
  *****************************************************************/
 
 import React from "react"
-import { Container, Link, makeStyles } from "@material-ui/core"
+import Link from "next/link"
+import { Container, makeStyles } from "@material-ui/core"
 import AskNow from "./AskNow"
 
 /*****************************************************************

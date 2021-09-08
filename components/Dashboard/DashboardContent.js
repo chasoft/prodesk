@@ -1,6 +1,7 @@
 import React from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import { Fab, Link, Paper, Typography } from "@material-ui/core"
+import Link from "next/link"
+import { Fab, Paper, Typography } from "@material-ui/core"
 import PostListItem from "../Post/PostListItem"
 import AskNow from "./../Docs/AskNow"
 import AddIcon from "@material-ui/icons/Add"
@@ -54,7 +55,7 @@ function DashboardContent() {
 		<div className={classes.root}>
 			<Typography className={classes.heading}>Browse the Support Desk</Typography>
 			<div>
-				<Typography variant="h4" className={classes.header}>Open</Typography>
+				<Typography variant="h1" className={classes.header} style={{ color: "white" }}>Open</Typography>
 				<Paper elevation={2} className={classes.group}>
 					<PostListItem isFirst={true} />
 					<PostListItem />
@@ -62,7 +63,7 @@ function DashboardContent() {
 				</Paper>
 			</div>
 			<div>
-				<Typography variant="h4" className={classes.header}>Closed</Typography>
+				<Typography variant="h1" className={classes.header}>Closed</Typography>
 				<Paper elevation={2} className={classes.group}>
 					<PostListItem isFirst={true} />
 					<PostListItem />

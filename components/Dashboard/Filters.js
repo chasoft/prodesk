@@ -216,7 +216,6 @@ function Filters() {
 					<Button color="primary" style={{ fontSize: "0.9rem" }}>Clear</Button>
 				</div>
 
-
 				<FilterFrame title="Status">
 					<FormControl className={classes.margin} fullWidth>
 						<FilterSelect

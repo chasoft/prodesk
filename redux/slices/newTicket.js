@@ -20,6 +20,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import merge from "lodash.merge"
+import { nanoid } from "nanoid"
 
 const isReadyNextStep = (currentStep, subject, message) => {
 	switch (currentStep) {
@@ -110,6 +111,23 @@ const newTicketSlice = createSlice({
 		setSelectedSubCategory: (state, { payload }) => { state.newTicket.selectedCategory.subCat = payload },
 		setSelectedPriority: (state, { payload }) => { state.newTicket.selectedPriority = payload },
 		setSelectedDepartment: (state, { payload }) => { state.newTicket.selectedDepartment = payload },
+
+		resetNewTicket: (state) => {
+			state.newTicket = {
+				...state.newTicket,
+				currentStep: 0,
+				isReadyNextStep: false,
+				tid: nanoid(10),
+				subject: "",
+				message: "<p></p>",
+				selectedCategory: {
+					cat: "",
+					subCat: ""
+				},
+				selectedPriority: "",
+				selectedDepartment: "",
+			}
+		},
 	}
 })
 
@@ -120,7 +138,8 @@ export const {
 	setMessage,
 	setSelectedCategory, setSelectedSubCategory,
 	setSelectedPriority,
-	setSelectedDepartment
+	setSelectedDepartment,
+	resetNewTicket
 } = newTicketSlice.actions
 
 export default newTicketSlice.reducer

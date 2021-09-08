@@ -1,6 +1,7 @@
 import React from "react"
+import Link from "next/link"
 import { makeStyles } from "@material-ui/core/styles"
-import { Link, Typography } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 import HelpfulSurvey from "./HelpfulSurvey"
 
 

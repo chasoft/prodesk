@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
 		[theme.breakpoints.down("xs")]: {
 			padding: theme.spacing(3),
 		},
+		backgroundColor: "white",
+		borderTopLeftRadius: "8px",
+		borderTopRightRadius: "8px",
 	},
 
 }))

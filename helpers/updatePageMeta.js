@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -22,33 +22,32 @@
  * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
-import React from "react"
-import Post from "../components/Post"
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { getLayout } from "./../layout/BlankLayout"
-
+import { setTitle, setSubTitle, setPageId } from "./../redux/slices/pageMeta"
+import { batch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-
-
-
-function ANewsPost() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-	return (
-		<Post />
-	)
+/**
+ * Update pageMeta when a page is loaded
+ * @param {object} props
+ */
+export default function updatePageMeta(props) {
+	const dispatch = useDispatch()
+	useEffect(() => {
+		batch(() => {
+			dispatch(setPageId(props.id ?? ""))
+			dispatch(setTitle(props.title ?? ""))
+			dispatch(setSubTitle(props.subTitle ?? ""))
+		})
+		console.log("pageMeta updated")
+	}, [])
 }
-
-ANewsPost.getLayout = getLayout
-export default ANewsPost
