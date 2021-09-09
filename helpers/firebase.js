@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -38,6 +38,7 @@ import { updateAvatarAndLocation } from "../redux/slices/auth"
 import { REDIRECT_URL, TICKET_STATUS } from "./constants"
 import { setRedirect } from "../redux/slices/redirect"
 import { batch as reduxBatch } from "react-redux"
+import { useEffect, useState } from "react"
 
 /*****************************************************************
  * FIREBASE CONFIGURATION                                        *
@@ -505,3 +506,27 @@ export const createNewTicketReply = async ({ currentUser, ticketId, replyContent
 // 		toast.error(`Something is wrong! Error message: ${e.message}`)
 // 	}
 // }
+
+/**
+ * This is to be used for rich-markdown-editor!
+ * @param {*} file - file which you get from onChangeEvent: `Array.from(e.target.files)[0]`
+ * @note rich-markdown-editor provide this `file` directly!
+ */
+export const imageUploader = async (file) => {
+	const username = localStorage.getItem("username")
+	let imgURL = "http://localhost:3000/img/img-error.png"
+
+	if (!username) return imgURL
+
+	const filename = file.name.split(".")[0]
+	const uniqueId = nanoid(5)
+	const extension = file.type.split("/")[1]
+
+	const ref = storage.ref(`uploads/${username}/${filename}-${uniqueId}.${extension}`)
+	const task = ref.put(file)
+
+	// Get downloadURL AFTER task resolves (Note: this is not a native Promise)
+	task
+		.then(() => ref.getDownloadURL())
+		.then((url) => { return url })
+}

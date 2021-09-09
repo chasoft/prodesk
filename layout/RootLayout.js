@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║          ProDesk - Your Elegant & Powerful Ticket System          ║ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -62,6 +62,10 @@ function RootLayout({ children }) {
 					...userProperties
 				}))
 
+				//Make a copy of username to localStorage
+				//TODO: secure this information later
+				localStorage.setItem("username", userProperties.username)
+
 				//Whether a social user, redirect if not yet created in db
 				if (user.providerData[0].providerId !== "password") {
 					//these information will be loaded in next step @ /signup/account
@@ -91,6 +95,7 @@ function RootLayout({ children }) {
 				}
 			} else {
 				//Clear loggedin data
+				localStorage.removeItem("username")
 				dispatch(logoutSuccess())
 			}
 		})

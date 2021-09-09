@@ -31,8 +31,6 @@ function AnArticle() {
 	const router = useRouter()
 	const { docId } = router.query
 
-
-
 	return (
 		<>
 			{
