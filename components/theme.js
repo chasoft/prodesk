@@ -94,9 +94,9 @@ export const theme = createTheme({
 				color: "#fff",
 				backgroundColor: "#1a73e8",
 				"&:hover": {
-					backgroundColor: "-webkit-linear-gradient(top,#4387fd,#4683ea)",
-					"-webkit-box-shadow": "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)",
-					boxShadow: "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)"
+					// backgroundColor: "-webkit-linear-gradient(top,#4387fd,#4683ea)",
+					// "-webkit-box-shadow": "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)",
+					// boxShadow: "0 1px 2px 0 rgb(66 133 244 / 30%), 0 1px 3px 1px rgb(66 133 244 / 15%)"
 				},
 			},
 		},

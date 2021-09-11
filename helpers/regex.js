@@ -5,3 +5,5 @@ export const regAnyName = /^[^~!@#$%^&*()|`;:"=']*$/
 export const regAdminURL = /^(\/admin)$|^(\/admin\/)/
 export const regBackendURL = /^(\/admin)$|^(\/admin\/)|^(\/client$)|^(\/client\/)/
 export const regLoginSignUpURL = /^(\/login)$|^(\/login\/)|^(\/signup$)|^(\/signup\/)/
+
+//export const regInternalLink = /^(\/admin)$|^(\/admin\/)/

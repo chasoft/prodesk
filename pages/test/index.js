@@ -5,9 +5,10 @@
 import React, { useState } from "react"
 import dynamic from "next/dynamic"
 import PropTypes from "prop-types"
+import Link from "next/link"
 
 // MATERIAL-UI
-import { Box, Button, Container, Grid, LinearProgress, Typography } from "@material-ui/core"
+import { Box, Button, Container, Grid, LinearProgress, Popover, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 import Editor from "rich-markdown-editor"
@@ -19,8 +20,11 @@ import { useSelector } from "react-redux"
 import { getAuth } from "../../redux/selectors"
 import { nanoid } from "nanoid"
 import Gallery from "../../components/Gallery"
+import AuthCheck from "../../components/AuthCheck"
 
 //ASSETS
+import DescriptionIcon from "@material-ui/icons/Description"
+import InsertPhotoIcon from "@material-ui/icons/InsertPhoto"
 
 /*****************************************************************
  * INIT                                                          *
@@ -41,6 +45,21 @@ function LinearProgressWithLabel(props) {
 }
 LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired, }
 
+const GoogleDocEmbed = ({ attrs }) => {
+	return <div style={{ border: "5px solid blue" }}>
+		<a href={attrs.href}>You embeded a GOOGLE DOCs Link</a>
+	</div>
+}
+GoogleDocEmbed.propTypes = { attrs: PropTypes.any }
+
+//prefix by "ImageURLhttps://....../an-image.jpeg"
+const FaceBookEmbed = ({ attrs }) => {
+	return <div style={{ border: "3px solid red" }}>
+		<a href={attrs.href} rel="noreferrer" target="_blank">You embeded a FACEBOOK link</a>
+	</div>
+}
+FaceBookEmbed.propTypes = { attrs: PropTypes.any }
+
 const Test = () => {
 	const [toggle, setToggle] = useState(false)
 	const { currentUser } = useSelector(getAuth)
@@ -53,6 +72,11 @@ const Test = () => {
 			const uniqueId = nanoid(5)
 			const extension = file.type.split("/")[1]
 			const filename = file.name.split(".")[0]
+
+			//fixbug
+			if (currentUser.username === undefined) {
+				reject("You must loggin to use this feature!")
+			}
 
 			// Makes reference to the storage bucket location
 			const storageRef = storage.ref(`uploads/${currentUser.username}/${filename}-${uniqueId}.${extension}`)
@@ -87,14 +111,15 @@ const Test = () => {
 	}
 
 	return (
-		<Container maxWidth="md" style={{ marginTop: "100px", marginBottom: "300px" }}>
-			<Grid container spacing={10}>
-				<Grid item>
-					<Button onClick={() => setToggle(p => !p)}>{toggle.toString()}</Button>
-				</Grid>
-				<Grid item>
-					<Editor
-						defaultValue={`Hello world!
+		<AuthCheck>
+			<Container maxWidth="md" style={{ marginTop: "100px", marginBottom: "300px" }}>
+				<Grid container spacing={10}>
+					<Grid item>
+						<Button onClick={() => setToggle(p => !p)}>{toggle.toString()}</Button>
+					</Grid>
+					<Grid item>
+						<Editor
+							defaultValue={`Hello world!
 # yes, you can type a text
 
 > yes, please
@@ -105,29 +130,60 @@ const Test = () => {
 |    |    |    |
 
 - [ ] please, do not do this!`}
-						onChange={(data) => { console.log(data()) }}
-						readOnly={toggle}
-						uploadImage={doImageUpload}
+							onChange={(data) => { console.log(data()) }}
+							readOnly={toggle}
+							uploadImage={doImageUpload}
+
+							// extensions={[new Emoji()]}
+							// onHoverLink={(event) => {
+							// 	// console.log(`Hovered link ${event.target.href}`)
+							// 	setLinkHoverURL(event.target.href)
+							// 	handlePopoverOpen(event.currentTarget)
+							// 	setLinkHover(true)
+							// }}
+							embeds={[
+								{
+									title: "Google Doc",
+									keywords: "google docs gdocs",
+									icon: DescriptionIcon,
+									defaultHidden: false,
+									matcher: href => {
+										return /^(http|https):\/\/docs.google.com/.test(href)
+									},
+									component: GoogleDocEmbed
+								},
+								{
+									title: "Facebook",
+									keywords: "fb facebook",
+									icon: InsertPhotoIcon,
+									defaultHidden: false,
+									matcher: href => {
+										return /^(http|https):\/\/(|www.)facebook.com/.test(href)
+									},
+									component: FaceBookEmbed
+								},
+							]}
 
 
-					/>
-					{uploading ? <LinearProgressWithLabel value={progress} /> : null}
+						/>
+						{uploading ? <LinearProgressWithLabel value={progress} /> : null}
 
+					</Grid>
+
+					<Grid item>
+						<label className="btn">
+							📸 Upload Img
+							<input type="file" onChange={(e) => console.log(Array.from(e.target.files)[0])} accept="image/x-png,image/gif,image/jpeg" />
+						</label>
+					</Grid>
 				</Grid>
 
-				<Grid item>
-					<label className="btn">
-						📸 Upload Img
-						<input type="file" onChange={(e) => console.log(Array.from(e.target.files)[0])} accept="image/x-png,image/gif,image/jpeg" />
-					</label>
-				</Grid>
-			</Grid>
+				<Gallery>
+					<Button variant="contained">Show Gallery</Button>
+				</Gallery>
 
-			<Gallery>
-				<Button variant="contained">Show Gallery</Button>
-			</Gallery>
-
-		</Container >
+			</Container >
+		</AuthCheck>
 	)
 }
 

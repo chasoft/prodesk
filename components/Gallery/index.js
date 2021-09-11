@@ -1,22 +1,26 @@
 import PropTypes from "prop-types"
-import { Box, makeStyles, Grid, Popover, TextField, Button, Drawer, AppBar, Toolbar, Typography, ImageList, ImageListItem } from "@material-ui/core"
+import { Box, makeStyles, Grid, Popover, TextField, Button, Drawer, AppBar, Toolbar, Typography, ImageList, ImageListItem, CircularProgress, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton, Tabs, Tab, Paper } from "@material-ui/core"
 import { useSnackbar } from "notistack"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { getAuth } from "../../redux/selectors"
 import * as yup from "yup"
 import { useFormik } from "formik"
 import dayjs from "dayjs"
+import { useTheme } from "@material-ui/core/styles"
+
 import { useDownloadURL } from "react-firebase-hooks/storage"
 import { storage } from "../../helpers/firebase"
+import { getListAll, useGetAllFiles } from "../../helpers/firebase-storage"
+import CloseIcon from "@material-ui/icons/Close"
 
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		padding: theme.spacing(3),
-		minWidth: "500px",
+		width: "500px",
 		[theme.breakpoints.down("xs")]: {
-			minWidth: "100%"
+			width: "100%"
 		}
 	},
 	textField: {
@@ -26,7 +30,20 @@ const useStyles = makeStyles((theme) => ({
 	},
 	imageList: {
 
+	},
+	DialogTitle: {
+		display: "flex",
+		alignItems: "center",
+		padding: theme.spacing(1, 1, 0, 2)
+	},
+	DialogContent: {
+		minHeight: "300px",
+		[theme.breakpoints.up("xs")]: {
+			minWidth: "400px"
+		},
 	}
+
+
 }))
 
 const validationSchema = yup.object({
@@ -44,16 +61,151 @@ const validationSchema = yup.object({
 	// })
 })
 
+function TabPanel(props) {
+	const { children, value, index, ...other } = props
+	return (
+		<div
+			role="tabpanel" id={`simple-tabpanel-${index}`}
+			hidden={value !== index} {...other}
+		>
+			{value === index && (
+				<Box p={3}>
+					<Typography>{children}</Typography>
+				</Box>
+			)}
+		</div>
+	)
+}
+
+TabPanel.propTypes = {
+	children: PropTypes.node,
+	index: PropTypes.any.isRequired,
+	value: PropTypes.any.isRequired,
+}
+
+const itemData = [
+	{
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	},
+	{
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	},
+	{
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	}, {
+		img: "/img/default-avatar.png",
+		title: "Image",
+		author: "author",
+	},
+]
+
 function Gallery({ children }) {
-
-	const { currentUser } = useSelector(getAuth)
-	//const [downloadUrl, loading, error] = useDownloadURL(storage.ref(`uploads/${currentUser?.username}`))
-	const [allFiles, setAllFiles] = useState({})
-
+	const theme = useTheme()
 	const classes = useStyles()
-	const [toggleDrawer, setToggleDrawer] = useState(false)
-
+	const { fileList } = useGetAllFiles()
 	const { enqueueSnackbar } = useSnackbar()
+
+	const [showGallery, setShowGallery] = useState(false)
+	const [tabId, setTabId] = useState(0)
+	const [selectedImage, setSelectedImage] = useState("")
+
+	const handleClose = () => { setShowGallery(false) }
+	const handleChange = (event, newValue) => { setTabId(newValue) }
+
+	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+
+
+
 
 
 	const formik = useFormik({
@@ -68,98 +220,84 @@ function Gallery({ children }) {
 	})
 
 
+
 	return (
 		<>
-			<span onClick={async () => {
-				setToggleDrawer(true)
-				const aaa = `uploads/${currentUser.username}/`
-				console.log(aaa)
-				const listRef = storage.ref().child(aaa)
-				const res = await listRef.listAll()
-				const folderList = []
-				const fileList = []
-
-				res.prefixes.forEach((folderRef) => {
-					// All the prefixes under listRef.
-					// You may call listAll() recursively on them.
-					folderList.push(folderRef)
-				})
-				res.items.forEach(async (itemRef) => {
-					// All the items under listRef.
-					const url = await itemRef.getDownloadURL()
-					fileList.push(url)
-				})
-
-				setAllFiles({ folderList, fileList })
-			}}
+			<span onClick={() => setShowGallery(true)}
 			>{children}</span>
 
-			<Drawer anchor="right" open={toggleDrawer} onClose={() => setToggleDrawer(false)}>
-				<div>
-					<Toolbar>
-						<Typography variant="h6" noWrap>
-							Permanent drawer
-						</Typography>
-					</Toolbar>
-				</div>
-				<div className={classes.datetime}>
-					<form className={classes.container} onSubmit={formik.handleSubmit}>
+			<Dialog open={showGallery} onClose={handleClose} fullScreen={fullScreen}>
+				<DialogTitle id="responsive-dialog-title" style={{ padding: 0 }}>
+					<div className={classes.DialogTitle}>
 
+
+						<Typography style={{ flexGrow: 1 }} variant="button">Image Gallery</Typography>
+
+						<IconButton
+							size="small" aria-label="close"
+							className={classes.closeButton} onClick={handleClose}
+						>
+							<CloseIcon />
+						</IconButton>
+
+					</div>
+				</DialogTitle>
+
+				<DialogContent className={classes.DialogContent}>
+					<Box onClick={() => setSelectedImage("")}>
+						<Typography variant="h3">10-Sep-2021</Typography>
 						<Grid container spacing={2}>
-							<Grid item xs={6}>
-								<TextField
-									id="dateFrom"
-									label="From"
-									type="date"
-									value={formik.values.dateFrom}
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									error={formik.touched.dateFrom && Boolean(formik.errors.dateFrom)}
-									helperText={formik.touched.dateFrom && formik.errors.dateFrom}
-									className={classes.textField}
-									InputLabelProps={{
-										shrink: true,
-									}}
-									variant="outlined"
-								/>
-							</Grid>
-
-							<Grid item xs={6}>
-								<TextField
-									id="dateTo"
-									label="To"
-									type="date"
-									value={formik.values.dateTo}
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									error={formik.touched.dateTo && Boolean(formik.errors.dateTo)}
-									helperText={formik.touched.dateTo && formik.errors.dateTo}
-									className={classes.textField}
-									InputLabelProps={{
-										shrink: true,
-									}}
-									variant="outlined"
-								/>
-							</Grid>
+							{
+								(fileList.length === 0) ?
+									<Grid item xs>
+										<Typography>There is no images in your gallery!</Typography>
+									</Grid>
+									: fileList.map((item) => (
+										<Grid key={item.filename} item xs>
+											<Paper
+												variant="outlined"
+												style={{
+													textAlign: "center",
+													height: "120px", width: "120px",
+													border: (selectedImage === item.filename) ? "3px solid #1A73E8" : "1px solid #E0E0E0",
+													cursor: "pointer",
+													backgroundImage: "url(" + item.thumb + ")",
+													backgroundSize: "cover"
+												}}
+												onClick={(e) => {
+													e.stopPropagation()
+													setSelectedImage(item.filename)
+												}}
+											>
+											</Paper>
+										</Grid>
+									))
+							}
 						</Grid>
+					</Box>
+				</DialogContent>
 
-					</form>
-				</div>
-				<div className={classes.imageList}>
-					{
-						// allFiles ? JSON.stringify(allFiles) : "Empty"
-						allFiles ? console.log({ allFiles }) : "Empty"
-					}
-
-					{
-						allFiles?.fileList?.length > 0 &&
-						allFiles.fileList.map((item) => (
-							<img key={item} src={item} alt="aa" />
-						))
-					}
-
-				</div>
-			</Drawer>
+				<DialogActions>
+					<div style={{ display: "flex", flexGrow: 1, justifyContent: "flex-start", paddingLeft: "1rem" }}>
+						<Typography>{(selectedImage.length > 0) && "You selected: "}</Typography>
+						<Typography style={{ fontWeight: 500 }}>
+							{
+								(selectedImage.length < 30)
+									? selectedImage
+									: (selectedImage.slice(0, 15) + "..." + selectedImage.slice(-15))
+							}
+						</Typography>
+					</div>
+					<div style={{ paddingRight: "1rem" }}>
+						<Button onClick={handleClose} color="secondary" style={{ marginRight: "1rem" }}>
+							Cancel
+						</Button>
+						<Button onClick={() => { }} variant="contained" color="primary">
+							Insert
+						</Button>
+					</div>
+				</DialogActions>
+			</Dialog>
 		</>
 	)
 }
