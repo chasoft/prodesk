@@ -24,14 +24,10 @@
 
 import React from "react"
 import Link from "next/link"
-import { Container, makeStyles, Paper, Typography } from "@material-ui/core"
-import PostListItem from "../Post/PostListItem"
+import { makeStyles, Paper, Typography } from "@material-ui/core"
 
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
-
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+import PropTypes from "prop-types"
 
 /*****************************************************************
  * INIT                                                          *
@@ -73,31 +69,37 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DocGroup = () => {
+const DocGroup = ({ title, viewAllText, viewAllLink, children }) => {
 	const classes = useStyles()
 	return (
-		<Container maxWidth="md">
-			<div className={classes.paper}>
-				<div className={classes.root}>
+		<div className={classes.paper}>
+			<div className={classes.root}>
 
-					<Typography variant="h2">Featured posts</Typography>
-					<Link href="/" className={classes.viewAll}>
-						<div>
-							<Typography>View all featured posts</Typography>
-							<ArrowForwardIcon fontSize="small" />
-						</div>
-					</Link>
+				<Typography variant="h2">{title}</Typography>
+				{
+					viewAllLink ?
+						<Link href={viewAllLink} className={classes.viewAll}>
+							<div>
+								<Typography>{viewAllText}</Typography>
+								<ArrowForwardIcon fontSize="small" />
+							</div>
+						</Link>
+						: null
+				}
 
-					<Paper elevation={2} className={classes.group}>
-						<PostListItem isFirst={true} />
-						<PostListItem />
-						<PostListItem isLast={true} />
-					</Paper>
+				<Paper elevation={2} className={classes.group}>
+					{children}
+				</Paper>
 
-				</div>
 			</div>
-		</Container >
+		</div>
 	)
+}
+DocGroup.propTypes = {
+	title: PropTypes.string,
+	viewAllText: PropTypes.string,
+	viewAllLink: PropTypes.string,
+	children: PropTypes.node,
 }
 
 export default DocGroup

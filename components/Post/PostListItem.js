@@ -1,6 +1,7 @@
 import React from "react"
+import Link from "next/link"
 import { makeStyles } from "@material-ui/core/styles"
-import { Chip, Grid, Typography } from "@material-ui/core"
+import { Chip, Typography } from "@material-ui/core"
 import PropTypes from "prop-types"
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 		overflow: "hidden",
 		marginRight: theme.spacing(2),
 	},
-	details: {
+	excerpt: {
 		[theme.breakpoints.down("xs")]: {
 			display: "none"
 		},
@@ -65,44 +66,83 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-function PostListItem({ isFirst = false, isLast = false }) {
+function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLast = false, isShort = false, emptyMessage }) {
 	const classes = useStyles()
+
+	if (emptyMessage) {
+		return (
+			<div
+				className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}
+				style={{ cursor: "default", }}
+			>
+				<div className={classes.paper}>
+					<div className={classes.content} style={{ textAlign: "center" }}>
+						<Typography>{emptyMessage}</Typography>
+					</div>
+				</div>
+			</div>
+		)
+	}
 
 	return (
 		<div className={(!isFirst) ? classes.border : ""} >
-			<div
-				className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}
-				onClick={() => alert("ok!")}
-			>
+			<Link href={link}>
+				<div className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}>
 
-				<div className={classes.paper}>
+					<div className={classes.paper}>
 
-					<div className={classes.content}>
-						<Typography variant="h5" className={classes.subject} noWrap>
-							Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!
-						</Typography>
-						<Typography className={classes.details} noWrap>
-							Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!
-						</Typography>
-					</div>
-
-					<div className={classes.state}>
-						<div className={classes.state1}>
-							<Chip size="small" label="Closed" onDelete={() => { }} color="secondary" />
-						</div>
-						<div className={classes.state2}>
-							<Typography variant="caption" noWrap>
-								0 replies
+						<div className={classes.content}>
+							<Typography variant="h5" className={classes.subject} noWrap>
+								{subject}
 							</Typography>
+							{
+								isShort ?
+									null
+									: <Typography className={classes.excerpt} noWrap>
+										{excerpt}
+									</Typography>
+							}
 						</div>
+
+						{
+							isShort ?
+								null
+								: <div className={classes.state}>
+									{
+										metaData.length > 0 ?
+											metaData.map(() => {
+												return (
+													<>
+														<div className={classes.state1}>
+															<Chip size="small" label="Closed" onDelete={() => { }} color="secondary" />
+														</div>
+														<div className={classes.state2}>
+															<Typography variant="caption" noWrap>
+																0 replies
+															</Typography>
+														</div>
+													</>
+												)
+											})
+											: null
+									}
+								</div>
+						}
+
 					</div>
-
 				</div>
-
-			</div>
+			</Link>
 		</div>
 	)
 }
-PostListItem.propTypes = { isFirst: PropTypes.bool, isLast: PropTypes.bool }
+PostListItem.propTypes = {
+	subject: PropTypes.string,
+	excerpt: PropTypes.string,
+	link: PropTypes.string,
+	metaData: PropTypes.array, //array of Objects
+	isFirst: PropTypes.bool, isLast: PropTypes.bool,
+	isShort: PropTypes.bool,
+	emptyMessage: PropTypes.string,
+}
 
 export default PostListItem

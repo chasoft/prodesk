@@ -45,12 +45,6 @@ const useStyles = makeStyles((theme) => ({
 			marginRight: theme.spacing(0),
 		},
 	},
-	// content: {
-	// 	padding: theme.spacing(8),
-	// 	[theme.breakpoints.down("xs")]: {
-	// 		padding: theme.spacing(3),
-	// 	},
-	// },
 	docHeading: {
 		padding: theme.spacing(2, 3),
 		fontFamily: "\"Google Sans\", Roboto, sans-serif",
@@ -72,6 +66,14 @@ const useStyles = makeStyles((theme) => ({
 		},
 		borderTop: "1px solid",
 		borderColor: theme.palette.divider,
+	},
+	link: {
+		display: "flex",
+		alignItems: "center",
+		cursor: "pointer",
+		"&:hover": {
+			textDecoration: "underline",
+		}
 	}
 }))
 
@@ -92,7 +94,7 @@ const DocItem = () => {
 
 			<div className={`${classes.viewAll} ${classes.docFooter}`}>
 				<Link href="/">
-					<div>
+					<div className={classes.link}>
 						<Typography>View all post</Typography>
 						<ArrowForwardIcon fontSize="small" />
 					</div>

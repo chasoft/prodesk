@@ -64,11 +64,10 @@ const useStyles = makeStyles((theme) => ({
 
 const backgroundInfo = {
 	"Empty": {
-		backgroundImage: "",
 		backgroundRepeat: "",
 	},
 	"AdminIndex": {
-		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0' y='0' width='2500' height='600'/%3E%3C/svg%3E")`,
+		backgroundImage: "",
 		backgroundRepeat: "no-repeat",
 	},
 	"AdminProfile": {
@@ -150,13 +149,12 @@ function ClientLayout({ children }) {
 						onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
 					>
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
-						<div
-							style={{
-								backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-								backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat,
-								backgroundAttachment: "scroll"
-							}}
-						>
+						<div>
+							<div style={{
+								backgroundColor: "#1a73e8",
+								width: "100%", height: "300px",
+								position: "absolute", top: 0, zIndex: -1
+							}}></div>
 							{children}
 							<Footer />
 						</div>

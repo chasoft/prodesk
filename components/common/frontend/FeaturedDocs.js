@@ -18,92 +18,72 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import React from "react"
-
-// MATERIAL-UI
-import { Button, makeStyles, Paper, Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-
-//PROJECT IMPORT
-
-
-//ASSETS
-import ForumIcon from "@material-ui/icons/Forum"
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import PostListItem from "./../../Post/PostListItem"
+import DocGroup from "./../../Docs/DocGroup"
+import { Container } from "@material-ui/core"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: theme.spacing(4),
-		marginBottom: theme.spacing(4),
-		[theme.breakpoints.down("xs")]: {
-			marginTop: theme.spacing(2),
-			marginBottom: theme.spacing(2),
-		}
+// const useStyles = makeStyles((theme) => ({
+// 	root: {
+// 	},
+// }))
+
+const DummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-	paper: {
-		display: "flex",
-		alignItems: "center",
-		"& > *:not(:last-child)": {
-			marginRight: theme.spacing(4)
-		},
-		padding: theme.spacing(3, 8),
-		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(5, 4, 4, 4)
-		}
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-	ask: {
-		display: "flex",
-		alignItems: "center",
-		flexGrow: 1,
-		"& > *": {
-			marginRight: theme.spacing(2)
-		},
-		[theme.breakpoints.down("xs")]: {
-			flexDirection: "column",
-			alignItems: "flex-start"
-		}
-	}
-}))
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
+	},
+]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AskNow = () => {
-	const classes = useStyles()
+const FeaturedDocs = () => {
+	// const classes = useStyles()
 	return (
-		<div className={classes.root}>
-			<Paper elevation={2} className={classes.paper}>
-				<div>
-					<ForumIcon color="primary" />
-				</div>
-				<div className={classes.ask} >
-
-					<Typography><span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.</Typography>
-
-					<Button
-						color="primary"
-						size="small"
-						// className={classes.button}
-						endIcon={<ArrowForwardIcon />}
-						style={{ whiteSpace: "nowrap" }}
-					>
-						Ask now
-					</Button>
-				</div>
-			</Paper>
-		</div>
+		<DocGroup
+			title="Featured Docs"
+			viewAllText="View all featured docs"
+			viewAllLink="/docs/featured"
+		>
+			{
+				DummyData.map((item, idx) => {
+					return (
+						<PostListItem
+							key={item.docId}
+							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
+							subject={item.subject}
+							excerpt={item.excerpt}
+							link={item.link}
+							metaData={item.metaData}
+						/>
+					)
+				})
+			}
+		</DocGroup>
 	)
 }
 
-export default AskNow
+export default FeaturedDocs

@@ -38,9 +38,6 @@ function AnArticle() {
 			}
 			<MainNav borderBottom={true} />
 			<Article />
-
-			<MainNav borderBottom={true} />
-			<Category />
 		</>
 	)
 }

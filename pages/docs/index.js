@@ -18,23 +18,15 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
-
 import React from "react"
-import DocGroup from "./../../components/Docs/DocGroup"
+import FeaturedDocs from "./../../components/common/frontend/FeaturedDocs"
 import CatGroup from "./../../components/Docs/CatGroup"
-import AskNow from "./../../components/Docs/AskNow"
-
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
 
 import { getLayout } from "../../layout/BlankLayout"
 import MainNav from "../../components/common/frontend/MainNav"
 import PromotedSearch from "../../components/common/frontend/PromotedSearch"
 import AskNowFrame from "../../components/Docs/AskNowFrame"
+import { Container } from "@material-ui/core"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,13 +37,21 @@ import AskNowFrame from "../../components/Docs/AskNowFrame"
  *****************************************************************/
 
 function Docs() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
 	return (
 		<>
 			<MainNav />
+
 			<PromotedSearch />
-			<DocGroup />
+
+			{/* <DocGroup /> */}
+
+			<Container maxWidth="md">
+				<FeaturedDocs />
+			</Container>
+
+
 			<AskNowFrame />
+
 			<CatGroup />
 		</>
 	)

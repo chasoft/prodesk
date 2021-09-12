@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const NavCollapse = ({ title, description, children, isExpanded = false, isLongDisplay = false, callback }) => {
+const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 	const classes = useStyles()
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
@@ -129,8 +129,6 @@ NavCollapse.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
 	isExpanded: PropTypes.bool,
-	isLongDisplay: PropTypes.bool,
-	callback: PropTypes.func,
 	children: PropTypes.any,
 }
 

@@ -20,74 +20,70 @@
 
 
 import React from "react"
-import Link from "next/link"
-import { makeStyles, Paper, Typography } from "@material-ui/core"
 import PostListItem from "./../../../Post/PostListItem"
-
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import DocGroup from "../../../Docs/DocGroup"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
+// const useStyles = makeStyles((theme) => ({
+// 	root: {
+
+// 	}
+// }))
+
+const LatestFeedbackDummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-	paper: {
-		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
-			marginTop: theme.spacing(3),
-		},
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-	group: {
-		margin: "1.5rem 0",
-		[theme.breakpoints.down("xs")]: {
-			margin: "1.625rem 0",
-		},
-		marginBottom: 0
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		}
-	}
-}))
+]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 const LatestTicketFeedback = () => {
-	const classes = useStyles()
+	// const classes = useStyles()
 	return (
-		<div className={classes.paper}>
-			<div className={classes.root}>
-
-				<Typography variant="h2">Latest Activities</Typography>
-				<Link href="/client/tickets" className={classes.viewAll}>
-					<div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-						<Typography variant="button" color="primary">View all tickets</Typography>
-						<ArrowForwardIcon fontSize="small" color="primary" />
-					</div>
-				</Link>
-
-				<Paper elevation={2} className={classes.group}>
-					<PostListItem isFirst={true} />
-					<PostListItem />
-					<PostListItem isLast={true} />
-				</Paper>
-
-			</div>
-		</div>
+		<DocGroup
+			title="Latest Support Activities"
+			viewAllText="View all tickets"
+			viewAllLink="/client/tickets"
+		>
+			{
+				LatestTicketFeedback.length > 0 ?
+					LatestFeedbackDummyData.map((item, idx) => (
+						<PostListItem
+							key={item.docId}
+							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
+							subject={item.subject}
+							excerpt={item.excerpt}
+							link={item.link}
+							metaData={item.metaData}
+						/>
+					))
+					: <PostListItem emptyMessage="Welcome! Please open new ticket, our dedicated staffs would be pleased to serve you." />
+			}
+		</DocGroup>
 	)
 }
 

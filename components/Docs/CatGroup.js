@@ -51,9 +51,16 @@ const useStyles = makeStyles((theme) => ({
 	viewAll: {
 		display: "flex",
 		alignItems: "center",
+		justifyContent: "space-between",
 		padding: theme.spacing(6, 1, 3)
+	},
+	link: {
+		color: theme.palette.primary.main,
+		"&:hover": {
+			textDecoration: "underline",
+			cursor: "pointer",
+		}
 	}
-
 }))
 
 /*****************************************************************
@@ -71,9 +78,8 @@ const CatGroup = () => {
 					<div className={classes.viewAll}>
 
 						<Typography variant="h2">Categories</Typography>
-						<div style={{ flexGrow: 1 }}></div>
-						<Link href="/">
-							<Typography>View all post</Typography>
+						<Link href="/docs/categories">
+							<Typography className={classes.link}>View all Categories</Typography>
 						</Link>
 
 					</div>

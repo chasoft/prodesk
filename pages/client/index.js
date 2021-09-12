@@ -22,32 +22,38 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Card, CardContent, Container, Grid, Paper, Typography } from "@material-ui/core"
 import React from "react"
+import Link from "next/link"
 
 // MATERIAL-UI
 import { makeStyles } from "@material-ui/core/styles"
+import { Container, Grid, IconButton, Tooltip, Typography } from "@material-ui/core"
+
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import AskNow from "../../components/Docs/AskNow"
 import { getLayout } from "./../../layout/ClientLayout"
-import Dashboard from "./../../components/Dashboard"
 import updatePageMeta from "../../helpers/updatePageMeta"
 import ClientStats from "../../components/common/backend/client/ClientStats"
+import DocItem from "../../components/Docs/DocItem"
 import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
+import RecentActivities from "../../components/common/backend/client/RecentActivities"
 
 //ASSETS
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 
 	},
 	boxTitle: {
+		display: "flex",
+		justifyContent: "space-between",
 		padding: theme.spacing(8, 0, 4),
 		color: "white",
 	},
@@ -80,18 +86,32 @@ function Client() {
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 
 			<div className={classes.boxTitle}>
-				<Typography className={classes.siteTitle}>
-					prodesk
-				</Typography>
+				<div>
+					<Typography className={classes.siteTitle}>
+						prodesk
+					</Typography>
 
-				<Typography variant="subtitle1">
-					Your Elegant &amp; Powerful Ticket System
-				</Typography>
+					<Typography variant="subtitle1">
+						Your Elegant &amp; Powerful Ticket System
+					</Typography>
+				</div>
+				<div>
+					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
+						<Tooltip title="Open New Ticket" placement="left">
+							<IconButton color="inherit">
+								<ArrowForwardIcon />
+							</IconButton>
+						</Tooltip>
+					</Link>
+				</div>
 			</div>
 
 			<ClientStats />
 
 			<LatestTicketFeedback />
+
+			<RecentActivities />
+
 
 		</Container>
 	)

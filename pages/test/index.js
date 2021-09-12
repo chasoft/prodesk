@@ -2,7 +2,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
 import PropTypes from "prop-types"
 import Link from "next/link"
@@ -12,6 +12,7 @@ import { Box, Button, Container, Grid, LinearProgress, Popover, Typography } fro
 
 //THIRD-PARTY
 import Editor from "rich-markdown-editor"
+import { useSnackbar } from "notistack"
 
 //PROJECT IMPORT
 import { getRootLayout } from "./../../layout/RootLayout"
@@ -46,14 +47,15 @@ function LinearProgressWithLabel(props) {
 LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired, }
 
 const GoogleDocEmbed = ({ attrs }) => {
+	console.log(attrs)
 	return <div style={{ border: "5px solid blue" }}>
 		<a href={attrs.href}>You embeded a GOOGLE DOCs Link</a>
 	</div>
 }
 GoogleDocEmbed.propTypes = { attrs: PropTypes.any }
 
-//prefix by "ImageURLhttps://....../an-image.jpeg"
 const FaceBookEmbed = ({ attrs }) => {
+	console.log(attrs)
 	return <div style={{ border: "3px solid red" }}>
 		<a href={attrs.href} rel="noreferrer" target="_blank">You embeded a FACEBOOK link</a>
 	</div>
@@ -65,6 +67,10 @@ const Test = () => {
 	const { currentUser } = useSelector(getAuth)
 	const [uploading, setUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
+
+	const editorInstance = useRef()
+	const { enqueueSnackbar } = useSnackbar()
+
 
 	function uploaderPromise(file) {
 		return new Promise((resolve, reject) => {
@@ -110,6 +116,12 @@ const Test = () => {
 		return imageURL
 	}
 
+	useEffect(() => {
+		// not working because at this time, editorInstance not yet initialized done!
+		// editorInstance.current?.focusAtStart()
+		//console.log(headings) 
+	}, [])
+
 	return (
 		<AuthCheck>
 			<Container maxWidth="md" style={{ marginTop: "100px", marginBottom: "300px" }}>
@@ -132,6 +144,7 @@ const Test = () => {
 - [ ] please, do not do this!`}
 							onChange={(data) => { console.log(data()) }}
 							readOnly={toggle}
+							ref={editorInstance}
 							uploadImage={doImageUpload}
 
 							// extensions={[new Emoji()]}
@@ -163,6 +176,42 @@ const Test = () => {
 									component: FaceBookEmbed
 								},
 							]}
+							onSearchLink={async searchTerm => {
+								// const results = await MyAPI.search(searchTerm)
+								// USE THIS FEATURE TO SEARCH FOR INTERNAL LINK
+								// MAKING INTERNAL LINKING BECOMES SOO EASY
+								const results = [
+									{
+										name: "name 1",
+										createdAt: "2021-09-10",
+										url: "http://www.facebook.com"
+									},
+									{
+										name: "name 2",
+										createdAt: "2021-08-10",
+										url: "http://www.facebook.com/1"
+									},
+									{
+										name: "name 3",
+										createdAt: "2021-07-10",
+										url: "http://www.facebook.com/2"
+									},
+								]
+
+								return results.map(result => ({
+									title: result.name,
+									subtitle: `Created ${result.createdAt}`,
+									url: result.url
+								}))
+							}}
+
+							onShowToast={(message, type) => {
+
+								enqueueSnackbar(message, { variant: type })
+
+							}}
+
+
 
 
 						/>

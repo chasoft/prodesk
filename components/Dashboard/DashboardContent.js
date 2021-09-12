@@ -1,10 +1,11 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import Link from "next/link"
 import { Fab, Paper, Typography } from "@material-ui/core"
 import PostListItem from "../Post/PostListItem"
 import AskNow from "./../Docs/AskNow"
 import AddIcon from "@material-ui/icons/Add"
+import { STATUS_FILTER } from "../../helpers/constants"
 
 // import HelpfulSurvey from "./HelpfulSurvey"
 
@@ -48,26 +49,135 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-//TODO: Float button - design the position
+
+const DummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN
+	},
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.CLOSED
+	},
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN
+	},
+	{
+		docId: 4,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.CLOSED
+	},
+	{
+		docId: 5,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN
+	},
+	{
+		docId: 6,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN
+	},
+]
+
 function DashboardContent() {
 	const classes = useStyles()
+	const [openTickets, setOpenTickets] = useState([])
+	const [closedTickets, setClosedTickets] = useState([])
+	const [pendingTickets, setPendingTickets] = useState([])
+
+	useEffect(() => {
+		setOpenTickets(DummyData.filter(item => item.status === STATUS_FILTER.OPEN))
+		setClosedTickets(DummyData.filter(item => item.status === STATUS_FILTER.CLOSED))
+		setPendingTickets(DummyData.filter(item => item.status === STATUS_FILTER.PENDING))
+	}, [DummyData])
+
 	return (
 		<div className={classes.root}>
 			<Typography className={classes.heading}>Browse the Support Desk</Typography>
 			<div>
 				<Typography variant="h1" className={classes.header} style={{ color: "white" }}>Open</Typography>
 				<Paper elevation={2} className={classes.group}>
-					<PostListItem isFirst={true} />
-					<PostListItem />
-					<PostListItem isLast={true} />
+					{
+						openTickets.length > 0 ?
+							openTickets.map((item, idx) => {
+								return (
+									<PostListItem
+										key={item.docId}
+										isFirst={idx === 0} isLast={idx === openTickets.length - 1}
+										subject={item.subject}
+										excerpt={item.excerpt}
+										link={item.link}
+										metaData={item.metaData}
+									/>
+								)
+							})
+							: <PostListItem />
+					}
 				</Paper>
 			</div>
 			<div>
 				<Typography variant="h1" className={classes.header}>Closed</Typography>
 				<Paper elevation={2} className={classes.group}>
-					<PostListItem isFirst={true} />
-					<PostListItem />
-					<PostListItem isLast={true} />
+					{
+						closedTickets.length > 0 ?
+							closedTickets.map((item, idx) => {
+								return (
+									<PostListItem
+										key={item.docId}
+										isFirst={idx === 0} isLast={idx === closedTickets.length - 1}
+										subject={item.subject}
+										excerpt={item.excerpt}
+										link={item.link}
+										metaData={item.metaData}
+									/>
+								)
+							})
+							: <PostListItem emptyMessage="There are no closed tickets." />
+					}
+				</Paper>
+			</div>
+
+			<div>
+				<Typography variant="h1" className={classes.header}>Pending</Typography>
+				<Paper elevation={2} className={classes.group}>
+					{
+						pendingTickets.length > 0 ?
+							pendingTickets.map((item, idx) => {
+								return (
+									<PostListItem
+										key={item.docId}
+										isFirst={idx === 0} isLast={idx === pendingTickets.length - 1}
+										subject={item.subject}
+										excerpt={item.excerpt}
+										link={item.link}
+										metaData={item.metaData}
+									/>
+								)
+							})
+							: <PostListItem emptyMessage="There are no pending tickets." />
+					}
 				</Paper>
 			</div>
 

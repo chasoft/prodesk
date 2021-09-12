@@ -18,24 +18,14 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
 
 import React from "react"
+import Link from "next/link"
+import { Grid, makeStyles, Paper, Typography } from "@material-ui/core"
+import PostListItem from "../../../Post/PostListItem"
 
-// MATERIAL-UI
-import { Button, makeStyles, Paper, Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-
-//PROJECT IMPORT
-
-
-//ASSETS
-import ForumIcon from "@material-ui/icons/Forum"
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import DocItem from "../../../Docs/DocItem"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,34 +33,32 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		marginTop: theme.spacing(4),
-		marginBottom: theme.spacing(4),
-		[theme.breakpoints.down("xs")]: {
-			marginTop: theme.spacing(2),
-			marginBottom: theme.spacing(2),
-		}
+		width: "100%",
 	},
 	paper: {
-		display: "flex",
-		alignItems: "center",
-		"& > *:not(:last-child)": {
-			marginRight: theme.spacing(4)
-		},
-		padding: theme.spacing(3, 8),
+		marginTop: theme.spacing(8),
 		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(5, 4, 4, 4)
-		}
+			marginTop: theme.spacing(3),
+		},
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
 	},
-	ask: {
+	group: {
+		margin: "1.5rem 0",
+		[theme.breakpoints.down("xs")]: {
+			margin: "1.625rem 0",
+		},
+		marginBottom: 0
+	},
+	viewAll: {
 		display: "flex",
 		alignItems: "center",
-		flexGrow: 1,
-		"& > *": {
-			marginRight: theme.spacing(2)
+		"& > :first-child": {
+			marginRight: theme.spacing(1)
 		},
-		[theme.breakpoints.down("xs")]: {
-			flexDirection: "column",
-			alignItems: "flex-start"
+		"& > *": {
+			color: theme.palette.primary.main
 		}
 	}
 }))
@@ -79,31 +67,51 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AskNow = () => {
+const RecentActivities = () => {
 	const classes = useStyles()
 	return (
-		<div className={classes.root}>
-			<Paper elevation={2} className={classes.paper}>
-				<div>
-					<ForumIcon color="primary" />
-				</div>
-				<div className={classes.ask} >
+		<div className={classes.paper}>
+			<div className={classes.root}>
 
-					<Typography><span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.</Typography>
+				<Typography variant="h2">Recent Activities</Typography>
+				<Link href="/client/tickets" className={classes.viewAll}>
+					{/* <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
+					<Typography variant="button" color="primary">View all tickets</Typography>
+					{/* <ArrowForwardIcon fontSize="small" color="primary" /> */}
+					{/* </div> */}
+				</Link>
 
-					<Button
-						color="primary"
-						size="small"
-						// className={classes.button}
-						endIcon={<ArrowForwardIcon />}
-						style={{ whiteSpace: "nowrap" }}
-					>
-						Ask now
-					</Button>
-				</div>
-			</Paper>
+				{/* <Paper elevation={2} className={classes.group}>
+					<PostListItem isFirst={true} />
+					<PostListItem />
+					<PostListItem isLast={true} />
+				</Paper> */}
+				<Grid container spacing={4}>
+
+					<Grid item xs={12} sm={6}>
+
+						<DocItem />
+
+					</Grid>
+
+					<Grid item xs={12} sm={6}>
+						<DocItem />
+					</Grid>
+
+					<Grid item xs={12} sm={6}>
+						<DocItem />
+					</Grid>
+
+					<Grid item xs={12} sm={6}>
+						<DocItem />
+					</Grid>
+
+
+				</Grid>
+
+			</div>
 		</div>
 	)
 }
 
-export default AskNow
+export default RecentActivities
