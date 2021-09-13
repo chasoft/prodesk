@@ -22,9 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Grid, Hidden } from "@material-ui/core"
+import { Container, Hidden } from "@material-ui/core"
 import React from "react"
-import Link from "next/link"
 
 // MATERIAL-UI
 import { makeStyles } from "@material-ui/core/styles"

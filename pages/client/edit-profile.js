@@ -31,6 +31,7 @@ import React from "react"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
+import { updateFrontendBackground } from "./../../helpers/updateFrontendBackground"
 
 //ASSETS
 
@@ -45,9 +46,12 @@ import { getLayout } from "./../../layout/ClientLayout"
  *****************************************************************/
 
 function EditProfile() {
+	updateFrontendBackground({ data: { backgroundColor: "red" } })
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Edit Profile</Typography>
+
+
 		</Container>
 	)
 }

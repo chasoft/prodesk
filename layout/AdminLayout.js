@@ -48,7 +48,7 @@ import { getRootLayout } from "./RootLayout"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
 	root: {
 		display: "flex",
 		flexDirection: "row",
@@ -59,31 +59,7 @@ const useStyles = makeStyles((theme) => ({
 		height: "100vh",
 		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)",
 	},
-}))
-
-const backgroundInfo = {
-	"Empty": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	},
-	"AdminIndex": {
-		backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2500 600'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23${"1a73e8"};%7D%3C/style%3E%3C/defs%3E%3Crect class='cls-1' x='0' y='0' width='2500' height='600'/%3E%3C/svg%3E")`,
-		backgroundRepeat: "no-repeat",
-		backgroundAttachment: "scroll"
-	},
-	"AdminProfile": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	},
-	"AdminTicket": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	},
-	"AdminUsers": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	}
-}
+})
 
 const ADMIN_MENUS = [
 	{
@@ -164,7 +140,7 @@ function AdminLayout({ children }) {
 	const classes = useStyles()
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const [scrolled, setScrolled] = useState(false)
-	const { adminBackgroundId } = useSelector(getUiSettings)
+	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 
 	const sideBarExpanding = () => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
@@ -193,13 +169,8 @@ function AdminLayout({ children }) {
 
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 
-						<div
-							style={{
-								backgroundImage: backgroundInfo[adminBackgroundId].backgroundImage,
-								backgroundRepeat: backgroundInfo[adminBackgroundId].backgroundRepeat,
-								backgroundAttachment: "scroll"
-							}}
-						>
+						<div>
+							<div style={backgroundForLoggedinPage}></div>
 							{children}
 							<Footer />
 						</div>

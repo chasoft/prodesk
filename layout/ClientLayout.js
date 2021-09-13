@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import React, { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -40,6 +40,7 @@ import { MENU_ITEM_TYPE } from "../helpers/constants"
 import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
 import { setScrollTop } from "../redux/slices/uiSettings"
+import { getUiSettings } from "./../redux/selectors"
 
 //ASSETS
 
@@ -120,6 +121,7 @@ function ClientLayout({ children }) {
 	const [scrolled, setScrolled] = useState(false)
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const dispatch = useDispatch()
+	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 
 	const sideBarExpanding = () => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
@@ -151,11 +153,7 @@ function ClientLayout({ children }) {
 					>
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 						<div>
-							<div style={{
-								backgroundColor: "#1a73e8",
-								width: "100%", height: "300px",
-								position: "absolute", top: 0, zIndex: -1
-							}}></div>
+							<div style={backgroundForLoggedinPage}></div>
 							{children}
 							<Footer />
 						</div>

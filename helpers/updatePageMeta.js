@@ -19,18 +19,17 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
-
-import { useEffect } from "react"
-import { useDispatch } from "react-redux"
-
-/*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { setTitle, setSubTitle, setPageId } from "./../redux/slices/pageMeta"
+import { useEffect } from "react"
+
+//THIRD-PARTY
 import { batch } from "react-redux"
+import { useDispatch } from "react-redux"
+
+//PROJECT IMPORT
+import { setTitle, setSubTitle, setPageId } from "./../redux/slices/pageMeta"
 
 /*****************************************************************
  * INIT                                                          *

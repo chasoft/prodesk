@@ -25,7 +25,7 @@
 //CORE SYSTEM
 import Head from "next/head"
 import PropTypes from "prop-types"
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"

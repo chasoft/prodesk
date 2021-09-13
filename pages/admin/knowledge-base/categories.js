@@ -47,7 +47,7 @@ import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
 
 function CategoriesKB() {
 
-	updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

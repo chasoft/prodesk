@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { BACKGROUND_ID, PRIORITY, TICKET_STATUS } from "../../helpers/constants"
+import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
 
 export const initialState = {
 	/*
@@ -30,7 +30,14 @@ export const initialState = {
 	/*
 		customize the background for each page used AdminLayout
 	*/
-	adminBackgroundId: BACKGROUND_ID.ADMIN_INDEX,
+	backgroundForLoggedinPage: {
+		top: 0,
+		zIndex: -1,
+		width: "100%",
+		height: "300px",
+		position: "absolute",
+		backgroundColor: "#1a73e8",
+	},
 
 	/*
 		Note the PerfectScrollbar.scrollTop for component's usage
@@ -57,8 +64,11 @@ const uiSettingsSlice = createSlice({
 		setflexDirection: (state, { payload }) => {
 			state.flexDirection = payload
 		},
-		setAdminBackgroundId: (state, { payload }) => {
-			state.adminBackgroundId = payload
+		setBackgroundForLoggedinPage: (state, { payload }) => {
+			state.backgroundForLoggedinPage = {
+				...state.backgroundForLoggedinPage,
+				...payload
+			}
 		},
 		setScrollTop: (state, { payload }) => {
 			state.scrollTop = payload
@@ -90,7 +100,7 @@ const uiSettingsSlice = createSlice({
 
 export const {
 	setflexDirection,
-	setAdminBackgroundId,
+	setBackgroundForLoggedinPage,
 	setScrollTop,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter
 } = uiSettingsSlice.actions

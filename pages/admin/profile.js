@@ -46,7 +46,7 @@ import updateFrontendBackground from "../../helpers/updateFrontendBackground"
  *****************************************************************/
 
 function Profile() {
-	updateFrontendBackground({ id: BACKGROUND_ID.ADMIN_PROFILE })
+	// updateFrontendBackground({ id: BACKGROUND_ID.ADMIN_PROFILE })
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Profile</Typography>

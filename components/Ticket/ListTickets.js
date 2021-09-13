@@ -186,7 +186,7 @@ function ListTickets() {
 
 		} else {
 			//show all data got from server
-			setFilteredTickets(DummyData)
+			setFilteredTickets([])
 		}
 
 	}, [DummyData, ticketSearchTerm, selectedPriority, selectedStatus])
