@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import { Typography } from "@material-ui/core"
-import { LaptopWindows } from "@material-ui/icons"
 
 const useStyles = makeStyles((theme) => ({
 	root: {

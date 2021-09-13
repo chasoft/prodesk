@@ -1,29 +1,60 @@
-import React, { useEffect, useRef, useState } from "react"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import { Accordion, AccordionDetails, AccordionSummary, Button, CssBaseline, FormControl, FormControlLabel, FormGroup, FormLabel, MenuItem, Paper, Select, Typography, Checkbox, FormHelperText, OutlinedInput, InputAdornment, SvgIcon } from "@material-ui/core"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import { PropTypes } from "prop-types"
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank"
-import CheckBoxIcon from "@material-ui/icons/CheckBox"
-import CheckBoxOutlineBlankSharpIcon from "@material-ui/icons/CheckBoxOutlineBlankSharp"
-import CheckBoxSharpIcon from "@material-ui/icons/CheckBoxSharp"
-import SearchIcon from "@material-ui/icons/Search"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
 
-import css from "./Filters.module.css"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React, { useState } from "react"
+import { PropTypes } from "prop-types"
+
+// MATERIAL-UI
+import { makeStyles, withStyles } from "@material-ui/core/styles"
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@material-ui/core"
+
+//THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
+
+//PROJECT IMPORT
+import { getUiSettings } from "../../redux/selectors"
+import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
+
+//ASSETS
+import SearchIcon from "@material-ui/icons/Search"
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import CheckBoxOutlineBlankSharpIcon from "@material-ui/icons/CheckBoxOutlineBlankSharp"
+import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSearchTerm } from "../../redux/slices/uiSettings"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: "9rem 0 0",
+		margin: "5rem 2rem 0",
 		width: "12rem",
-	},
-	nav: {
 		display: "flex",
 		flexDirection: "column",
-		marginLeft: "3.125rem",
-		[theme.breakpoints.down("xs")]: {
-			marginLeft: "1.125rem"
-		},
-		width: "100%",
+	},
+	nav: {
+		// maxWidth: "100%",
 	},
 	list: {
 		display: "flex",
@@ -67,17 +98,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-const FilterCategory = withStyles((theme) => ({
+const FilterCategory = withStyles({
 	root: {
-		// border: "1px solid rgba(0, 0, 0, .125)",
-		borderTop: "2px solid rgba(0, 0, 0, .125)",
 		margin: 0,
-		paddingLeft: "0.25rem",
-		paddingRight: "0.25rem",
+		width: "12rem",
+		padding: "0 0.75rem 0.75rem",
 		boxShadow: "none",
-		// "&:not(:last-child)": {
-		// 	borderBottom: 0,
-		// },
+		borderRadius: "0.5rem",
 		"&:before": {
 			display: "none",
 		},
@@ -85,16 +112,13 @@ const FilterCategory = withStyles((theme) => ({
 			marginBottom: "1rem",
 		}
 	}
-}))(Accordion)
+})(Accordion)
 
 const FilterSummary = withStyles((theme) => ({
 	root: {
 		padding: 0,
 		paddingTop: "0.25rem",
-		minHeight: 0,
-		[theme.breakpoints.down("xs")]: {
-			// paddingLeft: theme.spacing(3),
-		},
+		minHeight: 0
 	},
 	content: {
 		"&&": {
@@ -108,11 +132,11 @@ const FilterSummary = withStyles((theme) => ({
 	}
 }))(AccordionSummary)
 
-const FilterDetails = withStyles((theme) => ({
+const FilterDetails = withStyles({
 	root: {
 		padding: 0,
 	}
-}))(AccordionDetails)
+})(AccordionDetails)
 
 const FilterSelect = withStyles((theme) => ({
 	root: {
@@ -124,18 +148,18 @@ const FilterSelect = withStyles((theme) => ({
 }))(Select)
 
 
-const FilterCheckbox0 = withStyles((theme) => ({
+const FilterCheckbox0 = withStyles({
 	root: {
 		padding: "0.25rem",
 		marginLeft: "0.25rem"
 	},
-}))(Checkbox)
+})(Checkbox)
 
 function CheckBoxNewIcon(props) {
 	return (
 		<SvgIcon {...props}>
-			<path d="M3,3V21H21V3ZM19,8V19H5V5H19Z" transform="translate(-3 -3)" />
-			<polygon points="7 11.17 3.41 7.59 2 9 7 14 16 5 14.59 3.58 7 11.17" />
+			<path d="M3,3v18h18V3H3z M19,8v11H5v-7V5h14V8z" />
+			<polygon points="10,14.2 6.4,10.6 5,12 10,17 19,8 17.6,6.6 " />
 		</SvgIcon>
 	)
 }
@@ -171,99 +195,99 @@ const FilterFrame = ({ title, children }) => {
 }
 FilterFrame.propTypes = { title: PropTypes.string, children: PropTypes.any }
 
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
+
 function ListTicketsFilter() {
 	const classes = useStyles()
-	const [fixed, setFixed] = useState(false)
-	const listRef = useRef(null)
+	const dispatch = useDispatch()
+	const { scrollTop, ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
-	const [state, setState] = React.useState({
-		gilad: true,
-		jason: false,
-		antoine: false,
-	})
-
-	const handleChange = (event) => {
-		setState({ ...state, [event.target.name]: event.target.checked })
+	const handleSelectTicketStatus = (e) => {
+		dispatch(setSelectedStatus({ [e.target.name]: e.target.checked }))
 	}
-
-	const { gilad, jason, antoine } = state
-	const error = [gilad, jason, antoine].filter((v) => v).length !== 2
-
-	const fixedPosition = () => {
-		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? (listRef.current.offsetTop - window.scrollY) <= 100 ? true : false : false)
-	}
-
-	/* Activate resize listener */
-	useEffect(() => {
-		fixedPosition()
-		window.addEventListener("resize", fixedPosition)
-		return () => window.removeEventListener("resize", fixedPosition)
-	}, [])
-
-	/* Activate resize listener */
-	useEffect(() => {
-		window.addEventListener("scroll", fixedPosition)
-		return () => window.removeEventListener("scroll", fixedPosition)
-	}, [])
 
 	return (
-		<div ref={listRef} className={`${classes.root} ${fixed ? css.sticky : null}`}>
-			<form className={classes.nav}>
+		<div className={classes.root}>
+
+			<div style={{ position: "fixed" }}>
 				<div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }} >
-					<Typography style={{ flexGrow: 1, fontWeight: 500 }}>Filter</Typography>
-					<Button color="primary" style={{ fontSize: "0.9rem" }}>Clear</Button>
+					<Typography style={{ flexGrow: 1, fontWeight: 500, color: (scrollTop > 150) ? "#000" : "#FFF" }}>
+						Filter
+					</Typography>
+					<Button
+						style={{ fontSize: "0.9rem" }} color={(scrollTop > 150) ? "primary" : "inherit"}
+						onClick={() => { dispatch(resetTicketsFilter()) }}
+					>
+						Reset
+					</Button>
 				</div>
 
 				<FilterFrame title="Status">
-					<FormControl className={classes.margin} fullWidth>
-						<FilterSelect
-							labelId="demo-customized-select-label"
-							id="demo-customized-select"
-							// value={age}
-							// onChange={handleChange}
-							// input={<BootstrapInput />}
-							MenuProps={{
-								anchorOrigin: {
-									vertical: "bottom",
-									horizontal: "left"
-								},
-								getContentAnchorEl: null
-							}}
-							className={classes.select}
-							disableUnderline={true}
-						>
-							<MenuItem value={0}>All</MenuItem>
-							<MenuItem value={10}>Open</MenuItem>
-							<MenuItem value={20}>Pending</MenuItem>
-							<MenuItem value={30}>Replied</MenuItem>
-							<MenuItem value={40}>Closed</MenuItem>
-						</FilterSelect>
+					<FormControl component="fieldset" className={classes.formControl}>
+						<FormGroup>
+							<FormControlLabel
+								control={
+									<FilterCheckbox
+										checked={selectedStatus[TICKET_STATUS.OPEN]}
+										onChange={handleSelectTicketStatus}
+										name={TICKET_STATUS.OPEN}
+									/>
+								}
+								label="Open"
+							/>
+							<FormControlLabel
+								control={
+									<FilterCheckbox
+										name={TICKET_STATUS.PENDING}
+										onChange={handleSelectTicketStatus}
+										checked={selectedStatus[TICKET_STATUS.PENDING]}
+									/>
+								}
+								label="Pending"
+							/>
+							<FormControlLabel
+								control={
+									<FilterCheckbox
+										name={TICKET_STATUS.REPLIED}
+										onChange={handleSelectTicketStatus}
+										checked={selectedStatus[TICKET_STATUS.REPLIED]}
+									/>
+								}
+								label="Replied"
+							/>
+							<FormControlLabel
+								control={
+									<FilterCheckbox
+										name={TICKET_STATUS.CLOSED}
+										onChange={handleSelectTicketStatus}
+										checked={selectedStatus[TICKET_STATUS.CLOSED]}
+									/>
+								}
+								label="Closed"
+							/>
+						</FormGroup>
 					</FormControl>
 				</FilterFrame>
-
 
 				<FilterFrame title="Priority">
 					<FormControl className={classes.margin} fullWidth>
 						<FilterSelect
-							labelId="demo-customized-select-label"
-							id="demo-customized-select"
-							// value={age}
-							// onChange={handleChange}
-							// input={<BootstrapInput />}
 							MenuProps={{
-								anchorOrigin: {
-									vertical: "bottom",
-									horizontal: "left"
-								},
+								anchorOrigin: { vertical: "bottom", horizontal: "left" },
 								getContentAnchorEl: null
 							}}
 							className={classes.select}
 							disableUnderline={true}
+							value={selectedPriority}
+							onChange={(e) => { dispatch(setSelectedPriority(e.target.value)) }}
 						>
-							<MenuItem value={0}>All</MenuItem>
-							<MenuItem value={10}>Normal</MenuItem>
-							<MenuItem value={20}>Low</MenuItem>
-							<MenuItem value={30}>High</MenuItem>
+							{
+								Object.entries(PRIORITY).map((item) => {
+									return <MenuItem key={item[1]} value={item[1]}>{item[1]}</MenuItem>
+								})
+							}
 						</FilterSelect>
 					</FormControl>
 				</FilterFrame>
@@ -271,21 +295,22 @@ function ListTicketsFilter() {
 				<FilterFrame title="Has words">
 					<FormControl variant="outlined">
 						<OutlinedInput
-							id="outlined-adornment-weight"
-							// value={values.weight}
-							// onChange={handleChange('weight')}
 							placeholder="Type keywords"
-							endAdornment={<InputAdornment position="end"><SearchIcon fontSize="small" /></InputAdornment>}
-							aria-describedby="outlined-weight-helper-text"
+							endAdornment={
+								<InputAdornment position="end">
+									<SearchIcon fontSize="small" />
+								</InputAdornment>
+							}
+							aria-describedby="ticket-search-term"
 							labelWidth={0}
 							className={classes.outlinedInput}
 							margin="dense"
+							value={ticketSearchTerm}
+							onChange={(e) => { dispatch(setTicketSearchTerm(e.target.value)) }}
 						/>
 					</FormControl>
 				</FilterFrame>
-
-
-			</form>
+			</div>
 		</div >
 	)
 }

@@ -45,7 +45,15 @@ import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-
+		minHeight: "calc(100vh - 150px)",
+		width: "100%"
+	},
+	container: {
+		display: "flex",
+		minHeight: "calc(100vh - 200px)",
+		[theme.breakpoints.only("md")]: {
+			paddingRight: "2rem"
+		}
 	}
 }))
 
@@ -57,20 +65,15 @@ function Tickets() {
 	const classes = useStyles()
 	updatePageMeta({ title: "All tickets" })
 	return (
-		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
-			<div className={classes.root}>
-				<Container>
-					<Grid container>
-						<Grid item sm={12} md={8} >
-							<ListTickets />
-						</Grid>
-						<Hidden smDown>
-							<Grid item md={4}>
-								<ListTicketsFilter />
-							</Grid>
-						</Hidden>
-					</Grid>
-				</Container>
+		<Container maxWidth="lg" className={classes.root}>
+			<div className={classes.container}>
+
+				<ListTickets />
+
+				<Hidden smDown>
+					<ListTicketsFilter />
+				</Hidden>
+
 			</div>
 		</Container>
 	)

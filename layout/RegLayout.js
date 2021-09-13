@@ -19,24 +19,25 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
+import { useEffect } from "react"
 import PropTypes from "prop-types"
+
+// MATERIAL-UI
 import { Container, Hidden, makeStyles } from "@material-ui/core"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
-import Footer from "./../components/common/Footer"
+//THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
-import { getUiSettings } from "../redux/selectors"
-import { useEffect } from "react"
-import { setflexDirection } from "../redux/slices/uiSettings"
-import { ReduxRedirect } from "../components/AuthCheck"
+
+//PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
+import Footer from "./../components/common/Footer"
+import { getUiSettings } from "../redux/selectors"
+import { ReduxRedirect } from "../components/AuthCheck"
+import { setflexDirection } from "../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *

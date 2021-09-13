@@ -23,9 +23,8 @@
  *****************************************************************/
 
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import PropTypes from "prop-types"
-
 
 // MATERIAL-UI
 import { makeStyles } from "@material-ui/core"
@@ -37,10 +36,10 @@ import PerfectScrollbar from "react-perfect-scrollbar"
 import Header from "../components/common/backend/Header"
 import SideBar from "../components/common/backend/SideBar"
 import Footer from "../components/common/Footer"
-import { getUiSettings } from "../redux/selectors"
 import { MENU_ITEM_TYPE } from "../helpers/constants"
 import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
+import { setScrollTop } from "../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -49,7 +48,7 @@ import { getRootLayout } from "./RootLayout"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
 	root: {
 		display: "flex",
 		flexDirection: "row",
@@ -60,29 +59,29 @@ const useStyles = makeStyles((theme) => ({
 		height: "100vh",
 		transition: "margin .3s cubic-bezier(0.4, 0, 0.2, 1)"
 	}
-}))
+})
 
-const backgroundInfo = {
-	"Empty": {
-		backgroundRepeat: "",
-	},
-	"AdminIndex": {
-		backgroundImage: "",
-		backgroundRepeat: "no-repeat",
-	},
-	"AdminProfile": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	},
-	"AdminTicket": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	},
-	"AdminUsers": {
-		backgroundImage: "",
-		backgroundRepeat: "",
-	}
-}
+// const backgroundInfo = {
+// 	"Empty": {
+// 		backgroundRepeat: "",
+// 	},
+// 	"AdminIndex": {
+// 		backgroundImage: "",
+// 		backgroundRepeat: "no-repeat",
+// 	},
+// 	"AdminProfile": {
+// 		backgroundImage: "",
+// 		backgroundRepeat: "",
+// 	},
+// 	"AdminTicket": {
+// 		backgroundImage: "",
+// 		backgroundRepeat: "",
+// 	},
+// 	"AdminUsers": {
+// 		backgroundImage: "",
+// 		backgroundRepeat: "",
+// 	}
+// }
 
 
 const CLIENT_MENU = [
@@ -94,8 +93,8 @@ const CLIENT_MENU = [
 		title: "Support",
 		description: "Getting supports",
 		items: [
-			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/tickets/new-ticket" },
 			{ id: "submenu_tickets", icon: "1", text: "All tickets", url: "/client/tickets" },
+			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/tickets/new-ticket" },
 		]
 	},
 	{
@@ -120,8 +119,7 @@ function ClientLayout({ children }) {
 	const classes = useStyles()
 	const [scrolled, setScrolled] = useState(false)
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
-
-	const { adminBackgroundId } = useSelector(getUiSettings)
+	const dispatch = useDispatch()
 
 	const sideBarExpanding = () => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
@@ -146,7 +144,10 @@ function ClientLayout({ children }) {
 					<PerfectScrollbar
 						component="div" className={classes.content}
 						options={{ wheelSpeed: 1, wheelPropagation: true }}
-						onScrollY={(e) => { if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) } }}
+						onScrollY={(e) => {
+							if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) }
+							dispatch(setScrollTop(e.scrollTop))
+						}}
 					>
 						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
 						<div>

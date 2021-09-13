@@ -31,18 +31,17 @@ import {
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 
 //THIRD-PARTY
-import { useFormik } from "formik"
 import * as yup from "yup"
+import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "../common"
-import { updateFlexDirection } from "./../../layout/RegLayout"
 import { regRule } from "../../helpers/regex"
 import { isUsernameAvailable } from "../../helpers/firebase"
-import { useSnackbar } from "notistack"
+import { updateFlexDirection } from "./../../layout/RegLayout"
 import { signUpWithEmail } from "../../helpers/userAuthentication"
-import { useRouter } from "next/router"
-import { useDispatch } from "react-redux"
 
 //ASSETS
 

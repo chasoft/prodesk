@@ -33,18 +33,22 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		display: "flex",
+		// width: "calc(100% - 200px)",
 		[theme.breakpoints.down("xs")]: {
 			flexDirection: "column",
-			alignItems: "flex-start",
-			overflow: "hidden",
+			// alignItems: "flex-start",
+			// overflow: "hidden",
 			textOverflow: "ellipsis",
 		},
 	},
+	subject: {
+		// textOverflow: "ellipsis"
+	},
 	content: {
-		overflow: "hidden",
 		marginRight: theme.spacing(2),
 	},
 	excerpt: {
+		// textOverflow: "ellipsis",
 		[theme.breakpoints.down("xs")]: {
 			display: "none"
 		},
@@ -129,13 +133,13 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 						<div className={classes.paper}>
 
 							<div className={classes.content}>
-								<Typography variant="h5" className={classes.subject} noWrap>
+								<Typography variant="h5" className={classes.subject}>
 									{subject}
 								</Typography>
 								{
 									isShort ?
 										null
-										: <Typography className={classes.excerpt} noWrap>
+										: <Typography className={classes.excerpt}>
 											{excerpt}
 										</Typography>
 								}

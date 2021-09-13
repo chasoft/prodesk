@@ -45,7 +45,7 @@ import { regAdminURL } from "../helpers/regex"
 const LoadingIndicator = () => {
 	return (
 		<div style={{ margin: "100px 0 150px 0", display: "flex", flexDirection: "row", justifyContent: "center" }}>
-			Workers are working hard... &nbsp; <CircularProgress size={20} />
+			Loading... &nbsp; <CircularProgress size={20} />
 		</div>
 	)
 }
@@ -135,29 +135,6 @@ export function AuthAdminTrue(props) {
 		: null
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * GuestOnly
  * so, if you are Already loggedin, you will be redirected to dashboard
@@ -183,6 +160,31 @@ export function GuestOnly(props) {
 	)
 }
 GuestOnly.propTypes = { children: PropTypes.node }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

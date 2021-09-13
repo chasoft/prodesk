@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { BACKGROUND_ID } from "../../helpers/constants"
+import { BACKGROUND_ID, PRIORITY, TICKET_STATUS } from "../../helpers/constants"
 
 export const initialState = {
 	/*
@@ -30,7 +30,24 @@ export const initialState = {
 	/*
 		customize the background for each page used AdminLayout
 	*/
-	adminBackgroundId: BACKGROUND_ID.ADMIN_INDEX
+	adminBackgroundId: BACKGROUND_ID.ADMIN_INDEX,
+
+	/*
+		Note the PerfectScrollbar.scrollTop for component's usage
+	*/
+	scrollTop: 0,
+
+	/*
+		Settings for ListTicketsFilter
+	*/
+	selectedStatus: {
+		[TICKET_STATUS.OPEN]: true,
+		[TICKET_STATUS.PENDING]: true,
+		[TICKET_STATUS.REPLIED]: true,
+		[TICKET_STATUS.CLOSED]: false
+	},
+	selectedPriority: PRIORITY.ALL,
+	ticketSearchTerm: ""
 }
 
 const uiSettingsSlice = createSlice({
@@ -42,13 +59,40 @@ const uiSettingsSlice = createSlice({
 		},
 		setAdminBackgroundId: (state, { payload }) => {
 			state.adminBackgroundId = payload
+		},
+		setScrollTop: (state, { payload }) => {
+			state.scrollTop = payload
+		},
+		setSelectedPriority: (state, { payload }) => {
+			state.selectedPriority = payload
+		},
+		setTicketSearchTerm: (state, { payload }) => {
+			state.ticketSearchTerm = payload
+		},
+		setSelectedStatus: (state, { payload }) => {
+			state.selectedStatus = {
+				...state.selectedStatus,
+				...payload
+			}
+		},
+		resetTicketsFilter: (state) => {
+			state.selectedStatus = {
+				[TICKET_STATUS.OPEN]: true,
+				[TICKET_STATUS.PENDING]: true,
+				[TICKET_STATUS.REPLIED]: true,
+				[TICKET_STATUS.CLOSED]: false
+			}
+			state.selectedPriority = PRIORITY.ALL
+			state.ticketSearchTerm = ""
 		}
-	},
+	}
 })
 
 export const {
 	setflexDirection,
-	setAdminBackgroundId
+	setAdminBackgroundId,
+	setScrollTop,
+	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

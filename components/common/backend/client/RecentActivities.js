@@ -20,7 +20,6 @@
 
 
 import React from "react"
-import Link from "next/link"
 import { Grid, makeStyles, Typography } from "@material-ui/core"
 import CategoryGroupLatestFAQs from "../../../Docs/CategoryGroupLatestFAQs"
 import CategoryGroupLatestPublicTickets from "../../../Docs/CategoryGroupLatestPublicTickets"

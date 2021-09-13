@@ -24,7 +24,7 @@
 
 import React from "react"
 import Head from "next/head"
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 import PropTypes from "prop-types"
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
@@ -46,6 +46,7 @@ import { theme } from "./../components/theme"
 
 import "../styles/globals.css"
 import "../public/css/nprogress.css"
+import PageTransition from "../components/PageTransition"
 
 
 /*****************************************************************
@@ -65,6 +66,7 @@ Router.events.on("routeChangeError", () => NProgress.done())
 
 function MyApp({ Component, pageProps }) {
 	const getLayout = Component.getLayout || ((page) => page)
+	const router = useRouter()
 
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
@@ -84,7 +86,13 @@ function MyApp({ Component, pageProps }) {
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<SnackbarProvider maxSnack={3}>
-						{getLayout(<Component {...pageProps} />)}
+						{
+							getLayout(
+								<PageTransition location={router.pathname}>
+									<Component {...pageProps} />
+								</PageTransition>
+							)
+						}
 					</SnackbarProvider>
 				</ThemeProvider>
 			</Provider>

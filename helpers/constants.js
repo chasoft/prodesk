@@ -72,7 +72,8 @@ export const STATUS_FILTER = {
 	UNAVAILABLE: "Unavailable"
 }
 
-export const PRIORIRY = {
+export const PRIORITY = {
+	ALL: "All",
 	LOW: "Low",
 	NORMAL: "Normal",
 	HIGH: "High"

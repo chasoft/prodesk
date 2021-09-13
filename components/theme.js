@@ -26,7 +26,7 @@ export const theme = createTheme({
 		h1: {
 			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
 			fontSize: "1.75rem",
-			fontWeight: 700,
+			fontWeight: 500,
 			lineHeight: "2rem",
 			margin: "0 0 .5rem",
 		},

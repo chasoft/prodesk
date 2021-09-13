@@ -19,23 +19,16 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
-import SignupForm from "../../components/Signup/SignupForm"
+//PROJECT IMPORT
+import { GuestOnly } from "../../components/AuthCheck"
 import { LoginLink, Logo } from "../../components/common"
 import { getLayout, TopLine } from "../../layout/RegLayout"
-import { GuestOnly } from "../../components/AuthCheck"
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+import SignupForm from "../../components/Signup/SignupForm"
 
 /*****************************************************************
  * MAIN RENDER                                                   *

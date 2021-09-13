@@ -27,16 +27,14 @@ import Link from "next/link"
 
 // MATERIAL-UI
 import { makeStyles } from "@material-ui/core/styles"
-import { Container, Grid, IconButton, Tooltip, Typography } from "@material-ui/core"
+import { Container, IconButton, Tooltip, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import AskNow from "../../components/Docs/AskNow"
 import { getLayout } from "./../../layout/ClientLayout"
 import updatePageMeta from "../../helpers/updatePageMeta"
 import ClientStats from "../../components/common/backend/client/ClientStats"
-import CategoryGroupItem from "../../components/Docs/CategoryGroupItem"
 import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
 import RecentActivities from "../../components/common/backend/client/RecentActivities"
 
