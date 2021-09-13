@@ -18,100 +18,30 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
-
 import React from "react"
-import Link from "next/link"
-import { Container, Grid, makeStyles, Typography } from "@material-ui/core"
-import DocItem from "./DocItem"
+import { Container } from "@material-ui/core"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+import { getLayout } from "./../layout/BlankLayout"
+import MainNav from "./../components/common/frontend/MainNav"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-	paper: {
-		// marginTop: theme.spacing(0),
-		// [theme.breakpoints.down("xs")]: {
-		// marginTop: theme.spacing(3),
-		// },
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		padding: theme.spacing(6, 1, 3)
-	},
-	link: {
-		color: theme.palette.primary.main,
-		"&:hover": {
-			textDecoration: "underline",
-			cursor: "pointer",
-		}
-	}
-}))
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const CatGroup = () => {
-	const classes = useStyles()
+function Faqs() {
 	return (
-		<Container maxWidth="md">
-			<div className={classes.paper}>
-				<div className={classes.root} >
-
-
-					<div className={classes.viewAll}>
-
-						<Typography variant="h2">Categories</Typography>
-						<Link href="/docs/categories">
-							<Typography className={classes.link}>View all Categories</Typography>
-						</Link>
-
-					</div>
-
-
-					<Grid container spacing={4}>
-
-						<Grid item xs={12} sm={6}>
-
-							<DocItem />
-
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<DocItem />
-						</Grid>
-
-
-					</Grid>
-
-				</div>
-			</div>
-		</Container >
+		<>
+			<MainNav />
+			<Container maxWidth="md">
+				Show All FAQs here!!!
+			</Container>
+		</>
 	)
 }
 
-export default CatGroup
+Faqs.getLayout = getLayout
+export default Faqs

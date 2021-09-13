@@ -18,93 +18,32 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
- *****************************************************************/
-
 import React from "react"
-import Link from "next/link"
-import { makeStyles, Paper, Typography } from "@material-ui/core"
-import PostListItemShorten from "../Post/PostListItemShorten"
+import { Container } from "@material-ui/core"
 
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
-
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+import { getLayout } from "../layout/BlankLayout"
+import MainNav from "../components/common/frontend/MainNav"
+import AuthCheck from "../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
-			marginLeft: theme.spacing(0),
-			marginRight: theme.spacing(0),
-		},
-	},
-	docHeading: {
-		padding: theme.spacing(2, 3),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "1rem",
-		fontWeight: 500,
-		lineHeight: "1.25rem"
-	},
-	docFooter: {
-		padding: theme.spacing(2, 3)
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		},
-		borderTop: "1px solid",
-		borderColor: theme.palette.divider,
-	},
-	link: {
-		display: "flex",
-		alignItems: "center",
-		cursor: "pointer",
-		"&:hover": {
-			textDecoration: "underline",
-		}
-	}
-}))
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DocItem = () => {
-	const classes = useStyles()
+function PublicTickets() {
 	return (
-
-		<Paper elevation={1}>
-
-			<div className={classes.docHeading}>Device Performace</div>
-			<PostListItemShorten />
-			<PostListItemShorten />
-			<PostListItemShorten />
-
-			<div className={`${classes.viewAll} ${classes.docFooter}`}>
-				<Link href="/">
-					<div className={classes.link}>
-						<Typography>View all post</Typography>
-						<ArrowForwardIcon fontSize="small" />
-					</div>
-				</Link>
-			</div>
-
-		</Paper>
-
-
+		<AuthCheck>
+			<MainNav />
+			<Container maxWidth="md">
+				Show All Public Ticket here!!!
+				Public Tickets... they are called Community
+			</Container>
+		</AuthCheck>
 	)
 }
 
-export default DocItem
+PublicTickets.getLayout = getLayout
+export default PublicTickets

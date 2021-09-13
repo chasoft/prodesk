@@ -32,6 +32,7 @@ import { makeStyles } from "@material-ui/core/styles"
 
 import Header from "../components/common/frontend/Header"
 import Footer from "../components/common/Footer"
+import { getRootLayout } from "./RootLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -86,6 +87,6 @@ function BlankLayout({ children }) {
 
 BlankLayout.propTypes = { children: PropTypes.node }
 
-export const getLayout = page => <BlankLayout>{page}</BlankLayout>
+export const getLayout = page => getRootLayout(<BlankLayout>{page}</BlankLayout>)
 
 export default BlankLayout

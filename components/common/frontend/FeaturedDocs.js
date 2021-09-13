@@ -20,7 +20,7 @@
 
 import React from "react"
 import PostListItem from "./../../Post/PostListItem"
-import DocGroup from "./../../Docs/DocGroup"
+import ListGroup from "../ListGroup"
 import { Container } from "@material-ui/core"
 
 /*****************************************************************
@@ -63,7 +63,7 @@ const DummyData = [
 const FeaturedDocs = () => {
 	// const classes = useStyles()
 	return (
-		<DocGroup
+		<ListGroup
 			title="Featured Docs"
 			viewAllText="View all featured docs"
 			viewAllLink="/docs/featured"
@@ -82,7 +82,7 @@ const FeaturedDocs = () => {
 					)
 				})
 			}
-		</DocGroup>
+		</ListGroup>
 	)
 }
 

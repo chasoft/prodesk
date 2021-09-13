@@ -6,6 +6,7 @@ import Tab from "@material-ui/core/Tab"
 import { Grid, IconButton, Typography } from "@material-ui/core"
 import NavLink from "./NavLink"
 import PropTypes from "prop-types"
+import { AuthTrue } from "../../AuthCheck"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -68,9 +69,26 @@ const MainNav = ({ borderBottom = false }) => {
 	return (
 		<Grid container className={`${classes.root} ${borderBottom ? classes.borderBottom : null}`} >
 			<Grid item className={classes.leftAvatar}>
-				<NavLink href="" passHref ><span className={classes.linkCurrent}><span className={classes.iii}>Help Center</span></span></NavLink>
-				<NavLink href="/community" passHref ><span className={classes.link}>Community</span></NavLink>
-				<NavLink href="/troubleshoot" passHref ><span className={classes.link}>Troubleshoot</span></NavLink>
+				<NavLink href="/" passHref ><span className={classes.linkCurrent}>
+					<span className={classes.iii}>Help Center</span></span>
+				</NavLink>
+
+				<AuthTrue>
+					<NavLink href="/public-tickets" passHref>
+						<span className={classes.link}>Public Tickets</span>
+					</NavLink>
+				</AuthTrue>
+
+				{/*
+					//TODO: Community Feature would be implemented in version 2.0
+					<NavLink href="/community" passHref>
+						<span className={classes.link}>Community</span>
+					</NavLink>
+				*/}
+
+				<NavLink href="/faqs" passHref>
+					<span className={classes.link}>Frequently Asked Questions</span>
+				</NavLink>
 			</Grid>
 			<Grid item className={classes.middleContent}>
 

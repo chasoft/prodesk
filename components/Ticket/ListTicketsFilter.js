@@ -171,9 +171,7 @@ const FilterFrame = ({ title, children }) => {
 }
 FilterFrame.propTypes = { title: PropTypes.string, children: PropTypes.any }
 
-
-
-function Filters() {
+function ListTicketsFilter() {
 	const classes = useStyles()
 	const [fixed, setFixed] = useState(false)
 	const listRef = useRef(null)
@@ -292,4 +290,4 @@ function Filters() {
 	)
 }
 
-export default Filters
+export default ListTicketsFilter

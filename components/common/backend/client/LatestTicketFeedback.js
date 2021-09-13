@@ -20,8 +20,8 @@
 
 
 import React from "react"
-import PostListItem from "./../../../Post/PostListItem"
-import DocGroup from "../../../Docs/DocGroup"
+import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
+import ListGroup from "../../ListGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -38,21 +38,21 @@ const LatestFeedbackDummyData = [
 		docId: 1,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-docsdsfdsfi-dont-know",
 		metaData: []
 	},
 	{
 		docId: 2,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some222docs-i-dont-know",
 		metaData: []
 	},
 	{
 		docId: 3,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-doc3333s-i-dont-know",
 		metaData: []
 	},
 ]
@@ -64,7 +64,7 @@ const LatestFeedbackDummyData = [
 const LatestTicketFeedback = () => {
 	// const classes = useStyles()
 	return (
-		<DocGroup
+		<ListGroup
 			title="Latest Support Activities"
 			viewAllText="View all tickets"
 			viewAllLink="/client/tickets"
@@ -81,9 +81,9 @@ const LatestTicketFeedback = () => {
 							metaData={item.metaData}
 						/>
 					))
-					: <PostListItem emptyMessage="Welcome! Please open new ticket, our dedicated staffs would be pleased to serve you." />
+					: <PostListEmpty message="There are no activities." />
 			}
-		</DocGroup>
+		</ListGroup>
 	)
 }
 

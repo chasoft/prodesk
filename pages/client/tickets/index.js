@@ -22,18 +22,20 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
+import { Container, Grid, Hidden } from "@material-ui/core"
 import React from "react"
 import Link from "next/link"
 
 // MATERIAL-UI
+import { makeStyles } from "@material-ui/core/styles"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "../../../layout/ClientLayout"
 import updatePageMeta from "../../../helpers/updatePageMeta"
-import Dashboard from "../../../components/Dashboard"
+import ListTickets from "../../../components/Ticket/ListTickets"
+import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
 
 //ASSETS
 
@@ -41,17 +43,35 @@ import Dashboard from "../../../components/Dashboard"
  * INIT                                                          *
  *****************************************************************/
 
+const useStyles = makeStyles((theme) => ({
+	root: {
 
+	}
+}))
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function Tickets() {
+	const classes = useStyles()
 	updatePageMeta({ title: "All tickets" })
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Dashboard />
+			<div className={classes.root}>
+				<Container>
+					<Grid container>
+						<Grid item sm={12} md={8} >
+							<ListTickets />
+						</Grid>
+						<Hidden smDown>
+							<Grid item md={4}>
+								<ListTicketsFilter />
+							</Grid>
+						</Hidden>
+					</Grid>
+				</Container>
+			</div>
 		</Container>
 	)
 }

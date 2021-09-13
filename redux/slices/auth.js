@@ -24,6 +24,10 @@ export const initialState = {
 	currentUser: {},
 	isAuthenticated: false,
 	error: "",
+	//at the very first time, loading is TRUE,
+	//then, when authen ran, out or in, loading is also set to False when completed
+	//then we can use this variable to indicate that... the app just started!
+	//this is used in useEffect of AuthCheck
 	loading: true,
 }
 

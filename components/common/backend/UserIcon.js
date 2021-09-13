@@ -23,6 +23,8 @@ import { useTheme } from "@material-ui/styles"
 import { useSnackbar } from "notistack"
 import { signOut } from "../../../helpers/userAuthentication"
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { AuthAdminTrue, AuthUserTrue } from "../../AuthCheck"
+import { setRedirect } from "../../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
@@ -148,7 +150,13 @@ const UserIcon = () => {
 					</div>
 
 					<ul className={classes.menu}>
-						<li><SettingsIcon />User Settings</li>
+						<AuthAdminTrue>
+							<li onClick={() => { dispatch(setRedirect("/admin")) }}><SettingsIcon />Admin Dashboard</li>
+						</AuthAdminTrue>
+						<AuthUserTrue>
+							<li onClick={() => { dispatch(setRedirect("/client")) }}><SettingsIcon />Client Dashboard</li>
+						</AuthUserTrue>
+						<li><SettingsIcon />Profile Settings</li>
 						<li onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}><ExitToAppIcon />Logout</li>
 					</ul>
 					<div className={classes.terms}>

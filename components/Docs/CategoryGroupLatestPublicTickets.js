@@ -19,43 +19,58 @@
  ************************************************************************/
 
 import React from "react"
-import FeaturedDocs from "./../../components/common/frontend/FeaturedDocs"
-import CategoryGroup from "../../components/Docs/CategoryGroup"
+import { PostListItemShorten } from "../Post/PostListItem"
+import CategoryGroupItem from "./CategoryGroupItem"
 
-import { getLayout } from "../../layout/BlankLayout"
-import MainNav from "../../components/common/frontend/MainNav"
-import PromotedSearch from "../../components/common/frontend/PromotedSearch"
-import AskNowFrame from "../../components/Docs/AskNowFrame"
-import { Container } from "@material-ui/core"
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+const DummyData = [
+	{
+		id: 1,
+		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
+		link: "/faqs/some-faqs-1"
+	},
+	{
+		id: 2,
+		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
+		link: "/faqs/some-faqs-2"
+	},
+	{
+		id: 3,
+		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
+		link: "/faqs/some-faqs-3"
+	},
+	{
+		id: 4,
+		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
+		link: "/faqs/some-faqs-4"
+	},
+]
+
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Docs() {
+const CategoryGroupLatestPublicTickets = () => {
 	return (
-		<>
-			<MainNav />
-
-			<PromotedSearch />
-
-			{/* <DocGroup /> */}
-
-			<Container maxWidth="md">
-				<FeaturedDocs />
-			</Container>
-
-
-			<AskNowFrame />
-
-			<CategoryGroup />
-		</>
+		<CategoryGroupItem
+			header="Public Tickets"
+			viewAllText="View all public tickets"
+			viewAllLink="/public-tickets"
+		>
+			{
+				DummyData.map((item) => {
+					return (
+						<PostListItemShorten
+							key={item.id}
+							subject={item.subject}
+							link={item.link}
+						/>
+					)
+				})
+			}
+		</CategoryGroupItem>
 	)
 }
 
-Docs.getLayout = getLayout
-export default Docs
+export default CategoryGroupLatestPublicTickets

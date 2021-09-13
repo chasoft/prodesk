@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import Link from "next/link"
 import { Fab, Paper, Typography } from "@material-ui/core"
-import PostListItem from "../Post/PostListItem"
-import AskNow from "./../Docs/AskNow"
+import PostListItem, { PostListEmpty } from "../Post/PostListItem"
+import AskNow from "../Docs/AskNow"
 import AddIcon from "@material-ui/icons/Add"
 import { STATUS_FILTER } from "../../helpers/constants"
 
@@ -63,7 +63,7 @@ const DummyData = [
 		docId: 2,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-docs-i434343-dont-know",
 		metaData: [],
 		status: STATUS_FILTER.CLOSED
 	},
@@ -71,7 +71,7 @@ const DummyData = [
 		docId: 3,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-docs-i-dos24343434343nt-know",
 		metaData: [],
 		status: STATUS_FILTER.OPEN
 	},
@@ -79,7 +79,7 @@ const DummyData = [
 		docId: 4,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-docs-i-dodfdfdnt-know",
 		metaData: [],
 		status: STATUS_FILTER.CLOSED
 	},
@@ -87,7 +87,7 @@ const DummyData = [
 		docId: 5,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-33333docs-i-dont-know",
 		metaData: [],
 		status: STATUS_FILTER.OPEN
 	},
@@ -95,13 +95,13 @@ const DummyData = [
 		docId: 6,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
+		link: "/docs/some-docs45444444-i-dont-know",
 		metaData: [],
 		status: STATUS_FILTER.OPEN
 	},
 ]
 
-function DashboardContent() {
+function ListTickets() {
 	const classes = useStyles()
 	const [openTickets, setOpenTickets] = useState([])
 	const [closedTickets, setClosedTickets] = useState([])
@@ -133,10 +133,11 @@ function DashboardContent() {
 									/>
 								)
 							})
-							: <PostListItem />
+							: <PostListEmpty message="There are no open tickets." />
 					}
 				</Paper>
 			</div>
+
 			<div>
 				<Typography variant="h1" className={classes.header}>Closed</Typography>
 				<Paper elevation={2} className={classes.group}>
@@ -154,7 +155,7 @@ function DashboardContent() {
 									/>
 								)
 							})
-							: <PostListItem emptyMessage="There are no closed tickets." />
+							: <PostListEmpty message="There are no closed tickets." />
 					}
 				</Paper>
 			</div>
@@ -176,7 +177,7 @@ function DashboardContent() {
 									/>
 								)
 							})
-							: <PostListItem emptyMessage="There are no pending tickets." />
+							: <PostListEmpty message="There are no pending tickets." />
 					}
 				</Paper>
 			</div>
@@ -189,4 +190,4 @@ function DashboardContent() {
 	)
 }
 
-export default DashboardContent
+export default ListTickets

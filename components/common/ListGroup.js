@@ -19,29 +19,15 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
 import React from "react"
 import Link from "next/link"
+import { makeStyles, Paper, Typography } from "@material-ui/core"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Container, Grid, IconButton, Tooltip, Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import AskNow from "../../components/Docs/AskNow"
-import { getLayout } from "./../../layout/ClientLayout"
-import updatePageMeta from "../../helpers/updatePageMeta"
-import ClientStats from "../../components/common/backend/client/ClientStats"
-import CategoryGroupItem from "../../components/Docs/CategoryGroupItem"
-import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
-import RecentActivities from "../../components/common/backend/client/RecentActivities"
-
-//ASSETS
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import PropTypes from "prop-types"
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,74 +35,79 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-
+		width: "100%",
 	},
-	boxTitle: {
-		display: "flex",
-		justifyContent: "space-between",
-		padding: theme.spacing(8, 0, 4),
-		color: "white",
-	},
-	siteTitle: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontWeight: "500",
-		fontSize: "2.5rem",
-		lineHeight: "2.5rem",
-		[theme.breakpoints.down("sm")]: {
-			fontSize: "2.2rem",
-			lineHeight: "2.2rem",
-		},
+	paper: {
+		marginTop: theme.spacing(8),
 		[theme.breakpoints.down("xs")]: {
-			fontSize: "2rem",
-			lineHeight: "2rem",
+			marginTop: theme.spacing(3),
+		},
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+	},
+	group: {
+		margin: "1.5rem 0",
+		[theme.breakpoints.down("xs")]: {
+			margin: "1.625rem 0",
+		},
+		marginBottom: 0
+	},
+	viewAll: {
+		display: "flex",
+		alignItems: "center",
+		"& > :first-child": {
+			marginRight: theme.spacing(1)
+		},
+		"& > *": {
+			color: theme.palette.primary.main
+		}
+	},
+	link: {
+		display: "flex",
+		alignItems: "center",
+		color: theme.palette.primary.main,
+		cursor: "pointer",
+		"&:hover": {
+			textDecoration: "underline"
 		}
 	}
 }))
-
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Client() {
+const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
 	const classes = useStyles()
-	updatePageMeta({ title: "" })
-
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<div className={classes.paper}>
+			<div className={classes.root}>
 
-			<div className={classes.boxTitle}>
-				<div>
-					<Typography className={classes.siteTitle}>
-						prodesk
-					</Typography>
+				<Typography variant="h2">{title}</Typography>
+				{
+					viewAllLink ?
+						<Link href={viewAllLink} className={classes.viewAll}>
+							<a className={classes.link}>
+								<Typography variant="button">{viewAllText}</Typography>
+							</a>
+						</Link>
+						: null
+				}
 
-					<Typography variant="subtitle1">
-						Your Elegant &amp; Powerful Ticket System
-					</Typography>
-				</div>
-				<div>
-					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
-						<Tooltip title="Open New Ticket" placement="left">
-							<IconButton color="inherit">
-								<ArrowForwardIcon />
-							</IconButton>
-						</Tooltip>
-					</Link>
-				</div>
+				<Paper elevation={2} className={classes.group}>
+					{children}
+				</Paper>
+
 			</div>
-
-			<ClientStats />
-
-			<LatestTicketFeedback />
-
-			<RecentActivities />
-
-
-		</Container>
+		</div>
 	)
 }
+ListGroup.propTypes = {
+	title: PropTypes.string,
+	viewAllText: PropTypes.string,
+	viewAllLink: PropTypes.string,
+	children: PropTypes.node,
+}
 
-Client.getLayout = getLayout
-
-export default Client
+export default ListGroup

@@ -18,105 +18,73 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
 
 import React from "react"
-import Link from "next/link"
-
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Container, Grid, IconButton, Tooltip, Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import AskNow from "../../components/Docs/AskNow"
-import { getLayout } from "./../../layout/ClientLayout"
-import updatePageMeta from "../../helpers/updatePageMeta"
-import ClientStats from "../../components/common/backend/client/ClientStats"
-import CategoryGroupItem from "../../components/Docs/CategoryGroupItem"
-import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
-import RecentActivities from "../../components/common/backend/client/RecentActivities"
-
-//ASSETS
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
+import ListGroup from "../../ListGroup"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
+// const useStyles = makeStyles((theme) => ({
+// 	root: {
 
-	},
-	boxTitle: {
-		display: "flex",
-		justifyContent: "space-between",
-		padding: theme.spacing(8, 0, 4),
-		color: "white",
-	},
-	siteTitle: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontWeight: "500",
-		fontSize: "2.5rem",
-		lineHeight: "2.5rem",
-		[theme.breakpoints.down("sm")]: {
-			fontSize: "2.2rem",
-			lineHeight: "2.2rem",
-		},
-		[theme.breakpoints.down("xs")]: {
-			fontSize: "2rem",
-			lineHeight: "2rem",
-		}
-	}
-}))
+// 	}
+// }))
 
+const LatestFeedbackDummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
+	},
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
+	},
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
+	},
+]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Client() {
-	const classes = useStyles()
-	updatePageMeta({ title: "" })
-
+const LatestFAQs = () => {
+	// const classes = useStyles()
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-
-			<div className={classes.boxTitle}>
-				<div>
-					<Typography className={classes.siteTitle}>
-						prodesk
-					</Typography>
-
-					<Typography variant="subtitle1">
-						Your Elegant &amp; Powerful Ticket System
-					</Typography>
-				</div>
-				<div>
-					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
-						<Tooltip title="Open New Ticket" placement="left">
-							<IconButton color="inherit">
-								<ArrowForwardIcon />
-							</IconButton>
-						</Tooltip>
-					</Link>
-				</div>
-			</div>
-
-			<ClientStats />
-
-			<LatestTicketFeedback />
-
-			<RecentActivities />
-
-
-		</Container>
+		<ListGroup
+			title="Latest Support Activities"
+			viewAllText="View all tickets"
+			viewAllLink="/client/tickets"
+		>
+			{
+				LatestFAQs.length > 0 ?
+					LatestFeedbackDummyData.map((item, idx) => (
+						<PostListItem
+							key={item.docId}
+							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
+							subject={item.subject}
+							excerpt={item.excerpt}
+							link={item.link}
+							metaData={item.metaData}
+						/>
+					))
+					: <PostListEmpty message="There are no activities." />
+			}
+		</ListGroup>
 	)
 }
 
-Client.getLayout = getLayout
-
-export default Client
+export default LatestFAQs

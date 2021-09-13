@@ -21,6 +21,16 @@ const useStyles = makeStyles((theme) => ({
 			paddingRight: theme.spacing(2),
 		},
 	},
+	main_shorten: {
+		cursor: "pointer",
+		"&:hover": {
+			background: theme.palette.action.hover
+		},
+		padding: theme.spacing(2, 3),
+		[theme.breakpoints.down("xs")]: {
+			padding: theme.spacing(1, 2)
+		},
+	},
 	paper: {
 		display: "flex",
 		[theme.breakpoints.down("xs")]: {
@@ -66,71 +76,99 @@ const useStyles = makeStyles((theme) => ({
 	}
 }))
 
-function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLast = false, isShort = false, emptyMessage }) {
-	const classes = useStyles()
 
-	if (emptyMessage) {
-		return (
-			<div
-				className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}
-				style={{ cursor: "default", }}
-			>
-				<div className={classes.paper}>
-					<div className={classes.content} style={{ textAlign: "center" }}>
-						<Typography>{emptyMessage}</Typography>
-					</div>
+export const PostListEmpty = ({ message }) => {
+	const classes = useStyles()
+	return (
+		<div
+			className={`${classes.main} ${classes.isFirst} ${classes.isLast}`}
+			style={{ cursor: "default" }}
+		>
+			<div className={classes.paper}>
+				<div className={classes.content} style={{ textAlign: "center" }}>
+					<Typography>{message}</Typography>
 				</div>
 			</div>
-		)
-	}
+		</div>
+	)
+}
+PostListEmpty.propTypes = { message: PropTypes.string }
 
+
+export const PostListItemShorten = ({ subject, link }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.border}>
+			<Link href={link}>
+				<a>
+					<div className={classes.main_shorten}>
+
+						<div className={classes.paper}>
+							<div className={classes.content}>
+								<Typography noWrap>{subject}</Typography>
+							</div>
+						</div>
+
+					</div>
+				</a>
+			</Link>
+		</div>
+	)
+}
+PostListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
+
+
+function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLast = false, isShort = false }) {
+	const classes = useStyles()
 	return (
 		<div className={(!isFirst) ? classes.border : ""} >
 			<Link href={link}>
-				<div className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}>
+				<a>
+					<div className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}>
 
-					<div className={classes.paper}>
+						<div className={classes.paper}>
 
-						<div className={classes.content}>
-							<Typography variant="h5" className={classes.subject} noWrap>
-								{subject}
-							</Typography>
+							<div className={classes.content}>
+								<Typography variant="h5" className={classes.subject} noWrap>
+									{subject}
+								</Typography>
+								{
+									isShort ?
+										null
+										: <Typography className={classes.excerpt} noWrap>
+											{excerpt}
+										</Typography>
+								}
+							</div>
+
 							{
 								isShort ?
 									null
-									: <Typography className={classes.excerpt} noWrap>
-										{excerpt}
-									</Typography>
+									: <div className={classes.state}>
+										{
+											metaData.length > 0 ?
+												metaData.map(() => {
+													return (
+														<>
+															<div className={classes.state1}>
+																<Chip size="small" label="Closed" onDelete={() => { }} color="secondary" />
+															</div>
+															<div className={classes.state2}>
+																<Typography variant="caption" noWrap>
+																	0 replies
+																</Typography>
+															</div>
+														</>
+													)
+												})
+												: null
+										}
+									</div>
 							}
+
 						</div>
-
-						{
-							isShort ?
-								null
-								: <div className={classes.state}>
-									{
-										metaData.length > 0 ?
-											metaData.map(() => {
-												return (
-													<>
-														<div className={classes.state1}>
-															<Chip size="small" label="Closed" onDelete={() => { }} color="secondary" />
-														</div>
-														<div className={classes.state2}>
-															<Typography variant="caption" noWrap>
-																0 replies
-															</Typography>
-														</div>
-													</>
-												)
-											})
-											: null
-									}
-								</div>
-						}
-
 					</div>
-				</div>
+				</a>
 			</Link>
 		</div>
 	)
@@ -141,8 +179,7 @@ PostListItem.propTypes = {
 	link: PropTypes.string,
 	metaData: PropTypes.array, //array of Objects
 	isFirst: PropTypes.bool, isLast: PropTypes.bool,
-	isShort: PropTypes.bool,
-	emptyMessage: PropTypes.string,
+	isShort: PropTypes.bool
 }
 
 export default PostListItem

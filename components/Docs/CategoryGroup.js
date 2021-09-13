@@ -19,29 +19,19 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * FRAMEWORK & THIRD-PARTY IMPORT                                *
  *****************************************************************/
 
 import React from "react"
 import Link from "next/link"
+import { Container, Grid, makeStyles, Typography } from "@material-ui/core"
+import CategoryGroupItem from "./CategoryGroupItem"
+import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
+import LatestFAQs from "../common/backend/client/LatestFAQs"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Container, Grid, IconButton, Tooltip, Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import AskNow from "../../components/Docs/AskNow"
-import { getLayout } from "./../../layout/ClientLayout"
-import updatePageMeta from "../../helpers/updatePageMeta"
-import ClientStats from "../../components/common/backend/client/ClientStats"
-import CategoryGroupItem from "../../components/Docs/CategoryGroupItem"
-import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
-import RecentActivities from "../../components/common/backend/client/RecentActivities"
-
-//ASSETS
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,74 +39,74 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-
+		width: "100%",
 	},
-	boxTitle: {
+	paper: {
+		// marginTop: theme.spacing(0),
+		// [theme.breakpoints.down("xs")]: {
+		// marginTop: theme.spacing(3),
+		// },
 		display: "flex",
-		justifyContent: "space-between",
-		padding: theme.spacing(8, 0, 4),
-		color: "white",
+		flexDirection: "column",
+		alignItems: "center",
 	},
-	siteTitle: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontWeight: "500",
-		fontSize: "2.5rem",
-		lineHeight: "2.5rem",
-		[theme.breakpoints.down("sm")]: {
-			fontSize: "2.2rem",
-			lineHeight: "2.2rem",
-		},
-		[theme.breakpoints.down("xs")]: {
-			fontSize: "2rem",
-			lineHeight: "2rem",
+	viewAll: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		padding: theme.spacing(6, 1, 3)
+	},
+	link: {
+		color: theme.palette.primary.main,
+		"&:hover": {
+			textDecoration: "underline",
+			cursor: "pointer",
 		}
 	}
 }))
-
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Client() {
+const CategoryGroup = () => {
 	const classes = useStyles()
-	updatePageMeta({ title: "" })
-
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md">
+			<div className={classes.paper}>
+				<div className={classes.root} >
 
-			<div className={classes.boxTitle}>
-				<div>
-					<Typography className={classes.siteTitle}>
-						prodesk
-					</Typography>
 
-					<Typography variant="subtitle1">
-						Your Elegant &amp; Powerful Ticket System
-					</Typography>
-				</div>
-				<div>
-					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
-						<Tooltip title="Open New Ticket" placement="left">
-							<IconButton color="inherit">
-								<ArrowForwardIcon />
-							</IconButton>
-						</Tooltip>
-					</Link>
+					<div className={classes.viewAll}>
+
+						<Typography variant="h2">Categories</Typography>
+						<Link href="/docs/categories">
+							<a>
+								<Typography className={classes.link}>View all Categories</Typography>
+							</a>
+						</Link>
+
+					</div>
+
+
+					<Grid container spacing={4}>
+
+						<Grid item xs={12} sm={6}>
+							<CategoryGroupLatestFAQs />
+						</Grid>
+
+						<Grid item xs={12} sm={6}>
+							<CategoryGroupLatestFAQs />
+						</Grid>
+
+
+
+					</Grid>
+
 				</div>
 			</div>
-
-			<ClientStats />
-
-			<LatestTicketFeedback />
-
-			<RecentActivities />
-
-
-		</Container>
+		</Container >
 	)
 }
 
-Client.getLayout = getLayout
-
-export default Client
+export default CategoryGroup

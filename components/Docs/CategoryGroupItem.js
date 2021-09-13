@@ -25,9 +25,12 @@
 import React from "react"
 import Link from "next/link"
 import { makeStyles, Paper, Typography } from "@material-ui/core"
-
+import { PropTypes } from "prop-types"
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
-import PropTypes from "prop-types"
+
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
 /*****************************************************************
  * INIT                                                          *
@@ -35,23 +38,21 @@ import PropTypes from "prop-types"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		width: "100%",
-	},
-	paper: {
-		marginTop: theme.spacing(8),
+		margin: theme.spacing(1),
 		[theme.breakpoints.down("xs")]: {
-			marginTop: theme.spacing(3),
+			marginLeft: theme.spacing(0),
+			marginRight: theme.spacing(0),
 		},
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
 	},
-	group: {
-		margin: "1.5rem 0",
-		[theme.breakpoints.down("xs")]: {
-			margin: "1.625rem 0",
-		},
-		marginBottom: 0
+	docHeading: {
+		padding: theme.spacing(2, 3),
+		fontFamily: "\"Google Sans\", Roboto, sans-serif",
+		fontSize: "1rem",
+		fontWeight: 500,
+		lineHeight: "1.25rem"
+	},
+	docFooter: {
+		padding: theme.spacing(2, 3)
 	},
 	viewAll: {
 		display: "flex",
@@ -61,6 +62,16 @@ const useStyles = makeStyles((theme) => ({
 		},
 		"& > *": {
 			color: theme.palette.primary.main
+		},
+		borderTop: "1px solid",
+		borderColor: theme.palette.divider,
+	},
+	link: {
+		display: "flex",
+		alignItems: "center",
+		cursor: "pointer",
+		"&:hover": {
+			textDecoration: "underline",
 		}
 	}
 }))
@@ -69,37 +80,30 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DocGroup = ({ title, viewAllText, viewAllLink, children }) => {
+const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
 	const classes = useStyles()
 	return (
-		<div className={classes.paper}>
-			<div className={classes.root}>
+		<Paper elevation={1}>
+			<div className={classes.docHeading}>{header}</div>
 
-				<Typography variant="h2">{title}</Typography>
-				{
-					viewAllLink ?
-						<Link href={viewAllLink} className={classes.viewAll}>
-							<div>
-								<Typography>{viewAllText}</Typography>
-								<ArrowForwardIcon fontSize="small" />
-							</div>
-						</Link>
-						: null
-				}
+			{children}
 
-				<Paper elevation={2} className={classes.group}>
-					{children}
-				</Paper>
-
+			<div className={`${classes.viewAll} ${classes.docFooter}`}>
+				<Link href={viewAllLink}>
+					<a className={classes.link}>
+						<Typography>{viewAllText}</Typography>
+						<ArrowForwardIcon fontSize="small" />
+					</a>
+				</Link>
 			</div>
-		</div>
+		</Paper>
 	)
 }
-DocGroup.propTypes = {
-	title: PropTypes.string,
+CategoryGroupItem.propTypes = {
+	header: PropTypes.string,
 	viewAllText: PropTypes.string,
 	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
+	children: PropTypes.node
 }
 
-export default DocGroup
+export default CategoryGroupItem

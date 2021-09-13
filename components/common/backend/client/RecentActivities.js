@@ -21,11 +21,9 @@
 
 import React from "react"
 import Link from "next/link"
-import { Grid, makeStyles, Paper, Typography } from "@material-ui/core"
-import PostListItem from "../../../Post/PostListItem"
-
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
-import DocItem from "../../../Docs/DocItem"
+import { Grid, makeStyles, Typography } from "@material-ui/core"
+import CategoryGroupLatestFAQs from "../../../Docs/CategoryGroupLatestFAQs"
+import CategoryGroupLatestPublicTickets from "../../../Docs/CategoryGroupLatestPublicTickets"
 
 /*****************************************************************
  * INIT                                                          *
@@ -72,42 +70,20 @@ const RecentActivities = () => {
 	return (
 		<div className={classes.paper}>
 			<div className={classes.root}>
-
 				<Typography variant="h2">Recent Activities</Typography>
-				<Link href="/client/tickets" className={classes.viewAll}>
-					{/* <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }}> */}
-					<Typography variant="button" color="primary">View all tickets</Typography>
-					{/* <ArrowForwardIcon fontSize="small" color="primary" /> */}
-					{/* </div> */}
-				</Link>
+				<div className={classes.group}>
+					<Grid container spacing={4}>
 
-				{/* <Paper elevation={2} className={classes.group}>
-					<PostListItem isFirst={true} />
-					<PostListItem />
-					<PostListItem isLast={true} />
-				</Paper> */}
-				<Grid container spacing={4}>
+						<Grid item xs={12} sm={6}>
+							<CategoryGroupLatestPublicTickets />
+						</Grid>
 
-					<Grid item xs={12} sm={6}>
-
-						<DocItem />
+						<Grid item xs={12} sm={6}>
+							<CategoryGroupLatestFAQs />
+						</Grid>
 
 					</Grid>
-
-					<Grid item xs={12} sm={6}>
-						<DocItem />
-					</Grid>
-
-					<Grid item xs={12} sm={6}>
-						<DocItem />
-					</Grid>
-
-					<Grid item xs={12} sm={6}>
-						<DocItem />
-					</Grid>
-
-
-				</Grid>
+				</div>
 
 			</div>
 		</div>

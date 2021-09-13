@@ -50,9 +50,8 @@ const LoadingIndicator = () => {
 	)
 }
 
-
 /**
- * Redirect based on Redux -> Selector -> redirect
+ * Redirect based on Redux
  */
 export function ReduxRedirect(props) {
 	const router = useRouter()
@@ -75,10 +74,14 @@ export default function AuthCheck(props) {
 	const dispatch = useDispatch()
 	const router = useRouter()
 
-	// useEffect(() => {
-	//if (isAuthenticated !== true)
-	//dispatch(setRedirect(REDIRECT_URL.LOGIN))
-	// }, [isAuthenticated])
+	useEffect(() => {
+		//just do redirection Only if both these conditions are matched
+		// 1. finished get loggin data and
+		// 2. user not loggin
+		// that means that... user truly not Login!
+		if (isAuthenticated !== true && loading === false)
+			dispatch(setRedirect(REDIRECT_URL.LOGIN))
+	}, [isAuthenticated, loading])
 
 	if (loading) return < LoadingIndicator />
 
@@ -93,6 +96,67 @@ export default function AuthCheck(props) {
 	)
 }
 AuthCheck.propTypes = { children: PropTypes.node }
+
+/**
+ * Only display `children` when LOGGED IN or nothing would be showed up
+ */
+export function AuthTrue(props) {
+	const { isAuthenticated } = useSelector(getAuth)
+	return (isAuthenticated)
+		? props.children
+		: null
+}
+
+/**
+ * Staffs only = SuperAdmin, Admin, Members
+ */
+export function AuthStaffTrue(props) {
+	const { currentUser } = useSelector(getAuth)
+	return (currentUser.group !== USERGROUP.USER) ? props.children : null
+}
+
+/**
+ * Users only
+ */
+export function AuthUserTrue(props) {
+	const { currentUser } = useSelector(getAuth)
+	return (currentUser.group === USERGROUP.USER)
+		? props.children
+		: null
+}
+
+/**
+ * Display `children` when Admin LOGGED IN or nothing
+ */
+export function AuthAdminTrue(props) {
+	const { currentUser } = useSelector(getAuth)
+	return (currentUser.group === USERGROUP.ADMIN || currentUser.group === USERGROUP.SUPERADMIN)
+		? props.children
+		: null
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * GuestOnly
@@ -120,13 +184,7 @@ export function GuestOnly(props) {
 }
 GuestOnly.propTypes = { children: PropTypes.node }
 
-/**
- * Only display `children` when LOGGED IN or nothing would be showed up
- */
-export function AuthTrue(props) {
-	const { isAuthenticated } = useSelector(getAuth)
-	return isAuthenticated ? props.children : null
-}
+
 
 /**
  * Display `children` for guest only
@@ -164,13 +222,11 @@ export function AuthAdminCheck(props) {
 	return (currentUser.isAdmin || currentUser.isSuperAdmin) ? props.children : props.fallback || <p>SingleLoginForm</p>
 }
 
-/**
- * Display `children` when Admin LOGGED IN or nothing
- */
-export function AuthAdminTrue(props) {
-	const { currentUser } = useSelector(getAuth)
-	return (currentUser.isAdmin || currentUser.isSuperAdmin) ? props.children : null
-}
+
+
+
+
+
 
 /**
  * Please note that SuperAdmin is also Admin, but Admin could be SuperAdmin or not!
