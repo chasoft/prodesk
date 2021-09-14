@@ -54,7 +54,13 @@ export const initialState = {
 		[TICKET_STATUS.CLOSED]: false
 	},
 	selectedPriority: PRIORITY.ALL,
-	ticketSearchTerm: ""
+	ticketSearchTerm: "",
+
+	/*
+		Active Tabs for Settings Page in Admin view
+		this keep the name of the Tab!
+	*/
+	activeSettingTab: ""
 }
 
 const uiSettingsSlice = createSlice({
@@ -94,7 +100,10 @@ const uiSettingsSlice = createSlice({
 			}
 			state.selectedPriority = PRIORITY.ALL
 			state.ticketSearchTerm = ""
-		}
+		},
+		setActiveSettingTab: (state, { payload }) => {
+			state.activeSettingTab = payload
+		},
 	}
 })
 
@@ -102,7 +111,8 @@ export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrollTop,
-	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter
+	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
+	setActiveSettingTab
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

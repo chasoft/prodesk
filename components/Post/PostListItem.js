@@ -1,8 +1,9 @@
 import React from "react"
 import Link from "next/link"
 import { makeStyles } from "@material-ui/core/styles"
-import { Chip, Typography } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 import PropTypes from "prop-types"
+import PriorityHighIcon from "@material-ui/icons/PriorityHigh"
 
 const useStyles = makeStyles((theme) => ({
 	border: {
@@ -14,12 +15,6 @@ const useStyles = makeStyles((theme) => ({
 		"&:hover": {
 			background: theme.palette.action.hover
 		},
-		padding: theme.spacing(3),
-		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(1),
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(2),
-		},
 	},
 	main_shorten: {
 		cursor: "pointer",
@@ -28,47 +23,62 @@ const useStyles = makeStyles((theme) => ({
 		},
 		padding: theme.spacing(2, 3),
 		[theme.breakpoints.down("xs")]: {
-			padding: theme.spacing(1, 2)
+			padding: theme.spacing(2, 2)
 		},
 	},
 	paper: {
 		display: "flex",
-		// width: "calc(100% - 200px)",
 		[theme.breakpoints.down("xs")]: {
 			flexDirection: "column",
-			// alignItems: "flex-start",
-			// overflow: "hidden",
-			textOverflow: "ellipsis",
+			alignItems: "flex-start",
 		},
+		// "&:hover > #moreInfo > #extraInfo": {
+		// 	visibility: "visible",
+		// 	width: "100%",
+		// 	opacity: 1,
+		// },
 	},
 	subject: {
-		// textOverflow: "ellipsis"
+
 	},
 	content: {
-		marginRight: theme.spacing(2),
+		minWidth: 0, //this property is important
+		[theme.breakpoints.down("xs")]: {
+			maxWidth: "100%",
+			padding: theme.spacing(1),
+			paddingLeft: theme.spacing(2),
+			paddingRight: theme.spacing(2),
+		},
+	},
+	content_addon: {
+		padding: theme.spacing(3),
 	},
 	excerpt: {
-		// textOverflow: "ellipsis",
 		[theme.breakpoints.down("xs")]: {
 			display: "none"
 		},
 	},
 	state: {
 		display: "flex",
-		flexDirection: "column",
-		justifyContent: "flex-end",
 		alignItems: "center",
+		flexDirection: "column",
+		justifyContent: "center",
+		padding: theme.spacing(1, 2, 1, 0),
 		[theme.breakpoints.down("xs")]: {
 			flexDirection: "row",
-		},
+			padding: theme.spacing(0, 2, 1)
+		}
 	},
 	state1: {
-		[theme.breakpoints.down("xs")]: {
-			marginRight: theme.spacing(2),
-		},
+		textAlign: "center",
+		paddingLeft: "0.5rem",
+		paddingRight: "0.5rem",
 	},
-	state2: {
-
+	extraInfo: {
+		// visibility: "hidden",
+		// width: 0,
+		// opacity: 0,
+		textAlign: "center"
 	},
 	isLast: {
 		borderBottomRightRadius: "0.5rem",
@@ -89,7 +99,7 @@ export const PostListEmpty = ({ message }) => {
 			style={{ cursor: "default" }}
 		>
 			<div className={classes.paper}>
-				<div className={classes.content} style={{ textAlign: "center" }}>
+				<div className={`${classes.content} ${classes.content_addon}`} style={{ textAlign: "center" }}>
 					<Typography>{message}</Typography>
 				</div>
 			</div>
@@ -132,14 +142,14 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 
 						<div className={classes.paper}>
 
-							<div className={classes.content}>
-								<Typography variant="h5" className={classes.subject}>
+							<div id="content" className={`${classes.content} ${classes.content_addon}`}>
+								<Typography variant="h5" className={classes.subject} noWrap>
 									{subject}
 								</Typography>
 								{
 									isShort ?
 										null
-										: <Typography className={classes.excerpt}>
+										: <Typography className={classes.excerpt} noWrap>
 											{excerpt}
 										</Typography>
 								}
@@ -148,16 +158,27 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 							{
 								isShort ?
 									null
-									: <div className={classes.state}>
+									: <div id="moreInfo" className={classes.state}>
 										{
 											metaData.length > 0 ?
 												metaData.map(() => {
 													return (
 														<>
 															<div className={classes.state1}>
-																<Chip size="small" label="Closed" onDelete={() => { }} color="secondary" />
+
+																<PriorityHighIcon
+																	style={{
+																		color: "#f44336",
+																		width: "1.25rem",
+																		height: "1.25rem",
+																		border: "1px solid",
+																		borderRadius: "50%"
+																	}}
+																/>
+
 															</div>
-															<div className={classes.state2}>
+
+															<div id="extraInfo" className={classes.extraInfo}>
 																<Typography variant="caption" noWrap>
 																	0 replies
 																</Typography>
@@ -171,10 +192,11 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 							}
 
 						</div>
+
 					</div>
 				</a>
 			</Link>
-		</div>
+		</div >
 	)
 }
 PostListItem.propTypes = {

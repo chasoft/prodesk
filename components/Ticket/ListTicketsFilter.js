@@ -48,7 +48,7 @@ import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSe
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: "5rem 2rem 0",
+		margin: "5rem 0 0 2rem",
 		width: "12rem",
 		display: "flex",
 		flexDirection: "column",
@@ -311,6 +311,8 @@ function ListTicketsFilter() {
 					</FormControl>
 				</FilterFrame>
 			</div>
+			{/* the empty block below is used to fixed the bug when setting position of theFilter to fixed */}
+			<div style={{ width: "200px" }}></div>
 		</div >
 	)
 }

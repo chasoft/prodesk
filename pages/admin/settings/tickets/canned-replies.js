@@ -25,14 +25,13 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "../../../helpers/constants"
-import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
+import updateActiveSettingTab from "./../../../../helpers/updateActiveSettingTab"
 
 //ASSETS
 
@@ -45,16 +44,16 @@ import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function SMTP() {
+function TicketSettingsCannedReplies() {
 
-	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+	updateActiveSettingTab(TICKET_SETTINGS_NAMES.CANNED_REPLIES)
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin SMTP</Typography>
-		</Container>
+		<>
+			<Typography variant="h1">Canned Replies</Typography>
+		</>
 	)
 }
 
-SMTP.getLayout = getLayout
-export default SMTP
+TicketSettingsCannedReplies.getLayout = getLayout
+export default TicketSettingsCannedReplies

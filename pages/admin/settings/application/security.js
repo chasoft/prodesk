@@ -25,14 +25,14 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+import { Typography } from "@material-ui/core"
+// import { makeStyles } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "../../../helpers/constants"
-import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
+import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
 
 //ASSETS
 
@@ -45,16 +45,16 @@ import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-function Application() {
+function ApplicationSettingsSecurity() {
 
-	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+	updateActiveSettingTab(APPLICATION_SETTINGS_NAMES.SECURITY)
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Application Settings</Typography>
-		</Container>
+		<>
+			<Typography variant="h1">Admin Application Settings - SEC</Typography>
+		</>
 	)
 }
 
-Application.getLayout = getLayout
-export default Application
+ApplicationSettingsSecurity.getLayout = getLayout
+export default ApplicationSettingsSecurity

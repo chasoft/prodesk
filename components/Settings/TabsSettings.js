@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -18,67 +18,76 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
 import React from "react"
-import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
-import ListGroup from "../../ListGroup"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { makeStyles } from "@material-ui/core/styles"
+import { Paper, Tab, Tabs } from "@material-ui/core"
+
+//THIRD-PARTY
+import { getUiSettings } from "../../redux/selectors"
+import { useSelector, useDispatch } from "react-redux"
+import { setRedirect } from "../../redux/slices/redirect"
+
+//PROJECT IMPORT
+
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const LatestFeedbackDummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docsdsfdsfi-dont-know",
-		metaData: []
+const useStyles = makeStyles({
+	root: {
+		flexGrow: 1,
+		marginTop: "1rem",
+		marginBottom: "2rem"
 	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some222docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-doc3333s-i-dont-know",
-		metaData: []
-	},
-]
+})
 
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-const LatestTicketFeedback = () => {
-	// const classes = useStyles()
-	return (
-		<ListGroup
-			title="Latest Support Activities"
-			viewAllText="View all tickets"
-			viewAllLink="/client/tickets"
-		>
-			{
-				LatestTicketFeedback.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
-		</ListGroup>
-	)
+const getTabId = (tabName, dataSet) => {
+	console.log({ dataSet })
+	for (let i = 0; i < dataSet.length; i++) {
+		if (dataSet[i].indexOf(tabName) !== -1) return i
+	}
+	return 0
 }
 
-export default LatestTicketFeedback
+const TabsSettings = ({ dataSet }) => {
+	const classes = useStyles()
+	const dispatch = useDispatch()
+	const { activeSettingTab } = useSelector(getUiSettings)
+
+	const handleChange = (event, selectedTabId) => {
+		dispatch(setRedirect(dataSet[selectedTabId][1]))
+	}
+
+	return (
+		<Paper className={classes.root}>
+			<Tabs
+				value={getTabId(activeSettingTab, dataSet)}
+				onChange={handleChange}
+				indicatorColor="primary"
+				variant="scrollable"
+				scrollButtons="on"
+				textColor="primary"
+				centered
+			>
+				{
+					dataSet.map((item, idx) => {
+						return <Tab key={idx} label={item[0]} />
+					})
+				}
+			</Tabs>
+		</Paper>
+	)
+}
+TabsSettings.propTypes = { dataSet: PropTypes.array }
+
+export default TabsSettings

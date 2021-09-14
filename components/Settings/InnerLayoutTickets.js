@@ -18,67 +18,66 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
 import React from "react"
-import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
-import ListGroup from "../../ListGroup"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Container, Typography } from "@material-ui/core"
+// import { makeStyles } from "@material-ui/core"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
+import updateActiveSettingTab from "./../../helpers/updateActiveSettingTab"
+import TabsSettings from "./TabsSettings"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const LatestFeedbackDummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docsdsfdsfi-dont-know",
-		metaData: []
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some222docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-doc3333s-i-dont-know",
-		metaData: []
-	},
+export const TICKET_SETTINGS_NAMES = {
+	GENERAL: "General",		//Explained fix Status & Priority
+	DEPARTMENT: "Department",
+	TAGS: "Tags",
+	CANNED_REPLIES: "Canned Replies",
+}
+
+export const TICKET_SETTINGS_TABS = [
+	[TICKET_SETTINGS_NAMES.GENERAL, "/admin/settings/tickets"],
+	[TICKET_SETTINGS_NAMES.DEPARTMENT, "/admin/settings/tickets/department"],
+	[TICKET_SETTINGS_NAMES.TAGS, "/admin/settings/tickets/tags"],
+	[TICKET_SETTINGS_NAMES.CANNED_REPLIES, "/admin/settings/tickets/canned-replies"],
 ]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const LatestTicketFeedback = () => {
-	// const classes = useStyles()
+function InnerLayoutTickets({ children }) {
+
+	updateActiveSettingTab(TICKET_SETTINGS_NAMES.GENERAL)
+
 	return (
-		<ListGroup
-			title="Latest Support Activities"
-			viewAllText="View all tickets"
-			viewAllLink="/client/tickets"
-		>
-			{
-				LatestTicketFeedback.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
-		</ListGroup>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+
+			<Typography variant="h1" style={{ color: "white" }}>Tickets Settings</Typography>
+
+			<TabsSettings dataSet={TICKET_SETTINGS_TABS} />
+
+			{children}
+
+		</Container>
 	)
 }
+InnerLayoutTickets.propTypes = { children: PropTypes.node }
 
-export default LatestTicketFeedback
+export const getLayout = page => getAdminLayout(<InnerLayoutTickets>{page}</InnerLayoutTickets>)
+
+export default InnerLayoutTickets

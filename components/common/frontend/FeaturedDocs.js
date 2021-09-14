@@ -21,16 +21,10 @@
 import React from "react"
 import PostListItem from "./../../Post/PostListItem"
 import ListGroup from "../ListGroup"
-import { Container } from "@material-ui/core"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-// const useStyles = makeStyles((theme) => ({
-// 	root: {
-// 	},
-// }))
 
 const DummyData = [
 	{
@@ -38,14 +32,14 @@ const DummyData = [
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
 		link: "/docs/some-docs-i-dont-know",
-		metaData: []
+		metaData: ["d"]
 	},
 	{
 		docId: 2,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
 		link: "/docs/some-docs-i-dont-know",
-		metaData: []
+		metaData: ["d"]
 	},
 	{
 		docId: 3,
@@ -61,7 +55,6 @@ const DummyData = [
  *****************************************************************/
 
 const FeaturedDocs = () => {
-	// const classes = useStyles()
 	return (
 		<ListGroup
 			title="Featured Docs"

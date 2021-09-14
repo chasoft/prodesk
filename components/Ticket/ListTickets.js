@@ -49,10 +49,10 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
 		flexDirection: "column",
-		width: "100%",
+		minWidth: 0
 	},
 	group: {
-		width: "100%",
+		minWidth: 0
 	},
 	header: {
 		marginLeft: theme.spacing(3),
@@ -99,13 +99,15 @@ const DummyData = [
 		status: STATUS_FILTER.OPEN,
 		priority: PRIORITY.HIGH,
 		isPublic: false,
+		category: "",
+		username: ""
 	},
 	{
 		docId: 2,
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
 		link: "/docs/some-docs-i434343-dont-know",
-		metaData: [],
+		metaData: ["a"],
 		status: STATUS_FILTER.CLOSED,
 		priority: PRIORITY.NORMAL,
 		isPublic: false,
@@ -115,7 +117,7 @@ const DummyData = [
 		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
 		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
 		link: "/docs/some-docs-i-dos24343434343nt-know",
-		metaData: [],
+		metaData: ["a"],
 		status: STATUS_FILTER.OPEN,
 		priority: PRIORITY.LOW,
 		isPublic: false,

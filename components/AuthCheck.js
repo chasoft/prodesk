@@ -44,7 +44,12 @@ import { regAdminURL } from "../helpers/regex"
 
 const LoadingIndicator = () => {
 	return (
-		<div style={{ margin: "100px 0 150px 0", display: "flex", flexDirection: "row", justifyContent: "center" }}>
+		<div style={{
+			height: "80vh",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+		}}>
 			Loading... &nbsp; <CircularProgress size={20} />
 		</div>
 	)

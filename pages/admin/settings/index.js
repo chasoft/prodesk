@@ -25,34 +25,85 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Container, IconButton, makeStyles, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "../../../helpers/constants"
-import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+// import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+import TabsSettings from "../../../components/Settings/TabsSettings"
 
 //ASSETS
+import MoreVertIcon from "@material-ui/icons/MoreVert"
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
+const useStyles = makeStyles((theme) => ({
+	root: {
+		marginTop: "2rem"
+	},
+}))
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 function Settings() {
 
+	const classes = useStyles()
+
 	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
 
 	return (
+
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Settings</Typography>
+
+			<Card className={classes.root} variant="outlined">
+				<CardHeader
+					avatar={
+						<Avatar aria-label="recipe" className={classes.avatar}>
+							R
+						</Avatar>
+					}
+					action={
+						<IconButton aria-label="settings">
+							<MoreVertIcon />
+						</IconButton>
+					}
+					title="Shrimp and Chorizo Paella"
+					subheader="September 14, 2016"
+				/>
+				<CardContent>
+					<Typography className={classes.title} color="textSecondary" gutterBottom>
+						Word of the Day
+					</Typography>
+					<Typography variant="h5" component="h2">
+						beddddddlent
+					</Typography>
+					<Typography className={classes.pos} color="textSecondary">
+						adjective
+					</Typography>
+					<Typography variant="body2" component="p">
+						well meaning and kindly.
+						<br />
+						{"\"a benevolent smile\""}
+					</Typography>
+				</CardContent>
+				<CardActions>
+					<Button size="small">Learn More</Button>
+				</CardActions>
+			</Card>
+
+
+
+
+
 		</Container>
+
 	)
 }
 

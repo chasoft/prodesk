@@ -18,67 +18,44 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
 import React from "react"
-import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
-import ListGroup from "../../ListGroup"
+
+// MATERIAL-UI
+import { Typography } from "@material-ui/core"
+// import { makeStyles } from "@material-ui/core"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
+import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const LatestFeedbackDummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docsdsfdsfi-dont-know",
-		metaData: []
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some222docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-doc3333s-i-dont-know",
-		metaData: []
-	},
-]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const LatestTicketFeedback = () => {
-	// const classes = useStyles()
+function ApplicationSettings() {
+
+	updateActiveSettingTab(APPLICATION_SETTINGS_NAMES.GENERAL)
+
 	return (
-		<ListGroup
-			title="Latest Support Activities"
-			viewAllText="View all tickets"
-			viewAllLink="/client/tickets"
-		>
-			{
-				LatestTicketFeedback.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
-		</ListGroup>
+		<>
+			<Typography variant="h1">Admin Application Settings</Typography>
+		</>
 	)
 }
 
-export default LatestTicketFeedback
+ApplicationSettings.getLayout = getLayout
+
+export default ApplicationSettings

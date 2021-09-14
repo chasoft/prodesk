@@ -87,13 +87,15 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 				isExpanded ?
 					<div className={classes.dashboard}>
 						<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-						<Link href={homeUrl}><Typography style={{ flexGrow: 1 }}>Dashboard</Typography></Link>
+						<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
 						<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
 						<div style={{ display: "flex", alignItems: "center" }}>
 							<Link href={settingsUrl}>
-								<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
-									<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-								</IconButton>
+								<a>
+									<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
+										<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
+									</IconButton>
+								</a>
 							</Link>
 						</div>
 					</div>

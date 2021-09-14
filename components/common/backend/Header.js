@@ -22,22 +22,18 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { Badge, IconButton, makeStyles, Paper, Tooltip, Typography, withStyles } from "@material-ui/core"
-import { Avatar } from "@material-ui/core"
-import { AppBar } from "@material-ui/core"
+import { AppBar, Badge, IconButton, makeStyles, Tooltip, Typography, withStyles } from "@material-ui/core"
 
 //THIRD-PARTY
 import clsx from "clsx"
 
-
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
-
 
 //ASSETS
 import NotificationsIcon from "@material-ui/icons/Notifications"
@@ -110,7 +106,7 @@ const StyledBadge = withStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const Header = ({ isSideBarExpanded, scrolled }) => {
+const Header = ({ scrolled }) => {
 	const classes = useStyles()
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 	const { title } = useSelector(getPageMeta)
@@ -131,11 +127,8 @@ const Header = ({ isSideBarExpanded, scrolled }) => {
 				</Tooltip>
 
 				<Tooltip title="Recent Notifications" placement="bottom">
-					<IconButton size="medium" color="inherit" >
-						<StyledBadge
-							badgeContent={4}
-							onClick={() => setShowNotificationDraw(p => !p)}
-						>
+					<IconButton size="medium" color="inherit" onClick={() => setShowNotificationDraw(p => !p)} >
+						<StyledBadge badgeContent={4} >
 							<NotificationsIcon />
 						</StyledBadge>
 					</IconButton>
@@ -152,6 +145,6 @@ const Header = ({ isSideBarExpanded, scrolled }) => {
 		</AppBar>
 	)
 }
-Header.propTypes = { isSideBarExpanded: PropTypes.bool, scrolled: PropTypes.bool }
+Header.propTypes = { scrolled: PropTypes.bool }
 
 export default Header

@@ -31,8 +31,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
-import { BACKGROUND_ID } from "../../../helpers/constants"
-import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
+// import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
 
 //ASSETS
 
@@ -52,6 +51,7 @@ function Tools() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Tools</Typography>
+
 		</Container>
 	)
 }

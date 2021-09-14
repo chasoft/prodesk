@@ -92,19 +92,20 @@ const useStyles = makeStyles((theme) => ({
 		padding: 0,
 		width: "100%",
 		listStyle: "none",
-		"&>li": {
+		"& > li > a": {
 			display: "flex",
 			alignItems: "center",
 			fontSize: "0.875rem",
 			padding: theme.spacing(1, 2, 1, 0),
 			paddingLeft: theme.spacing(3) - 4,
+
 			"& >:first-child": {
 				marginRight: theme.spacing(1),
 				height: "20px",
 				weight: "20px",
 			}
 		},
-		"&>li:hover": {
+		"& > li:hover": {
 			backgroundColor: "#ffffff14",
 			cursor: "pointer",
 		},
@@ -124,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
 			justifyContent: "center",
 			padding: theme.spacing(1, 2, 1),
 			color: "#ffffffcc",
-			"& >:first-child": {
+			"& > a > :first-child": {
 				height: "20px",
 				weight: "20px",
 			}
@@ -232,24 +233,26 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 							data.map((group) => {
 								if (group.type === MENU_ITEM_TYPE.ITEM)
 									return (
-										<Link href={group.url} >
-											<div className={classes.itemHeader}>
-												<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-													<div style={{ display: "flex", alignItems: "center" }}>
+										<Link key={group.url} href={group.url} >
+											<a>
+												<div className={classes.itemHeader}>
+													<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+														<div style={{ display: "flex", alignItems: "center" }}>
+															<Typography
+																className={classes.heading}
+																style={{ color: "#fff", flexGrow: 1 }}
+															>
+																{group.title}
+															</Typography>
+														</div>
 														<Typography
-															className={classes.heading}
-															style={{ color: "#fff", flexGrow: 1 }}
-														>
-															{group.title}
-														</Typography>
+															className={classes.headingDescription}
+															variant="caption"
+															noWrap
+														>{group.description}</Typography>
 													</div>
-													<Typography
-														className={classes.headingDescription}
-														variant="caption"
-														noWrap
-													>{group.description}</Typography>
 												</div>
-											</div>
+											</a>
 										</Link>
 									)
 								else if (group.type === MENU_ITEM_TYPE.GROUP)
@@ -265,7 +268,13 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 												{
 													group.items.map((item) => {
 														return (
-															<Link key={item.id} href={item.url}><li>{IconLib[item.icon]}{item.text}</li></Link>
+															<li key={item.id}>
+																<Link href={item.url}>
+																	<a>
+																		{IconLib[item.icon]}{item.text}
+																	</a>
+																</Link>
+															</li>
 														)
 													})
 												}
@@ -284,7 +293,7 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 							data.map((group) => {
 								if (group.type === MENU_ITEM_TYPE.ITEM)
 									return (
-										<Link href={group.url} >
+										<Link key={group.url} href={group.url} >
 											<Tooltip title={group.description} placement="right">
 												<div className={classes.miniItemHeader}>
 													{IconLib[group.icon]}
@@ -300,8 +309,10 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 													return (
 														<Tooltip key={item.id} title={item.text} placement="right">
 															<li>
-																<Link href={item.url}  >
-																	{IconLib[item.icon]}
+																<Link href={item.url}>
+																	<a>
+																		{IconLib[item.icon]}
+																	</a>
 																</Link>
 															</li>
 														</Tooltip>

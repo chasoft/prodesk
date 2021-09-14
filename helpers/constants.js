@@ -80,10 +80,10 @@ export const PRIORITY = {
 }
 
 export const TICKET_STATUS = {
-	OPEN: "Open",
-	REPLIED: "Replied",
-	PENDING: "Pending",
-	CLOSED: "Closed",
+	OPEN: "Open",		//Newly created ticket
+	REPLIED: "Replied",	//Ticket is replied by staff and waiting for feedback from customer
+	PENDING: "Pending",	//Customer do a feecback to staff's reply. If customer send more than 1 reply, the status would be unchanged
+	CLOSED: "Closed",	//Ticket is set to be closed
 }
 
 export const USERGROUP = {
@@ -92,3 +92,24 @@ export const USERGROUP = {
 	MEMBER: "member",
 	USER: "user"
 }
+
+/****************************************************************
+ * SETTING PAGES
+ ****************************************************************/
+
+// export const SETTINGS_NAMES = {
+// 	MEMBERs: "Members",
+// 	PAGE: "Site Pages",
+// 	TICKETS: "Tickets",
+// 	SMTP: "SMTP",
+// 	ADS: "Advertisement",
+// }
+
+// export const SETTING_TABS = [
+// 	["Members", "/admin/settings/members"],
+// 	["Site Pages", "/admin/settings/pages"],
+// 	["Tickets", "/admin/settings/tickets"],
+// 	["Application Settings", "/admin/settings/application"],
+// 	["Tools", "/admin/settings/tools"]
+// ]
+

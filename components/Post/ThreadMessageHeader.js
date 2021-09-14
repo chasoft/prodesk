@@ -23,8 +23,7 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Grid, IconButton, ListItemIcon, makeStyles, Menu, MenuItem, Typography } from "@material-ui/core"
-import { Icon } from "@material-ui/core"
+import { Avatar, Grid, IconButton, makeStyles, Menu, MenuItem, Typography } from "@material-ui/core"
 
 import FingerprintIcon from "@material-ui/icons/Fingerprint"
 import MoreVertIcon from "@material-ui/icons/MoreVert"

@@ -42,7 +42,7 @@ import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
 	root: {
 		minHeight: "calc(100vh - 150px)",
 		width: "100%"
@@ -50,11 +50,8 @@ const useStyles = makeStyles((theme) => ({
 	container: {
 		display: "flex",
 		minHeight: "calc(100vh - 200px)",
-		[theme.breakpoints.only("md")]: {
-			paddingRight: "2rem"
-		}
 	}
-}))
+})
 
 /*****************************************************************
  * MAIN RENDER                                                   *
@@ -72,6 +69,7 @@ function Tickets() {
 				<Hidden smDown>
 					<ListTicketsFilter />
 				</Hidden>
+
 
 			</div>
 		</Container>

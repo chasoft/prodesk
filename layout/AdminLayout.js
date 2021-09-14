@@ -96,15 +96,8 @@ const ADMIN_MENUS = [
 			{ id: "submenu_adddoc", icon: "1", text: "Add new document", url: "/admin/knowledge-base/add-new" },
 			{ id: "submenu_categories", icon: "2", text: "Categories", url: "/admin/knowledge-base/categories" },
 			{ id: "submenu_tags", icon: "2", text: "Tags", url: "/admin/knowledge-base/tags" },
+			{ id: "submenu_faqs", icon: "2", text: "Frequently Asked Questions", url: "/admin/faqs" },
 		]
-	},
-	{
-		id: "menu_faqs",
-		type: MENU_ITEM_TYPE.ITEM,
-		icon: "0",
-		title: "FAQs",
-		description: "Frequently Asked Questions",
-		url: "/admin/faqs"
 	},
 	{
 		id: "menu_users",
@@ -123,10 +116,10 @@ const ADMIN_MENUS = [
 		description: "Configuring your ProDesk",
 		items: [
 			{ id: 1, icon: "1", text: "Members", url: "/admin/settings/members" },
-			{ id: 1, icon: "1", text: "Site Pages", url: "/admin/settings/pages" },
-			{ id: 1, icon: "1", text: "Application Settings", url: "/admin/settings/application" },
-			{ id: 2, icon: "1", text: "SMTP", url: "/admin/settings/smtp" },
-			{ id: 2, icon: "1", text: "Tools", url: "/admin/settings/tools" }, //send email to users...v.v.
+			{ id: 2, icon: "1", text: "Site Pages", url: "/admin/settings/pages" },
+			{ id: 3, icon: "1", text: "Tickets", url: "/admin/settings/tickets" },
+			{ id: 4, icon: "1", text: "Application Settings", url: "/admin/settings/application" },
+			{ id: 6, icon: "1", text: "Tools", url: "/admin/settings/tools" }, //send email to users...v.v.
 		]
 	},
 
@@ -158,7 +151,7 @@ function AdminLayout({ children }) {
 				<div className={classes.root}>
 					<SideBar
 						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
-						homeUrl="/admin" settingsUrl=""
+						homeUrl="/admin" settingsUrl="/admin/settings"
 						data={ADMIN_MENUS}
 					/>
 

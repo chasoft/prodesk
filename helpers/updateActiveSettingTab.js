@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -18,67 +18,30 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * LIBRARY IMPORT                                                *
+ *****************************************************************/
 
-import React from "react"
-import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
-import ListGroup from "../../ListGroup"
+import { useEffect } from "react"
+
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
+import { setActiveSettingTab } from "../redux/slices/uiSettings"
+
+//PROJECT IMPORT
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const LatestFeedbackDummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docsdsfdsfi-dont-know",
-		metaData: []
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some222docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-doc3333s-i-dont-know",
-		metaData: []
-	},
-]
-
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-const LatestTicketFeedback = () => {
-	// const classes = useStyles()
-	return (
-		<ListGroup
-			title="Latest Support Activities"
-			viewAllText="View all tickets"
-			viewAllLink="/client/tickets"
-		>
-			{
-				LatestTicketFeedback.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
-		</ListGroup>
-	)
+/**
+ * Update ActiveSettingTab when a setting page is loaded
+ * @param {object} props
+ */
+export default function updateActiveSettingTab(props) {
+	const dispatch = useDispatch()
+	useEffect(() => {
+		dispatch(setActiveSettingTab(props))
+	}, [])
 }
-
-export default LatestTicketFeedback
