@@ -26,13 +26,14 @@ import React from "react"
 import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+import { Container } from "@material-ui/core"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "../../../layout/ClientLayout"
 import Post from "../../../components/Post"
+import updateUiSettings from "../../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -48,7 +49,13 @@ import Post from "../../../components/Post"
 
 function SingleTicket() {
 	const router = useRouter()
-	const { tid } = router.query
+	// const { tid } = router.query
+
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>

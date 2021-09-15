@@ -33,7 +33,7 @@ import { Container, IconButton, Tooltip, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
-import updatePageMeta from "../../helpers/updatePageMeta"
+import updateUiSettings from "../../helpers/updateUiSettings"
 import ClientStats from "../../components/common/backend/client/ClientStats"
 import LatestTicketFeedback from "../../components/common/backend/client/LatestTicketFeedback"
 import RecentActivities from "../../components/common/backend/client/RecentActivities"
@@ -78,7 +78,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Client() {
 	const classes = useStyles()
-	updatePageMeta({ title: "" })
+
+	updateUiSettings({
+		title: "",
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

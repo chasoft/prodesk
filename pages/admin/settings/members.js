@@ -31,6 +31,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
+import updateUiSettings from "../../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -44,6 +45,11 @@ import { getLayout } from "./../../../layout/AdminLayout"
  *****************************************************************/
 
 function Members() {
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Members</Typography>

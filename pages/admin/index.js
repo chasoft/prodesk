@@ -31,7 +31,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/AdminLayout"
-import updateFrontendBackground from "../../helpers/updateFrontendBackground"
+import updateUiSettings from "../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -46,7 +46,11 @@ import updateFrontendBackground from "../../helpers/updateFrontendBackground"
 
 function Admin() {
 
-	// updateFrontendBackground({ id: BACKGROUND_ID.ADMIN_INDEX })
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

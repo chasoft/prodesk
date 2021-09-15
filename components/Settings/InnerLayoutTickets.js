@@ -33,7 +33,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
-import updateActiveSettingTab from "./../../helpers/updateActiveSettingTab"
+import updateUiSettings from "./../../helpers/updateUiSettings"
 import TabsSettings from "./TabsSettings"
 
 //ASSETS
@@ -62,7 +62,7 @@ export const TICKET_SETTINGS_TABS = [
 
 function InnerLayoutTickets({ children }) {
 
-	updateActiveSettingTab(TICKET_SETTINGS_NAMES.GENERAL)
+	updateUiSettings(TICKET_SETTINGS_NAMES.GENERAL)
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

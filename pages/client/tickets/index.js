@@ -32,7 +32,7 @@ import { makeStyles } from "@material-ui/core/styles"
 
 //PROJECT IMPORT
 import { getLayout } from "../../../layout/ClientLayout"
-import updatePageMeta from "../../../helpers/updatePageMeta"
+import updateUiSettings from "../../../helpers/updateUiSettings"
 import ListTickets from "../../../components/Ticket/ListTickets"
 import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
 
@@ -59,7 +59,14 @@ const useStyles = makeStyles({
 
 function Tickets() {
 	const classes = useStyles()
-	updatePageMeta({ title: "All tickets" })
+
+	updateUiSettings({
+		title: "All tickets",
+		background: {
+			backgroundImage: ""
+		}
+	})
+
 	return (
 		<Container maxWidth="lg" className={classes.root}>
 			<div className={classes.container}>
@@ -69,7 +76,6 @@ function Tickets() {
 				<Hidden smDown>
 					<ListTicketsFilter />
 				</Hidden>
-
 
 			</div>
 		</Container>

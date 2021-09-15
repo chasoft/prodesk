@@ -22,31 +22,79 @@
  * LIBRARY IMPORT                                                *
  *****************************************************************/
 
-import { useEffect } from "react"
+import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { makeStyles } from "@material-ui/core/styles"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@material-ui/core"
+import { useTheme } from "@material-ui/styles"
 
 //THIRD-PARTY
-import { batch } from "react-redux"
-import { useDispatch } from "react-redux"
+// import { getUiSettings } from "../../redux/selectors"
+// import { useSelector, useDispatch } from "react-redux"
+// import { setRedirect } from "../../redux/slices/redirect"
 
 //PROJECT IMPORT
-import { setTitle, setSubTitle, setPageId } from "./../redux/slices/pageMeta"
+
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/**
- * Update pageMeta when a page is loaded
- * @param {object} props
- */
-export default function updatePageMeta(props) {
-	const dispatch = useDispatch()
-	useEffect(() => {
-		batch(() => {
-			dispatch(setPageId(props.id ?? ""))
-			dispatch(setTitle(props.title ?? ""))
-			dispatch(setSubTitle(props.subTitle ?? ""))
-		})
-		console.log("pageMeta updated")
-	}, [])
+// const useStyles = makeStyles({
+// 	root: {
+// 		flexGrow: 1,
+// 		marginTop: "1rem",
+// 		marginBottom: "2rem"
+// 	},
+// })
+
+const TicketDepartmentDetailsDialog = ({ department, children }) => {
+	// const classes = useStyles()
+	const [open, setOpen] = React.useState(false)
+	const theme = useTheme()
+	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+
+	const handleClickOpen = () => {
+		setOpen(true)
+	}
+
+	const handleClose = () => {
+		setOpen(false)
+	}
+	return (
+		<div>
+			<div onClick={handleClickOpen}>{children}</div>
+			<Dialog
+				open={open}
+				onClose={handleClose}
+				fullScreen={fullScreen}
+			>
+				<DialogTitle>{"Department Details"}</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Let Google help apps determine location. This means sending anonymous location data to
+						Google, even when no apps are running. {department.note}
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button autoFocus onClick={handleClose} color="primary">
+						Disagree
+					</Button>
+					<Button onClick={handleClose} color="primary" autoFocus>
+						Agree
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	)
 }
+TicketDepartmentDetailsDialog.propTypes = {
+	department: PropTypes.node,
+	children: PropTypes.node
+}
+
+export default TicketDepartmentDetailsDialog

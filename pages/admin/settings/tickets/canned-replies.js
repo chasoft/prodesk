@@ -31,7 +31,7 @@ import { Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import updateActiveSettingTab from "./../../../../helpers/updateActiveSettingTab"
+import updateUiSettings from "./../../../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -46,7 +46,13 @@ import updateActiveSettingTab from "./../../../../helpers/updateActiveSettingTab
 
 function TicketSettingsCannedReplies() {
 
-	updateActiveSettingTab(TICKET_SETTINGS_NAMES.CANNED_REPLIES)
+	updateUiSettings({
+		activeTab: TICKET_SETTINGS_NAMES.CANNED_REPLIES,
+		background: {
+			height: "132px",
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<>

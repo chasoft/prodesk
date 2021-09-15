@@ -33,7 +33,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
-import updateActiveSettingTab from "./../../helpers/updateActiveSettingTab"
+import updateUiSettings from "./../../helpers/updateUiSettings"
 import TabsSettings from "./TabsSettings"
 
 //ASSETS
@@ -64,10 +64,10 @@ export const APPLICATION_SETTINGS_TABS = [
 
 function InnerLayoutSettings({ children }) {
 
-	updateActiveSettingTab(APPLICATION_SETTINGS_NAMES.GENERAL)
+	updateUiSettings(APPLICATION_SETTINGS_NAMES.GENERAL)
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)", marginTop: "1rem" }}>
 
 			<Typography variant="h1" style={{ color: "white" }}>Application Settings</Typography>
 

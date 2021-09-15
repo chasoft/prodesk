@@ -31,11 +31,10 @@ import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Container, 
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
-// import updateFrontendBackground from "../../../helpers/updateFrontendBackground"
-import TabsSettings from "../../../components/Settings/TabsSettings"
 
 //ASSETS
 import MoreVertIcon from "@material-ui/icons/MoreVert"
+import updateUiSettings from "../../../helpers/updateUiSettings"
 
 
 /*****************************************************************
@@ -52,10 +51,13 @@ const useStyles = makeStyles((theme) => ({
  *****************************************************************/
 
 function Settings() {
-
 	const classes = useStyles()
 
-	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 

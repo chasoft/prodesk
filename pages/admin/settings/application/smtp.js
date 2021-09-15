@@ -32,7 +32,7 @@ import { Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
+import updateUiSettings from "../../../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -47,7 +47,12 @@ import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
 
 function ApplicationSettingsSmtp() {
 
-	updateActiveSettingTab(APPLICATION_SETTINGS_NAMES.SMTP)
+	updateUiSettings({
+		activeTab: APPLICATION_SETTINGS_NAMES.SMTP,
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<>

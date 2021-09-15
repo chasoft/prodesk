@@ -24,6 +24,7 @@
 
 import { Container, Typography } from "@material-ui/core"
 import React from "react"
+import updateUiSettings from "../../helpers/updateUiSettings"
 
 // MATERIAL-UI
 
@@ -45,6 +46,13 @@ import { getLayout } from "./../../layout/ClientLayout"
  *****************************************************************/
 
 function UserAccount() {
+
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
+
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">User Account</Typography>

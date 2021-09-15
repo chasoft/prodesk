@@ -23,37 +23,141 @@
  *****************************************************************/
 
 import React from "react"
+import Link from "next/link"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Typography } from "@material-ui/core"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import updateActiveSettingTab from "./../../../../helpers/updateActiveSettingTab"
-
-//ASSETS
+import { makeStyles } from "@material-ui/core/styles"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const useStyles = makeStyles((theme) => ({
+	main: {
+		"&:hover": {
+			background: theme.palette.action.hover
+		},
+	},
+	main_shorten: {
+		cursor: "pointer",
+		"&:hover": {
+			background: theme.palette.action.hover
+		},
+		padding: theme.spacing(2, 3),
+		[theme.breakpoints.down("xs")]: {
+			padding: theme.spacing(2, 2)
+		},
+	},
+	paper: {
+		display: "flex",
+		[theme.breakpoints.down("xs")]: {
+			flexDirection: "column",
+			alignItems: "flex-start",
+		},
+	},
+	subject: {
+
+	},
+	content: {
+		minWidth: 0, //this property is important
+		flexGrow: 1,
+		[theme.breakpoints.down("xs")]: {
+			maxWidth: "100%",
+			padding: theme.spacing(1),
+			paddingLeft: theme.spacing(2),
+			paddingRight: theme.spacing(2),
+		},
+	},
+	content_addon: {
+		cursor: "pointer",
+		padding: theme.spacing(3),
+	},
+	excerpt: {
+		[theme.breakpoints.down("xs")]: {
+			display: "none"
+		},
+	},
+	state: {
+		display: "flex",
+		alignItems: "center",
+		flexDirection: "column",
+		justifyContent: "center",
+		padding: theme.spacing(1, 2, 1, 0),
+		[theme.breakpoints.down("xs")]: {
+			flexDirection: "row",
+			padding: theme.spacing(0, 2, 1)
+		}
+	},
+	state1: {
+		textAlign: "center",
+		paddingLeft: "0.5rem",
+		paddingRight: "0.5rem",
+	},
+	extraInfo: {
+		textAlign: "center"
+	},
+
+}))
+
+export const GeneralListItemEmpty = ({ message }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.main}>
+			<div className={classes.paper}>
+				<div className={`${classes.content} ${classes.content_addon}`} style={{ textAlign: "center" }}>
+					{message}
+				</div>
+			</div>
+		</div>
+	)
+}
+GeneralListItemEmpty.propTypes = { message: PropTypes.string }
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketSettingsDepartment() {
-
-	updateActiveSettingTab(TICKET_SETTINGS_NAMES.DEPARTMENT)
-
+function GeneralListItem({ link, content, extraContent }) {
+	const classes = useStyles()
 	return (
-		<>
-			<Typography variant="h1">Department</Typography>
-		</>
+		<div>
+
+			<div className={classes.main}>
+
+				<div className={classes.paper}>
+
+					<Link href={link}>
+						<div id="content" className={`${classes.content} ${classes.content_addon}`}>
+
+							{content}
+
+						</div>
+					</Link>
+
+					{
+						extraContent ?
+							<div id="moreInfo" className={classes.state}>
+
+								{extraContent}
+
+							</div>
+							: null
+
+					}
+
+				</div>
+
+			</div>
+
+		</div >
 	)
 }
 
-TicketSettingsDepartment.getLayout = getLayout
-export default TicketSettingsDepartment
+GeneralListItem.propTypes = {
+	link: PropTypes.string,
+	content: PropTypes.node,
+	extraContent: PropTypes.node,
+}
+
+export default GeneralListItem

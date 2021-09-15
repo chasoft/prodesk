@@ -6,6 +6,8 @@ import Tabs from "@material-ui/core/Tabs"
 import Tab from "@material-ui/core/Tab"
 import Typography from "@material-ui/core/Typography"
 import Box from "@material-ui/core/Box"
+import { AvatarGroup } from "@material-ui/lab"
+import { Avatar } from "@material-ui/core"
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props
@@ -48,35 +50,51 @@ const useStyles = makeStyles((theme) => ({
 	},
 }))
 
+const DUMMY_DEPARTMENT = [
+	{
+		id: 1, link: "/", department: "Sales", members: [
+			{ displayName: "Brian", photoURL: "/img/default-avatar.png" },
+			{ displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
+			{ displayName: "Phu", photoURL: "/img/default-avatar.png" }
+		]
+	},
+	{
+		id: 2, link: "/", department: "Accounts", members: [
+			{ displayName: "Brian", photoURL: "/img/default-avatar.png" },
+		]
+	},
+	{
+		id: 3, link: "/", department: "Complain", members: [
+		]
+	},
+	{
+		id: 4, link: "/", department: "Technical", members: [
+			{ displayName: "Brian", photoURL: "/img/default-avatar.png" },
+			{ displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
+			{ displayName: "Phu", photoURL: "/img/default-avatar.png" },
+			{ displayName: "Tai", photoURL: "/img/default-avatar.png" },
+			{ displayName: "WhoAmI", photoURL: "/img/default-avatar.png" }
+		]
+	},
+
+]
+
 export default function ScrollableTabsButtonAuto() {
 	const classes = useStyles()
-	const [value, setValue] = React.useState(0)
-
-	const handleChange = (event, newValue) => {
-		setValue(newValue)
-	}
 
 	return (
 		<div className={classes.root}>
-			<AppBar position="static" color="default">
-				<Tabs
-					value={value}
-					onChange={handleChange}
-					indicatorColor="primary"
-					textColor="primary"
-					variant="scrollable"
-					scrollButtons="auto"
-					aria-label="scrollable auto tabs example"
-				>
-					<Tab label="Item One" {...a11yProps(0)} />
-					<Tab label="Item Two" {...a11yProps(1)} />
-					<Tab label="Item Three" {...a11yProps(2)} />
-					<Tab label="Item Four" {...a11yProps(3)} />
-					<Tab label="Item Five" {...a11yProps(4)} />
-					<Tab label="Item Six" {...a11yProps(5)} />
-					<Tab label="Item Seven" {...a11yProps(6)} />
-				</Tabs>
-			</AppBar>
+			<AvatarGroup max={4}>
+				{
+					DUMMY_DEPARTMENT.map((item) => {
+						<>
+							{console.log(item)}
+							{item.displayName}
+							<Avatar alt={item.displayName} src={item.photoURL} />
+						</>
+					})
+				}
+			</AvatarGroup>
 
 		</div>
 	)

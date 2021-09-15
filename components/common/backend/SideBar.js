@@ -303,7 +303,7 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 									)
 								else if (group.type === MENU_ITEM_TYPE.GROUP)
 									return (
-										<ul className={classes.miniList}>
+										<ul key={group.id} className={classes.miniList}>
 											{
 												group.items.map((item) => {
 													return (

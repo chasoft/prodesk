@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: "center",
 		padding: "0 1rem",
 		"a[aria-current]": {
-			backgroundColor: "#E4E9ED"
+			backgroundColor: "transparent",
 		}
 	},
 	middleContent: {

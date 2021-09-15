@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import PropTypes from "prop-types"
 import { TransitionGroup, Transition as ReactTransition } from "react-transition-group"
 
@@ -21,12 +21,13 @@ const getTransitionStyles = {
 }
 
 const PageTransition = ({ children, location }) => {
+	const nodeRef = useRef(null)
 	return (
 		<TransitionGroup style={{ position: "relative" }}>
-			<ReactTransition key={location} timeout={{ enter: TIMEOUT, exit: TIMEOUT }}>
+			<ReactTransition nodeRef={nodeRef} key={location} timeout={{ enter: TIMEOUT, exit: TIMEOUT }}>
 				{
 					(status) => (
-						<div style={{ ...getTransitionStyles[status] }}>
+						<div ref={nodeRef} style={{ ...getTransitionStyles[status] }}>
 							{children}
 						</div>
 					)

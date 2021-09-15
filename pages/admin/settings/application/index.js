@@ -32,7 +32,7 @@ import { Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
+import updateUiSettings from "../../../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -47,7 +47,12 @@ import updateActiveSettingTab from "../../../../helpers/updateActiveSettingTab"
 
 function ApplicationSettings() {
 
-	updateActiveSettingTab(APPLICATION_SETTINGS_NAMES.GENERAL)
+	updateUiSettings({
+		activeTab: APPLICATION_SETTINGS_NAMES.GENERAL,
+		background: {
+			backgroundImage: "url(\"/bg/meteor.svg\")"
+		}
+	})
 
 	return (
 		<>

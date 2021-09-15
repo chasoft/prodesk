@@ -23,41 +23,137 @@
  *****************************************************************/
 
 import React from "react"
+import Link from "next/link"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Typography } from "@material-ui/core"
+import { makeStyles, Paper, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
-//PROJECT IMPORT
-import { getLayout } from "./../../layout/AdminLayout"
-import updateUiSettings from "../../helpers/updateUiSettings"
 
-//ASSETS
+//PROJECT IMPORT
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const useStyles = makeStyles((theme) => ({
+	root: {
+		width: "100%",
+	},
+	paper: {
+		marginTop: theme.spacing(5),
+		[theme.breakpoints.down("xs")]: {
+			marginTop: theme.spacing(3),
+		},
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+	},
+	group: {
+		margin: "1.5rem 0",
+		marginBottom: 0,
+		[theme.breakpoints.down("xs")]: {
+			margin: "1.625rem 0",
+		},
+		"& >*": {
+			cursor: "default",
+			borderBottom: `1px solid ${theme.palette.divider}`,
+		},
+		"& > :first-child": {
+			borderTopRightRadius: "0.5rem",
+			borderTopLeftRadius: "0.5rem"
+		},
+		"& > :last-child": {
+			borderBottomRightRadius: "0.5rem",
+			borderBottomLeftRadius: "0.5rem",
+			borderBottom: 0,
+		}
+	},
+	viewAll: {
+		display: "flex",
+		alignItems: "center",
+		"& > :first-child": {
+			marginRight: theme.spacing(1)
+		},
+		"& > *": {
+			color: theme.palette.primary.main
+		}
+	},
+	link: {
+		display: "flex",
+		alignItems: "center",
+		color: theme.palette.primary.main,
+		cursor: "pointer",
+		"&:hover": {
+			textDecoration: "underline"
+		}
+	}
+}))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Profile() {
+const GeneralList = (
+	{
+		/* A list should have a title */
+		title,
+		titleHeading = "h2",
+		rightAction,
 
-	updateUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
+		/* If a link is provided, then show it */
+		viewAllText,
+		viewAllLink,
 
+		/* A little decoration */
+		elevation = 2,
+
+		/* children are a list of GeneralListItem or GeneralListItemEmpty */
+		children
+	}
+) => {
+	const classes = useStyles()
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Profile</Typography>
-		</Container>
+		<div className={classes.paper}>
+			<div className={classes.root}>
+
+				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+					<Typography variant={titleHeading}>{title}</Typography>
+					<div>{rightAction ?? ""}</div>
+				</div>
+
+				{
+					viewAllLink ?
+						<Link href={viewAllLink} className={classes.viewAll}>
+							<a className={classes.link}>
+								<Typography variant="button">{viewAllText}</Typography>
+							</a>
+						</Link>
+						: null
+				}
+
+				<Paper elevation={elevation} className={classes.group}>
+
+					{children}
+
+				</Paper>
+
+			</div>
+		</div>
 	)
 }
 
-Profile.getLayout = getLayout
-export default Profile
+GeneralList.propTypes = {
+	title: PropTypes.string,
+	titleHeading: PropTypes.string,
+	rightAction: PropTypes.node,
+	viewAllText: PropTypes.string,
+	viewAllLink: PropTypes.string,
+	elevation: PropTypes.number,
+	children: PropTypes.node,
+}
+
+export default GeneralList

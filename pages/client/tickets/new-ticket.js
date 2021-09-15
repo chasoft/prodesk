@@ -22,10 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@material-ui/core"
+import { Container } from "@material-ui/core"
 import React from "react"
 import CreateNewTicket from "../../../components/Ticket/CreateNewTicket"
-import updatePageMeta from "../../../helpers/updatePageMeta"
+import updateUiSettings from "../../../helpers/updateUiSettings"
 
 // MATERIAL-UI
 
@@ -47,7 +47,14 @@ import { getLayout } from "../../../layout/ClientLayout"
  *****************************************************************/
 
 function NewTicket() {
-	updatePageMeta({ title: "Open New Ticket" })
+
+	updateUiSettings({
+		title: "Open New Ticket",
+		background: {
+			backgroundImage: ""
+		}
+	})
+
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
 			<CreateNewTicket />

@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { makeStyles } from "@material-ui/core/styles"
-import { Paper, Tab, Tabs } from "@material-ui/core"
+import { Paper, Tab, Tabs, useMediaQuery } from "@material-ui/core"
 
 //THIRD-PARTY
 import { getUiSettings } from "../../redux/selectors"
@@ -52,7 +52,6 @@ const useStyles = makeStyles({
 })
 
 const getTabId = (tabName, dataSet) => {
-	console.log({ dataSet })
 	for (let i = 0; i < dataSet.length; i++) {
 		if (dataSet[i].indexOf(tabName) !== -1) return i
 	}
@@ -61,6 +60,7 @@ const getTabId = (tabName, dataSet) => {
 
 const TabsSettings = ({ dataSet }) => {
 	const classes = useStyles()
+	const isScreenBigEnough = useMediaQuery("(min-width: 1280px)")
 	const dispatch = useDispatch()
 	const { activeSettingTab } = useSelector(getUiSettings)
 
@@ -74,10 +74,10 @@ const TabsSettings = ({ dataSet }) => {
 				value={getTabId(activeSettingTab, dataSet)}
 				onChange={handleChange}
 				indicatorColor="primary"
-				variant="scrollable"
-				scrollButtons="on"
+				variant={isScreenBigEnough ? "standard" : "scrollable"}
+				scrollButtons="auto"
 				textColor="primary"
-				centered
+				centered={isScreenBigEnough}
 			>
 				{
 					dataSet.map((item, idx) => {

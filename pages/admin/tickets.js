@@ -31,7 +31,7 @@ import { Container, Typography } from "@material-ui/core"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/AdminLayout"
-import updateFrontendBackground from "../../helpers/updateFrontendBackground"
+import updateUiSettings from "../../helpers/updateUiSettings"
 
 //ASSETS
 
@@ -46,7 +46,11 @@ import updateFrontendBackground from "../../helpers/updateFrontendBackground"
 
 function Tickets() {
 
-	// updateFrontendBackground({ id: BACKGROUND_ID.EMPTY })
+	updateUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
 		<Container maxWidth="lg" style={{ minHeight: "calc(100vh - 150px)", backgroundColor: "#F1F1F1" }}>
