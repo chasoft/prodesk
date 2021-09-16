@@ -44,8 +44,8 @@ import updateUiSettings from "../../../../../helpers/updateUiSettings"
 // import TicketDepartmentDetailsDialog from "../../../../../components/Settings/TicketDepartmentDetailsDialog"
 // import AddMemberList from "../../../../../components/Settings/AddMemberList"
 import DeleteIcon from "@material-ui/icons/Delete"
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
-import LaunchIcon from '@material-ui/icons/Launch';
+import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore"
+import LaunchIcon from "@material-ui/icons/Launch"
 
 /*****************************************************************
  * INIT                                                          *
@@ -126,10 +126,10 @@ function DepartmentDetails() {
 				<Paper elevation={2} className={classes.group}>
 
 					<div className={classes.helpBox}>
-						<Typography variant="button">Email address change</Typography>
+						<Typography variant="button" style={{ display: "block" }}>Email address change</Typography>
 						<Typography variant="caption">
-							For security, when a user changes their email address, an email is sent to their original address so they can review the change
-							<span>
+							For security, when a user changes their email address, their original address so they can review the change
+							<span style={{ display: "inline-block", marginLeft: "5px" }}>
 								<Link href="https://support.chasoft.net">
 									<a>
 										<div style={{ display: "flex", alignItems: "center" }}>

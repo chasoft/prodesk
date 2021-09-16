@@ -62,7 +62,7 @@ export const TICKET_SETTINGS_TABS = [
 
 function InnerLayoutTickets({ children }) {
 
-	updateUiSettings(TICKET_SETTINGS_NAMES.GENERAL)
+	// updateUiSettings(TICKET_SETTINGS_NAMES.GENERAL)
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

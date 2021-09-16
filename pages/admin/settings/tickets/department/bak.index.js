@@ -23,40 +23,86 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import { Button, IconButton, Tooltip, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-
+import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../../components/Settings/InnerLayoutTickets"
+import updateUiSettings from "../../../../../helpers/updateUiSettings"
+import GeneralList from "../../../../../components/common/GeneralList"
+import GeneralListItem, { GeneralListItemEmpty } from "../../../../../components/common/GeneralList/GeneralListItem"
+import AvatarList from "../../../../../components/common/AvatarList"
 
 //ASSETS
-
+import AddIcon from "@material-ui/icons/Add"
+import TicketDepartmentDetailsDialog from "../../../../../components/Settings/TicketDepartmentDetailsDialog"
+import MembersListCheckBox from "../../../../../components/Settings/AddMemberList"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
+const DUMMY_DEPARTMENT = [
+	{
+		id: 1,
+		department: "Sales", note: "",
+		members: [
+			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
+			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
+			{ username: "phu", displayName: "Phu", photoURL: "/img/default-avatar.png" }
+		]
+	},
+	{
+		id: 2,
+		department: "Accounts", note: "",
+		members: [
+			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
+		]
+	},
+	{
+		id: 3,
+		department: "Complain",
+		note: "",
+		members: [
+		]
+	},
+	{
+		id: 4,
+		department: "Technical", note: "Solve technical questions",
+		head: "caoanh",
+		members: [
+			{ username: "brian", displayName: "Brian", photoURL: "/default-avatar/1.png" },
+			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/default-avatar/2.png" },
+			{ username: "phu", displayName: "Phu", photoURL: "/default-avatar/3.png" },
+			{ username: "tai", displayName: "Tai", photoURL: "/default-avatar/4.png" },
+			{ username: "whoami", displayName: "WhoAmI", photoURL: "/default-avatar/5.png" }
+		]
+	},
+]
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const Template = ({ children }) => {
-	const classes = useStyles()
+function TicketSettingsDepartment() {
+
+	updateUiSettings({
+		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
+		background: {
+			height: "132px",
+			backgroundImage: ""
+		}
+	})
+
 	return (
-		<div className={classes.root}>{children}</div>
+		<>
+
+		</>
 	)
 }
-Template.propTypes = { children: PropTypes.node }
 
-export default Template
+TicketSettingsDepartment.getLayout = getLayout
+export default TicketSettingsDepartment

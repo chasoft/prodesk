@@ -51,12 +51,12 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const Template = ({ children }) => {
+const SettingsHeader = ({ children }) => {
 	const classes = useStyles()
 	return (
 		<div className={classes.root}>{children}</div>
 	)
 }
-Template.propTypes = { children: PropTypes.node }
+SettingsHeader.propTypes = { children: PropTypes.node }
 
-export default Template
+export default SettingsHeader

@@ -8,6 +8,11 @@ import Typography from "@material-ui/core/Typography"
 import Box from "@material-ui/core/Box"
 import { AvatarGroup } from "@material-ui/lab"
 import { Avatar } from "@material-ui/core"
+import SettingsPanel, { ContentHelper, ContentHelperLearnMore, ListItem, ListTitle } from "../../components/common/SettingsPanel"
+
+import { getLayout } from "./../../components/Settings/InnerLayoutTickets"
+import updateUiSettings from "../../helpers/updateUiSettings"
+import FolderIcon from '@material-ui/icons/Folder';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props
@@ -35,12 +40,6 @@ TabPanel.propTypes = {
 	value: PropTypes.any.isRequired,
 }
 
-function a11yProps(index) {
-	return {
-		id: `scrollable-auto-tab-${index}`,
-		"aria-controls": `scrollable-auto-tabpanel-${index}`,
-	}
-}
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -79,23 +78,62 @@ const DUMMY_DEPARTMENT = [
 
 ]
 
-export default function ScrollableTabsButtonAuto() {
+export default function testtest() {
 	const classes = useStyles()
-
+	updateUiSettings({
+		background: {
+			height: "132px",
+			backgroundImage: ""
+		}
+	})
 	return (
 		<div className={classes.root}>
-			<AvatarGroup max={4}>
-				{
-					DUMMY_DEPARTMENT.map((item) => {
-						<>
-							{console.log(item)}
-							{item.displayName}
-							<Avatar alt={item.displayName} src={item.photoURL} />
-						</>
-					})
-				}
-			</AvatarGroup>
 
-		</div>
+
+			<SettingsPanel
+				list={
+					<>
+						<ListItem
+							icon={<FolderIcon fontSize="small" />}
+							onClick={() => { }}
+						>
+							Database secrets
+						</ListItem>
+						<ListTitle>Legacy credentials</ListTitle>
+						<ListItem
+							icon={<FolderIcon fontSize="small" />}
+							onClick={() => { }}
+						>
+							Database secrets
+						</ListItem>
+						<ListItem
+							icon={<FolderIcon fontSize="small" />}
+							onClick={() => { }}
+						>
+							Database secrets
+						</ListItem>
+					</>
+				}
+				helper={
+					<ContentHelper title="Firebase Admin SDK">
+						<div>
+							Your Firebase service accrebase features, such as Database, Storage and Auth, programmatically via the unified Admin SDK.
+						</div>
+						<div>
+							Your Firebase service accrebase features, such as Database, Storage and Auth, programmatically via the unified Admin SDK.
+							<ContentHelperLearnMore onClick={() => { alert("hello") }}>Learn more</ContentHelperLearnMore>
+						</div>
+					</ContentHelper>
+				}
+			>
+
+				sdfsdfd
+
+			</SettingsPanel >
+
+
+		</div >
 	)
 }
+
+testtest.getLayout = getLayout

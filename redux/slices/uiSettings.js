@@ -61,8 +61,10 @@ export const initialState = {
 	/*
 		Active Tabs for Settings Page in Admin view
 		this keep the name of the Tab!
+		& active Panel
 	*/
-	activeSettingTab: ""
+	activeSettingTab: "",
+	activeSettingPanel: ""
 }
 
 const uiSettingsSlice = createSlice({
@@ -106,6 +108,9 @@ const uiSettingsSlice = createSlice({
 		setActiveSettingTab: (state, { payload }) => {
 			state.activeSettingTab = payload
 		},
+		setActiveSettingPanel: (state, { payload }) => {
+			state.activeSettingPanel = payload
+		},
 	}
 })
 
@@ -114,7 +119,7 @@ export const {
 	setBackgroundForLoggedinPage,
 	setScrollTop,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
-	setActiveSettingTab
+	setActiveSettingTab, setActiveSettingPanel
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

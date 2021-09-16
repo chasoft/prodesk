@@ -56,7 +56,6 @@ const useStyles = makeStyles((theme) => ({
 const AddMemberList = ({ department, members, children }) => {
 	const classes = useStyles()
 
-
 	const [anchorEl, setAnchorEl] = React.useState(null)
 
 	// const [open, setOpen] = useState(false)

@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import { FormControlLabel, makeStyles, Switch, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
 
@@ -44,6 +44,11 @@ import { makeStyles } from "@material-ui/core"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
+	},
+	description: {
+		color: theme.palette.grey[600],
+		// padding: theme.spacing(2),
+		fontSize: "0.75rem"
 	}
 }))
 
@@ -51,12 +56,32 @@ const useStyles = makeStyles((theme) => ({
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const Template = ({ children }) => {
+const SettingsSwitch = ({ title, state, setState, stateDescription, description }) => {
 	const classes = useStyles()
 	return (
-		<div className={classes.root}>{children}</div>
+		<>
+			<Typography variant="caption" style={{ display: "block" }}>{title}</Typography>
+			<FormControlLabel
+				control={
+					<Switch
+						checked={state}
+						onChange={() => setState(p => !p)}
+						name="checkedB"
+						color="primary"
+					/>
+				}
+				label={stateDescription[state ? 1 : 0]}
+			/>
+			<Typography className={classes.description}>{description}</Typography>
+		</>
 	)
 }
-Template.propTypes = { children: PropTypes.node }
+SettingsSwitch.propTypes = {
+	title: PropTypes.string,
+	state: PropTypes.bool,
+	setState: PropTypes.bool,
+	stateDescription: PropTypes.array,
+	description: PropTypes.string
+}
 
-export default Template
+export default SettingsSwitch

@@ -13,7 +13,10 @@ export default function updateUiSettings(
 		id, title, subTitle,
 
 		//Name of activeTab (used in admin settings pages)
-		activeTab
+		activeTab,
+
+		//active settings panel
+		activePanel
 	}
 ) {
 	const dispatch = useDispatch()
@@ -33,6 +36,10 @@ export default function updateUiSettings(
 
 			if (activeTab) {
 				dispatch(setActiveSettingTab(activeTab))
+			}
+
+			if (activePanel) {
+				dispatch(setActiveSettingPanel(activePanel))
 			}
 
 		})

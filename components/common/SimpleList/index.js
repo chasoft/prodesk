@@ -34,29 +34,45 @@ import { makeStyles } from "@material-ui/core"
 //PROJECT IMPORT
 
 
-//ASSETS
-
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: theme.spacing(1),
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+	},
+	paper: {
+		width: "100%",
+		"& > *:last-child": {
+			borderBottomRightRadius: "0.5rem",
+		},
+		[theme.breakpoints.down("xs")]: {
+			"& > *:last-child": {
+				borderBottomLeftRadius: "0.5rem",
+			}
+		}
 	}
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Template = ({ children }) => {
+const SimpleList = ({ children }) => {
 	const classes = useStyles()
 	return (
-		<div className={classes.root}>{children}</div>
+		<div className={classes.root}>
+			<div className={classes.paper}>
+
+				{children}
+
+			</div>
+		</div>
 	)
 }
-Template.propTypes = { children: PropTypes.node }
+SimpleList.propTypes = { children: PropTypes.node }
 
-export default Template
+export default SimpleList
