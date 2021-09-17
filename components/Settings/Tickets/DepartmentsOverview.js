@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -19,23 +19,23 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * LIBRARY IMPORT                                                *
  *****************************************************************/
 
 import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core/styles"
+import { Typography } from "@material-ui/core"
 
 //THIRD-PARTY
-
+import AvatarList from "../../common/AvatarList"
+import { SettingsContent, SettingsContentHelper, SettingsContentHelperText } from "../../common/SettingsPanel"
 
 //PROJECT IMPORT
 
-
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,20 +43,82 @@ import { makeStyles } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: theme.spacing(1),
-	}
+	},
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SettingsList = ({ children }) => {
+const DepartmentsOverview = ({ dataDepartments, callback }) => {
 	const classes = useStyles()
+
+	if (dataDepartments.length === 0) {
+		return (
+			<SettingsContent>
+				<div style={{ display: "flex", alignItems: "center" }} >
+					<Typography>
+						You have no department at the moment.
+					</Typography>
+				</div>
+			</SettingsContent >
+		)
+	}
+
 	return (
-		<div className={classes.root}>{children}</div>
+		<SettingsContent>
+
+			<SettingsContentHelper>
+				<SettingsContentHelperText>
+					Department Overview
+				</SettingsContentHelperText>
+			</SettingsContentHelper>
+
+			{
+				dataDepartments.map((item) => {
+					return (
+						<div
+							key={item.id}
+							className={classes.item}
+							onClick={() => callback(item.id)}
+						>
+
+							<div className={classes.itemContent}>
+
+								<Typography variant="h3" style={{ margin: 0 }}>{item.department}</Typography>
+								<div style={{ display: "flex", alignItems: "center" }}>
+									<Typography variant="caption">{item.description}</Typography>
+									{item.description ? <>&nbsp; |&nbsp; </> : null}
+									<Typography variant="caption" style={{ margin: 0 }}>
+										{item.members.length} members
+									</Typography>
+								</div>
+
+							</div>
+
+							<div className={classes.itemExtraContent}>
+								<div style={{ display: "flex", alignItems: "center" }}>
+
+									<AvatarList dataSource={item.members} />
+
+								</div>
+							</div>
+
+						</div>
+					)
+				})
+			}
+
+
+
+
+		</SettingsContent>
 	)
 }
-SettingsList.propTypes = { children: PropTypes.node }
 
-export default SettingsList
+DepartmentsOverview.propTypes = {
+	dataDepartments: PropTypes.array,
+	callback: PropTypes.func,
+}
+
+export default DepartmentsOverview

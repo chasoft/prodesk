@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -19,23 +19,24 @@
  ************************************************************************/
 
 /*****************************************************************
- * IMPORTING                                                     *
+ * LIBRARY IMPORT                                                *
  *****************************************************************/
 
 import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core/styles"
+import { Grid, TextField, Typography } from "@material-ui/core"
 
 //THIRD-PARTY
-
+import AvatarList from "../../common/AvatarList"
+import SettingsSwitch from "../../common/SettingsSwitch"
+import MembersList from "../MembersList"
 
 //PROJECT IMPORT
 
-
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,20 +44,71 @@ import { makeStyles } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		margin: theme.spacing(1),
+		marginTop: "1rem",
+		marginBottom: "1rem",
+	},
+	item: {
+		cursor: "pointer",
+		"&:hover": {
+			background: theme.palette.action.hover
+		},
+		padding: theme.spacing(2, 3),
+		[theme.breakpoints.down("xs")]: {
+			padding: theme.spacing(2, 2)
+		},
 	}
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SettingsHeader = ({ children }) => {
+const DepartmentsAddNew = ({ dataDepartment, onClick }) => {
 	const classes = useStyles()
+
 	return (
-		<div className={classes.root}>{children}</div>
+		<Grid container spacing={4}>
+			<Grid item xs={12}>
+				<TextField
+					label="Name of the department"
+					placeholder="eg. Sales, Accounting..."
+					fullWidth
+				/>
+			</Grid>
+			<Grid item xs={12}>
+				<SettingsSwitch
+					title="All members"
+					state={false}
+					setState={() => { }}
+					stateDescription={["Only selected members", "All members"]}
+					description="Allow access to the department to all members, or exclusively to a specified group of members."
+				/>
+			</Grid>
+
+			<Grid item xs={12}>
+				<SettingsSwitch
+					title="Public"
+					state={true}
+					setState={() => { }}
+					stateDescription={["For internal use only", "Available for all users"]}
+					description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+				/>
+			</Grid>
+
+			<Grid item xs={12}>
+				<MembersList
+					dataSource={[]}
+					addMemberCallback={() => { }}
+				/>
+
+			</Grid>
+		</Grid>
 	)
 }
-SettingsHeader.propTypes = { children: PropTypes.node }
 
-export default SettingsHeader
+DepartmentsAddNew.propTypes = {
+	dataDepartment: PropTypes.array,
+	onClick: PropTypes.func,
+}
+
+export default DepartmentsAddNew

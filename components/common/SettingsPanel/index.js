@@ -28,16 +28,14 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Avatar, IconButton, makeStyles, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@material-ui/core"
-import SettingsHeader from "./SettingsHeader"
-import SettingsList from "./SettingsList"
 
 //THIRD-PARTY
 
 
 //PROJECT IMPORT
 
-import LaunchIcon from '@material-ui/icons/Launch';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import LaunchIcon from "@material-ui/icons/Launch"
+import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore"
 
 
 /*****************************************************************
@@ -49,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 		width: "100%",
 		marginTop: theme.spacing(5),
 	},
-	paper: {
+	container: {
 		display: "flex",
 		marginTop: theme.spacing(1),
 		[theme.breakpoints.down("xs")]: {
@@ -74,10 +72,7 @@ const useStyles = makeStyles((theme) => ({
 	content: {
 		flexGrow: 1,
 	},
-	contentHelper: {
-		borderBottom: `1px solid ${theme.palette.divider}`,
-	},
-	contentHelperTitle: {
+	contentHeader: {
 		display: "flex",
 		alignItems: "center",
 		padding: theme.spacing(2, 2, 2),
@@ -85,6 +80,9 @@ const useStyles = makeStyles((theme) => ({
 			padding: theme.spacing(1),
 			backgroundColor: "#FAFAFA",
 		},
+	},
+	contentHelper: {
+		borderBottom: `1px solid ${theme.palette.divider}`,
 	},
 	contentHelperText: {
 		padding: theme.spacing(0, 2, 0),
@@ -125,20 +123,9 @@ const useStyles = makeStyles((theme) => ({
 	details: {
 		padding: theme.spacing(2, 3, 2),
 	},
-	rightAction: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginBottom: "1rem"
-	},
 	alert: {
 		padding: theme.spacing(2),
 	},
-	actionBar: {
-		textAlign: "right",
-		padding: theme.spacing(2),
-		borderTop: `1px solid ${theme.palette.divider}`,
-	}
 }))
 
 export const ListTitle = ({ children }) => {
@@ -158,11 +145,7 @@ export const ListItem = ({ icon, onClick, children }) => {
 	return (
 		<div className={classes.listItem} onClick={onClick}>
 			{
-				icon
-					? <Avatar>
-						{icon}
-					</Avatar>
-					: null
+				icon ? <Avatar>{icon}</Avatar> : null
 			}
 			<Typography variant="button">
 				{children}
@@ -176,171 +159,157 @@ ListItem.propTypes = {
 	children: PropTypes.node
 }
 
-export const ContentHelper = ({ title, alert, onClick, children }) => {
-	const classes = useStyles()
-	const theme = useTheme()
-	const showBackButton = useMediaQuery(theme.breakpoints.down("xs"))
-
+export const SettingsHeader = ({ children }) => {
 	return (
-		<div className={classes.contentHelper}>
-			{
-				showBackButton
-					? <div className={classes.contentHelperTitle}>
-						<Tooltip title="Go back" placement="top">
-							<IconButton size="small" onClick={onClick} style={{ marginRight: "5px" }}>
-								<NavigateBeforeIcon />
-							</IconButton>
-						</Tooltip>
-						<Typography variant="h4" style={{ margin: 0 }}>{title}</Typography>
-					</div>
-					: <Typography variant="button" className={classes.contentHelperTitle}>
-						{title}
-					</Typography>
-			}
-
-			{
-				alert
-					? <div className={classes.alert}>{alert}</div>
-					: null
-			}
-
-			{
-				children
-					? <div className={classes.contentHelperText}>
-						<Typography variant="caption">
-							{children}
-						</Typography>
-					</div>
-					: null
-			}
-
+		<div
+			style={{
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
+				marginBottom: "1rem"
+			}}
+		>
+			{children}
 		</div>
 	)
 }
-ContentHelper.propTypes = {
-	title: PropTypes.string,
-	alert: PropTypes.node,
-	onClick: PropTypes.func,
+SettingsHeader.propTypes = { children: PropTypes.node }
+
+export const SettingsContainer = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<Paper className={classes.container}>
+			{children}
+		</Paper>
+	)
+}
+SettingsContainer.propTypes = { children: PropTypes.node }
+
+export const SettingsList = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.list}>
+			{children}
+		</div>
+	)
+}
+SettingsList.propTypes = { children: PropTypes.node }
+
+export const SettingsContent = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.content} >
+			{children}
+		</div>
+	)
+}
+SettingsContent.propTypes = { children: PropTypes.node }
+
+export const SettingsContentHeader = ({ hasBackBtn, backBtnOnClick, children }) => {
+	const theme = useTheme()
+	const classes = useStyles()
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down("xs"))
+
+	if (isSmallScreen && hasBackBtn) {
+		return (
+			<div className={classes.contentHeader}>
+				<Tooltip title="Go back" placement="top">
+					<IconButton size="small" onClick={backBtnOnClick} style={{ marginRight: "5px" }}>
+						<NavigateBeforeIcon />
+					</IconButton>
+				</Tooltip>
+				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+			</div>
+		)
+	}
+
+	if (isSmallScreen && hasBackBtn === false) {
+		return (
+			<div className={classes.contentHeader}>
+				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+			</div>
+		)
+	}
+
+	return (
+		<Typography variant="button" className={classes.contentHeader}>
+			{children}
+		</Typography>
+	)
+}
+SettingsContentHeader.propTypes = {
+	hasBackBtn: PropTypes.bool,
+	backBtnOnClick: PropTypes.func,
 	children: PropTypes.node
 }
 
-export const ContentHelperLearnMore = ({ url, onClick = () => { } }) => {
+export const SettingsContentHelper = ({ children }) => {
 	const classes = useStyles()
 	return (
-		<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={onClick}>
-			{
-				url
-					? <Link href={url ?? ""}>
-						<a>
-							<div className={classes.learnMore}>
-								Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-							</div>
-						</a>
-					</Link>
-					: <div className={classes.learnMore}>
-						Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-					</div>
-			}
-		</span>
-	)
-}
-ContentHelperLearnMore.propTypes = {
-	url: PropTypes.string,
-	onClick: PropTypes.func,
-}
-
-/**
- * Use this block directly inside Children of SettingsPanel
- */
-export const ActionBar = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<>
-			{
-				children
-					? <div className={classes.actionBar}>
-						{children}
-					</div>
-					: null
-			}
-		</>
-	)
-}
-ActionBar.propTypes = { children: PropTypes.node }
-
-
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-const SettingsPanel = (
-	{
-		/* header on the top of the Box */
-		title,
-		titleHeading = "h2",
-		rightAction,
-		actionBar,
-		/* List of items */
-		list,
-		/* content */
-		helper,
-		style = {},
-		children,
-	}
-) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.root}>
-			{
-				(title || rightAction)
-					? <div className={classes.rightAction}>
-						<Typography variant={titleHeading}>{title ?? ""}</Typography>
-						<div>{rightAction ?? ""}</div>
-					</div>
-					: null
-			}
-
-			<Paper className={classes.paper}>
-
-				{
-					list
-						? <div className={classes.list}>
-							{list}
-						</div>
-						: null
-				}
-
-				<div className={classes.content}>
-
-					{helper ?? null}
-
-					<div className={classes.details} style={{ ...style }}>
-						{children}
-					</div>
-
-					{
-						(actionBar)
-							? <div className={classes.actionBar}>
-								{actionBar ?? ""}
-							</div>
-							: null
-					}
-
-				</div>
-			</Paper>
+		<div className={classes.contentHelper}>
+			{children}
 		</div>
 	)
 }
+SettingsContentHelper.propTypes = { children: PropTypes.node }
 
-SettingsPanel.propTypes = {
-	title: PropTypes.string,
-	titleHeading: PropTypes.string,
-	rightAction: PropTypes.node,
-	actionBar: PropTypes.node,
-	list: PropTypes.node,
-	helper: PropTypes.node,
-	style: PropTypes.object,
-	children: PropTypes.node,
+export const SettingsContentHelperText = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.contentHelperText}>
+			<Typography variant="caption">
+				{children}
+			</Typography>
+		</div>
+	)
 }
+SettingsContentHelperText.propTypes = { children: PropTypes.node }
 
-export default SettingsPanel
+export const SettingsContentHelperAlert = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.contentHelperText}>
+			<Typography variant="caption">
+				{children}
+			</Typography>
+		</div>
+	)
+}
+SettingsContentHelperAlert.propTypes = { children: PropTypes.node }
+
+export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) => {
+	const classes = useStyles()
+
+	if (target) {
+		return (
+			<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
+				<Link href={target ?? ""}>
+					<a>
+						<div className={classes.learnMore}>
+							Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
+						</div>
+					</a>
+				</Link>
+			</span>
+		)
+	}
+
+	return (
+		<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
+			<div className={classes.learnMore}>
+				Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
+			</div>
+		</span>
+	)
+}
+SettingsContentHelperLearnMore.propTypes = { target: PropTypes.string, action: PropTypes.func }
+
+export const SettingsContentActionBar = ({ children }) => {
+	const classes = useStyles()
+	return (
+		<div className={classes.actionBar}>
+			{children}
+		</div>
+	)
+}
+SettingsContentActionBar.propTypes = { children: PropTypes.node }
