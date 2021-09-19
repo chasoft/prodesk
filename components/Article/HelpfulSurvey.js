@@ -1,18 +1,18 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, Typography } from "@mui/material"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		padding: theme.spacing(4, 8),
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			padding: theme.spacing(1),
 		},
 	},
 	content: {
 		display: "flex",
 		flexDirection: "row",
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			flexDirection: "column",
 		}
 	},
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 		textAlign: "left",
 		alignItems: "center",
 		marginRight: "1.5rem",
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			flexDirection: "column",
 			textAlign: "center",
 			padding: "1.115rem 0",
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 	buttons: {
 		display: "flex",
 		alignItems: "middle",
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			justifyContent: "center"
 		},
 		"& > :first-child": {

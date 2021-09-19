@@ -25,10 +25,9 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@material-ui/core"
-import { useTheme } from "@material-ui/styles"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material"
+import { useTheme } from "@mui/styles"
 
 //THIRD-PARTY
 // import { getUiSettings } from "../../redux/selectors"
@@ -56,7 +55,7 @@ const TicketDepartmentDetailsDialog = ({ department, children }) => {
 	// const classes = useStyles()
 	const [open, setOpen] = React.useState(false)
 	const theme = useTheme()
-	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+	const fullScreen = useMediaQuery(theme.breakpoints.down("lg"))
 
 	const handleClickOpen = () => {
 		setOpen(true)

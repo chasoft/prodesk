@@ -1,6 +1,6 @@
 import PropTypes from "prop-types"
 import React from "react"
-import { TextField } from "@material-ui/core"
+import { TextField } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 import { getNewTicket } from "./../../redux/selectors"
 import { setSubject } from "./../../redux/slices/newTicket"

@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import { Accordion, AccordionDetails, AccordionSummary, Button, CssBaseline, FormControl, FormControlLabel, FormGroup, FormLabel, MenuItem, Paper, Select, Typography, Checkbox, FormHelperText, OutlinedInput, InputAdornment, SvgIcon } from "@material-ui/core"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import makeStyles from "@mui/styles/makeStyles"
+import withStyles from "@mui/styles/withStyles"
+import { Accordion, AccordionDetails, AccordionSummary, Button, CssBaseline, FormControl, FormControlLabel, FormGroup, FormLabel, MenuItem, Paper, Select, Typography, Checkbox, FormHelperText, OutlinedInput, InputAdornment, SvgIcon } from "@mui/material"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import { PropTypes } from "prop-types"
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank"
-import CheckBoxIcon from "@material-ui/icons/CheckBox"
-import CheckBoxOutlineBlankSharpIcon from "@material-ui/icons/CheckBoxOutlineBlankSharp"
-import CheckBoxSharpIcon from "@material-ui/icons/CheckBoxSharp"
-import SearchIcon from "@material-ui/icons/Search"
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
+import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
+import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp"
+import SearchIcon from "@mui/icons-material/Search"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		marginLeft: "3.125rem",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginLeft: "1.125rem"
 		},
 		width: "100%",
@@ -98,7 +99,7 @@ const FilterSummary = withStyles((theme) => ({
 		padding: 0,
 		paddingTop: "0.25rem",
 		minHeight: 0,
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			// paddingLeft: theme.spacing(3),
 		},
 	},

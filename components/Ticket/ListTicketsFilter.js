@@ -25,9 +25,9 @@
 import React, { useState } from "react"
 import { PropTypes } from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import withStyles from "@mui/styles/withStyles"
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -37,9 +37,9 @@ import { getUiSettings } from "../../redux/selectors"
 import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
 
 //ASSETS
-import SearchIcon from "@material-ui/icons/Search"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import CheckBoxOutlineBlankSharpIcon from "@material-ui/icons/CheckBoxOutlineBlankSharp"
+import SearchIcon from "@mui/icons-material/Search"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
 import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSearchTerm } from "../../redux/slices/uiSettings"
 
 /*****************************************************************

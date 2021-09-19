@@ -19,68 +19,48 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-import { Button, Paper, Typography, makeStyles, RadioGroup, FormControlLabel, Radio } from "@material-ui/core"
-import { doInitSurvey } from "../../helpers/firebase"
-import { useDispatch, useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
+
+// MATERIAL-UI
+import { Box, Button, FormControlLabel, Paper, Radio, RadioGroup, Typography } from "@mui/material"
+
+//THIRD-PARTY
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
-import { useRouter } from "next/router"
+import { useDispatch, useSelector } from "react-redux"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		marginBottom: theme.spacing(4),
-	},
-	options: {
-		display: "flex",
-		flexWrap: "wrap",
-		justifyContent: "center",
-		"& > *": {
-			margin: theme.spacing(1),
-			width: theme.spacing(16),
-			height: theme.spacing(16),
-		},
-		padding: theme.spacing(4, 2, 4)
-	},
-}))
+//PROJECT IMPORT
+import { getAuth } from "../../redux/selectors"
+import { doInitSurvey } from "../../helpers/firebase"
 
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const AnOption = () => {
-	return (
-		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
-			<FormControlLabel value="female" control={<Radio />} />
-		</RadioGroup>
-	)
-}
+// const AnOption = () => {
+// 	return (
+// 		<RadioGroup aria-label="gender" name="gender1" value={0} onChange={() => { }}>
+// 			<FormControlLabel
+// 				value="female"
+// 				control={
+// 					<Radio name="purpose" />
+// 				}
+// 			/>
+// 		</RadioGroup>
+// 	)
+// }
 
 const InitSurveyForm = () => {
-	const classes = useStyles()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
 
 	const formik = useFormik({
 		initialValues: {
-			purpose: "1"
+			surveyOptions: "Option1"
 		},
 		// validationSchema: validationSchema,
 		onSubmit: async (values) => {
@@ -91,28 +71,68 @@ const InitSurveyForm = () => {
 		},
 	})
 
-
 	return (
-		<>
-			<Paper className={classes.root} elevation={0}>
+		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					flexGrow: 1,
+					mb: 4,
+				}}
+			>
 
 				<div style={{ marginBottom: "2rem" }}>
 					<Typography variant="h1">What brings you to ProDesk</Typography>
 					<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
 				</div>
 
-				<form className={classes.form} onSubmit={formik.handleSubmit}>
-					<div className={classes.options}>
-						<Paper><AnOption /></Paper>
-						<Paper><AnOption /></Paper>
-						<Paper><AnOption /></Paper>
-					</div>
+				<form onSubmit={formik.handleSubmit}>
+					<Box
+						sx={{
+							display: "flex",
+							flexWrap: "wrap",
+							justifyContent: "center",
+							"& > *": {
+								m: 1,
+								width: (theme) => theme.spacing(16),
+								height: (theme) => theme.spacing(16),
+							},
+							px: 2, py: 4
+						}}
+					>
+						<RadioGroup
+							name="surveyOptions"
+							value={formik.values.surveyOptions}
+							onChange={formik.handleChange}
+						>
+							<Paper>
+								<FormControlLabel
+									label="Option 1" control={<Radio />}
+									value="Option1"
+								/>
+							</Paper>
+							<Paper>
+								<FormControlLabel
+									label="Option 2" control={<Radio />}
+									value="Option2"
+								/>
+							</Paper>
+							<Paper>
+								<FormControlLabel
+									label="Option 3" control={<Radio />}
+									value="Option3"
+								/>
+							</Paper>
+						</RadioGroup>
+					</Box>
 
 					<Button type="submit" variant="contained" color="primary">Finish</Button>
 				</form>
 
-			</Paper>
-		</>
+			</Box>
+		</Box>
 	)
 }
 

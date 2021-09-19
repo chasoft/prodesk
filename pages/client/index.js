@@ -25,9 +25,8 @@
 import React from "react"
 import Link from "next/link"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Container, IconButton, Tooltip, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Container, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -39,7 +38,7 @@ import LatestTicketFeedback from "../../components/common/backend/client/LatestT
 import RecentActivities from "../../components/common/backend/client/RecentActivities"
 
 //ASSETS
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
@@ -60,11 +59,11 @@ const useStyles = makeStyles((theme) => ({
 		fontWeight: "500",
 		fontSize: "2.5rem",
 		lineHeight: "2.5rem",
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			fontSize: "2.2rem",
 			lineHeight: "2.2rem",
 		},
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			fontSize: "2rem",
 			lineHeight: "2rem",
 		}
@@ -102,7 +101,7 @@ function Client() {
 				<div>
 					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
 						<Tooltip title="Open New Ticket" placement="left">
-							<IconButton color="inherit">
+							<IconButton color="inherit" size="large">
 								<ArrowForwardIcon />
 							</IconButton>
 						</Tooltip>

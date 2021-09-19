@@ -10,11 +10,12 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@ckeditor/ckeditor5-build-classic": "^29.1.0",
-		"@ckeditor/ckeditor5-react": "^3.0.2",
+		"@emotion/react": "^11.4.1",
+		"@emotion/styled": "^11.3.0",
 		"@material-ui/core": "^4.12.3",
-		"@material-ui/icons": "^4.11.2",
-		"@material-ui/lab": "^4.0.0-alpha.60",
+		"@mui/icons-material": "^5.0.0",
+		"@mui/material": "^5.0.0",
+		"@mui/styles": "^5.0.0",
 		"@reduxjs/toolkit": "^1.6.1",
 		"dayjs": "^1.10.6",
 		"firebase": "^8.10.0",
@@ -23,7 +24,7 @@
 		"lodash.merge": "^4.6.2",
 		"nanoid": "^3.1.25",
 		"next": "11.1.0",
-		"notistack": "^1.0.10",
+		"notistack": "^2.0.1-alpha.5",
 		"nprogress": "^0.2.0",
 		"prop-types": "^15.7.2",
 		"react": "17.0.2",
@@ -33,7 +34,6 @@
 		"react-redux": "^7.2.4",
 		"react-transition-group": "^4.4.2",
 		"rich-markdown-editor": "^11.17.4-0",
-		"styled-components": "^5.3.1",
 		"yup": "^0.32.9"
 	},
 	"devDependencies": {

@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Button, Typography } from "@material-ui/core"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -41,9 +41,9 @@ import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../../components/Sett
 import { ListItem, ListTitle, SettingsContainer, SettingsHeader, SettingsList } from "../../../../../components/common/SettingsPanel"
 
 //ASSETS
-import AddIcon from "@material-ui/icons/Add"
-import InfoIcon from "@material-ui/icons/Info"
-import BusinessIcon from "@material-ui/icons/Business"
+import AddIcon from "@mui/icons-material/Add"
+import InfoIcon from "@mui/icons-material/Info"
+import BusinessIcon from "@mui/icons-material/Business"
 
 /*****************************************************************
  * DUMMY DATA                                                    *

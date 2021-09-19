@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import React, { useEffect, useRef } from "react"
-// import { makeStyles } from "@material-ui/core"
+// import { makeStyles } from "@mui/material"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -31,7 +31,8 @@ import React, { useEffect, useRef } from "react"
 
 import { Logo } from "../../components/common"
 import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
-import { LinearProgress, makeStyles, Paper, Typography } from "@material-ui/core"
+import { LinearProgress, Paper, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { REDIRECT_URL } from "../../helpers/constants"
 import { setRedirect } from "../../redux/slices/redirect"
 import { useDispatch } from "react-redux"

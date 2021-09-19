@@ -24,9 +24,10 @@
 
 import React from "react"
 import Link from "next/link"
-import { makeStyles, Paper, Typography } from "@material-ui/core"
+import { Paper, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { PropTypes } from "prop-types"
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -39,7 +40,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginLeft: theme.spacing(0),
 			marginRight: theme.spacing(0),
 		},

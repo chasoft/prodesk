@@ -1,13 +1,23 @@
 import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import {
-	makeStyles, Button, Grid, IconButton, Paper, Step, StepContent, StepLabel, Stepper, Tooltip, Typography
-} from "@material-ui/core"
-import { useTheme } from "@material-ui/core/styles"
-import useMediaQuery from "@material-ui/core/useMediaQuery"
+	Button,
+	Grid,
+	IconButton,
+	Paper,
+	Step,
+	StepContent,
+	StepLabel,
+	Stepper,
+	Tooltip,
+	Typography,
+} from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
+import { useTheme } from "@mui/material/styles"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 
-import EditOutlinedIcon from "@material-ui/icons/EditOutlined"
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 
 import { getNewTicket } from "../../redux/selectors"
 import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
@@ -78,7 +88,7 @@ export default function TicketStepper() {
 		subject, message, selectedCategory, selectedPriority, selectedDepartment
 	} = newTicket
 	const theme = useTheme()
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("xs"))
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"))
 
 	const steps = ["Create your question", "Select details", "Describe & post"]
 

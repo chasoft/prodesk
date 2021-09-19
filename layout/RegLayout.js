@@ -27,7 +27,7 @@ import { useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Hidden, makeStyles } from "@material-ui/core"
+import { Container, Box } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -43,68 +43,70 @@ import { setflexDirection } from "../redux/slices/uiSettings"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	content: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		// justifyContent: "center",
-		width: "100%",
-		[theme.breakpoints.down("md")]: { width: "60%" },
-		[theme.breakpoints.down("sm")]: { width: "100%" },
-	},
-	sideImage: {
-		backgroundRepeat: "no-repeat",
-		backgroundColor: theme.palette.type === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
-		backgroundSize: "cover",
-		backgroundPosition: "center",
-		width: "500px",
-		// height: "100%",
-		[theme.breakpoints.down("md")]: { width: "40%" },
-		[theme.breakpoints.down("sm")]: { display: "none" },
-	},
-	centerAlignAtSmallScreen: {
-		[theme.breakpoints.down("sm")]: { textAlign: "center", },
-	},
-}))
-
 const SideImage = ({ imageUrl = null, children }) => {
-	const classes = useStyles()
 	return (
-		<div
-			className={classes.sideImage}
-			style={{ backgroundImage: imageUrl ?? "url(https://source.unsplash.com/random)" }}
+		<Box
+			sx={{
+				backgroundRepeat: "no-repeat",
+				backgroundColor: (theme) => theme.palette.mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
+				backgroundSize: "cover",
+				backgroundPosition: "center",
+				width: { xs: "40%", xl: "500px" },
+				display: { xs: "none", sm: "block" },
+				backgroundImage: imageUrl ?? "url(https://source.unsplash.com/random)"
+			}}
 		>
 			{children}
-		</div>
+		</Box>
 	)
 }
 SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
 
 export const TopLine = ({ left, center, right }) => {
 	return (
-		<div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "2rem" }}>
-			<Hidden smDown>
-				<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-					{left ?? ""}
-				</div>
-			</Hidden>
+		<Box sx={{
+			width: "100%",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+			pt: 3,
+		}}
+		>
+			<Box
+				sx={{
+					display: { xs: "none", lg: "flex" },
+					alignItems: "center", justifyContent: "flex-start",
+				}}
+			>
+				{left ?? ""}
+			</Box>
 
-			<Hidden mdUp>
-				<div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "5rem", flexGrow: 1 }}>
-					{center ?? " "}
-				</div>
-			</Hidden>
+			<Box
+				sx={{
+					display: { lg: "none", xs: "flex" },
+					alignItems: "center", justifyContent: "center", flexGrow: 1,
+					py: 8,
+				}}
+			>
+				{center ?? ""}
+			</Box>
 
-			<Hidden smDown>
-				<div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: "2rem" }}>
-					{right ?? ""}
-				</div>
-			</Hidden>
-		</div>
+			<Box
+				sx={{
+					display: { xs: "none", lg: "flex" },
+					alignItems: "center", justifyContent: "flex-end", pr: 2
+				}}
+			>
+				{right ?? ""}
+			</Box>
+		</Box>
 	)
 }
-TopLine.propTypes = { left: PropTypes.any, center: PropTypes.any, right: PropTypes.any }
+TopLine.propTypes = {
+	left: PropTypes.any,
+	center: PropTypes.any,
+	right: PropTypes.any
+}
 
 export const updateFlexDirection = (props) => {
 	const dispatch = useDispatch()
@@ -118,17 +120,26 @@ export const updateFlexDirection = (props) => {
  *****************************************************************/
 
 function RegLayout({ children }) {
-	const classes = useStyles()
 	const { flexDirection } = useSelector(getUiSettings)
-	console.log("started RegLayout")
 	return (
 		<ReduxRedirect>
 			<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
+
 				<SideImage />
-				<Container className={classes.content} >
+
+				<Container
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						justifyContent: "center",
+						width: { xs: "100%", sm: "60%", xl: "100%" }
+					}}
+				>
 					{children}
 					<Footer />
 				</Container>
+
 			</div>
 		</ReduxRedirect>
 	)

@@ -1,7 +1,5 @@
-import { red } from "@material-ui/core/colors"
-import { createTheme } from "@material-ui/core"
-
-//TODO: THêm 1 breakpoint ở mực 7xx pixel
+import { red } from "@mui/material/colors"
+import { createTheme } from "@mui/material"
 
 export const theme = createTheme({
 	palette: {

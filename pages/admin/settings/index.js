@@ -25,7 +25,19 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Container, IconButton, makeStyles, Typography } from "@material-ui/core"
+import {
+	Avatar,
+	Button,
+	Card,
+	CardActions,
+	CardContent,
+	CardHeader,
+	Container,
+	IconButton,
+	Typography,
+} from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -33,7 +45,7 @@ import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Container, 
 import { getLayout } from "./../../../layout/AdminLayout"
 
 //ASSETS
-import MoreVertIcon from "@material-ui/icons/MoreVert"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
 import updateUiSettings from "../../../helpers/updateUiSettings"
 
 
@@ -60,7 +72,6 @@ function Settings() {
 	})
 
 	return (
-
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Settings</Typography>
 
@@ -72,7 +83,7 @@ function Settings() {
 						</Avatar>
 					}
 					action={
-						<IconButton aria-label="settings">
+						<IconButton aria-label="settings" size="large">
 							<MoreVertIcon />
 						</IconButton>
 					}
@@ -105,7 +116,6 @@ function Settings() {
 
 
 		</Container>
-
 	)
 }
 

@@ -27,7 +27,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Typography } from "@material-ui/core"
+import { Button, Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"

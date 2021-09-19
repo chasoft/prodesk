@@ -1,9 +1,10 @@
 import React from "react"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-// import Paper from "@material-ui/core/Paper"
-import Tabs from "@material-ui/core/Tabs"
-import Tab from "@material-ui/core/Tab"
-import { Grid, IconButton, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import withStyles from "@mui/styles/withStyles"
+// import Paper from "@mui/material/Paper"
+import Tabs from "@mui/material/Tabs"
+import Tab from "@mui/material/Tab"
+import { Grid, IconButton, Typography } from "@mui/material"
 import NavLink from "./NavLink"
 import PropTypes from "prop-types"
 import { AuthTrue } from "../../AuthCheck"
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	tabs: {
 		marginLeft: theme.spacing(2),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginLeft: theme.spacing(1),
 		},
 	},
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 		fontWeight: 500,
 		padding: theme.spacing(2) - 3,
 		marginRight: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			paddingRight: theme.spacing(1),
 			paddingLeft: theme.spacing(1)
 		},
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 		paddingLeft: 1,
 		paddingRight: 1,
 		marginRight: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			paddingRight: theme.spacing(1),
 			paddingLeft: theme.spacing(1)
 		},

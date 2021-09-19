@@ -25,10 +25,9 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Avatar, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography, useMediaQuery } from "@material-ui/core"
-import { useTheme } from "@material-ui/styles"
+import makeStyles from "@mui/styles/makeStyles"
+import { Avatar, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography, useMediaQuery } from "@mui/material"
+import { useTheme } from "@mui/styles"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"

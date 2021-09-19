@@ -23,10 +23,12 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Chip, makeStyles, Typography } from "@material-ui/core"
+import { Avatar, Chip, Typography } from "@mui/material"
 
-import FaceIcon from "@material-ui/icons/Face"
-import DoneIcon from "@material-ui/icons/Done"
+import makeStyles from "@mui/styles/makeStyles"
+
+import FaceIcon from "@mui/icons-material/Face"
+import DoneIcon from "@mui/icons-material/Done"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *

@@ -26,9 +26,10 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Collapse, makeStyles, Typography } from "@material-ui/core"
-import ExpandLessIcon from "@material-ui/icons/ExpandLess"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import { Collapse, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
+import ExpandLessIcon from "@mui/icons-material/ExpandLess"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 
 //THIRD-PARTY
 import clsx from "clsx"

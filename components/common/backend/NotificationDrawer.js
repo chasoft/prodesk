@@ -26,7 +26,9 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core"
+import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -35,8 +37,8 @@ import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles } from "
 
 
 //ASSETS
-import InboxIcon from "@material-ui/icons/MoveToInbox"
-import MailIcon from "@material-ui/icons/Mail"
+import InboxIcon from "@mui/icons-material/MoveToInbox"
+import MailIcon from "@mui/icons-material/Mail"
 
 
 
@@ -47,7 +49,7 @@ import MailIcon from "@material-ui/icons/Mail"
 const useStyles = makeStyles((theme) => ({
 	drawerPaper: {
 		width: "400px",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			width: "100%",
 		}
 	},

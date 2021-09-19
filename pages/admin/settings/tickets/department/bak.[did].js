@@ -26,9 +26,8 @@ import React from "react"
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, FormControlLabel, IconButton, Link, Paper, Switch, TextField, Tooltip, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, FormControlLabel, IconButton, Link, Paper, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -40,12 +39,12 @@ import updateUiSettings from "../../../../../helpers/updateUiSettings"
 // import AvatarList from "../../../../../components/common/AvatarList"
 
 //ASSETS
-// import AddIcon from "@material-ui/icons/Add"
+// import AddIcon from "@mui/icons-material/Add"
 // import TicketDepartmentDetailsDialog from "../../../../../components/Settings/TicketDepartmentDetailsDialog"
 // import AddMemberList from "../../../../../components/Settings/AddMemberList"
-import DeleteIcon from "@material-ui/icons/Delete"
-import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore"
-import LaunchIcon from "@material-ui/icons/Launch"
+import DeleteIcon from "@mui/icons-material/Delete"
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
+import LaunchIcon from "@mui/icons-material/Launch"
 
 /*****************************************************************
  * INIT                                                          *
@@ -72,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 	group: {
 		margin: "1.5rem 0",
 		marginBottom: 0,
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("sm")]: {
 			margin: "1.625rem 0",
 		},
 	},
@@ -107,7 +106,7 @@ function DepartmentDetails() {
 				<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 					<div style={{ display: "flex", alignItems: "center" }}>
 						<Tooltip title="Go back to the departments list" placement="top">
-							<IconButton onClick={() => router.back()}>
+							<IconButton onClick={() => router.back()} size="large">
 								<NavigateBeforeIcon />
 							</IconButton>
 						</Tooltip>

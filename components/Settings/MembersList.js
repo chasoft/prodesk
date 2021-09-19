@@ -26,7 +26,9 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Button, IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
+import { Avatar, Button, IconButton, Tooltip, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -36,8 +38,8 @@ import AddMemberList from "./AddMemberList"
 
 
 //ASSETS
-import AddIcon from "@material-ui/icons/Add"
-import MoreVertIcon from "@material-ui/icons/MoreVert"
+import AddIcon from "@mui/icons-material/Add"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
 
 /*****************************************************************
  * INIT                                                          *
@@ -70,40 +72,38 @@ const useStyles = makeStyles((theme) => ({
 
 const MembersList = ({ dataSource, addMemberCallback }) => {
 	const classes = useStyles()
-	return (
-		<>
-			<Typography variant="caption">There are {dataSource.length} members</Typography>
-			<div className={classes.action}>
-				<div className={classes.icons}>
-					{
-						dataSource.map((item) => {
-							return (
-								<Tooltip key={item.username} title={item.displayName} placement="bottom">
-									<Avatar
-										alt={item.displayName}
-										src={item.photoURL}
-									/>
-								</Tooltip>
-							)
-						})
-					}
+	return <>
+		<Typography variant="caption">There are {dataSource.length} members</Typography>
+		<div className={classes.action}>
+			<div className={classes.icons}>
+				{
+					dataSource.map((item) => {
+						return (
+							<Tooltip key={item.username} title={item.displayName} placement="bottom">
+								<Avatar
+									alt={item.displayName}
+									src={item.photoURL}
+								/>
+							</Tooltip>
+						)
+					})
+				}
 
-					<AddMemberList
-						department=""
-						members={dataSource}
-						addMemberCallback={addMemberCallback}
-					>
-						<Tooltip title="Add members" placement="bottom">
-							<IconButton color="primary">
-								<AddIcon />
-							</IconButton>
-						</Tooltip>
-					</AddMemberList>
-				</div>
+				<AddMemberList
+					department=""
+					members={dataSource}
+					addMemberCallback={addMemberCallback}
+				>
+					<Tooltip title="Add members" placement="bottom">
+						<IconButton color="primary" size="large">
+							<AddIcon />
+						</IconButton>
+					</Tooltip>
+				</AddMemberList>
 			</div>
+		</div>
 
-		</>
-	)
+	</>
 }
 MembersList.propTypes = {
 	dataSource: PropTypes.array,

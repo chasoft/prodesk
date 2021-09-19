@@ -1,11 +1,9 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, IconButton, Container, Grid, Hidden, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Container, Grid, Box, } from "@mui/material"
 import PostContent from "./PostContent"
 import Replies from "./Replies"
 import HistoryTimeline from "./HistoryTimeline"
-
-import ArrowBackOutlinedIcon from "@material-ui/icons/ArrowBackOutlined"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,9 +43,9 @@ function Post() {
 						</main>
 					</Grid>
 					<Grid item xs={12} sm={12} md={4}>
-						<Hidden xsDown={true}>
+						<Box sx={{ display: { xs: "none", md: "block" } }}>
 							<HistoryTimeline />
-						</Hidden>
+						</Box>
 					</Grid>
 				</Grid>
 			</Container>

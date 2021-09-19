@@ -26,7 +26,9 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { FormControlLabel, makeStyles, Switch, Typography } from "@material-ui/core"
+import { FormControlLabel, Switch, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 

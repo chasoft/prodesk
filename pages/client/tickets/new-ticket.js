@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container } from "@material-ui/core"
+import { Container } from "@mui/material"
 import React from "react"
 import CreateNewTicket from "../../../components/Ticket/CreateNewTicket"
 import updateUiSettings from "../../../helpers/updateUiSettings"

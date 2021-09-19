@@ -23,9 +23,7 @@
  *****************************************************************/
 
 import React, { useState } from "react"
-import {
-	Button, Grid, Paper, TextField, Typography, makeStyles, Avatar
-} from "@material-ui/core"
+import { Button, Grid, Box, TextField, Typography, Avatar } from "@mui/material"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -41,51 +39,29 @@ import { useSnackbar } from "notistack"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		marginBottom: theme.spacing(4),
-		"& > h2": {
-			marginTop: "2rem",
-			marginBottom: "1rem"
-		}
-	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
-	higherPanel: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		padding: theme.spacing(0, 0, 4)
-	},
-	form: {
-
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
-	},
-}))
-
 /*****************************************************************
  * MAIN RENDER                                                   *
  *****************************************************************/
 
 const CreateProfileForm = () => {
-	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
 	const [location, setLocation] = useState("")
 	return (
-		<>
-			<Paper className={classes.root} elevation={0}>
-
+		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+			<Box
+				sx={{
+					maxWidth: "600px",
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					flexGrow: 1,
+					mb: 4,
+					"& > h2": { mt: 4, mb: 2 }
+				}}
+			>
 				<div style={{ marginBottom: "2rem" }}>
 					<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
 					<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
@@ -105,7 +81,7 @@ const CreateProfileForm = () => {
 				</Grid>
 
 				<Typography variant="h2">Add your location</Typography>
-				<form className={classes.form}>
+				<form>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
 							<TextField
@@ -123,7 +99,8 @@ const CreateProfileForm = () => {
 						</Grid>
 					</Grid>
 					<Button
-						type="submit" variant="contained" color="primary" className={classes.submit}
+						type="submit" variant="contained" color="primary"
+						sx={{ mt: 3, mx: 0, mb: 2 }}
 						onClick={(e) => {
 							e.preventDefault()
 							createProfileRegStep({
@@ -132,13 +109,13 @@ const CreateProfileForm = () => {
 								location
 							}, { enqueueSnackbar, dispatch })
 						}}
+						disabled={(location === "")}
 					>
 						Continue
 					</Button>
 				</form>
-
-			</Paper>
-		</>
+			</Box>
+		</Box>
 	)
 }
 

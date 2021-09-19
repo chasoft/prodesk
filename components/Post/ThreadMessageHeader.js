@@ -23,11 +23,13 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Grid, IconButton, makeStyles, Menu, MenuItem, Typography } from "@material-ui/core"
+import { Avatar, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material"
 
-import FingerprintIcon from "@material-ui/icons/Fingerprint"
-import MoreVertIcon from "@material-ui/icons/MoreVert"
-import LinkIcon from "@material-ui/icons/Link"
+import makeStyles from "@mui/styles/makeStyles"
+
+import FingerprintIcon from "@mui/icons-material/Fingerprint"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import LinkIcon from "@mui/icons-material/Link"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -100,7 +102,7 @@ const ThreadMessageHeader = () => {
 					aria-controls="long-menu"
 					aria-haspopup="true"
 					onClick={handleClick}
-				>
+					size="large">
 					<MoreVertIcon />
 				</IconButton>
 				<Menu

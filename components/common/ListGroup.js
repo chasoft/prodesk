@@ -19,15 +19,22 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 import Link from "next/link"
-import { makeStyles, Paper, Typography } from "@material-ui/core"
-
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
 import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import makeStyles from "@mui/styles/makeStyles"
+import { Paper, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -39,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 		},
 		display: "flex",
@@ -48,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	group: {
 		margin: "1.5rem 0",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			margin: "1.625rem 0",
 		},
 		marginBottom: 0

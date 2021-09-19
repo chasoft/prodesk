@@ -1,14 +1,15 @@
 import React from "react"
-import { makeStyles, withStyles } from "@material-ui/core/styles"
-import Accordion from "@material-ui/core/Accordion"
-import AccordionDetails from "@material-ui/core/AccordionDetails"
-import AccordionSummary from "@material-ui/core/AccordionSummary"
-import Typography from "@material-ui/core/Typography"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import { Container } from "@material-ui/core"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
+import makeStyles from "@mui/styles/makeStyles"
+import withStyles from "@mui/styles/withStyles"
+import Accordion from "@mui/material/Accordion"
+import AccordionDetails from "@mui/material/AccordionDetails"
+import AccordionSummary from "@mui/material/AccordionSummary"
+import Typography from "@mui/material/Typography"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { Container } from "@mui/material"
+import List from "@mui/material/List"
+import ListItem from "@mui/material/ListItem"
+import ListItemText from "@mui/material/ListItemText"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 		},
 		display: "flex",
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 		width: "100%",
 		"&>li": {
 			padding: theme.spacing(1, 4, 1, 8),
-			[theme.breakpoints.down("xs")]: {
+			[theme.breakpoints.down("md")]: {
 				paddingLeft: theme.spacing(3),
 			},
 		},
@@ -78,7 +79,7 @@ const ProAccordionSummary = withStyles((theme) => ({
 			minHeight: 56,
 		},
 		paddingLeft: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			paddingLeft: theme.spacing(3),
 		},
 		"&:hover": {

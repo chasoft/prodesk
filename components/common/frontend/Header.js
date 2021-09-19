@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import { alpha, makeStyles } from "@material-ui/core/styles"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
-import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import InputBase from "@material-ui/core/InputBase"
+import { alpha } from "@mui/material/styles"
+import makeStyles from "@mui/styles/makeStyles"
+import AppBar from "@mui/material/AppBar"
+import Toolbar from "@mui/material/Toolbar"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
+import InputBase from "@mui/material/InputBase"
 
-import Button from "@material-ui/core/Button"
-import MenuIcon from "@material-ui/icons/Menu"
-import SearchIcon from "@material-ui/icons/Search"
-import MoreIcon from "@material-ui/icons/MoreVert"
-import AppsIcon from "@material-ui/icons/Apps"
+import Button from "@mui/material/Button"
+import MenuIcon from "@mui/icons-material/Menu"
+import SearchIcon from "@mui/icons-material/Search"
+import MoreIcon from "@mui/icons-material/MoreVert"
+import AppsIcon from "@mui/icons-material/Apps"
 import { Logo } from ".."
 import { AuthFalse, AuthTrue } from "../../AuthCheck"
 import UserIcon from "../backend/UserIcon"
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 		}
 	},
 	logo: {
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			display: "none"
 		}
 	},
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 0),
-		paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
 		transition: theme.transitions.create("width"),
 		width: "100%",
 		[theme.breakpoints.up("md")]: {
@@ -108,7 +109,7 @@ function Header() {
 					className={classes.menuButton}
 					color="inherit"
 					aria-label="open drawer"
-				>
+					size="large">
 					<MenuIcon />
 				</IconButton>
 
@@ -137,7 +138,7 @@ function Header() {
 				<div className={classes.grow} />
 
 				<div className={classes.sectionDesktop}>
-					<IconButton aria-label="show 17 new notifications" color="inherit">
+					<IconButton aria-label="show 17 new notifications" color="inherit" size="large">
 						<AppsIcon />
 					</IconButton>
 
@@ -164,7 +165,7 @@ function Header() {
 						aria-haspopup="true"
 						// onClick={handleMobileMenuOpen}
 						color="inherit"
-					>
+						size="large">
 						<MoreIcon />
 					</IconButton>
 				</div>

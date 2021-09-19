@@ -23,7 +23,9 @@
  *****************************************************************/
 
 import React from "react"
-import { makeStyles, Typography } from "@material-ui/core"
+import { Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -36,7 +38,7 @@ import { makeStyles, Typography } from "@material-ui/core"
 const useStyles = makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1, 1, 1, 8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginLeft: theme.spacing(0),
 		},
 	}

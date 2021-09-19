@@ -25,7 +25,7 @@
 import Head from "next/head"
 import PropTypes from "prop-types"
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import makeStyles from '@mui/styles/makeStyles';
 /*****************************************************************
  * LIBRARY IMPORT                                                *
  *****************************************************************/
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(3, 2),
 		marginTop: "auto",
 		backgroundColor:
-			theme.palette.type === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
+			theme.palette.mode === "light" ? theme.palette.grey[200] : theme.palette.grey[800],
 	},
 }))
 

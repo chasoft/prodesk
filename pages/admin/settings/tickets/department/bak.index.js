@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Button, IconButton, Tooltip, Typography } from "@material-ui/core"
+import { Button, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -37,7 +37,7 @@ import GeneralListItem, { GeneralListItemEmpty } from "../../../../../components
 import AvatarList from "../../../../../components/common/AvatarList"
 
 //ASSETS
-import AddIcon from "@material-ui/icons/Add"
+import AddIcon from "@mui/icons-material/Add"
 import TicketDepartmentDetailsDialog from "../../../../../components/Settings/TicketDepartmentDetailsDialog"
 import MembersListCheckBox from "../../../../../components/Settings/AddMemberList"
 

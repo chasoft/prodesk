@@ -1,6 +1,8 @@
 import React from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, makeStyles } from "@material-ui/core"
+import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 import { getNewTicket } from "./../../redux/selectors"
 import {

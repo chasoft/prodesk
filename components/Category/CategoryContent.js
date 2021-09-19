@@ -1,7 +1,7 @@
 import React from "react"
 import Link from "next/link"
-import { makeStyles } from "@material-ui/core/styles"
-import { Grid, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Grid, Typography } from "@mui/material"
 import { LINK_TYPE } from "./../../helpers/constants"
 
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		padding: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(3),
 		},
 	},
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 		"& li": {
 			marginTop: theme.spacing(1),
 			marginBottom: theme.spacing(1),
-			[theme.breakpoints.down("xs")]: {
+			[theme.breakpoints.down("md")]: {
 				marginBottom: theme.spacing(2),
 			},
 		},

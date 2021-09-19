@@ -1,5 +1,29 @@
 import PropTypes from "prop-types"
-import { Box, makeStyles, Grid, Popover, TextField, Button, Drawer, AppBar, Toolbar, Typography, ImageList, ImageListItem, CircularProgress, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogContentText, DialogActions, IconButton, Tabs, Tab, Paper } from "@material-ui/core"
+import {
+	Box,
+	Grid,
+	Popover,
+	TextField,
+	Button,
+	Drawer,
+	AppBar,
+	Toolbar,
+	Typography,
+	ImageList,
+	ImageListItem,
+	CircularProgress,
+	Dialog,
+	useMediaQuery,
+	DialogTitle,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
+	IconButton,
+	Tabs,
+	Tab,
+	Paper,
+} from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { useSnackbar } from "notistack"
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
@@ -7,19 +31,19 @@ import { getAuth } from "../../redux/selectors"
 import * as yup from "yup"
 import { useFormik } from "formik"
 import dayjs from "dayjs"
-import { useTheme } from "@material-ui/core/styles"
+import { useTheme } from "@mui/material/styles"
 
 import { useDownloadURL } from "react-firebase-hooks/storage"
 import { storage } from "../../helpers/firebase"
 import { getListAll, useGetAllFiles } from "../../helpers/firebase-storage"
-import CloseIcon from "@material-ui/icons/Close"
+import CloseIcon from "@mui/icons-material/Close"
 
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		padding: theme.spacing(3),
 		width: "500px",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			width: "100%"
 		}
 	},
@@ -202,7 +226,7 @@ function Gallery({ children }) {
 	const handleClose = () => { setShowGallery(false) }
 	const handleChange = (event, newValue) => { setTabId(newValue) }
 
-	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+	const fullScreen = useMediaQuery(theme.breakpoints.down("lg"))
 
 
 

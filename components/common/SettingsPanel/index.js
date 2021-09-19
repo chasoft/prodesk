@@ -27,15 +27,17 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, IconButton, makeStyles, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@material-ui/core"
+import { Avatar, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
 
 //PROJECT IMPORT
 
-import LaunchIcon from "@material-ui/icons/Launch"
-import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore"
+import LaunchIcon from "@mui/icons-material/Launch"
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
 
 
 /*****************************************************************
@@ -50,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 	container: {
 		display: "flex",
 		marginTop: theme.spacing(1),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 		},
 	},
@@ -60,10 +62,10 @@ const useStyles = makeStyles((theme) => ({
 		borderTopLeftRadius: "0.5rem",
 		minWidth: theme.spacing(37),
 		padding: theme.spacing(1, 0, 1),
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			minWidth: theme.spacing(27)
 		},
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			display: "none",
 			borderTopRightRadius: "0.5rem",
 			borderBottomRightRadius: "0.5rem",
@@ -76,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		alignItems: "center",
 		padding: theme.spacing(2, 2, 2),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(1),
 			backgroundColor: "#FAFAFA",
 		},
@@ -88,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(0, 2, 0),
 		color: theme.palette.grey[600],
 		paddingBottom: theme.spacing(2),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			paddingTop: theme.spacing(1),
 		},
 		"& > span > div:last-child": {
@@ -208,7 +210,7 @@ SettingsContent.propTypes = { children: PropTypes.node }
 export const SettingsContentHeader = ({ hasBackBtn, backBtnOnClick, children }) => {
 	const theme = useTheme()
 	const classes = useStyles()
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("xs"))
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"))
 
 	if (isSmallScreen && hasBackBtn) {
 		return (

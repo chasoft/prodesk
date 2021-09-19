@@ -1,6 +1,6 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Grid, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Grid, Typography } from "@mui/material"
 import FooterNotice from "./FooterNotice"
 import ThreadMessageHeader from "./ThreadMessageHeader"
 import ThreadMessagePayload from "./ThreadMessagePayload"
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		padding: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(3),
 		},
 		backgroundColor: "white",

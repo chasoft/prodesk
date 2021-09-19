@@ -26,7 +26,16 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Avatar, Button, Checkbox, FormControlLabel, Grid, Paper, TextField, Typography, makeStyles } from "@material-ui/core"
+import {
+	Avatar,
+	Box,
+	Button,
+	Checkbox,
+	FormControlLabel,
+	Grid,
+	TextField,
+	Typography,
+} from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
@@ -34,45 +43,17 @@ import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
 
 //PROJECT IMPORT
-import { ForgotPasswordLink, LoginLink } from "../common"
+import { ForgotPasswordLink, SignUpLink } from "../common"
 import { updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { signInWithEmail } from "./../../helpers/userAuthentication"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		maxWidth: "400px",
-		marginBottom: theme.spacing(4)
-	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
-	higherPanel: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		padding: theme.spacing(0, 0, 4)
-	},
-	form: {
-
-	},
-	submit: {
-		margin: theme.spacing(0, 0, 2),
-	},
-}))
-
 
 const validationSchema = yup.object({
 	username: yup
@@ -88,9 +69,8 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 const LoginForm = () => {
-	const classes = useStyles()
-	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
 
 	const formik = useFormik({
 		initialValues: {
@@ -109,83 +89,101 @@ const LoginForm = () => {
 	updateFlexDirection({ payload: "row" })
 
 	return (
-		<Paper className={classes.root} elevation={0}>
+		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: { xs: "flex-start", lg: "center" },
+					flexGrow: 1,
+					maxWidth: "400px",
+					mb: 8
+				}}
+			>
 
-			<div className={classes.higherPanel}>
-				<Avatar className={classes.avatar}>
-					<LockOutlinedIcon />
-				</Avatar>
-				<Typography component="h1" variant="h1">
-					Login
-				</Typography>
-			</div>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						pt: 0, px: 0, pb: 4
+					}}
+				>
+					<Avatar sx={{ margin: 1, backgroundColor: "secondary.main" }}>
+						<LockOutlinedIcon />
+					</Avatar>
+					<Typography component="h1" variant="h1">
+						Login
+					</Typography>
+				</Box>
 
-			<form className={classes.form} onSubmit={formik.handleSubmit}>
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<TextField
-							id="username"
-							name="username"
-							label="Username or Email address"
-							variant="outlined"
-							autoComplete="username"
-							value={formik.values.username}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.username && Boolean(formik.errors.username)}
-							helperText={formik.touched.username && formik.errors.username}
-							fullWidth
-							required
-							autoFocus
-						/>
+				<form onSubmit={formik.handleSubmit}>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<TextField
+								id="username"
+								name="username"
+								label="Username or Email address"
+								variant="outlined"
+								autoComplete="username"
+								value={formik.values.username}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								error={formik.touched.username && Boolean(formik.errors.username)}
+								helperText={formik.touched.username && formik.errors.username}
+								fullWidth
+								required
+								autoFocus
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								id="password"
+								name="password"
+								label="Password"
+								type="password"
+								variant="outlined"
+								autoComplete="current-password"
+								value={formik.values.password}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								error={formik.touched.password && Boolean(formik.errors.password)}
+								helperText={formik.touched.password && formik.errors.password}
+								required
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<FormControlLabel
+								control={<Checkbox value="remember" color="primary" />}
+								label="Remember me"
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<Button
+								fullWidth
+								type="submit"
+								variant="contained"
+								color="primary"
+								sx={{ mt: 0, mx: 0, mb: 2 }}
+								disabled={!(formik.isValid && formik.dirty)}
+							>
+								Login
+							</Button>
+						</Grid>
 					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							id="password"
-							name="password"
-							label="Password"
-							type="password"
-							variant="outlined"
-							autoComplete="current-password"
-							value={formik.values.password}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.password && Boolean(formik.errors.password)}
-							helperText={formik.touched.password && formik.errors.password}
-							required
-							fullWidth
-						/>
+				</form>
+				<Grid container>
+					<Grid item xs>
+						<ForgotPasswordLink />
 					</Grid>
-					<Grid item xs={12}>
-						<FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
-							label="Remember me"
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<Button
-							fullWidth
-							type="submit"
-							variant="contained"
-							color="primary"
-							className={classes.submit}
-							disabled={!(formik.isValid && formik.dirty)}
-						>
-							Login
-						</Button>
+					<Grid item sx={{ display: { xs: "initial", lg: "none" } }}>
+						<SignUpLink />
 					</Grid>
 				</Grid>
-			</form>
-			<Grid container>
-				<Grid item xs>
-					<ForgotPasswordLink />
-				</Grid>
-				<Grid item>
-					<LoginLink />
-				</Grid>
-			</Grid>
 
-		</Paper>
+			</Box>
+		</Box>
 	)
 }
 

@@ -25,9 +25,8 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Paper, Tab, Tabs, useMediaQuery } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
 import { getUiSettings } from "../../redux/selectors"

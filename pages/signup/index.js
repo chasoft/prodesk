@@ -42,7 +42,6 @@ function Signup() {
 				center={<Logo />}
 				right={<LoginLink />}
 			/>
-
 			<SignupForm />
 		</GuestOnly>
 	)

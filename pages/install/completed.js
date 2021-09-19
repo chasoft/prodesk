@@ -27,7 +27,7 @@ import React, { useEffect, useRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { LinearProgress, Typography } from "@material-ui/core"
+import { LinearProgress, Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"

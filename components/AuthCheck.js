@@ -25,7 +25,7 @@ import PropTypes from "prop-types"
 import DefaultErrorPage from "next/error"
 
 // MATERIAL-UI
-import { CircularProgress } from "@material-ui/core"
+import { CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"

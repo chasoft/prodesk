@@ -23,12 +23,13 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Grid, IconButton, ListItemIcon, makeStyles, Menu, MenuItem, Typography } from "@material-ui/core"
-import { Icon } from "@material-ui/core"
+import { Avatar, Grid, IconButton, ListItemIcon, Menu, MenuItem, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
+import { Icon } from "@mui/material"
 
-import FingerprintIcon from "@material-ui/icons/Fingerprint"
-import MoreVertIcon from "@material-ui/icons/MoreVert"
-import LinkIcon from "@material-ui/icons/Link"
+import FingerprintIcon from "@mui/icons-material/Fingerprint"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import LinkIcon from "@mui/icons-material/Link"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -100,7 +101,7 @@ const ReplyHeader = () => {
 					aria-controls="long-menu"
 					aria-haspopup="true"
 					onClick={handleClick}
-				>
+					size="large">
 					<MoreVertIcon />
 				</IconButton>
 				<Menu

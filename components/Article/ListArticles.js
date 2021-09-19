@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Typography } from "@mui/material"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		marginLeft: "3.125rem",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginLeft: "1.125rem"
 		},
 	},

@@ -23,8 +23,9 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, makeStyles, Typography } from "@material-ui/core"
-import FingerprintIcon from "@material-ui/icons/Fingerprint"
+import { Avatar, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
+import FingerprintIcon from "@mui/icons-material/Fingerprint"
 
 /*****************************************************************
  * LIBRARY IMPORT                                                *
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 	rightContent: {
 		display: "flex",
 		flexDirection: "column",
-		[theme.breakpoints.down("md")]: {
+		[theme.breakpoints.down("xl")]: {
 			display: "none",
 		},
 	},

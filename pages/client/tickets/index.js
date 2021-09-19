@@ -22,11 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Hidden } from "@material-ui/core"
+import { Container, Box } from "@mui/material"
 import React from "react"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -73,9 +72,9 @@ function Tickets() {
 
 				<ListTickets />
 
-				<Hidden smDown>
+				<Box sx={{ display: { xs: "none", lg: "block" } }}>
 					<ListTicketsFilter />
-				</Hidden>
+				</Box>
 
 			</div>
 		</Container>

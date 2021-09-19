@@ -25,10 +25,11 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
-import { Avatar, Grid, makeStyles, Typography } from "@material-ui/core"
+import { Avatar, Grid, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { motion } from "framer-motion"
-import ExpandLessIcon from "@material-ui/icons/ExpandLess"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+import ExpandLessIcon from "@mui/icons-material/ExpandLess"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 
 /*****************************************************************
 * LIBRARY IMPORT                                                *

@@ -26,8 +26,7 @@ import React from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
+import makeStyles from "@mui/styles/makeStyles"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,13 +44,13 @@ const useStyles = makeStyles((theme) => ({
 			background: theme.palette.action.hover
 		},
 		padding: theme.spacing(2, 3),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(2, 2)
 		},
 	},
 	paper: {
 		display: "flex",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			flexDirection: "column",
 			alignItems: "flex-start",
 		},
@@ -62,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 	content: {
 		minWidth: 0, //this property is important
 		flexGrow: 1,
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			maxWidth: "100%",
 			padding: theme.spacing(1),
 			paddingLeft: theme.spacing(2),
@@ -74,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(3),
 	},
 	excerpt: {
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			display: "none"
 		},
 	},
@@ -84,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		padding: theme.spacing(1, 2, 1, 0),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			flexDirection: "row",
 			padding: theme.spacing(0, 2, 1)
 		}

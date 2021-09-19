@@ -7,7 +7,24 @@ import React, { useState } from "react"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Avatar, Box, Tooltip, Chip, ClickAwayListener, Divider, Grid, IconButton, List, ListItemIcon, ListItemText, makeStyles, Paper, Popover, Popper, Typography } from "@material-ui/core"
+import {
+	Avatar,
+	Box,
+	Tooltip,
+	Chip,
+	ClickAwayListener,
+	Divider,
+	Grid,
+	IconButton,
+	List,
+	ListItemIcon,
+	ListItemText,
+	Paper,
+	Popover,
+	Popper,
+	Typography,
+} from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { useDispatch, useSelector } from "react-redux"
 import { getAuth } from "../../../redux/selectors"
 
@@ -18,11 +35,11 @@ import { getAuth } from "../../../redux/selectors"
 
 
 //ASSETS
-import SettingsIcon from "@material-ui/icons/Settings"
-import { useTheme } from "@material-ui/styles"
+import SettingsIcon from "@mui/icons-material/Settings"
+import { useTheme } from "@mui/styles"
 import { useSnackbar } from "notistack"
 import { signOut } from "../../../helpers/userAuthentication"
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from "@mui/icons-material/ExitToApp"
 import { AuthAdminTrue, AuthUserTrue } from "../../AuthCheck"
 import { setRedirect } from "../../../redux/slices/redirect"
 
@@ -119,54 +136,52 @@ const UserIcon = () => {
 	const open = Boolean(anchorEl)
 	const id = open ? "UserMenuPopover" : undefined
 
-	return (
-		<>
-			<Tooltip title="User Menu" placement="bottom">
-				<IconButton onClick={handleClick}>
-					<Avatar src="/img/default-avatar.png" className={classes.avatarIcon} />
-				</IconButton>
-			</Tooltip>
-			<Popover
-				id={id}
-				open={open}
-				anchorEl={anchorEl}
-				onClose={handleClose}
-				anchorOrigin={{
-					vertical: "bottom",
-					horizontal: "center",
-				}}
-				transformOrigin={{
-					vertical: "top",
-					horizontal: "center",
-				}}
-				elevation={4}
-			>
-				<Box className={classes.box}>
-					<div className={classes.info}>
-						<Avatar src="/img/default-avatar.png" className={classes.avatar} />
-						<Typography variant="button">{currentUser.displayName}</Typography>
-						<Typography variant="caption">{currentUser.email}</Typography>
-						<Typography variant="caption">{currentUser.group} {currentUser?.role ? <> | {currentUser?.role}</> : null}</Typography>
-					</div>
+	return <>
+		<Tooltip title="User Menu" placement="bottom">
+			<IconButton onClick={handleClick} size="large">
+				<Avatar src="/img/default-avatar.png" className={classes.avatarIcon} />
+			</IconButton>
+		</Tooltip>
+		<Popover
+			id={id}
+			open={open}
+			anchorEl={anchorEl}
+			onClose={handleClose}
+			anchorOrigin={{
+				vertical: "bottom",
+				horizontal: "center",
+			}}
+			transformOrigin={{
+				vertical: "top",
+				horizontal: "center",
+			}}
+			elevation={4}
+		>
+			<Box className={classes.box}>
+				<div className={classes.info}>
+					<Avatar src="/img/default-avatar.png" className={classes.avatar} />
+					<Typography variant="button">{currentUser.displayName}</Typography>
+					<Typography variant="caption">{currentUser.email}</Typography>
+					<Typography variant="caption">{currentUser.group} {currentUser?.role ? <> | {currentUser?.role}</> : null}</Typography>
+				</div>
 
-					<ul className={classes.menu}>
-						<AuthAdminTrue>
-							<li onClick={() => { dispatch(setRedirect("/admin")) }}><SettingsIcon />Admin Dashboard</li>
-						</AuthAdminTrue>
-						<AuthUserTrue>
-							<li onClick={() => { dispatch(setRedirect("/client")) }}><SettingsIcon />Client Dashboard</li>
-						</AuthUserTrue>
-						<li><SettingsIcon />Profile Settings</li>
-						<li onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}><ExitToAppIcon />Logout</li>
-					</ul>
-					<div className={classes.terms}>
-						{/* <Typography className={classes.link}>Terms</Typography> • <Typography className={classes.link}>Privacy</Typography> */}
-					</div>
-				</Box>
+				<ul className={classes.menu}>
+					<AuthAdminTrue>
+						<li onClick={() => { dispatch(setRedirect("/admin")) }}><SettingsIcon />Admin Dashboard</li>
+					</AuthAdminTrue>
+					<AuthUserTrue>
+						<li onClick={() => { dispatch(setRedirect("/client")) }}><SettingsIcon />Client Dashboard</li>
+					</AuthUserTrue>
+					<li><SettingsIcon />Profile Settings</li>
+					<li onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}><ExitToAppIcon />Logout</li>
+				</ul>
+				<div className={classes.terms}>
+					{/* <Typography className={classes.link}>Terms</Typography> • <Typography className={classes.link}>Privacy</Typography> */}
+				</div>
+			</Box>
 
-			</Popover>
-		</>
-	)
+		</Popover>
+	</>
 }
 
 export default UserIcon

@@ -27,7 +27,9 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, makeStyles, Typography, Grid, TextField } from "@material-ui/core"
+import { Button, Typography, Grid, TextField } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 import * as yup from "yup"

@@ -23,32 +23,33 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 import Link from "next/link"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
-import { Logo } from ".."
-import NavCollapse from "./NavCollapse"
-import clsx from "clsx"
+import makeStyles from "@mui/styles/makeStyles"
+import { IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import clsx from "clsx"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
-
+import { Logo } from ".."
+import HomeButton from "./HomeButton"
+import NavCollapse from "./NavCollapse"
+import { MENU_ITEM_TYPE } from "../../../helpers/constants"
 
 //ASSETS
-import AssessmentIcon from "@material-ui/icons/Assessment"
 import "react-perfect-scrollbar/dist/css/styles.css"
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos"
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos"
-import AccountTreeIcon from "@material-ui/icons/AccountTree"
-import BarChartIcon from "@material-ui/icons/BarChart"
-import CategoryIcon from "@material-ui/icons/Category"
-import CreditCardIcon from "@material-ui/icons/CreditCard"
-import HomeButton from "./HomeButton"
-import { MENU_ITEM_TYPE } from "../../../helpers/constants"
+import AssessmentIcon from "@mui/icons-material/Assessment"
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
+import AccountTreeIcon from "@mui/icons-material/AccountTree"
+import BarChartIcon from "@mui/icons-material/BarChart"
+import CategoryIcon from "@mui/icons-material/Category"
+import CreditCardIcon from "@mui/icons-material/CreditCard"
+import { Box } from "@mui/system"
 
 /*****************************************************************
  * INIT                                                          *
@@ -69,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 		height: "59px",
 		display: "flex",
 		alignItems: "center",
-		padding: theme.spacing(1, 1, 0.5, 3)
+		pt: 1, pb: 0.5, pl: 3, pr: 1,
 	},
 	miniLogo: {
 		display: "flex",
@@ -96,11 +97,9 @@ const useStyles = makeStyles((theme) => ({
 			display: "flex",
 			alignItems: "center",
 			fontSize: "0.875rem",
-			padding: theme.spacing(1, 2, 1, 0),
-			paddingLeft: theme.spacing(3) - 4,
-
+			py: 1, pr: 2, pl: 3,
 			"& >:first-child": {
-				marginRight: theme.spacing(1),
+				mr: 1,
 				height: "20px",
 				weight: "20px",
 			}
@@ -110,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
 			cursor: "pointer",
 		},
 		"& > li:last-child": {
-			paddingBottom: theme.spacing(2)
+			pb: 2
 		}
 	},
 	miniList: {
@@ -123,7 +122,7 @@ const useStyles = makeStyles((theme) => ({
 		"&>li": {
 			display: "flex",
 			justifyContent: "center",
-			padding: theme.spacing(1, 2, 1),
+			pt: 1, px: 2, pb: 1,
 			color: "#ffffffcc",
 			"& > a > :first-child": {
 				height: "20px",
@@ -137,67 +136,22 @@ const useStyles = makeStyles((theme) => ({
 		borderTop: "1px solid #2A4257",
 	},
 	ScrollHeight: {
-		height: "calc(100vh - 88px)",
+
 	},
 	minimizer: {
-		display: "flex",
-		justifyContent: "flex-end",
-		marginTop: "auto",
-		padding: theme.spacing(2),
-		borderTop: "1px solid #2A4257",
+
 	},
 	singleItem: {
-		display: "flex",
-		alignItems: "center",
-		color: "#fff",
-		padding: theme.spacing(1.5, 0.5, 1.5, 3),
-		"&:hover": {
-			backgroundColor: "#ffffff14",
-			cursor: "pointer",
-		},
-		borderBottom: "1px solid #2A4257",
-		"& > :first-child": {
-			height: "20px",
-			width: "20px",
-			marginRight: theme.spacing(1),
-		}
+
 	},
 	heading: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "1rem"
+
 	},
 	headingDescription: {
-		fontSize: "0.75rem",
-		color: "#ffffff80",
-		width: "90%"
+
 	},
 	itemHeader: {
-		display: "flex",
-		alignItems: "center",
-		cursor: "pointer",
-		padding: theme.spacing(3, 1, 3, 3),
-		"&:hover": {
-			backgroundColor: "#ffffff14"
-		},
-		width: "256px",
-		borderBottom: "1px solid #2A4257",
-	},
-	miniItemHeader: {
-		display: "flex",
-		justifyContent: "center",
-		textAlign: "center",
-		padding: theme.spacing(1, 2, 1),
-		"&:hover": {
-			backgroundColor: "#ffffff14"
-		},
-		borderTop: "1px solid #2A4257",
-		color: "#ffffffcc",
-		cursor: "pointer",
-		"& >:first-child": {
-			height: "20px",
-			weight: "20px",
-		},
-		margin: theme.spacing(0.5, 0, 0.5)
+
 	}
 }))
 
@@ -228,30 +182,48 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 
 			{
 				isExpanded ?
-					<PerfectScrollbar component="div" className={classes.ScrollHeight}>
+					<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
 						{
 							data.map((group) => {
 								if (group.type === MENU_ITEM_TYPE.ITEM)
 									return (
 										<Link key={group.url} href={group.url} >
 											<a>
-												<div className={classes.itemHeader}>
+												<Box
+													sx={{
+														width: "256px",
+														display: "flex",
+														cursor: "pointer",
+														alignItems: "center",
+														borderBottom: "1px solid #2A4257",
+														py: 3, pl: 3, pr: 1,
+														"&:hover": { backgroundColor: "#ffffff14" },
+													}}
+												>
 													<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
 														<div style={{ display: "flex", alignItems: "center" }}>
 															<Typography
-																className={classes.heading}
-																style={{ color: "#fff", flexGrow: 1 }}
+																sx={{
+																	color: "#fff",
+																	fontSize: "1rem",
+																	fontFamily: "\"Google Sans\", Roboto, sans-serif",
+																	flexGrow: 1
+																}}
 															>
 																{group.title}
 															</Typography>
 														</div>
 														<Typography
-															className={classes.headingDescription}
+															sx={{
+																fontSize: "0.75rem",
+																color: "#ffffff80",
+																width: "90%"
+															}}
 															variant="caption"
 															noWrap
 														>{group.description}</Typography>
 													</div>
-												</div>
+												</Box>
 											</a>
 										</Link>
 									)
@@ -288,16 +260,34 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 					</PerfectScrollbar >
 
 					:
-					<PerfectScrollbar component="div" className={classes.ScrollHeight}>
+					<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
 						{
 							data.map((group) => {
 								if (group.type === MENU_ITEM_TYPE.ITEM)
 									return (
 										<Link key={group.url} href={group.url} >
 											<Tooltip title={group.description} placement="right">
-												<div className={classes.miniItemHeader}>
+												<Box
+													sx={{
+														display: "flex",
+														justifyContent: "center",
+														textAlign: "center",
+														pt: 1, px: 2, pb: 1,
+														"&:hover": {
+															backgroundColor: "#ffffff14"
+														},
+														borderTop: "1px solid #2A4257",
+														color: "#ffffffcc",
+														cursor: "pointer",
+														"& >:first-child": {
+															height: "20px",
+															weight: "20px",
+														},
+														mt: 0.5, mx: 0, mb: 0.5
+													}}
+												>
 													{IconLib[group.icon]}
-												</div>
+												</Box>
 											</Tooltip>
 										</Link>
 									)
@@ -328,17 +318,27 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 					</PerfectScrollbar>
 			}
 
-			<div className={classes.minimizer}>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "flex-end",
+					marginTop: "auto",
+					borderTop: "1px solid #2A4257",
+					p: 2,
+				}}
+			>
 				<IconButton
-					color="secondary" aria-label="Settings" style={{ padding: "5px" }}
+					color="secondary"
+					aria-label="Settings"
+					style={{ padding: "5px" }}
 					onClick={() => toggle(p => !p)}
-				>
+					size="large">
 					{
 						isExpanded ? <ArrowBackIosIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
 							: <ArrowForwardIosIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
 					}
 				</IconButton>
-			</div>
+			</Box>
 
 		</div >
 	)

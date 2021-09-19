@@ -1,11 +1,12 @@
 import React from "react"
 import Link from "next/link"
-import { Container, Grid } from "@material-ui/core"
+import { Container, Grid } from "@mui/material"
 import TicketStepper from "./TicketStepper"
-import { makeStyles, useTheme } from "@material-ui/core/styles"
-import { Button, Typography, IconButton } from "@material-ui/core"
-import ArrowBackOutlinedIcon from "@material-ui/icons/ArrowBackOutlined"
-import useMediaQuery from "@material-ui/core/useMediaQuery"
+import { useTheme } from "@mui/material/styles"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, Typography, IconButton } from "@mui/material"
+import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 		border: "1px solid",
 		borderRadius: "0.5rem",
 		borderColor: theme.palette.divider,
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			borderRadius: 0,
 			border: 0,
 		},
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 	content: {
 		paddingLeft: theme.spacing(4),
 		paddingRight: theme.spacing(4),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			paddingLeft: theme.spacing(0),
 			paddingRight: theme.spacing(0),
 		},
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 		borderColor: theme.palette.divider
 	},
 	bigScreen: {
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			display: "none"
 		},
 	},
@@ -63,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: 0,
 		paddingTop: theme.spacing(2),
 		paddingBottom: theme.spacing(2),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			display: "flex"
 		},
 		"& > button": {
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
 function CreateNewTicket() {
 	const classes = useStyles()
 	const theme = useTheme()
-	const smallScreen = useMediaQuery(theme.breakpoints.down("xs"))
+	const smallScreen = useMediaQuery(theme.breakpoints.down("md"))
 
 	return (
 		<Container disableGutters={smallScreen}>

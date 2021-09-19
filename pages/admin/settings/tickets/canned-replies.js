@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Typography } from "@material-ui/core"
+import { Typography } from "@mui/material"
 
 //THIRD-PARTY
 

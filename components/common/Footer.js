@@ -19,43 +19,35 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-import Container from "@material-ui/core/Container"
-import { makeStyles } from "@material-ui/core/styles"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Box, Container } from "@mui/material"
 
+//PROJECT IMPORT
 import { Copyright } from "."
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	footer: {
-		marginTop: "auto",
-		padding: theme.spacing(4),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "0.875rem"
-	},
-}))
 
 /*****************************************************************
 * MAIN RENDER                                                   *
 *****************************************************************/
 
 export default function Footer() {
-	const classes = useStyles()
 	return (
-		<footer className={classes.footer}>
+		<Box
+			component="footer"
+			sx={{
+				fontFamily: "\"Google Sans\", Roboto, sans-serif",
+				fontSize: "0.875rem",
+				marginTop: "auto",
+				padding: 4,
+			}}
+		>
 			<Container align="center">
 				<Copyright />
 			</Container>
-		</footer>
+		</Box>
 	)
 }

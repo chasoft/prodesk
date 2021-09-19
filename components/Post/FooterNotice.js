@@ -1,6 +1,6 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, Typography } from "@mui/material"
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
 		backgroundColor: "#F8F9FA",
 		borderBottomLeftRadius: "0.5rem",
 		borderBottomRightRadius: "0.5rem",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(1, 3)
 		},
 		borderTop: "1px solid",

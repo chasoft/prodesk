@@ -27,7 +27,10 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { AppBar, Badge, IconButton, makeStyles, Tooltip, Typography, withStyles } from "@material-ui/core"
+import { AppBar, Badge, IconButton, Tooltip, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
+import withStyles from "@mui/styles/withStyles"
 
 //THIRD-PARTY
 import clsx from "clsx"
@@ -36,7 +39,7 @@ import clsx from "clsx"
 import UserIcon from "./UserIcon"
 
 //ASSETS
-import NotificationsIcon from "@material-ui/icons/Notifications"
+import NotificationsIcon from "@mui/icons-material/Notifications"
 import NotificationDrawer from "./NotificationDrawer"
 import { getPageMeta } from "../../../redux/selectors"
 import { useSelector } from "react-redux"

@@ -1,6 +1,6 @@
 import React from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import { Button, IconButton, Container, Grid, Hidden, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Button, IconButton, Container, Grid, Hidden, Typography } from "@mui/material"
 import CategoryContent from "./CategoryContent"
 import Banner from "../widget/Banner"
 
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
 	widget: {
 		marginTop: "4rem",
 		marginLeft: "3rem",
-		[theme.breakpoints.down("sm")]: {
+		[theme.breakpoints.down("lg")]: {
 			marginLeft: 0,
 			marginTop: "3rem",
 		}

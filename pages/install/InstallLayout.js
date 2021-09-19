@@ -28,7 +28,9 @@ import PropTypes from "prop-types"
 import DefaultErrorPage from "next/error"
 
 // MATERIAL-UI
-import { CircularProgress, Container, makeStyles } from "@material-ui/core"
+import { CircularProgress, Container } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //PROJECT IMPORT
 import Footer from "../../components/common/Footer"

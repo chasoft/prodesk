@@ -8,7 +8,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Box, Button, Container, Grid, LinearProgress, Popover, Typography } from "@material-ui/core"
+import { Box, Button, Container, Grid, LinearProgress, Popover, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import Editor from "rich-markdown-editor"
@@ -24,8 +24,8 @@ import Gallery from "../../components/Gallery"
 import AuthCheck from "../../components/AuthCheck"
 
 //ASSETS
-import DescriptionIcon from "@material-ui/icons/Description"
-import InsertPhotoIcon from "@material-ui/icons/InsertPhoto"
+import DescriptionIcon from "@mui/icons-material/Description"
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto"
 
 /*****************************************************************
  * INIT                                                          *

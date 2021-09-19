@@ -25,9 +25,8 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Grid, TextField, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import AvatarList from "../../common/AvatarList"
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 			background: theme.palette.action.hover
 		},
 		padding: theme.spacing(2, 3),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(2, 2)
 		},
 	}

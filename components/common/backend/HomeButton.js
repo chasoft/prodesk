@@ -27,7 +27,9 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
+import { IconButton, Tooltip, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -37,8 +39,8 @@ import { IconButton, makeStyles, Tooltip, Typography } from "@material-ui/core"
 
 
 //ASSETS
-import SettingsIcon from "@material-ui/icons/Settings"
-import HomeIcon from "@material-ui/icons/Home"
+import SettingsIcon from "@mui/icons-material/Settings"
+import HomeIcon from "@mui/icons-material/Home"
 import { useSnackbar } from "notistack"
 import { signOut } from "../../../helpers/userAuthentication"
 import { useDispatch, useSelector } from "react-redux"
@@ -81,35 +83,37 @@ const useStyles = makeStyles((theme) => ({
 
 const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 	const classes = useStyles()
-	return (
-		<>
-			{
-				isExpanded ?
-					<div className={classes.dashboard}>
-						<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-						<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
-						<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
-						<div style={{ display: "flex", alignItems: "center" }}>
-							<Link href={settingsUrl}>
-								<a>
-									<IconButton color="secondary" aria-label="Settings" style={{ padding: "5px" }}>
-										<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-									</IconButton>
-								</a>
-							</Link>
-						</div>
+	return <>
+		{
+			isExpanded ?
+				<div className={classes.dashboard}>
+					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
+					<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
+					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
+					<div style={{ display: "flex", alignItems: "center" }}>
+						<Link href={settingsUrl}>
+							<a>
+								<IconButton
+									color="secondary"
+									aria-label="Settings"
+									style={{ padding: "5px" }}
+									size="large">
+									<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
+								</IconButton>
+							</a>
+						</Link>
 					</div>
-					:
-					<Link href={homeUrl}>
-						<Tooltip title="Dashboard" placement="right">
-							<div className={classes.miniDashboard}>
-								<HomeIcon style={{ height: "20px", width: "20px" }} />
-							</div>
-						</Tooltip>
-					</Link>
-			}
-		</>
-	)
+				</div>
+				:
+				<Link href={homeUrl}>
+					<Tooltip title="Dashboard" placement="right">
+						<div className={classes.miniDashboard}>
+							<HomeIcon style={{ height: "20px", width: "20px" }} />
+						</div>
+					</Tooltip>
+				</Link>
+		}
+	</>
 }
 HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string, isExpanded: PropTypes.bool }
 

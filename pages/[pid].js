@@ -26,7 +26,7 @@ import React from "react"
 import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { Container } from "@material-ui/core"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 

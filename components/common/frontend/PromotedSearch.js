@@ -1,13 +1,13 @@
 import React from "react"
-import Grid from "@material-ui/core/Grid"
-import Avatar from "@material-ui/core/Avatar"
-import Typography from "@material-ui/core/Typography"
-import TextField from "@material-ui/core/TextField"
-import InputAdornment from "@material-ui/core/InputAdornment"
-import AccountCircle from "@material-ui/icons/AccountCircle"
-import { makeStyles } from "@material-ui/core/styles"
-import { InputBase, Paper } from "@material-ui/core"
-import SearchIcon from "@material-ui/icons/Search"
+import Grid from "@mui/material/Grid"
+import Avatar from "@mui/material/Avatar"
+import Typography from "@mui/material/Typography"
+import TextField from "@mui/material/TextField"
+import InputAdornment from "@mui/material/InputAdornment"
+import AccountCircle from "@mui/icons-material/AccountCircle"
+import makeStyles from "@mui/styles/makeStyles"
+import { InputBase, Paper } from "@mui/material"
+import SearchIcon from "@mui/icons-material/Search"
 
 const useStyles = makeStyles((theme) => ({
 	grow: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 			backgroundImage: "url('/img/homepage_header_background_v2.svg')",
 			backgroundRepeat: "no-repeat",
 		},
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			height: "auto",
 			// height: "10rem",
 		},
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: "2rem",
 		lineHeight: "2.5rem",
 		marginBottom: "1.625rem",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginRight: theme.spacing(1),
 			marginLeft: theme.spacing(1)
 		},
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 		maxWidth: "32.5rem",
 		padding: theme.spacing(1, 3, 1, 4),
 
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginRight: theme.spacing(2),
 			marginLeft: theme.spacing(2),
 		},

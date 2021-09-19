@@ -26,8 +26,7 @@ import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import makeStyles from '@mui/styles/makeStyles';
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"

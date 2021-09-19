@@ -24,7 +24,8 @@
 
 import React from "react"
 import Link from "next/link"
-import { Container, makeStyles } from "@material-ui/core"
+import { Container } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import AskNow from "./AskNow"
 
 /*****************************************************************
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		width: "100%",
 	},
-	[theme.breakpoints.down("xs")]: {
+	[theme.breakpoints.down("md")]: {
 		// paddingTop: theme.spacing(2),
 		// paddingBottom: theme.spacing(2),
 		// marginTop: 0

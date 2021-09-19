@@ -25,7 +25,9 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Button, makeStyles, Paper, Typography } from "@material-ui/core"
+import { Button, Paper, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -34,8 +36,8 @@ import { Button, makeStyles, Paper, Typography } from "@material-ui/core"
 
 
 //ASSETS
-import ForumIcon from "@material-ui/icons/Forum"
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward"
+import ForumIcon from "@mui/icons-material/Forum"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 	root: {
 		marginTop: theme.spacing(4),
 		marginBottom: theme.spacing(4),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(2),
 			marginBottom: theme.spacing(2),
 		}
@@ -57,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 			marginRight: theme.spacing(4)
 		},
 		padding: theme.spacing(3, 8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			padding: theme.spacing(5, 4, 4, 4)
 		}
 	},
@@ -68,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 		"& > *": {
 			marginRight: theme.spacing(2)
 		},
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			flexDirection: "column",
 			alignItems: "flex-start"
 		}

@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { Avatar } from "@material-ui/core"
-import { AvatarGroup } from "@material-ui/lab"
+import { Avatar } from "@mui/material"
+import { AvatarGroup } from "@mui/material"
 
 function AvatarList({ dataSource }) {
 

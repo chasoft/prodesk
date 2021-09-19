@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import React from "react"
-import { Container } from "@material-ui/core"
+import { Container } from "@mui/material"
 
 import { getLayout } from "../layout/BlankLayout"
 import MainNav from "../components/common/frontend/MainNav"

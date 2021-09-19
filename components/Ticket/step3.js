@@ -1,16 +1,17 @@
 import dynamic from "next/dynamic"
 import React, { useState } from "react"
-import { makeStyles, Tab, Tabs, Typography } from "@material-ui/core"
+import { Tab, Tabs, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import { useSelector, useDispatch } from "react-redux"
-import Skeleton from "@material-ui/lab/Skeleton"
+import Skeleton from "@mui/material/Skeleton"
 import { getNewTicket } from "./../../redux/selectors"
 import { setMessage } from "./../../redux/slices/newTicket"
 import TicketUploader from "../Gallery/TicketUploader"
-import { TabPanel } from "@material-ui/lab"
+import { TabPanel } from "@mui/lab"
 
 const TextEditor = dynamic(() => import("./../common/backend/TextEditor"), {
 	ssr: false,
-	loading: function pleaseWait() { return <Skeleton variant="rect" width="100%" height={85} /> }
+	loading: function pleaseWait() { return <Skeleton variant="rectangular" width="100%" height={85} /> }
 })
 
 const useStyles = makeStyles((theme) => ({

@@ -26,7 +26,7 @@ import { getLayout } from "../../layout/BlankLayout"
 import MainNav from "../../components/common/frontend/MainNav"
 import PromotedSearch from "../../components/common/frontend/PromotedSearch"
 import AskNowFrame from "../../components/Docs/AskNowFrame"
-import { Container } from "@material-ui/core"
+import { Container } from "@mui/material"
 
 /*****************************************************************
  * INIT                                                          *

@@ -25,8 +25,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -49,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 		"& > *:last-child": {
 			borderBottomRightRadius: "0.5rem",
 		},
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			"& > *:last-child": {
 				borderBottomLeftRadius: "0.5rem",
 			}

@@ -24,9 +24,8 @@
 
 import React, { useEffect, useState } from "react"
 
-// MATERIAL-UI
-import { makeStyles } from "@material-ui/core/styles"
-import { Fab, Paper, Typography } from "@material-ui/core"
+import makeStyles from "@mui/styles/makeStyles"
+import { Fab, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -38,7 +37,7 @@ import { PRIORITY, STATUS_FILTER } from "../../helpers/constants"
 import PostListItem, { PostListEmpty } from "../Post/PostListItem"
 
 //ASSETS
-import AddIcon from "@material-ui/icons/Add"
+import AddIcon from "@mui/icons-material/Add"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
 
 /*****************************************************************
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 	header: {
 		marginLeft: theme.spacing(3),
 		marginTop: "3rem",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: "0.5rem",
 		},
 	},
@@ -67,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: "2rem",
 		lineHeight: "2.5rem",
 		color: "#ffffff",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 			color: "#1a73e8",
 			fontSize: "1.5rem",

@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
-import { CssBaseline, ThemeProvider } from "@material-ui/core"
+import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material"
 import { SnackbarProvider } from "notistack"
 
 
@@ -76,28 +76,28 @@ function MyApp({ Component, pageProps }) {
 		}
 	}, [])
 
-	return (
-		<>
-			<Head>
-				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
-				<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-			</Head>
-			<Provider store={store}>
+	return <>
+		<Head>
+			<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
+			<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+		</Head>
+		<Provider store={store}>
+			<StyledEngineProvider injectFirst>
 				<ThemeProvider theme={theme}>
-					<CssBaseline />
 					<SnackbarProvider maxSnack={3}>
 						{
 							getLayout(
 								<PageTransition location={router.pathname}>
+									<CssBaseline />
 									<Component {...pageProps} />
 								</PageTransition>
 							)
 						}
 					</SnackbarProvider>
 				</ThemeProvider>
-			</Provider>
-		</>
-	)
+			</StyledEngineProvider>
+		</Provider>
+	</>
 }
 
 MyApp.propTypes = {

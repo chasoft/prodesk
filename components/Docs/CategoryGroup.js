@@ -24,7 +24,8 @@
 
 import React from "react"
 import Link from "next/link"
-import { Container, Grid, makeStyles, Typography } from "@material-ui/core"
+import { Container, Grid, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import CategoryGroupItem from "./CategoryGroupItem"
 import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
 import LatestFAQs from "../common/backend/client/LatestFAQs"

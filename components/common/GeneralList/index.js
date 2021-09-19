@@ -27,7 +27,9 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { makeStyles, Paper, Typography } from "@material-ui/core"
+import { Paper, Typography } from "@mui/material"
+
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		marginTop: theme.spacing(5),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 		},
 		display: "flex",
@@ -55,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 	group: {
 		margin: "1.5rem 0",
 		marginBottom: 0,
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			margin: "1.625rem 0",
 		},
 		"& >*": {

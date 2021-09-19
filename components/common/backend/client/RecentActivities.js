@@ -20,7 +20,8 @@
 
 
 import React from "react"
-import { Grid, makeStyles, Typography } from "@material-ui/core"
+import { Grid, Typography } from "@mui/material"
+import makeStyles from "@mui/styles/makeStyles"
 import CategoryGroupLatestFAQs from "../../../Docs/CategoryGroupLatestFAQs"
 import CategoryGroupLatestPublicTickets from "../../../Docs/CategoryGroupLatestPublicTickets"
 
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			marginTop: theme.spacing(3),
 		},
 		display: "flex",
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 	group: {
 		margin: "1.5rem 0",
-		[theme.breakpoints.down("xs")]: {
+		[theme.breakpoints.down("md")]: {
 			margin: "1.625rem 0",
 		},
 		marginBottom: 0
