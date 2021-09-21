@@ -18,35 +18,24 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-//PROJECT IMPORT
-
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
 import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
-import { getUiSettings } from "../../redux/selectors"
 import { useSelector, useDispatch } from "react-redux"
-import { setRedirect } from "../../redux/slices/redirect"
 
 //PROJECT IMPORT
-
+import { getUiSettings } from "../../redux/selectors"
+import { setRedirect } from "../../redux/slices/redirect"
 
 //ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles({
-	root: {
-		flexGrow: 1,
-		marginTop: "1rem",
-		marginBottom: "2rem"
-	},
-})
 
 const getTabId = (tabName, dataSet) => {
 	for (let i = 0; i < dataSet.length; i++) {
@@ -56,8 +45,7 @@ const getTabId = (tabName, dataSet) => {
 }
 
 const TabsSettings = ({ dataSet }) => {
-	const classes = useStyles()
-	const isScreenBigEnough = useMediaQuery("(min-width: 1280px)")
+	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
 	const dispatch = useDispatch()
 	const { activeSettingTab } = useSelector(getUiSettings)
 
@@ -66,7 +54,13 @@ const TabsSettings = ({ dataSet }) => {
 	}
 
 	return (
-		<Paper className={classes.root}>
+		<Paper
+			sx={{
+				flexGrow: 1,
+				marginTop: "1rem",
+				marginBottom: "2rem"
+			}}
+		>
 			<Tabs
 				value={getTabId(activeSettingTab, dataSet)}
 				onChange={handleChange}

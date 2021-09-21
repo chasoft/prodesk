@@ -26,11 +26,14 @@ import PropTypes from "prop-types"
 import { Button, Container, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import MembersList from "../MembersList"
 import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
+import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
 
 //PROJECT IMPORT
 
@@ -40,61 +43,68 @@ import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsAddNew = ({ dataDepartment, onClick }) => (
-	<SettingsContent>
-		<SettingsContentHeader>
-			Add new department
-		</SettingsContentHeader>
+const DepartmentsAddNew = ({ dataDepartment, onClick, backBtnClick }) => {
+	const dispatch = useDispatch()
+	return (
+		<>
+			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+				Add new department
+			</SettingsContentHeader>
 
-		<Container sx={{ pt: { xs: 3, sm: 2 } }}>
-			<Grid container spacing={4}>
-				<Grid item xs={12}>
-					<TextField
-						label="Name of the department"
-						placeholder="eg. Sales, Accounting..."
-						fullWidth
-					/>
+			<SettingsContentDetails>
+				<Grid container spacing={4}>
+					<Grid item xs={12}>
+						<TextField
+							label="Name of the department"
+							placeholder="eg. Sales, Accounting..."
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<SettingsSwitch
+							title="All members"
+							state={false}
+							setState={() => { }}
+							stateDescription={["Only selected members", "All members"]}
+							description="Allow access to the department to all members, or exclusively to a specified group of members."
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<SettingsSwitch
+							title="Public"
+							state={true}
+							setState={() => { }}
+							stateDescription={["For internal use only", "Available for all users"]}
+							description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<MembersList
+							dataSource={[]}
+							addMemberCallback={() => { }}
+						/>
+					</Grid>
 				</Grid>
-				<Grid item xs={12}>
-					<SettingsSwitch
-						title="All members"
-						state={false}
-						setState={() => { }}
-						stateDescription={["Only selected members", "All members"]}
-						description="Allow access to the department to all members, or exclusively to a specified group of members."
-					/>
-				</Grid>
+			</SettingsContentDetails>
 
-				<Grid item xs={12}>
-					<SettingsSwitch
-						title="Public"
-						state={true}
-						setState={() => { }}
-						stateDescription={["For internal use only", "Available for all users"]}
-						description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
-					/>
-				</Grid>
+			<SettingsContentActionBar>
+				<Button variant="outlined" onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW)) }}>Cancel</Button>
+				<Button variant="contained" color="primary" onClick={() => {
+					onClick()
+					dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+				}}>Add</Button>
+			</SettingsContentActionBar>
 
-				<Grid item xs={12}>
-					<MembersList
-						dataSource={[]}
-						addMemberCallback={() => { }}
-					/>
-				</Grid>
-			</Grid>
-		</Container>
-
-		<SettingsContentActionBar>
-			<Button variant="outlined">Cancel</Button>
-			<Button variant="contained" color="primary">Add</Button>
-		</SettingsContentActionBar>
-
-	</SettingsContent>
-)
+		</>
+	)
+}
 
 DepartmentsAddNew.propTypes = {
 	dataDepartment: PropTypes.array,
 	onClick: PropTypes.func,
+	backBtnClick: PropTypes.func,
 }
 
 export default DepartmentsAddNew

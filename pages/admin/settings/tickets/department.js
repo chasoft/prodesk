@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
@@ -38,7 +38,7 @@ import DepartmentsAddNew from "../../../../components/Settings/Tickets/Departmen
 import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
 import DepartmentsOverview from "../../../../components/Settings/Tickets/DepartmentsOverview"
 import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -100,7 +100,7 @@ const DUMMY_DEPARTMENTS = [
 ]
 
 const getDepartmentById = (id) => {
-	const index = Object.entries(DUMMY_DEPARTMENTS).map(item => item[1].id).indexOf(id)
+	const index = DUMMY_DEPARTMENTS.map(item => item.id).indexOf(id)
 	return DUMMY_DEPARTMENTS[index]
 }
 
@@ -109,7 +109,7 @@ const getDepartmentById = (id) => {
  *****************************************************************/
 
 export const DEPARTMENT_PAGES = {
-	OVERVIEW: "",
+	OVERVIEW: "Departments overview",
 	ADD_NEW_DEPARTMENT: "Add new ticket department"
 }
 
@@ -118,9 +118,13 @@ export const DEPARTMENT_PAGES = {
  *****************************************************************/
 
 function TicketSettingsDepartment() {
+	const [showContent, setShowContent] = useState(false)
 
 	const dispatch = useDispatch()
 	const { activeSettingPanel } = useSelector(getUiSettings)
+
+	//Whether a group is selected, then show DepartmetsDetails
+	const aGroupSelected = Object.entries(DEPARTMENT_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
 
 	updateUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
@@ -137,20 +141,26 @@ function TicketSettingsDepartment() {
 				<Typography variant="h2" style={{ margin: 0 }}>Departments</Typography>
 				<Button
 					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
-					onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)) }}
+					onClick={() => {
+						dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT))
+						setShowContent(true)
+					}}
 				>
-					Add department
+					Add New
 				</Button>
 			</SettingsHeader>
 
 			<SettingsContainer>
 
-				<SettingsList>
+				<SettingsList sx={{ display: { xs: showContent ? "none" : "initial", sm: "initial", flexGrow: showContent ? 0 : 1 } }}>
 
 					<ListItem
 						selected={activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW}
 						icon={<InfoIcon fontSize="small" />}
-						onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW)) }}
+						onClick={() => {
+							dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+							setShowContent(true)
+						}}
 					>
 						Overview
 					</ListItem>
@@ -162,7 +172,10 @@ function TicketSettingsDepartment() {
 							key={item.id}
 							selected={activeSettingPanel === item.id}
 							icon={<BusinessIcon fontSize="small" />}
-							onClick={() => { dispatch(setActiveSettingPanel(item.id)) }}
+							onClick={() => {
+								dispatch(setActiveSettingPanel(item.id))
+								setShowContent(true)
+							}}
 						>
 							{item.department}
 						</ListItem>
@@ -170,16 +183,29 @@ function TicketSettingsDepartment() {
 
 				</SettingsList>
 
-				{
-					(activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
-						? <DepartmentsOverview
+				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+
+					{(activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
+						&& <DepartmentsOverview
 							dataDepartments={DUMMY_DEPARTMENTS}
 							callback={(id) => dispatch(setActiveSettingPanel(id))}
-						/>
-						: (activeSettingPanel === DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)
-							? <DepartmentsAddNew />
-							: <DepartmentsDetails dataDepartment={getDepartmentById(activeSettingPanel)} />
-				}
+							backBtnClick={setShowContent}
+						/>}
+
+					{(activeSettingPanel === DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)
+						&& <DepartmentsAddNew
+							onClick={() => { console.log("Add new department") }}
+							backBtnClick={setShowContent}
+						/>}
+
+
+					{aGroupSelected
+						&& <DepartmentsDetails
+							dataDepartment={getDepartmentById(activeSettingPanel)}
+							backBtnClick={setShowContent}
+						/>}
+
+				</SettingsContent>
 
 			</SettingsContainer>
 		</>

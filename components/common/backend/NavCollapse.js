@@ -55,6 +55,7 @@ const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 				})
 			}}
 		>
+
 			<Box
 				sx={{
 					display: "flex",
@@ -103,8 +104,8 @@ const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 						noWrap
 					>{description}</Typography>
 				</div>
-
 			</Box>
+
 			<Collapse in={expanded} timeout="auto" style={{ color: "#ffffffcc" }} unmountOnExit>
 				{children}
 			</Collapse>

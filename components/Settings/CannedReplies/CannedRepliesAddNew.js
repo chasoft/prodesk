@@ -19,18 +19,19 @@
  ************************************************************************/
 
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Container, Grid, TextField } from "@mui/material"
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import MembersList from "../MembersList"
-import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { Box } from "@mui/system"
+import TextEditor from "../../common/TextEditor"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 
@@ -40,61 +41,80 @@ import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesAddNew = ({ dataCannedReply, onClick }) => (
-	<SettingsContent>
-		<SettingsContentHeader>
-			Add new department
-		</SettingsContentHeader>
+const CannedRepliesAddNew = ({ backBtnClick }) => {
+	const [textEditorData, setTextEditorData] = useState("")
+	const dispatch = useDispatch()
+	return (
+		<>
 
-		<Container sx={{ pt: { xs: 3, sm: 2 } }}>
-			<Grid container spacing={4}>
-				<Grid item xs={12}>
+			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+				New canned reply
+			</SettingsContentHeader>
+
+			<SettingsContentDetails
+				sx={{
+					display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 }
+				}}
+			>
+				<FormControl variant="standard" fullWidth>
+					<InputLabel id="demo-simple-select-label">Group</InputLabel>
+					<Select
+						labelId="demo-simple-select-label"
+						id="demo-simple-select"
+						value={20}
+						label="Age"
+						onChange={() => { }}
+					>
+						<MenuItem value={10}>Group 1</MenuItem>
+						<MenuItem value={20}>Group 2</MenuItem>
+						<MenuItem value={30}>Group 3</MenuItem>
+						<MenuItem value={40}>Group 4</MenuItem>
+					</Select>
+				</FormControl>
+
+				<Box sx={{ py: 2 }}>
 					<TextField
-						label="Name of the department"
-						placeholder="eg. Sales, Accounting..."
+						id="lableName" label="Canned reply description" variant="standard"
 						fullWidth
 					/>
-				</Grid>
-				<Grid item xs={12}>
-					<SettingsSwitch
-						title="All members"
-						state={false}
-						setState={() => { }}
-						stateDescription={["Only selected members", "All members"]}
-						description="Allow access to the department to all members, or exclusively to a specified group of members."
+				</Box>
+
+				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
+					<TextEditor
+						defaultValue=""
+						pullEditorData={setTextEditorData}
 					/>
-				</Grid>
+				</Box>
 
-				<Grid item xs={12}>
-					<SettingsSwitch
-						title="Public"
-						state={true}
-						setState={() => { }}
-						stateDescription={["For internal use only", "Available for all users"]}
-						description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
-					/>
-				</Grid>
+			</SettingsContentDetails>
 
-				<Grid item xs={12}>
-					<MembersList
-						dataSource={[]}
-						addMemberCallback={() => { }}
-					/>
-				</Grid>
-			</Grid>
-		</Container>
+			<SettingsContentActionBar>
 
-		<SettingsContentActionBar>
-			<Button variant="outlined">Cancel</Button>
-			<Button variant="contained" color="primary">Add</Button>
-		</SettingsContentActionBar>
+				<Button
+					variant="outlined"
+					onClick={() => { backBtnClick(false) }}
+				>
+					Cancel
+				</Button>
 
-	</SettingsContent>
-)
+				<Button
+					variant="contained" color="primary"
+					onClick={() => {
+						console.log("Add new canned replied:", textEditorData)
+						// Go to the group of new canned 
+						// dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+					}}
+				>
+					Add
+				</Button>
+
+			</SettingsContentActionBar>
+		</>
+	)
+}
 
 CannedRepliesAddNew.propTypes = {
-	dataCannedReply: PropTypes.array,
-	onClick: PropTypes.func,
+	backBtnClick: PropTypes.func,
 }
 
 export default CannedRepliesAddNew

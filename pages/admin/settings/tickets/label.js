@@ -113,7 +113,9 @@ function TicketSettingsLabel() {
 
 				<SettingsContent>
 
-					<SettingsContentHeader>Labels</SettingsContentHeader>
+					<SettingsContentHeader hasBackBtn={false}>
+						Labels
+					</SettingsContentHeader>
 
 					<SettingsContentHelper>
 

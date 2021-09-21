@@ -32,6 +32,7 @@ import { Typography } from "@mui/material"
 //PROJECT IMPORT
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
 import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/common/SettingsPanel"
 
 //ASSETS
 
@@ -56,7 +57,37 @@ function TicketSettings() {
 
 	return (
 		<>
-			<Typography variant="h2">Ticket Settings</Typography>
+			<SettingsHeader>
+				<Typography variant="h2" style={{ margin: 0 }}>Ticket Settings</Typography>
+			</SettingsHeader>
+
+			<SettingsContainer>
+				<SettingsContent>
+
+					<SettingsContentHeader>Ticket Settings</SettingsContentHeader>
+
+					<SettingsContentHelper>
+
+						<SettingsContentHelperText>
+							Department Overview Department Overview Department Overview Department Overview Department Overview
+							Department Overview Department Overview Department Overview Department
+							<SettingsContentHelperLearnMore target="/admin" />
+						</SettingsContentHelperText>
+
+
+					</SettingsContentHelper>
+
+					<SettingsContentDetails>
+
+						<Typography>hello world</Typography>
+						<Typography>hello world</Typography>
+						<Typography>hello world</Typography>
+
+					</SettingsContentDetails>
+
+
+				</SettingsContent>
+			</SettingsContainer>
 		</>
 	)
 }

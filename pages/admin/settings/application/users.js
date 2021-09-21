@@ -23,94 +23,44 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
-import Link from "next/link"
 
-//MATERIAL-UI
-import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
+// MATERIAL-UI
+import { Typography } from "@mui/material"
+// import { makeStyles } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutSettings"
+import updateUiSettings from "../../../../helpers/updateUiSettings"
 
 //ASSETS
-import SettingsIcon from "@mui/icons-material/Settings"
-import HomeIcon from "@mui/icons-material/Home"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
+function ApplicationSettingsUsers() {
 
-	if (isExpanded) {
-		return (
-			<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						color: "#669df6",
-						padding: (theme) => theme.spacing(1, 0.5, 1, 3),
-						"&:hover": {
-							backgroundColor: "#ffffff14",
-							cursor: "pointer",
-						},
-						borderTop: "1px solid #2A4257",
-						borderBottom: "1px solid #2A4257",
-					}}
-				>
-					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-					<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
-					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
-					<div style={{ display: "flex", alignItems: "center" }}>
-						<Link href={settingsUrl}>
-							<a>
-								<Box
-									color="secondary"
-									aria-label="Settings"
-									style={{ padding: "5px" }}
-									size="large">
-									<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-								</Box>
-							</a>
-						</Link>
-					</div>
-				</Box>
-			</ButtonBase>
-		)
-	}
+	updateUiSettings({
+		activeTab: APPLICATION_SETTINGS_NAMES.USER,
+		background: {
+			backgroundImage: ""
+		}
+	})
 
 	return (
-		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-			<Link href={homeUrl}>
-				<Tooltip title="Dashboard" placement="right">
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "center",
-							textAlign: "center",
-							color: "#669df6",
-							padding: (theme) => theme.spacing(1, 0, 1, 0),
-							"&:hover": {
-								cursor: "pointer",
-								backgroundColor: "#ffffff14",
-							},
-							borderTop: "1px solid #2A4257",
-						}}
-					>
-						<HomeIcon style={{ height: "20px", width: "20px" }} />
-					</Box>
-				</Tooltip>
-			</Link>
-		</ButtonBase>
+		<>
+			<Typography variant="h1">Admin Application Settings - USERS</Typography>
+		</>
 	)
 }
 
-HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string, isExpanded: PropTypes.bool }
+ApplicationSettingsUsers.getLayout = getLayout
 
-export default HomeButton
+export default ApplicationSettingsUsers

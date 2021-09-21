@@ -22,44 +22,103 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import PropTypes from "prop-types"
+import React, { useCallback, useEffect, useState } from "react"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
-// import { makeStyles } from "@mui/material"
+import { Container, Typography } from "@mui/material"
+
+//PROJECT IMPORT
+import CannedRepliesList from "./CannedRepliesList"
+import CannedRepliesDetails from "./CannedRepliesDetails"
+import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "../../../redux/selectors"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import updateUiSettings from "../../../../helpers/updateUiSettings"
 
 //ASSETS
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ApplicationSettingsUser() {
+const CannedRepliesGroup = ({ groupInfo, cannedReplies, backBtnClick }) => {
+	const [selectedCannedReply, setSelectedCannedReply] = useState("")
+	const { activeSettingPanel } = useSelector(getUiSettings)
 
-	updateUiSettings({
-		activeTab: APPLICATION_SETTINGS_NAMES.USER,
-		background: {
-			backgroundImage: ""
-		}
-	})
+	useEffect(() => {
+		setSelectedCannedReply("")
+		console.log("Reset selectedCannedReply")
+	}, [activeSettingPanel])
+
+	const getCannedReply = useCallback(
+		() => {
+			const index = cannedReplies.map(item => item.id).indexOf(selectedCannedReply)
+			return cannedReplies[index]
+		},
+		[selectedCannedReply]
+	)
+
+	if (!groupInfo?.department) {
+		return (
+			<>
+				<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+					Unknowned group
+				</SettingsContentHeader>
+				<SettingsContentDetails>
+					<Typography>
+						There is something happen! Selected group is not found!
+					</Typography>
+				</SettingsContentDetails>
+			</>
+		)
+	}
+
+	if (cannedReplies.length === 0) {
+		return (
+			<>
+				<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+					{groupInfo.department}
+				</SettingsContentHeader>
+				<SettingsContentDetails>
+					<Typography>
+						There are no canned replies created for this group
+					</Typography>
+				</SettingsContentDetails>
+			</>
+		)
+	}
 
 	return (
 		<>
-			<Typography variant="h1">Admin Application Settings - USERS</Typography>
-		</>
+			<SettingsContentHeader
+				backBtnOnClick={() => {
+					/* Go to SettingsList OR CannedRepliesGroup */
+					if (selectedCannedReply === "")
+						backBtnClick(false)
+					else
+						setSelectedCannedReply("")
+				}}
+			>
+				{groupInfo.department}
+			</SettingsContentHeader>
+
+			{(selectedCannedReply === "")
+				&& <CannedRepliesList data={cannedReplies} callback={setSelectedCannedReply} />}
+
+			{(selectedCannedReply !== "")
+				&& <CannedRepliesDetails data={getCannedReply()} />}
+		</ >
 	)
 }
 
-ApplicationSettingsUser.getLayout = getLayout
-export default ApplicationSettingsUser
+CannedRepliesGroup.propTypes = {
+	groupInfo: PropTypes.object,
+	cannedReplies: PropTypes.array,
+	backBtnClick: PropTypes.func,
+}
+
+export default CannedRepliesGroup

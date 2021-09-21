@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { IconButton, Tooltip, Typography } from "@mui/material"
+import { ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -70,43 +70,45 @@ const SideBarContentExpanded = ({ data }) => (
 				return (
 					<Link key={group.url} href={group.url} >
 						<a>
-							<Box
-								sx={{
-									width: "256px",
-									display: "flex",
-									cursor: "pointer",
-									alignItems: "center",
-									borderBottom: "1px solid #2A4257",
-									padding: 3, pr: 1,
-									"&:hover": { backgroundColor: "#ffffff14" },
-								}}
-							>
-								<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-									<div style={{ display: "flex", alignItems: "center" }}>
+							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+								<Box
+									sx={{
+										width: "256px",
+										display: "flex",
+										cursor: "pointer",
+										alignItems: "center",
+										borderBottom: "1px solid #2A4257",
+										padding: 3, pr: 1,
+										"&:hover": { backgroundColor: "#ffffff14" },
+									}}
+								>
+									<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+										<div style={{ display: "flex", alignItems: "center" }}>
+											<Typography
+												sx={{
+													color: "#fff",
+													fontSize: "1rem",
+													fontFamily: "\"Google Sans\", Roboto, sans-serif",
+													flexGrow: 1
+												}}
+											>
+												{group.title}
+											</Typography>
+										</div>
 										<Typography
 											sx={{
-												color: "#fff",
-												fontSize: "1rem",
-												fontFamily: "\"Google Sans\", Roboto, sans-serif",
-												flexGrow: 1
+												fontSize: "0.75rem",
+												color: "#ffffff80",
+												width: "90%"
 											}}
+											variant="caption"
+											noWrap
 										>
-											{group.title}
+											{group.description}
 										</Typography>
 									</div>
-									<Typography
-										sx={{
-											fontSize: "0.75rem",
-											color: "#ffffff80",
-											width: "90%"
-										}}
-										variant="caption"
-										noWrap
-									>
-										{group.description}
-									</Typography>
-								</div>
-							</Box>
+								</Box>
+							</ButtonBase>
 						</a>
 					</Link>
 				)
@@ -126,34 +128,36 @@ const SideBarContentExpanded = ({ data }) => (
 								padding: 0,
 								width: "100%",
 								listStyle: "none",
-								"& > li > a": {
+								"& > button > li > a": {
 									display: "flex",
 									alignItems: "center",
 									fontSize: "0.875rem",
 									py: 1, pr: 2, pl: 3,
-									"& >:first-child": {
+									"& >:first-of-type": {
 										mr: 1,
 										height: "20px",
 										weight: "20px",
 									}
 								},
-								"& > li:hover": {
+								"& > button > li:hover": {
 									backgroundColor: "#ffffff14",
 									cursor: "pointer",
 								},
-								"& > li:last-child": {
-									pb: 2
-								}
+								// "& > button > li:last-of-type": {
+								// 	pb: 0
+								// }
 							}}
 						>
 							{group.items.map((item) => (
-								<li key={item.id}>
-									<Link href={item.url}>
-										<a>
-											{IconLib[item.icon]}{item.text}
-										</a>
-									</Link>
-								</li>
+								<ButtonBase key={item.id} sx={{ display: "block", width: "100%", textAlign: "left" }}>
+									<li>
+										<Link href={item.url}>
+											<a>
+												{IconLib[item.icon]}{item.text}
+											</a>
+										</Link>
+									</li>
+								</ButtonBase>
 							))}
 						</Box>
 					</NavCollapse>
@@ -172,21 +176,23 @@ const SideBarContentCollapsed = ({ data }) => (
 				return (
 					<Link key={group.url} href={group.url} >
 						<Tooltip title={group.description} placement="right">
-							<Box
-								sx={{
-									display: "flex",
-									justifyContent: "center",
-									textAlign: "center",
-									px: 2, py: 1,
-									"&:hover": { backgroundColor: "#ffffff14" },
-									borderTop: "1px solid #2A4257",
-									color: "#ffffffcc",
-									cursor: "pointer",
-									"& >:first-child": { height: 20, weight: 20 },
-								}}
-							>
-								{IconLib[group.icon]}
-							</Box>
+							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "center",
+										textAlign: "center",
+										px: 2, py: 1,
+										"&:hover": { backgroundColor: "#ffffff14" },
+										borderTop: "1px solid #2A4257",
+										color: "#ffffffcc",
+										cursor: "pointer",
+										"& >:first-of-type": { height: 20, weight: 20 },
+									}}
+								>
+									{IconLib[group.icon]}
+								</Box>
+							</ButtonBase>
 						</Tooltip>
 					</Link>
 				)
@@ -202,17 +208,17 @@ const SideBarContentCollapsed = ({ data }) => (
 							listStyle: "none",
 							textAlign: "center",
 							backgroundColor: "#ffffff14",
-							"&>li": {
+							"&>button>li": {
 								display: "flex",
 								justifyContent: "center",
 								pt: 1, px: 2, pb: 1,
 								color: "#ffffffcc",
-								"& > a > :first-child": {
+								"& > a > :first-of-type": {
 									height: "20px",
 									weight: "20px",
 								}
 							},
-							"&>li:hover": {
+							"&>button>li:hover": {
 								backgroundColor: "#ffffff14",
 								cursor: "pointer",
 							},
@@ -221,13 +227,15 @@ const SideBarContentCollapsed = ({ data }) => (
 					>
 						{group.items.map((item) => (
 							<Tooltip key={item.id} title={item.text} placement="right">
-								<li>
-									<Link href={item.url}>
-										<a>
-											{IconLib[item.icon]}
-										</a>
-									</Link>
-								</li>
+								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+									<li>
+										<Link href={item.url}>
+											<a>
+												{IconLib[item.icon]}
+											</a>
+										</Link>
+									</li>
+								</ButtonBase>
 							</Tooltip>
 						))}
 					</Box>

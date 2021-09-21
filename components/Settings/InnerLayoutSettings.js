@@ -44,15 +44,15 @@ import TabsSettings from "./TabsSettings"
 
 export const APPLICATION_SETTINGS_NAMES = {
 	GENERAL: "General",
-	USER: "User Settings",
+	USER: "Users",
 	SECURITY: "Security",
 	SMTP: "SMTP",
-	ADS: "Advertisement",
+	ADS: "Ads",
 }
 
 export const APPLICATION_SETTINGS_TABS = [
 	[APPLICATION_SETTINGS_NAMES.GENERAL, "/admin/settings/application"],
-	[APPLICATION_SETTINGS_NAMES.USER, "/admin/settings/application/user"],
+	[APPLICATION_SETTINGS_NAMES.USER, "/admin/settings/application/users"],
 	[APPLICATION_SETTINGS_NAMES.SECURITY, "/admin/settings/application/security"],
 	[APPLICATION_SETTINGS_NAMES.SMTP, "/admin/settings/application/smtp"],
 	[APPLICATION_SETTINGS_NAMES.ADS, "/admin/settings/application/ads"],

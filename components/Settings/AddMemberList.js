@@ -154,7 +154,7 @@ const AddMemberList = ({ department, members, children }) => {
 }
 AddMemberList.propTypes = {
 	department: PropTypes.string,
-	members: PropTypes.node,
+	members: PropTypes.array,
 	children: PropTypes.node
 }
 

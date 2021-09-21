@@ -71,7 +71,7 @@ const SettingsSwitch = ({ title, state, setState, stateDescription, description 
 SettingsSwitch.propTypes = {
 	title: PropTypes.string,
 	state: PropTypes.bool,
-	setState: PropTypes.bool,
+	setState: PropTypes.func,
 	stateDescription: PropTypes.array,
 	description: PropTypes.string
 }

@@ -31,7 +31,7 @@ import { Container, Grid, TextField, Typography } from "@mui/material"
 //PROJECT IMPORT
 import MembersList from "../MembersList"
 import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
 
 //THIRD-PARTY
 
@@ -45,23 +45,22 @@ import { SettingsContent, SettingsContentHeader } from "../../common/SettingsPan
 
 //TODO: Auto update data onBlur
 
-const DepartmentsDetails = ({ dataDepartment, onClick }) => {
+const DepartmentsDetails = ({ dataDepartment = [], onClick, backBtnClick }) => {
 	if (dataDepartment.length === 0) {
 		return (
-			<SettingsContent>
+			<>
 				<Typography>There is something happen! Selected department not found!</Typography>
-			</SettingsContent>
+			</>
 		)
 	}
 
 	return (
-		<SettingsContent>
-
-			<SettingsContentHeader>
+		<>
+			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
 				{dataDepartment.department}
 			</SettingsContentHeader>
 
-			<Container sx={{ pt: { xs: 3, sm: 2 } }}>
+			<SettingsContentDetails>
 				<Grid container spacing={4}>
 
 					<Grid item xs={12}>
@@ -109,15 +108,15 @@ const DepartmentsDetails = ({ dataDepartment, onClick }) => {
 						<div style={{ height: "2rem" }}></div>
 					</Grid>
 				</Grid>
-			</Container>
-
-		</SettingsContent >
+			</SettingsContentDetails>
+		</>
 	)
 }
 
 DepartmentsDetails.propTypes = {
-	dataDepartment: PropTypes.array,
+	dataDepartment: PropTypes.object,
 	onClick: PropTypes.func,
+	backBtnClick: PropTypes.func,
 }
 
 export default DepartmentsDetails

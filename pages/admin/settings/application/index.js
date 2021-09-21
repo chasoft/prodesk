@@ -22,19 +22,26 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
-// import { makeStyles } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
 import updateUiSettings from "../../../../helpers/updateUiSettings"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
 
 //ASSETS
+import AddIcon from "@mui/icons-material/Add"
+import InfoIcon from "@mui/icons-material/Info"
+import BusinessIcon from "@mui/icons-material/Business"
+import { getUiSettings } from "../../../../redux/selectors"
+import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
+import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
 
 /*****************************************************************
  * INIT                                                          *
@@ -46,6 +53,10 @@ import updateUiSettings from "../../../../helpers/updateUiSettings"
  *****************************************************************/
 
 function ApplicationSettings() {
+	const [showContent, setShowContent] = useState(false)
+
+	const dispatch = useDispatch()
+	const { activeSettingPanel } = useSelector(getUiSettings)
 
 	updateUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.GENERAL,
@@ -56,7 +67,56 @@ function ApplicationSettings() {
 
 	return (
 		<>
-			<Typography variant="h1">Admin Application Settings</Typography>
+			<SettingsHeader>
+				<Typography variant="h2" style={{ margin: 0 }}>Application Settings</Typography>
+			</SettingsHeader>
+
+			<SettingsContainer>
+				<SettingsList sx={{ display: { xs: showContent ? "none" : "initial", sm: "initial", flexGrow: showContent ? 0 : 1 } }}>
+
+					<ListItem
+						selected={activeSettingPanel === "AA"}
+						icon={<InfoIcon fontSize="small" />}
+						onClick={() => {
+							dispatch(setActiveSettingPanel("AA"))
+							setShowContent(true)
+						}}
+					>
+						Overview
+					</ListItem>
+
+					<ListTitle>Available departments</ListTitle>
+
+					{["BB", "CC", "DD", "EE"].map((item, idx) => (
+						<ListItem
+							key={idx}
+							selected={activeSettingPanel === item}
+							icon={<BusinessIcon fontSize="small" />}
+							onClick={() => {
+								dispatch(setActiveSettingPanel(item))
+								setShowContent(true)
+							}}
+						>
+							{item}
+						</ListItem>
+					))}
+
+				</SettingsList>
+
+				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+
+					<SettingsContentHeader backBtnOnClick={() => setShowContent(false)}>
+						Application Settings
+					</SettingsContentHeader>
+
+					<SettingsContentDetails>
+						<Typography>Content goes here!!!!</Typography>
+						<Typography>You are viewing {activeSettingPanel}</Typography>
+					</SettingsContentDetails>
+
+				</SettingsContent>
+
+			</SettingsContainer>
 		</>
 	)
 }

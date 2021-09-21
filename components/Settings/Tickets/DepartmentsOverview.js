@@ -43,23 +43,20 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsOverview = ({ dataDepartments, callback }) => {
+const DepartmentsOverview = ({ dataDepartments, callback, backBtnClick }) => {
 	if (dataDepartments.length === 0) {
 		return (
-			<SettingsContent>
-				<div style={{ display: "flex", alignItems: "center" }} >
-					<Typography>
-						You have no department at the moment.
-					</Typography>
-				</div>
-			</SettingsContent >
+			<div style={{ display: "flex", alignItems: "center" }} >
+				<Typography>
+					You have no department at the moment.
+				</Typography>
+			</div>
 		)
 	}
 
 	return (
-		<SettingsContent>
-
-			<SettingsContentHeader>
+		<>
+			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
 				Departments overview
 			</SettingsContentHeader>
 
@@ -141,14 +138,14 @@ const DepartmentsOverview = ({ dataDepartments, callback }) => {
 
 				</Box>
 			))}
-
-		</SettingsContent>
+		</>
 	)
 }
 
 DepartmentsOverview.propTypes = {
 	dataDepartments: PropTypes.array,
 	callback: PropTypes.func,
+	backBtnClick: PropTypes.func,
 }
 
 export default DepartmentsOverview

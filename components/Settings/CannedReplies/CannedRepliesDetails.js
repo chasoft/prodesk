@@ -22,16 +22,16 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Grid, TextField, Typography } from "@mui/material"
+import { Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 
 //PROJECT IMPORT
-import MembersList from "../MembersList"
-import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { Box } from "@mui/system"
+import TextEditor from "../../common/TextEditor"
 
 //THIRD-PARTY
 
@@ -45,79 +45,82 @@ import { SettingsContent, SettingsContentHeader } from "../../common/SettingsPan
 
 //TODO: Auto update data onBlur
 
-const CannedRepliesDetails = ({ dataCannedReply, onClick }) => {
-	if (dataCannedReply.length === 0) {
-		return (
-			<SettingsContent>
-				<Typography>There is something happen! Selected department not found!</Typography>
-			</SettingsContent>
-		)
-	}
-
+const CannedRepliesDetails = ({ data }) => {
+	const [readOnly, setEditorReadOnly] = useState(true)
+	const [textEditorData, setTextEditorData] = useState("")
 	return (
-		<SettingsContent>
+		<>
+			<SettingsContentDetails
+				sx={{ display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 } }}
+			>
 
-			<SettingsContentHeader>
-				{dataCannedReply.department}
-			</SettingsContentHeader>
+				<FormControl variant="standard" fullWidth disabled={readOnly}>
+					<InputLabel id="demo-simple-select-label">Group</InputLabel>
+					<Select
+						labelId="demo-simple-select-label"
+						id="demo-simple-select"
+						value={20}
+						label="Age"
+						onChange={() => { }}
+					>
+						<MenuItem value={10}>Group 1</MenuItem>
+						<MenuItem value={20}>Group 2</MenuItem>
+						<MenuItem value={30}>Group 3</MenuItem>
+						<MenuItem value={40}>Group 4</MenuItem>
+					</Select>
+				</FormControl>
 
-			<Container sx={{ pt: { xs: 3, sm: 2 } }}>
-				<Grid container spacing={4}>
+				<Box sx={{ py: 2 }}>
+					<TextField
+						id="lableName" label="Canned reply description" variant="standard"
+						defaultValue={data?.description}
+						fullWidth
+						disabled={readOnly}
+					/>
+				</Box>
 
-					<Grid item xs={12}>
-						<TextField
-							value={dataCannedReply.department}
-							label="Name of the department"
-							placeholder="eg. Sales, Accounting..."
-							fullWidth
-						/>
-					</Grid>
+				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
+					<TextEditor
+						defaultValue={data.content}
+						pullEditorData={setTextEditorData}
+						readOnly={readOnly}
+					/>
+				</Box>
 
-					<Grid item xs={12}>
-						<TextField
-							value={dataCannedReply.description}
-							label="Department description (Optional)"
-							fullWidth
-						/>
-					</Grid>
+			</SettingsContentDetails>
 
-					<Grid item xs={12}>
-						<SettingsSwitch
-							title="All members"
-							state={dataCannedReply.availableForAll}
-							setState={() => { }}
-							stateDescription={["Only selected members", "All members"]}
-							description="Allow access to the department to all members, or exclusively to a specified group of members."
-						/>
-					</Grid>
+			<SettingsContentActionBar>
 
-					<Grid item xs={12}>
-						<SettingsSwitch
-							title="Public"
-							state={dataCannedReply.isPublic}
-							setState={() => { }}
-							stateDescription={["For internal use only", "Available for all users"]}
-							description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
-						/>
-					</Grid>
+				{(readOnly === true) &&
+					<Button
+						variant="contained" color="secondary"
+						onClick={() => {
+							setEditorReadOnly(false)
+							console.log("Change to Editable mode")
+						}}
+					>
+						Edit
+					</Button>}
 
-					<Grid item xs={12}>
-						<MembersList
-							dataSource={dataCannedReply.members}
-							addMemberCallback={() => { }}
-						/>
-						<div style={{ height: "2rem" }}></div>
-					</Grid>
-				</Grid>
-			</Container>
+				{(readOnly === false) &&
+					<Button
+						variant="contained" color="primary"
+						onClick={() => {
+							console.log("Update changes, here are the data from Editor:")
+							console.log({ textEditorData })
+						}}
+					>
+						Save changes
+					</Button>
+				}
 
-		</SettingsContent >
+			</SettingsContentActionBar>
+		</>
 	)
 }
 
 CannedRepliesDetails.propTypes = {
-	dataCannedReply: PropTypes.array,
-	onClick: PropTypes.func,
+	data: PropTypes.object,
 }
 
 export default CannedRepliesDetails

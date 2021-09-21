@@ -28,7 +28,7 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { styled } from "@mui/material/styles"
-import { Alert, Avatar, Box, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Alert, Box, ButtonBase, Container, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -51,28 +51,33 @@ export const ListTitle = ({ children }) => (
 	</Box>
 ); ListTitle.propTypes = { children: PropTypes.node }
 
-export const ListItem = ({ icon, onClick, children }) => {
+export const ListItem = ({ selected, icon, onClick, children }) => {
 	return (
-		<Box
-			onClick={onClick}
-			sx={{
-				padding: (theme) => theme.spacing(1, 3, 1),
-				display: "flex",
-				alignItems: "center",
-				"&:hover": {
-					backgroundColor: "action.hover",
-					cursor: "pointer",
-				}
-			}}
-		>
-			{icon}
-			<Typography variant="button" sx={{ ml: 2 }}>
-				{children}
-			</Typography>
-		</Box>
+		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+			<Box
+				onClick={onClick}
+				sx={{
+					padding: (theme) => theme.spacing(1, 3, 1),
+					display: "flex",
+					alignItems: "center",
+					"&:hover": {
+						backgroundColor: selected ? "#e8f0fe" : "action.hover",
+						cursor: "pointer",
+					},
+					bgcolor: selected ? "#e8f0fe" : "",
+					color: selected ? "#1967d2" : ""
+				}}
+			>
+				{icon}
+				<Typography variant="button" sx={{ ml: 2 }}>
+					{children}
+				</Typography>
+			</Box>
+		</ButtonBase>
 	)
 }
 ListItem.propTypes = {
+	selected: PropTypes.bool,
 	icon: PropTypes.node,
 	onClick: PropTypes.func,
 	children: PropTypes.node
@@ -97,7 +102,7 @@ export const SettingsContainer = ({ children }) => (
 	>{children}</Paper>
 ); SettingsContainer.propTypes = { children: PropTypes.node }
 
-export const SettingsList = ({ children }) => (
+export const SettingsList = ({ sx, children }) => (
 	<Box
 		sx={{
 			backgroundColor: "#FAFAFA",
@@ -109,18 +114,35 @@ export const SettingsList = ({ children }) => (
 				lg: 37 * 8
 			},
 			padding: (theme) => theme.spacing(1, 0, 1),
-			display: { xs: "none", sm: "initial" },
+			// display: { xs: "none", sm: "initial" },
 			borderTopRightRadius: { xs: "0.5rem", md: 0 },
 			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
+			...sx
 		}}
 	>{children}</Box>
-); SettingsList.propTypes = { children: PropTypes.node }
+); SettingsList.propTypes = { sx: PropTypes.object, children: PropTypes.node }
 
-export const SettingsContent = ({ children }) => (
-	<Box sx={{ flexGrow: 1 }}>
+export const SettingsContent = ({ sx, children }) => {
+	// const theme = useTheme()
+	// const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
+	return (
+		<Box
+			sx={{
+				flexGrow: 1,
+				// borderBottomLeftRadius: 1,
+				// borderBottomRightRadius: 1,
+				...sx
+			}}>
+			{children}
+		</Box>
+	)
+}; SettingsContent.propTypes = { sx: PropTypes.object, children: PropTypes.node }
+
+export const SettingsContentDetails = ({ sx, children }) => (
+	<Container sx={{ py: { xs: 3, sm: 2 }, ...sx }}>
 		{children}
-	</Box>
-); SettingsContent.propTypes = { children: PropTypes.node }
+	</Container>
+); SettingsContentDetails.propTypes = { sx: PropTypes.any, children: PropTypes.node }
 
 const ContentHeader = ({ children }) => (
 	<Box sx={{
@@ -132,15 +154,15 @@ const ContentHeader = ({ children }) => (
 	}}> {children} </Box>
 ); ContentHeader.propTypes = { children: PropTypes.node }
 
-export const SettingsContentHeader = ({ hasBackBtn, backBtnOnClick, children }) => {
+export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, children }) => {
 	const theme = useTheme()
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"))
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
 			<ContentHeader>
 				<Tooltip title="Go back" placement="top">
-					<IconButton size="small" onClick={backBtnOnClick} style={{ marginRight: "5px" }}>
+					<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
 						<NavigateBeforeIcon />
 					</IconButton>
 				</Tooltip>
@@ -254,6 +276,8 @@ export const SettingsContentActionBar = ({ children }) => (
 		"> *:last-child": {
 			ml: 2,
 			minWidth: 100
-		}
+		},
+		borderBottomLeftRadius: 8,
+		borderBottomRightRadius: 8,
 	}}>{children}</Box>
 ); SettingsContentActionBar.propTypes = { children: PropTypes.node }
