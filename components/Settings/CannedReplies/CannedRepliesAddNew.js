@@ -18,46 +18,83 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Button, Container, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/AdminLayout"
-import updateUiSettings from "../../helpers/updateUiSettings"
+import MembersList from "../MembersList"
+import SettingsSwitch from "../../common/SettingsSwitch"
+import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from "../../common/SettingsPanel"
+
+//PROJECT IMPORT
 
 //ASSETS
 
 /*****************************************************************
- * INIT                                                          *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+const CannedRepliesAddNew = ({ dataCannedReply, onClick }) => (
+	<SettingsContent>
+		<SettingsContentHeader>
+			Add new department
+		</SettingsContentHeader>
 
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
+		<Container sx={{ pt: { xs: 3, sm: 2 } }}>
+			<Grid container spacing={4}>
+				<Grid item xs={12}>
+					<TextField
+						label="Name of the department"
+						placeholder="eg. Sales, Accounting..."
+						fullWidth
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<SettingsSwitch
+						title="All members"
+						state={false}
+						setState={() => { }}
+						stateDescription={["Only selected members", "All members"]}
+						description="Allow access to the department to all members, or exclusively to a specified group of members."
+					/>
+				</Grid>
 
-function Users() {
+				<Grid item xs={12}>
+					<SettingsSwitch
+						title="Public"
+						state={true}
+						setState={() => { }}
+						stateDescription={["For internal use only", "Available for all users"]}
+						description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+					/>
+				</Grid>
 
-	updateUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
-
-	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Users</Typography>
+				<Grid item xs={12}>
+					<MembersList
+						dataSource={[]}
+						addMemberCallback={() => { }}
+					/>
+				</Grid>
+			</Grid>
 		</Container>
-	)
+
+		<SettingsContentActionBar>
+			<Button variant="outlined">Cancel</Button>
+			<Button variant="contained" color="primary">Add</Button>
+		</SettingsContentActionBar>
+
+	</SettingsContent>
+)
+
+CannedRepliesAddNew.propTypes = {
+	dataCannedReply: PropTypes.array,
+	onClick: PropTypes.func,
 }
 
-Users.getLayout = getLayout
-export default Users
+export default CannedRepliesAddNew

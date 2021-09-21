@@ -28,45 +28,29 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 import { Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
 //THIRD-PARTY
-
 
 //PROJECT IMPORT
 
-
 //ASSETS
-import InboxIcon from "@mui/icons-material/MoveToInbox"
 import MailIcon from "@mui/icons-material/Mail"
-
-
+import InboxIcon from "@mui/icons-material/MoveToInbox"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	drawerPaper: {
-		width: "400px",
-		[theme.breakpoints.down("md")]: {
-			width: "100%",
-		}
-	},
-}))
-
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const NotificationDrawer = ({ isOpen, toggle }) => {
-	const classes = useStyles()
 	return (
 		<Drawer
 			anchor="right"
-			classes={{ paper: classes.drawerPaper }}
 			open={isOpen}
 			onClose={() => toggle(false)}
+			sx={{ width: { xs: "100%", md: "400px" } }}
 		>
 			<List>
 				{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
@@ -79,6 +63,7 @@ const NotificationDrawer = ({ isOpen, toggle }) => {
 		</Drawer>
 	)
 }
+
 NotificationDrawer.propTypes = { isOpen: PropTypes.bool, toggle: PropTypes.func }
 
 export default NotificationDrawer

@@ -38,7 +38,7 @@ import { installCompleted } from "../../helpers/userAuthentication"
 import { useSnackbar } from "notistack"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InstallCompleted() {

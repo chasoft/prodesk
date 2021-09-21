@@ -52,7 +52,7 @@ const LatestFeedbackDummyData = [
 ]
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const LatestTicketFeedback = () => {

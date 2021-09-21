@@ -26,7 +26,7 @@ import MainNav from "../../components/common/frontend/MainNav"
 import Category from "./../../components/Category"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function ViewAllCategories() {

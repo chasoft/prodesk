@@ -19,103 +19,96 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React, { useState } from "react"
-import { Button, Grid, Box, TextField, Typography, Avatar } from "@mui/material"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
-import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
-import { useDispatch, useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
-import { createProfileRegStep } from "../../helpers/firebase"
+//THIRD-PARTY
 import { useSnackbar } from "notistack"
+import { useDispatch, useSelector } from "react-redux"
+
+//PROJECT IMPORT
+import { getAuth } from "../../redux/selectors"
+import { RegContainer } from "../../layout/RegLayout"
+import { createProfileRegStep } from "../../helpers/firebase"
+import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CreateProfileForm = () => {
-	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
-	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
 	const [location, setLocation] = useState("")
-	return (
-		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
-			<Box
-				sx={{
-					maxWidth: "600px",
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-					flexGrow: 1,
-					mb: 4,
-					"& > h2": { mt: 4, mb: 2 }
-				}}
-			>
-				<div style={{ marginBottom: "2rem" }}>
-					<Typography variant="h1">Welcome! Let&apos;s create your profile</Typography>
-					<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
-				</div>
+	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
 
-				<Typography variant="h2">Add an avatar</Typography>
+	return (
+		<RegContainer>
+
+			<Box sx={{ mb: 4 }}>
+				<Typography variant="h1">{"Welcome! Let's create your profile"}</Typography>
+				<Typography variant="body1">Let others get to know you better! You can do these later</Typography>
+			</Box>
+
+			<Typography variant="h2">Add an avatar</Typography>
+			<Grid container spacing={2}>
+				<Grid item>
+					<Avatar url={avatar} sx={{ width: 128, height: 128 }} />
+				</Grid>
+				<Grid item>
+					<Button variant="outlined" color="secondary">Choose Image</Button>
+					<SimpleTogglePanel title="or choose one of our defaults">
+						<DefaultAvatarPanel callback={(url) => { setAvatar(url) }} defaultAvatar={currentUser.photoURL} />
+					</SimpleTogglePanel>
+				</Grid>
+			</Grid>
+
+			<Typography variant="h2">Add your location</Typography>
+			<form>
 				<Grid container spacing={2}>
-					<Grid item>
-						<Avatar url={avatar} style={{ width: 128, height: 128 }} />
-					</Grid>
-					<Grid item>
-						<Button variant="outlined" color="secondary">Choose Image</Button>
-						<SimpleTogglePanel title="or choose one of our defaults">
-							<DefaultAvatarPanel callback={(url) => { setAvatar(url) }} defaultAvatar={currentUser.photoURL} />
-						</SimpleTogglePanel>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id="location"
+							name="location"
+							label="Location"
+							variant="outlined"
+							margin="dense"
+							value={location}
+							onChange={(e) => setLocation(e.target.value)}
+							fullWidth
+							autoFocus
+							required
+						/>
 					</Grid>
 				</Grid>
+				<Button
+					type="submit" variant="contained" color="primary"
+					sx={{ mt: 3, mx: 0, mb: 2 }}
+					onClick={(e) => {
+						e.preventDefault()
+						createProfileRegStep({
+							username: currentUser.username,
+							avatar,
+							location
+						}, { enqueueSnackbar, dispatch })
+					}}
+					disabled={(location === "")}
+				>
+					Continue
+				</Button>
+			</form>
 
-				<Typography variant="h2">Add your location</Typography>
-				<form>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								id="location"
-								name="location"
-								label="Location"
-								variant="outlined"
-								margin="dense"
-								value={location}
-								onChange={(e) => setLocation(e.target.value)}
-								fullWidth
-								autoFocus
-								required
-							/>
-						</Grid>
-					</Grid>
-					<Button
-						type="submit" variant="contained" color="primary"
-						sx={{ mt: 3, mx: 0, mb: 2 }}
-						onClick={(e) => {
-							e.preventDefault()
-							createProfileRegStep({
-								username: currentUser.username,
-								avatar,
-								location
-							}, { enqueueSnackbar, dispatch })
-						}}
-						disabled={(location === "")}
-					>
-						Continue
-					</Button>
-				</form>
-			</Box>
-		</Box>
+		</RegContainer>
 	)
 }
 

@@ -42,7 +42,7 @@ import { getLayout } from "./../../layout/ClientLayout"
 
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function EditProfile() {

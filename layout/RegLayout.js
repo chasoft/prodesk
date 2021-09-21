@@ -27,7 +27,7 @@ import { useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Box } from "@mui/material"
+import { Avatar, Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -64,13 +64,14 @@ SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
 
 export const TopLine = ({ left, center, right }) => {
 	return (
-		<Box sx={{
-			width: "100%",
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "space-between",
-			pt: 3,
-		}}
+		<Box
+			sx={{
+				width: "100%",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
+				pt: 3,
+			}}
 		>
 			<Box
 				sx={{
@@ -108,6 +109,48 @@ TopLine.propTypes = {
 	right: PropTypes.any
 }
 
+export const RegContainer = ({ children }) => {
+	return (
+		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: { xs: "flex-start", lg: "center" },
+					flexGrow: 1,
+					maxWidth: "400px",
+					mb: 4
+				}}
+			>
+				{children}
+			</Box>
+		</Box>
+	)
+}
+RegContainer.propTypes = { children: PropTypes.node }
+
+export const RegHeader = ({ icon, title }) => {
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				pt: 0, px: 0, pb: 4
+			}
+			}
+		>
+			<Avatar sx={{ margin: 1, backgroundColor: "secondary.main", }}>
+				{icon}
+			</Avatar>
+			<Typography component="h1" variant="h1">
+				{title}
+			</Typography>
+		</Box >
+	)
+}
+RegHeader.propTypes = { icon: PropTypes.node, title: PropTypes.string }
+
 export const updateFlexDirection = (props) => {
 	const dispatch = useDispatch()
 	useEffect(() => {
@@ -116,7 +159,7 @@ export const updateFlexDirection = (props) => {
 }
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function RegLayout({ children }) {

@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const MembersList = ({ dataSource, addMemberCallback }) => {

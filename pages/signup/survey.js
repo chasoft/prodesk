@@ -19,27 +19,23 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-// import { makeStyles } from "@mui/material"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
 import { Logo } from "../../components/common"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
-import InitSurveyForm from "../../components/Signup/InitSurveyForm"
 import AuthCheck from "../../components/AuthCheck"
+import InitSurveyForm from "../../components/Signup/InitSurveyForm"
+import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function NewUserSurvey() {

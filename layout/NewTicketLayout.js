@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import Head from "next/head"
@@ -27,9 +27,7 @@ import PropTypes from "prop-types"
 import React from "react"
 import makeStyles from '@mui/styles/makeStyles';
 import { Grid } from "@mui/material"
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 import Header from "./Header"
 import Footer from "./Footer"
@@ -45,7 +43,7 @@ import Footer from "./Footer"
 // }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 const useStyles = makeStyles((theme) => ({
 	root: {

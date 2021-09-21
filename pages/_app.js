@@ -19,24 +19,24 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 import Head from "next/head"
-import Router, { useRouter } from "next/router"
 import PropTypes from "prop-types"
+import Router, { useRouter } from "next/router"
+
+// MATERIAL-UI
+import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material"
+
+//THIRD-PARTY
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
-import { configureStore } from "@reduxjs/toolkit"
-import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material"
 import { SnackbarProvider } from "notistack"
+import { configureStore } from "@reduxjs/toolkit"
 
-
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
 import rootReducer from "./../redux/slices"
 import { theme } from "./../components/theme"
 
@@ -61,7 +61,7 @@ Router.events.on("routeChangeComplete", () => NProgress.done())
 Router.events.on("routeChangeError", () => NProgress.done())
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function MyApp({ Component, pageProps }) {

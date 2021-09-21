@@ -57,7 +57,7 @@ const useStyles = makeStyles({
 })
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InstallLayout({ children }) {

@@ -19,31 +19,22 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
 import { getLayout } from "./../layout/BlankLayout"
+import MainNav from "./../components/common/frontend/MainNav"
 import PromotedSearch from "./../components/common/frontend/PromotedSearch"
 import FrontAccordions from "./../components/common/frontend/FrontAccordions"
-import MainNav from "./../components/common/frontend/MainNav"
 
 /*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-/*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Home() {
-	// const smallScreen = useMediaQuery({ query: "(max-width: 959px)" })
-
 	return (
 		<>
 			<MainNav />

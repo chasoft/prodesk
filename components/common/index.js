@@ -19,37 +19,25 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
-import { Avatar, Grid, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
+
+// MATERIAL-UI
+import { styled } from "@mui/material/styles"
+import { Avatar, Box, Grid, Typography } from "@mui/material"
+
+//THIRD-PARTY
 import { motion } from "framer-motion"
+
+//PROJECT IMPORT
+
+//ASSETS
 import ExpandLessIcon from "@mui/icons-material/ExpandLess"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-
-/*****************************************************************
-* LIBRARY IMPORT                                                *
-*****************************************************************/
-
-/*****************************************************************
-* HELPERS                                                        *
-*****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	avatar: {
-		cursor: "pointer",
-		border: "1px solid transparent",
-		"&:hover": {
-			border: "1px solid",
-			borderColor: theme.palette.divider,
-			borderRadius: "50%"
-		}
-	}
-}))
 
 /*****************************************************************
  * CONTENT                                                       *
@@ -82,19 +70,23 @@ export const SignUpLink = () => {
 }
 
 export const Logo = ({ isSmall = false, theme = "light", height = "30px" }) => {
-	return (
-		<Link href="/">
-			{
-				isSmall ? <img
+	if (isSmall) {
+		return (
+			<Link href="/">
+				<img
 					src={`/ProDesk-logo-${theme}-square.png`}
 					height={height} width={height}
 					style={{ cursor: "pointer" }} />
-					: <img
-						src={`/ProDesk-logo-${theme}.png`}
-						height={height} width={Math.round(height * 5.25).toString()}
-						style={{ cursor: "pointer" }} />
-			}
+			</Link>
+		)
+	}
 
+	return (
+		<Link href="/">
+			<img
+				src={`/ProDesk-logo-${theme}.png`}
+				height={height} width={Math.round(height * 5.25).toString()}
+				style={{ cursor: "pointer" }} />
 		</Link>
 	)
 }
@@ -103,22 +95,19 @@ Logo.propTypes = { isSmall: PropTypes.bool, theme: PropTypes.string, height: Pro
 export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
-		<div style={{ marginTop: "0.5rem" }}>
-			<div
-				style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+		<Box sx={{ marginTop: "0.5rem" }}>
+			<Box
+				sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
 				onClick={() => setExpanded(p => !p)}
 			>
 				{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				{title}
-			</div>
-			{/* <Collapse in={expanded} style={{ marginLeft: "1.5rem", marginTop: "0.5rem" }}>
-				{children}
-			</Collapse> */}
+			</Box>
 
 			<motion.div animate={{ opacity: expanded ? 1 : 0 }}>
 				{children}
 			</motion.div>
-		</div>
+		</Box>
 	)
 }
 SimpleTogglePanel.propTypes = {
@@ -127,8 +116,17 @@ SimpleTogglePanel.propTypes = {
 	children: PropTypes.any,
 }
 
+export const AvatarStyle = styled((props) => <Avatar {...props} />)(({ theme }) => ({
+	cursor: "pointer",
+	border: "1px solid transparent",
+	"&:hover": {
+		border: "1px solid",
+		borderColor: theme.palette.divider,
+		borderRadius: "50%"
+	}
+}))
+
 export const DefaultAvatarPanel = ({ size = 32, callback, defaultAvatar }) => {
-	const classes = useStyles()
 	const DefaultAvatarList = [
 		{ id: 1, alt: "default avatar", url: "/default-avatar/1.png" },
 		{ id: 2, alt: "default avatar", url: "/default-avatar/2.png" },
@@ -136,17 +134,18 @@ export const DefaultAvatarPanel = ({ size = 32, callback, defaultAvatar }) => {
 		{ id: 4, alt: "default avatar", url: "/default-avatar/4.png" },
 		{ id: 5, alt: "default avatar", url: "/default-avatar/5.png" },
 	]
+
 	return (
 
 		<Grid container spacing={1} alignContent="space-between">
-			<Grid item onClick={() => callback(defaultAvatar)} className={classes.avatar}>
-				<Avatar alt="defaultAvatar" url={defaultAvatar} style={{ width: size, height: size }} />
+			<Grid item onClick={() => callback(defaultAvatar)}>
+				<AvatarStyle alt="defaultAvatar" url={defaultAvatar} sx={{ width: size, height: size }} />
 			</Grid>
 			{
 				DefaultAvatarList.map((avatar) => {
 					return (
-						<Grid item key={avatar.id} onClick={() => callback(avatar.url)} className={classes.avatar}>
-							<Avatar alt={avatar.alt} url={avatar.url} style={{ width: size, height: size }} />
+						<Grid item key={avatar.id} onClick={() => callback(avatar.url)}>
+							<AvatarStyle alt={avatar.alt} url={avatar.url} sx={{ width: size, height: size }} />
 						</Grid>
 					)
 				})

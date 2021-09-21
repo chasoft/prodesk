@@ -6,9 +6,7 @@ this will display Articles and Category for DOCS
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 import { getLayout } from "../../layout/BlankLayout"
 import Article from "../../components/Article"
@@ -21,7 +19,7 @@ import { useRouter } from "next/router"
  *****************************************************************/
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 

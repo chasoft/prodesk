@@ -196,7 +196,7 @@ const FilterFrame = ({ title, children }) => {
 FilterFrame.propTypes = { title: PropTypes.string, children: PropTypes.any }
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function ListTicketsFilter() {

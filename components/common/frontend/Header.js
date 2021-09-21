@@ -1,94 +1,56 @@
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import { alpha } from "@mui/material/styles"
-import makeStyles from "@mui/styles/makeStyles"
-import AppBar from "@mui/material/AppBar"
-import Toolbar from "@mui/material/Toolbar"
-import IconButton from "@mui/material/IconButton"
-import Typography from "@mui/material/Typography"
-import InputBase from "@mui/material/InputBase"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
 
-import Button from "@mui/material/Button"
-import MenuIcon from "@mui/icons-material/Menu"
-import SearchIcon from "@mui/icons-material/Search"
-import MoreIcon from "@mui/icons-material/MoreVert"
-import AppsIcon from "@mui/icons-material/Apps"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
+
+// MATERIAL-UI
+import { alpha } from "@mui/material/styles"
+import { AppBar, Box, Button, InputBase, IconButton, Toolbar, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { Logo } from ".."
 import { AuthFalse, AuthTrue } from "../../AuthCheck"
 import UserIcon from "../backend/UserIcon"
 
-const useStyles = makeStyles((theme) => ({
-	grow: {
-		flexGrow: 1,
-	},
-	menuButton: {
-		marginRight: theme.spacing(2),
-		[theme.breakpoints.up("sm")]: {
-			display: "none"
-		}
-	},
-	logo: {
-		[theme.breakpoints.down("md")]: {
-			display: "none"
-		}
-	},
-	title: {
-		fontWeight: 400,
-		fontSize: "1.25rem"
-	},
-	search: {
-		position: "relative",
-		borderRadius: theme.shape.borderRadius,
-		backgroundColor: alpha(theme.palette.common.white, 0.15),
-		"&:hover": {
-			backgroundColor: alpha(theme.palette.common.white, 0.25),
-		},
-		marginRight: theme.spacing(2),
-		marginLeft: 0,
-		width: "100%",
-		[theme.breakpoints.up("sm")]: {
-			marginLeft: theme.spacing(3),
-			width: "auto",
-		},
-	},
-	searchIcon: {
-		padding: theme.spacing(0, 2),
-		height: "100%",
-		position: "absolute",
-		pointerEvents: "none",
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	inputRoot: {
-		color: "inherit",
-	},
-	inputInput: {
-		padding: theme.spacing(1, 1, 1, 0),
-		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-		transition: theme.transitions.create("width"),
-		width: "100%",
-		[theme.breakpoints.up("md")]: {
-			width: "20ch",
-		},
-	},
-	sectionDesktop: {
-		display: "none",
-		alignItems: "center",
-		[theme.breakpoints.up("md")]: {
-			display: "flex",
-		},
-	},
-	sectionMobile: {
-		display: "flex",
-		[theme.breakpoints.up("md")]: {
-			display: "none",
-		},
-	},
-}))
+//ASSETS
+import MenuIcon from "@mui/icons-material/Menu"
+import SearchIcon from "@mui/icons-material/Search"
+import MoreIcon from "@mui/icons-material/MoreVert"
+import AppsIcon from "@mui/icons-material/Apps"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 function Header() {
-	const classes = useStyles()
 	const [scrolled, setScrolled] = useState(false)
 
 	const animateHeader = () => {
@@ -106,38 +68,77 @@ function Header() {
 
 				<IconButton
 					edge="start"
-					className={classes.menuButton}
 					color="inherit"
 					aria-label="open drawer"
-					size="large">
+					size="large"
+					sx={{
+						mr: 2,
+						display: { xs: "block", sm: "none" }
+					}}
+				>
 					<MenuIcon />
 				</IconButton>
 
-				<div className={classes.logo}>
+				<Box sx={{ display: { xs: "none", md: "block" } }}>
 					<Logo />
-				</div>
+				</Box>
 
-				<Typography className={classes.title} noWrap>
+				<Typography
+					noWrap
+					sx={{
+						fontWeight: 400,
+						fontSize: "1.25rem"
+					}}
+				>
 					Your Elegant &amp; Powerful Ticket System
 				</Typography>
 
-				<div className={classes.search}>
-					<div className={classes.searchIcon}>
+				<Box
+					sx={{
+						position: "relative",
+						borderRadius: (theme) => theme.shape.borderRadius,
+						backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
+						"&:hover": {
+							backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
+						},
+						mr: 2,
+						ml: { xs: 0, sm: 3 },
+						width: { xs: "100%", sm: "auto" },
+					}}
+				>
+					<Box
+						sx={{
+							padding: (theme) => theme.spacing(0, 2),
+							height: "100%",
+							position: "absolute",
+							pointerEvents: "none",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+					>
 						<SearchIcon />
-					</div>
+					</Box>
 					<InputBase
 						placeholder="Search…"
-						classes={{
-							root: classes.inputRoot,
-							input: classes.inputInput,
+						sx={{
+							padding: 1,
+							paddingLeft: "3rem",
+							transition: (theme) => theme.transitions.create("width"),
+							width: { xs: "100%", md: "20ch" },
 						}}
 						inputProps={{ "aria-label": "search" }}
 					/>
-				</div>
+				</Box>
 
-				<div className={classes.grow} />
+				<Box sx={{ flexGrow: 1 }} />
 
-				<div className={classes.sectionDesktop}>
+				<Box
+					sx={{
+						display: { xs: "none", md: "flex" },
+						alignItems: "center",
+					}}
+				>
 					<IconButton aria-label="show 17 new notifications" color="inherit" size="large">
 						<AppsIcon />
 					</IconButton>
@@ -154,11 +155,9 @@ function Header() {
 						<UserIcon />
 					</AuthTrue>
 
-				</div>
+				</Box>
 
-
-
-				<div className={classes.sectionMobile}>
+				<Box sx={{ display: { xs: "flex", md: "none" } }}>
 					<IconButton
 						aria-label="show more"
 						// aria-controls={mobileMenuId}
@@ -168,7 +167,7 @@ function Header() {
 						size="large">
 						<MoreIcon />
 					</IconButton>
-				</div>
+				</Box>
 
 			</Toolbar>
 		</AppBar>

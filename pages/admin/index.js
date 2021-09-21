@@ -41,7 +41,7 @@ import updateUiSettings from "../../helpers/updateUiSettings"
 
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Admin() {
@@ -55,6 +55,7 @@ function Admin() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Index</Typography>
+
 		</Container>
 	)
 }

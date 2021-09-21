@@ -19,66 +19,62 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
-import FingerprintIcon from "@mui/icons-material/Fingerprint"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Avatar, Box, Typography } from "@mui/material"
+
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		alignItems: "center"
-	},
-	leftAvatar: {
-		marginRight: theme.spacing(1)
-	},
-	rightContent: {
-		display: "flex",
-		flexDirection: "column",
-		[theme.breakpoints.down("xl")]: {
-			display: "none",
-		},
-	},
-	MuiTypography: {
-		caption: {
-			whiteSpace: "nowrap"
-		}
-	},
-	MuiAvatar: {
-		root: {
-			width: theme.spacing(3),
-			height: theme.spacing(3),
-		}
-	}
-}))
+// const useStyles = makeStyles((theme) => ({
+// 	MuiTypography: {
+// 		caption: {
+// 			whiteSpace: "nowrap"
+// 		}
+// 	},
+// 	MuiAvatar: {
+// 		root: {
+// 			width: theme.spacing(3),
+// 			height: theme.spacing(3),
+// 		}
+// 	}
+// }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const UserInfo = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
-			<div item className={classes.leftAvatar}>
-				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" className={classes.small} />
-			</div>
-			<div item className={classes.rightContent}>
+		<Box
+			sx={{
+				display: "flex",
+				alignItems: "center"
+			}}
+		>
+
+			<Box sx={{ mr: 1 }}>
+				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+			</Box>
+
+			<Box
+				sx={{
+					flexDirection: "column",
+					display: { xs: "none", xl: "flex" }
+				}}
+			>
 				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">Camille V.</Typography>
 				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">Techical Supporter</Typography>
-			</div>
-		</div>
+			</Box>
+
+		</Box>
 	)
 }
 

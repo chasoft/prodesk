@@ -42,7 +42,7 @@ import updateUiSettings from "../../../../helpers/updateUiSettings"
 
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function ApplicationSettingsAds() {

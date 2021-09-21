@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
@@ -31,9 +31,7 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import LinkIcon from "@mui/icons-material/Link"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
@@ -66,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ThreadMessageHeader = () => {

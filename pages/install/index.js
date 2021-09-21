@@ -37,7 +37,7 @@ import { setRedirect } from "../../redux/slices/redirect"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Install() {

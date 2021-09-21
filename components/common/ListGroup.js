@@ -27,8 +27,8 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import makeStyles from "@mui/styles/makeStyles"
-import { Paper, Typography } from "@mui/material"
+import { styled } from "@mui/material/styles"
+import { Box, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -40,74 +40,51 @@ import { Paper, Typography } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-	paper: {
-		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("md")]: {
-			marginTop: theme.spacing(3),
-		},
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-	group: {
-		margin: "1.5rem 0",
-		[theme.breakpoints.down("md")]: {
-			margin: "1.625rem 0",
-		},
-		marginBottom: 0
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		}
-	},
-	link: {
-		display: "flex",
-		alignItems: "center",
-		color: theme.palette.primary.main,
-		cursor: "pointer",
-		"&:hover": {
-			textDecoration: "underline"
-		}
-	}
-}))
+const RootStyle = styled(Box)({
+	marginTop: { xs: 3, md: 8 },
+	display: "flex",
+	flexDirection: "column",
+	alignItems: "center",
+})
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
-	const classes = useStyles()
 	return (
-		<div className={classes.paper}>
-			<div className={classes.root}>
+		<RootStyle>
+			<div style={{ width: "100%" }}>
 
 				<Typography variant="h2">{title}</Typography>
-				{
-					viewAllLink ?
-						<Link href={viewAllLink} className={classes.viewAll}>
-							<a className={classes.link}>
-								<Typography variant="button">{viewAllText}</Typography>
-							</a>
-						</Link>
-						: null
-				}
 
-				<Paper elevation={2} className={classes.group}>
+				{viewAllLink ?
+					<Link
+						href={viewAllLink}
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							color: "primary.main",
+							cursor: "pointer",
+							"&:hover": {
+								textDecoration: "underline"
+							}
+						}}
+					>
+						<a>
+							<Typography variant="button">{viewAllText}</Typography>
+						</a>
+					</Link> : null}
+
+				<Paper
+					elevation={2}
+					sx={{ margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" } }}
+				>
 					{children}
 				</Paper>
 
 			</div>
-		</div>
+		</RootStyle >
 	)
 }
 ListGroup.propTypes = {

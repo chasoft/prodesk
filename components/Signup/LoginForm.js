@@ -27,29 +27,26 @@ import React from "react"
 
 // MATERIAL-UI
 import {
-	Avatar,
-	Box,
 	Button,
 	Checkbox,
 	FormControlLabel,
 	Grid,
 	TextField,
-	Typography,
 } from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { ForgotPasswordLink, SignUpLink } from "../common"
-import { updateFlexDirection } from "./../../layout/RegLayout"
+import { signInWithEmail } from "./../../helpers/userAuthentication"
+import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import { signInWithEmail } from "./../../helpers/userAuthentication"
-import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
@@ -65,7 +62,7 @@ const validationSchema = yup.object({
 })
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const LoginForm = () => {
@@ -89,101 +86,79 @@ const LoginForm = () => {
 	updateFlexDirection({ payload: "row" })
 
 	return (
-		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: { xs: "flex-start", lg: "center" },
-					flexGrow: 1,
-					maxWidth: "400px",
-					mb: 8
-				}}
-			>
+		<RegContainer>
 
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						pt: 0, px: 0, pb: 4
-					}}
-				>
-					<Avatar sx={{ margin: 1, backgroundColor: "secondary.main" }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h1">
-						Login
-					</Typography>
-				</Box>
+			<RegHeader
+				icon={<LockOutlinedIcon />}
+				title="Login"
+			/>
 
-				<form onSubmit={formik.handleSubmit}>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								id="username"
-								name="username"
-								label="Username or Email address"
-								variant="outlined"
-								autoComplete="username"
-								value={formik.values.username}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								error={formik.touched.username && Boolean(formik.errors.username)}
-								helperText={formik.touched.username && formik.errors.username}
-								fullWidth
-								required
-								autoFocus
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								id="password"
-								name="password"
-								label="Password"
-								type="password"
-								variant="outlined"
-								autoComplete="current-password"
-								value={formik.values.password}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								error={formik.touched.password && Boolean(formik.errors.password)}
-								helperText={formik.touched.password && formik.errors.password}
-								required
-								fullWidth
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<FormControlLabel
-								control={<Checkbox value="remember" color="primary" />}
-								label="Remember me"
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<Button
-								fullWidth
-								type="submit"
-								variant="contained"
-								color="primary"
-								sx={{ mt: 0, mx: 0, mb: 2 }}
-								disabled={!(formik.isValid && formik.dirty)}
-							>
-								Login
-							</Button>
-						</Grid>
+			<form onSubmit={formik.handleSubmit}>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<TextField
+							id="username"
+							name="username"
+							label="Username or Email address"
+							variant="outlined"
+							autoComplete="username"
+							value={formik.values.username}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.username && Boolean(formik.errors.username)}
+							helperText={formik.touched.username && formik.errors.username}
+							fullWidth
+							required
+							autoFocus
+						/>
 					</Grid>
-				</form>
-				<Grid container>
-					<Grid item xs>
-						<ForgotPasswordLink />
+					<Grid item xs={12}>
+						<TextField
+							id="password"
+							name="password"
+							label="Password"
+							type="password"
+							variant="outlined"
+							autoComplete="current-password"
+							value={formik.values.password}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.password && Boolean(formik.errors.password)}
+							helperText={formik.touched.password && formik.errors.password}
+							required
+							fullWidth
+						/>
 					</Grid>
-					<Grid item sx={{ display: { xs: "initial", lg: "none" } }}>
-						<SignUpLink />
+					<Grid item xs={12}>
+						<FormControlLabel
+							control={<Checkbox value="remember" color="primary" />}
+							label="Remember me"
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<Button
+							fullWidth
+							type="submit"
+							variant="contained"
+							color="primary"
+							sx={{ mt: 0, mx: 0, mb: 2 }}
+							disabled={!(formik.isValid && formik.dirty)}
+						>
+							Login
+						</Button>
 					</Grid>
 				</Grid>
+			</form>
+			<Grid container>
+				<Grid item xs>
+					<ForgotPasswordLink />
+				</Grid>
+				<Grid item sx={{ display: { xs: "initial", lg: "none" } }}>
+					<SignUpLink />
+				</Grid>
+			</Grid>
 
-			</Box>
-		</Box>
+		</RegContainer>
 	)
 }
 

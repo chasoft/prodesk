@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
@@ -30,9 +30,7 @@ import CategoryGroupItem from "./CategoryGroupItem"
 import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
 import LatestFAQs from "../common/backend/client/LatestFAQs"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
@@ -67,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CategoryGroup = () => {

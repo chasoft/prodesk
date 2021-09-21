@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React, { useEffect, useRef, useState } from "react"
@@ -34,9 +34,7 @@ import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent"
 import Typography from "@mui/material/Typography"
 import UserInfo from "./../../components/common/UserInfo"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
@@ -74,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const HistoryTimeline = () => {

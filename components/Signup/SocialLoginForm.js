@@ -26,31 +26,27 @@ import React from "react"
 
 // MATERIAL-UI
 import {
-	Avatar,
+	Box,
 	Button,
 	Checkbox,
 	FormControlLabel,
 	Grid,
-	Box,
-	TextField,
-	Typography,
-
+	TextField
 } from "@mui/material"
 
 //THIRD-PARTY
-import { useFormik } from "formik"
 import * as yup from "yup"
+import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "../common"
-import { updateFlexDirection } from "./../../layout/RegLayout"
 import { regRule } from "../../helpers/regex"
-import { isUsernameAvailable } from "../../helpers/firebase"
-import { useSnackbar } from "notistack"
-import { signUpViaSocialAccount } from "../../helpers/userAuthentication"
 import { getAuth } from "../../redux/selectors"
-import { useSelector } from "react-redux"
-// import { useRouter } from "next/router"
+import { isUsernameAvailable } from "../../helpers/firebase"
+import { signUpViaSocialAccount } from "../../helpers/userAuthentication"
+import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
@@ -77,7 +73,7 @@ const validationSchema = yup.object({
 })
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const SocialLoginForm = () => {
@@ -117,113 +113,93 @@ const SocialLoginForm = () => {
 	})
 
 	return (
-		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1, }}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-					flexGrow: 1,
-					maxWidth: "400px",
-					mb: 4
-				}}
-			>
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						pt: 0, px: 0, pb: 4
-					}}
+		<RegContainer>
+
+			<RegHeader
+				icon={<LockOutlinedIcon />}
+				title="Sign up"
+			/>
+
+			<form onSubmit={formik.handleSubmit}>
+				<Grid container spacing={2}>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							id="name"
+							name="name"
+							label="Name"
+							value={formik.values.name}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.name && Boolean(formik.errors.name)}
+							helperText={formik.touched.name && formik.errors.name}
+							variant="outlined"
+							autoFocus
+							required
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							fullWidth
+							id="userName"
+							name="username"
+							label="Username"
+							value={formik.values.username}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={formik.touched.username && Boolean(formik.errors.username)}
+							helperText={formik.touched.username && formik.errors.username}
+							variant="outlined"
+							required
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<TextField
+							fullWidth
+							id="email"
+							name="email"
+							label="Email Address"
+							value={formik.values.email}
+							variant="outlined"
+							disabled
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<FormControlLabel
+							control={
+								<Checkbox
+									id="agreement"
+									name="agreement"
+									checked={formik.values.agreement}
+									onChange={formik.handleChange}
+									error={Boolean(formik.errors.agreement)}
+									color="primary"
+								/>
+							}
+							label="I want to receive inspiration, marketing promotions and updates via email."
+						/>
+					</Grid>
+				</Grid>
+
+				<Button
+					fullWidth
+					type="submit" variant="contained" color="primary"
+					sx={{ mt: 3, mx: 0, mb: 2 }}
+					disabled={!(formik.isValid && formik.dirty)}
 				>
-					<Avatar sx={{ m: 1, backgroundColor: "secondary.main" }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h1">
-						Sign up
-					</Typography>
-				</Box>
-				<form onSubmit={formik.handleSubmit}>
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								fullWidth
-								id="name"
-								name="name"
-								label="Name"
-								value={formik.values.name}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								error={formik.touched.name && Boolean(formik.errors.name)}
-								helperText={formik.touched.name && formik.errors.name}
-								variant="outlined"
-								autoFocus
-								required
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								fullWidth
-								id="userName"
-								name="username"
-								label="Username"
-								value={formik.values.username}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								error={formik.touched.username && Boolean(formik.errors.username)}
-								helperText={formik.touched.username && formik.errors.username}
-								variant="outlined"
-								required
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								id="email"
-								name="email"
-								label="Email Address"
-								value={formik.values.email}
-								variant="outlined"
-								disabled
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										id="agreement"
-										name="agreement"
-										checked={formik.values.agreement}
-										onChange={formik.handleChange}
-										error={Boolean(formik.errors.agreement)}
-										color="primary"
-									/>
-								}
-								label="I want to receive inspiration, marketing promotions and updates via email."
-							/>
+					Create Account
+				</Button>
+
+				<Box sx={{ display: { md: "none", xs: "block" } }}>
+					<Grid container justifyContent="flex-end">
+						<Grid item>
+							<LoginLink />
 						</Grid>
 					</Grid>
+				</Box>
 
-					<Button
-						fullWidth
-						type="submit" variant="contained" color="primary"
-						sx={{ mt: 3, mx: 0, mb: 2 }}
-						disabled={!(formik.isValid && formik.dirty)}
-					>
-						Create Account
-					</Button>
-
-					<Box sx={{ display: { md: "none", xs: "block" } }}>
-						<Grid container justifyContent="flex-end">
-							<Grid item>
-								<LoginLink />
-							</Grid>
-						</Grid>
-					</Box>
-
-				</form>
-			</Box>
-		</Box>
+			</form>
+		</RegContainer>
 	)
 }
 

@@ -18,23 +18,20 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
+//PROJECT IMPORT
 
 import React from "react"
-import Head from "next/head"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { Box } from "@mui/system"
+import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import AvatarList from "../../common/AvatarList"
+import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../common/SettingsPanel"
 
 //PROJECT IMPORT
-import { getRootLayout } from "./RootLayout"
-import Footer from "../components/common/Footer"
-import Header from "../components/common/frontend/Header"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,33 +41,87 @@ import Header from "../components/common/frontend/Header"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function BlankLayout({ children }) {
+const CannedRepliesOverview = ({ dataCannedReplies, callback }) => {
+	if (dataCannedReplies.length === 0) {
+		return (
+			<SettingsContent>
+				<SettingsContentHeader>
+					Canned replies overview
+				</SettingsContentHeader>
+
+				<Container sx={{ pt: { xs: 3, sm: 2 } }}>
+					<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }} >
+						<Typography>
+							You have no canned replies at the moment.
+						</Typography>
+					</div>
+				</Container>
+			</SettingsContent >
+		)
+	}
+
 	return (
-		<>
-			<Head>
-				<title>Site Layout</title>
-				<meta name="description" content="Site Layout Description" />
-			</Head>
+		<SettingsContent>
 
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					minHeight: "100vh",
-				}}
-			>
-				<Header />
+			<SettingsContentHeader>
+				Departments overview
+			</SettingsContentHeader>
 
-				{children}
+			<SettingsContentHelper>
+				<SettingsContentHelperText>
+					Department Overview Department Overview Department Overview Department Overview Department Overview
+					Department Overview Department Overview Department Overview Department Overview Department Overview
+				</SettingsContentHelperText>
+				<SettingsContentHelperText>
+					Department Overview Department Overview Department Overview Department Overview Department Overview
+					Department Overview
+				</SettingsContentHelperText>
+			</SettingsContentHelper>
 
-				<Footer />
-			</Box>
-		</>
+			{dataCannedReplies.map((item) => (
+				<Box
+					key={item.id}
+					onClick={() => callback(item.id)}
+					sx={{
+						display: "flex",
+						p: 3,
+						":hover": {
+							cursor: "pointer",
+							bgcolor: "action.hover",
+						},
+						":last-child:hover": {
+							borderBottomRightRadius: "0.5rem",
+						},
+					}}
+				>
+					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+						<Typography variant="h3" style={{ margin: 0 }}>{item.department}</Typography>
+						<Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+							<Typography variant="caption" sx={{ margin: 0 }}>
+								{item.description}
+								{item.description ? <>&nbsp; | &nbsp; </> : null}
+							</Typography>
+
+							<Typography variant="caption" style={{ margin: 0 }}>
+								{item.members.length} members
+							</Typography>
+						</Box>
+					</Box>
+
+					<Box sx={{ display: "flex", alignItems: "center" }}>
+						<AvatarList dataSource={item.members} />
+					</Box>
+
+				</Box>
+			))}
+
+		</SettingsContent>
 	)
 }
 
-BlankLayout.propTypes = { children: PropTypes.node }
+CannedRepliesOverview.propTypes = {
+	dataCannedReplies: PropTypes.array,
+	callback: PropTypes.func,
+}
 
-export const getLayout = page => getRootLayout(<BlankLayout>{page}</BlankLayout>)
-
-export default BlankLayout
+export default CannedRepliesOverview

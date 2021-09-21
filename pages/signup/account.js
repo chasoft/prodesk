@@ -19,26 +19,23 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
+import AuthCheck from "../../components/AuthCheck"
 import { LoginLink, Logo } from "../../components/common"
 import { getLayout, TopLine } from "../../layout/RegLayout"
 import SocialLoginForm from "../../components/Signup/SocialLoginForm"
-import AuthCheck from "../../components/AuthCheck"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function SocialSignup() {

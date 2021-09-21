@@ -35,9 +35,10 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getAuth } from "../../redux/selectors"
 import { doInitSurvey } from "../../helpers/firebase"
+import { RegContainer } from "../../layout/RegLayout"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 // const AnOption = () => {
@@ -72,67 +73,57 @@ const InitSurveyForm = () => {
 	})
 
 	return (
-		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-					flexGrow: 1,
-					mb: 4,
-				}}
-			>
+		<RegContainer>
 
-				<div style={{ marginBottom: "2rem" }}>
-					<Typography variant="h1">What brings you to ProDesk</Typography>
-					<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
-				</div>
+			<div style={{ marginBottom: "2rem" }}>
+				<Typography variant="h1">What brings you to ProDesk</Typography>
+				<Typography variant="body1">Select the options that best describe you. Don&apos;t worry, you can explore other options later.</Typography>
+			</div>
 
-				<form onSubmit={formik.handleSubmit}>
-					<Box
-						sx={{
-							display: "flex",
-							flexWrap: "wrap",
-							justifyContent: "center",
-							"& > *": {
-								m: 1,
-								width: (theme) => theme.spacing(16),
-								height: (theme) => theme.spacing(16),
-							},
-							px: 2, py: 4
-						}}
+			<form onSubmit={formik.handleSubmit}>
+				<Box
+					sx={{
+						display: "flex",
+						flexWrap: "wrap",
+						justifyContent: "center",
+						"& > *": {
+							m: 1,
+							width: (theme) => theme.spacing(16),
+							height: (theme) => theme.spacing(16),
+						},
+						px: 2, py: 4
+					}}
+				>
+					<RadioGroup
+						name="surveyOptions"
+						value={formik.values.surveyOptions}
+						onChange={formik.handleChange}
 					>
-						<RadioGroup
-							name="surveyOptions"
-							value={formik.values.surveyOptions}
-							onChange={formik.handleChange}
-						>
-							<Paper>
-								<FormControlLabel
-									label="Option 1" control={<Radio />}
-									value="Option1"
-								/>
-							</Paper>
-							<Paper>
-								<FormControlLabel
-									label="Option 2" control={<Radio />}
-									value="Option2"
-								/>
-							</Paper>
-							<Paper>
-								<FormControlLabel
-									label="Option 3" control={<Radio />}
-									value="Option3"
-								/>
-							</Paper>
-						</RadioGroup>
-					</Box>
+						<Paper>
+							<FormControlLabel
+								label="Option 1" control={<Radio />}
+								value="Option1"
+							/>
+						</Paper>
+						<Paper>
+							<FormControlLabel
+								label="Option 2" control={<Radio />}
+								value="Option2"
+							/>
+						</Paper>
+						<Paper>
+							<FormControlLabel
+								label="Option 3" control={<Radio />}
+								value="Option3"
+							/>
+						</Paper>
+					</RadioGroup>
+				</Box>
 
-					<Button type="submit" variant="contained" color="primary">Finish</Button>
-				</form>
+				<Button type="submit" variant="contained" color="primary">Finish</Button>
+			</form>
 
-			</Box>
-		</Box>
+		</RegContainer>
 	)
 }
 

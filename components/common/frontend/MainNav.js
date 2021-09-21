@@ -1,82 +1,95 @@
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React from "react"
-import makeStyles from "@mui/styles/makeStyles"
-import withStyles from "@mui/styles/withStyles"
-// import Paper from "@mui/material/Paper"
-import Tabs from "@mui/material/Tabs"
-import Tab from "@mui/material/Tab"
-import { Grid, IconButton, Typography } from "@mui/material"
-import NavLink from "./NavLink"
 import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Box, Grid } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import NavLink from "./NavLink"
 import { AuthTrue } from "../../AuthCheck"
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		alignItems: "center",
-		padding: "0 1rem",
-		"a[aria-current]": {
-			backgroundColor: "transparent",
-		}
-	},
-	middleContent: {
-		flexGrow: 1,
-	},
-	tabs: {
-		marginLeft: theme.spacing(2),
-		[theme.breakpoints.down("md")]: {
-			marginLeft: theme.spacing(1),
-		},
-	},
-	link: {
-		color: "#5f6368",
-		lineHeight: "3rem",
-		fontSize: ".875rem",
-		fontWeight: 500,
-		padding: theme.spacing(2) - 3,
-		marginRight: theme.spacing(1),
-		[theme.breakpoints.down("md")]: {
-			paddingRight: theme.spacing(1),
-			paddingLeft: theme.spacing(1)
-		},
-	},
-	linkCurrent: {
-		color: "#1a73e8",
-		lineHeight: "3rem",
-		fontSize: ".875rem",
-		fontWeight: 500,
-		borderBottom: "2px solid #1a73e8",
-		padding: theme.spacing(2) - 1,
-		paddingLeft: 1,
-		paddingRight: 1,
-		marginRight: theme.spacing(1),
-		[theme.breakpoints.down("md")]: {
-			paddingRight: theme.spacing(1),
-			paddingLeft: theme.spacing(1)
-		},
-	},
-	iii: {
-		borderBottom: "2px solid #1a73e8",
-		padding: theme.spacing(2) - 2,
+//ASSETS
 
-	},
-	borderBottom: {
-		borderBottom: ".0625rem solid #dadce0",
-	}
-}))
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 const MainNav = ({ borderBottom = false }) => {
-	const classes = useStyles()
-
 	return (
-		<Grid container className={`${classes.root} ${borderBottom ? classes.borderBottom : null}`} >
-			<Grid item className={classes.leftAvatar}>
-				<NavLink href="/" passHref ><span className={classes.linkCurrent}>
-					<span className={classes.iii}>Help Center</span></span>
+		<Grid
+			container
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				padding: "0 1rem",
+				"a[aria-current]": {
+					backgroundColor: "transparent",
+				},
+				...(borderBottom && {
+					borderBottom: ".0625rem solid #dadce0",
+				})
+			}}
+		>
+			<Grid item>
+				<NavLink href="/" passHref >
+					<Box
+						component="span"
+						sx={{
+							color: "#1a73e8",
+							lineHeight: "3rem",
+							fontSize: ".875rem",
+							fontWeight: 500,
+							borderBottom: "2px solid #1a73e8",
+							padding: 2,
+							px: 1,
+							mr: 1,
+						}}
+					>
+						<Box
+							component="span"
+							sx={{
+								borderBottom: "2px solid #1a73e8",
+								padding: (theme) => theme.spacing(2) - 2,
+							}}
+						>
+							Help Center
+						</Box>
+					</Box>
 				</NavLink>
 
 				<AuthTrue>
 					<NavLink href="/public-tickets" passHref>
-						<span className={classes.link}>Public Tickets</span>
+						<span>Public Tickets</span>
 					</NavLink>
 				</AuthTrue>
 
@@ -88,13 +101,26 @@ const MainNav = ({ borderBottom = false }) => {
 				*/}
 
 				<NavLink href="/faqs" passHref>
-					<span className={classes.link}>Frequently Asked Questions</span>
+					<Box
+						component="span"
+						sx={{
+							color: "#5f6368",
+							lineHeight: "3rem",
+							fontSize: ".875rem",
+							fontWeight: 500,
+							padding: (theme) => theme.spacing(2) - 3,
+							mr: 1,
+							px: { xs: "1", md: (theme) => theme.spacing(2) - 3 }
+						}}
+					>
+						Frequently Asked Questions
+					</Box>
 				</NavLink>
 			</Grid>
-			<Grid item className={classes.middleContent}>
+			<Grid item>
 
 			</Grid>
-			<Grid item className={classes.rightMenu}>
+			<Grid item>
 
 
 			</Grid>

@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const RecentActivities = () => {

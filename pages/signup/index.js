@@ -31,7 +31,7 @@ import { getLayout, TopLine } from "../../layout/RegLayout"
 import SignupForm from "../../components/Signup/SignupForm"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Signup() {

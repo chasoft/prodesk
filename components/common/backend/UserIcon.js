@@ -4,127 +4,33 @@
  *****************************************************************/
 
 import React, { useState } from "react"
-import Link from "next/link"
 
 // MATERIAL-UI
-import {
-	Avatar,
-	Box,
-	Tooltip,
-	Chip,
-	ClickAwayListener,
-	Divider,
-	Grid,
-	IconButton,
-	List,
-	ListItemIcon,
-	ListItemText,
-	Paper,
-	Popover,
-	Popper,
-	Typography,
-} from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
-import { useDispatch, useSelector } from "react-redux"
-import { getAuth } from "../../../redux/selectors"
+import { Avatar, Box, Tooltip, IconButton, Popover, Typography, } from "@mui/material"
 
 //THIRD-PARTY
-
+import { useSnackbar } from "notistack"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-
+import { getAuth } from "../../../redux/selectors"
+import { setRedirect } from "../../../redux/slices/redirect"
+import { AuthAdminTrue, AuthUserTrue } from "../../AuthCheck"
+import { signOut } from "../../../helpers/userAuthentication"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
-import { useTheme } from "@mui/styles"
-import { useSnackbar } from "notistack"
-import { signOut } from "../../../helpers/userAuthentication"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
-import { AuthAdminTrue, AuthUserTrue } from "../../AuthCheck"
-import { setRedirect } from "../../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	typography: {
-		padding: theme.spacing(2)
-	},
-	box: {
-		padding: theme.spacing(0),
-		width: "300px"
-	},
-	info: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-		padding: theme.spacing(3, 2, 0),
-
-	},
-	avatar: {
-		height: theme.spacing(11),
-		width: theme.spacing(11)
-	},
-	avatarIcon: {
-		height: theme.spacing(3),
-		width: theme.spacing(3)
-	},
-	widget: {
-		padding: theme.spacing(1, 3, 1)
-	},
-	menu: {
-		borderTop: "1px solid #E8EAED",
-		borderBottom: "1px solid #E8EAED",
-		padding: theme.spacing(0),
-		fontSize: "0.875rem",
-		listStyle: "none",
-		marginBottom: 0,
-		"& > li": {
-			display: "flex",
-			alignItems: "center",
-			fontWeight: 500,
-			color: "#3c4043",
-			padding: theme.spacing(1.5, 3, 1.5),
-			"& > svg": {
-				marginRight: theme.spacing(1),
-				color: "#5F6368",
-				width: theme.spacing(3),
-				height: theme.spacing(3)
-			}
-
-		},
-		"& > li:hover": {
-			backgroundColor: "#F7F8F8",
-			cursor: "pointer",
-		}
-	},
-	terms: {
-		display: "flex",
-		justifyContent: "center",
-		alignItems: "center",
-		marginTop: theme.spacing(2)
-		// padding: theme.spacing(0, 3, 0.5),
-		// "& > *": {
-		// 	margin: theme.spacing(0.5)
-		// }
-	},
-	link: {
-		color: theme.palette.primary.main,
-		padding: theme.spacing(0.5),
-		"&:hover": {
-			backgroundColor: "#f7f8f8",
-			cursor: "pointer",
-		}
-	}
-}))
-
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const UserIcon = () => {
-	const classes = useStyles()
 	const [anchorEl, setAnchorEl] = useState(null)
 
 	const dispatch = useDispatch()
@@ -139,9 +45,10 @@ const UserIcon = () => {
 	return <>
 		<Tooltip title="User Menu" placement="bottom">
 			<IconButton onClick={handleClick} size="large">
-				<Avatar src="/img/default-avatar.png" className={classes.avatarIcon} />
+				<Avatar src="/img/default-avatar.png" sx={{ height: (theme) => theme.spacing(3), width: (theme) => theme.spacing(3) }} />
 			</IconButton>
 		</Tooltip>
+
 		<Popover
 			id={id}
 			open={open}
@@ -157,15 +64,50 @@ const UserIcon = () => {
 			}}
 			elevation={4}
 		>
-			<Box className={classes.box}>
-				<div className={classes.info}>
-					<Avatar src="/img/default-avatar.png" className={classes.avatar} />
+			<Box sx={{ padding: 0, width: "300px" }}>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						padding: (theme) => theme.spacing(3, 2, 0),
+					}}
+				>
+					<Avatar src="/img/default-avatar.png" sx={{ height: (theme) => theme.spacing(11), width: (theme) => theme.spacing(11) }} />
 					<Typography variant="button">{currentUser.displayName}</Typography>
 					<Typography variant="caption">{currentUser.email}</Typography>
 					<Typography variant="caption">{currentUser.group} {currentUser?.role ? <> | {currentUser?.role}</> : null}</Typography>
-				</div>
+				</Box>
 
-				<ul className={classes.menu}>
+				<Box
+					component="ul"
+					sx={{
+						borderTop: "1px solid #E8EAED",
+						borderBottom: "1px solid #E8EAED",
+						p: 0,
+						fontSize: "0.875rem",
+						listStyle: "none",
+						mb: 2,
+						"& > li": {
+							display: "flex",
+							alignItems: "center",
+							fontWeight: 500,
+							color: "#3c4043",
+							padding: (theme) => theme.spacing(1.5, 3, 1.5),
+							"& > svg": {
+								mr: 1,
+								color: "#5F6368",
+								width: (theme) => theme.spacing(3),
+								height: (theme) => theme.spacing(3)
+							}
+
+						},
+						"& > li:hover": {
+							backgroundColor: "#F7F8F8",
+							cursor: "pointer",
+						}
+					}}
+				>
 					<AuthAdminTrue>
 						<li onClick={() => { dispatch(setRedirect("/admin")) }}><SettingsIcon />Admin Dashboard</li>
 					</AuthAdminTrue>
@@ -174,10 +116,7 @@ const UserIcon = () => {
 					</AuthUserTrue>
 					<li><SettingsIcon />Profile Settings</li>
 					<li onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}><ExitToAppIcon />Logout</li>
-				</ul>
-				<div className={classes.terms}>
-					{/* <Typography className={classes.link}>Terms</Typography> • <Typography className={classes.link}>Privacy</Typography> */}
-				</div>
+				</Box>
 			</Box>
 
 		</Popover>

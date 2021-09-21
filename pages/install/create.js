@@ -83,7 +83,7 @@ const validationSchema = yup.object({
 })
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function CreateSuperAdmin() {

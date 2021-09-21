@@ -19,26 +19,23 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
-
+//PROJECT IMPORT
 import { Logo } from "../../components/common"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
-import CreateProfileForm from "../../components/Signup/CreateProfileForm"
 import AuthCheck from "../../components/AuthCheck"
+import CreateProfileForm from "../../components/Signup/CreateProfileForm"
+import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InitProfile() {

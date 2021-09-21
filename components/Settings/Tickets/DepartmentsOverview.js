@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -18,40 +18,32 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
-import { Typography } from "@mui/material"
+import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import AvatarList from "../../common/AvatarList"
-import { SettingsContent, SettingsContentHelper, SettingsContentHelperText } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../common/SettingsPanel"
 
 //PROJECT IMPORT
 
 //ASSETS
+import PublicIcon from "@mui/icons-material/Public"
+import FingerprintIcon from "@mui/icons-material/Fingerprint"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-	},
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const DepartmentsOverview = ({ dataDepartments, callback }) => {
-	const classes = useStyles()
-
 	if (dataDepartments.length === 0) {
 		return (
 			<SettingsContent>
@@ -67,49 +59,88 @@ const DepartmentsOverview = ({ dataDepartments, callback }) => {
 	return (
 		<SettingsContent>
 
+			<SettingsContentHeader>
+				Departments overview
+			</SettingsContentHeader>
+
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
+					Department Overview Department Overview Department Overview Department Overview Department Overview
+					Department Overview Department Overview Department Overview Department Overview Department Overview
+				</SettingsContentHelperText>
+				<SettingsContentHelperText>
+					Department Overview Department Overview Department Overview Department Overview Department Overview
 					Department Overview
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 
-			{
-				dataDepartments.map((item) => {
-					return (
-						<div
-							key={item.id}
-							className={classes.item}
-							onClick={() => callback(item.id)}
+			{dataDepartments.map((item) => (
+				<Box
+					key={item.id}
+					onClick={() => callback(item.id)}
+					sx={{
+						display: "flex",
+						p: 3,
+						":hover": {
+							cursor: "pointer",
+							bgcolor: "action.hover",
+						},
+						":last-child:hover": {
+							borderBottomRightRadius: "0.5rem",
+						},
+					}}
+				>
+					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center"
+							}}
 						>
+							<Typography variant="h3" style={{ margin: 0 }}>
+								{item.department}
+							</Typography>
+							{
+								item.availableForAll
+									?
+									<Tooltip title="All members" placement="top">
+										<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+									</Tooltip>
+									:
+									<Tooltip title="Only selected members" placement="top">
+										<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+									</Tooltip>
+							}
+							{
+								item.isPublic
+									?
+									<Tooltip title="Available for all users" placement="top">
+										<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+									</Tooltip>
+									:
+									<Tooltip title="For internal use only" placement="top">
+										<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+									</Tooltip>
+							}
+						</Box>
+						<Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+							<Typography variant="caption" sx={{ margin: 0 }}>
+								{item.description}
+								{item.description ? <>&nbsp; | &nbsp; </> : null}
+							</Typography>
 
-							<div className={classes.itemContent}>
+							<Typography variant="caption" style={{ margin: 0 }}>
+								{item.members.length} members
+							</Typography>
+						</Box>
+					</Box>
 
-								<Typography variant="h3" style={{ margin: 0 }}>{item.department}</Typography>
-								<div style={{ display: "flex", alignItems: "center" }}>
-									<Typography variant="caption">{item.description}</Typography>
-									{item.description ? <>&nbsp; |&nbsp; </> : null}
-									<Typography variant="caption" style={{ margin: 0 }}>
-										{item.members.length} members
-									</Typography>
-								</div>
+					<Box sx={{ display: "flex", alignItems: "center" }}>
+						<AvatarList dataSource={item.members} />
+					</Box>
 
-							</div>
-
-							<div className={classes.itemExtraContent}>
-								<div style={{ display: "flex", alignItems: "center" }}>
-
-									<AvatarList dataSource={item.members} />
-
-								</div>
-							</div>
-
-						</div>
-					)
-				})
-			}
-
-
-
+				</Box>
+			))}
 
 		</SettingsContent>
 	)

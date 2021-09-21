@@ -70,7 +70,7 @@ export const theme = createTheme({
 		button: {
 			textTransform: "none",
 			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
-			borderRadius: "0.25rem",
+			borderRadius: "0.5rem",
 		}
 	},
 	overrides: {
@@ -80,7 +80,7 @@ export const theme = createTheme({
 					backgroundColor: "#EDF4FD"
 				},
 				color: "#1a73e8",
-				borderRadius: "0.25rem",
+				borderRadius: "0.5rem",
 			},
 			contained: {
 				"&$disabled": {
@@ -100,7 +100,7 @@ export const theme = createTheme({
 		},
 		MuiOutlinedInput: {
 			root: {
-				borderRadius: "0.25rem",
+				borderRadius: "0.5rem",
 			},
 		},
 		MuiAccordion: {
@@ -123,12 +123,11 @@ export const theme = createTheme({
 				"&:hover:not(.Mui-disabled):before": {
 					borderBottom: "2px solid rgba(0, 0, 0, 0.5)"
 				},
-				// padddingLeft: "15px"
 			}
 		},
 
 	},
 	shape: {
-		borderRadius: "0.5rem"
+		// borderRadius: 1
 	}
 })

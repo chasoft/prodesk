@@ -19,46 +19,34 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React, { useEffect, useRef } from "react"
-// import { makeStyles } from "@mui/material"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+// MATERIAL-UI
+import { Box, LinearProgress, Typography } from "@mui/material"
 
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
+
+//PROJECT IMPORT
+import { once } from "../../helpers/utils"
 import { Logo } from "../../components/common"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
-import { LinearProgress, Paper, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
+import AuthCheck from "../../components/AuthCheck"
 import { REDIRECT_URL } from "../../helpers/constants"
 import { setRedirect } from "../../redux/slices/redirect"
-import { useDispatch } from "react-redux"
-import AuthCheck from "../../components/AuthCheck"
-import { once } from "../../helpers/utils"
+import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		justifyContent: "center",
-		marginBottom: theme.spacing(4),
-	}
-}))
-
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function SignUpCompleted() {
-	const classes = useStyles()
 	const [progress, setProgress] = React.useState(0)
 	const [buffer, setBuffer] = React.useState(10)
 	const progressRef = useRef(() => { })
@@ -93,7 +81,15 @@ function SignUpCompleted() {
 				center={<Logo />}
 			/>
 
-			<Paper className={classes.root} elevation={0}>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					flexGrow: 1,
+					justifyContent: "center",
+					mb: 4
+				}}
+			>
 
 				<div style={{ marginBottom: "2rem" }}>
 					<Typography variant="h1">ACCOUNT CREATION COMPLETED</Typography>
@@ -102,7 +98,7 @@ function SignUpCompleted() {
 
 				<LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
 
-			</Paper>
+			</Box>
 		</AuthCheck>
 	)
 }

@@ -1,30 +1,20 @@
 import React from "react"
 import { Card, CardContent, Grid, Typography } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-}))
-
 function ClientStats() {
-	const classes = useStyles()
-	const bull = <span className={classes.bullet}>•</span>
 
 	return (
 		<Grid container spacing={2} >
 			<Grid item xs>
-				<Card className={classes.root}>
+				<Card sx={{ width: "100%" }}>
 					<CardContent>
-						<Typography className={classes.title} color="textSecondary" gutterBottom>
+						<Typography color="textSecondary" gutterBottom>
 							Word of the Day
 						</Typography>
 						<Typography variant="h5" component="h2">
-							be{bull}nev{bull}o{bull}lent
+							belent
 						</Typography>
-						<Typography className={classes.pos} color="textSecondary">
+						<Typography color="textSecondary">
 							adjective
 						</Typography>
 						<Typography variant="body2" component="p">
@@ -37,15 +27,15 @@ function ClientStats() {
 			</Grid>
 
 			<Grid item xs>
-				<Card className={classes.root}>
+				<Card sx={{ width: "100%" }}>
 					<CardContent>
-						<Typography className={classes.title} color="textSecondary" gutterBottom>
+						<Typography color="textSecondary" gutterBottom>
 							Word of the Day
 						</Typography>
 						<Typography variant="h5" component="h2">
-							be{bull}nev{bull}o{bull}lent
+							belent
 						</Typography>
-						<Typography className={classes.pos} color="textSecondary">
+						<Typography color="textSecondary">
 							adjective
 						</Typography>
 						<Typography variant="body2" component="p">

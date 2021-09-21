@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
@@ -29,9 +29,7 @@ import makeStyles from "@mui/styles/makeStyles"
 import { PropTypes } from "prop-types"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
@@ -78,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {

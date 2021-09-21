@@ -19,7 +19,7 @@
  ************************************************************************/
 
 /*****************************************************************
- * FRAMEWORK & THIRD-PARTY IMPORT                                *
+ * IMPORTING                                                     *
  *****************************************************************/
 
 import React from "react"
@@ -30,9 +30,7 @@ import makeStyles from "@mui/styles/makeStyles"
 import FaceIcon from "@mui/icons-material/Face"
 import DoneIcon from "@mui/icons-material/Done"
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
+//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
@@ -53,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ThreadMessageDetails = () => {

@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║      DomainHub - Your Trusted Domain Partner (SaaS Platform)      ║ *
+ * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -18,92 +18,79 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * LIBRARY IMPORT                                                *
- *****************************************************************/
 
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
-import { Grid, TextField, Typography } from "@mui/material"
+// MATERIAL-UI
+import { Button, Container, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
-import AvatarList from "../../common/AvatarList"
-import SettingsSwitch from "../../common/SettingsSwitch"
+
+//PROJECT IMPORT
 import MembersList from "../MembersList"
+import SettingsSwitch from "../../common/SettingsSwitch"
+import { SettingsContent, SettingsContentActionBar, SettingsContentHeader } from "../../common/SettingsPanel"
 
 //PROJECT IMPORT
 
 //ASSETS
 
 /*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: "1rem",
-		marginBottom: "1rem",
-	},
-	item: {
-		cursor: "pointer",
-		"&:hover": {
-			background: theme.palette.action.hover
-		},
-		padding: theme.spacing(2, 3),
-		[theme.breakpoints.down("md")]: {
-			padding: theme.spacing(2, 2)
-		},
-	}
-}))
-
-/*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsAddNew = ({ dataDepartment, onClick }) => {
-	const classes = useStyles()
+const DepartmentsAddNew = ({ dataDepartment, onClick }) => (
+	<SettingsContent>
+		<SettingsContentHeader>
+			Add new department
+		</SettingsContentHeader>
 
-	return (
-		<Grid container spacing={4}>
-			<Grid item xs={12}>
-				<TextField
-					label="Name of the department"
-					placeholder="eg. Sales, Accounting..."
-					fullWidth
-				/>
-			</Grid>
-			<Grid item xs={12}>
-				<SettingsSwitch
-					title="All members"
-					state={false}
-					setState={() => { }}
-					stateDescription={["Only selected members", "All members"]}
-					description="Allow access to the department to all members, or exclusively to a specified group of members."
-				/>
-			</Grid>
+		<Container sx={{ pt: { xs: 3, sm: 2 } }}>
+			<Grid container spacing={4}>
+				<Grid item xs={12}>
+					<TextField
+						label="Name of the department"
+						placeholder="eg. Sales, Accounting..."
+						fullWidth
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<SettingsSwitch
+						title="All members"
+						state={false}
+						setState={() => { }}
+						stateDescription={["Only selected members", "All members"]}
+						description="Allow access to the department to all members, or exclusively to a specified group of members."
+					/>
+				</Grid>
 
-			<Grid item xs={12}>
-				<SettingsSwitch
-					title="Public"
-					state={true}
-					setState={() => { }}
-					stateDescription={["For internal use only", "Available for all users"]}
-					description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
-				/>
-			</Grid>
+				<Grid item xs={12}>
+					<SettingsSwitch
+						title="Public"
+						state={true}
+						setState={() => { }}
+						stateDescription={["For internal use only", "Available for all users"]}
+						description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+					/>
+				</Grid>
 
-			<Grid item xs={12}>
-				<MembersList
-					dataSource={[]}
-					addMemberCallback={() => { }}
-				/>
-
+				<Grid item xs={12}>
+					<MembersList
+						dataSource={[]}
+						addMemberCallback={() => { }}
+					/>
+				</Grid>
 			</Grid>
-		</Grid>
-	)
-}
+		</Container>
+
+		<SettingsContentActionBar>
+			<Button variant="outlined">Cancel</Button>
+			<Button variant="contained" color="primary">Add</Button>
+		</SettingsContentActionBar>
+
+	</SettingsContent>
+)
 
 DepartmentsAddNew.propTypes = {
 	dataDepartment: PropTypes.array,

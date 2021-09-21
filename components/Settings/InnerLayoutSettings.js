@@ -59,7 +59,7 @@ export const APPLICATION_SETTINGS_TABS = [
 ]
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InnerLayoutSettings({ children }) {

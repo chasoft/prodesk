@@ -23,43 +23,101 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
+import { Container, Grid, TextField, Typography } from "@mui/material"
+
+//PROJECT IMPORT
+import MembersList from "../MembersList"
+import SettingsSwitch from "../../common/SettingsSwitch"
+import { SettingsContent, SettingsContentHeader } from "../../common/SettingsPanel"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
 
 //ASSETS
 
 /*****************************************************************
- * INIT                                                          *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+//TODO: Auto update data onBlur
 
-/*****************************************************************
- * MAIN RENDER                                                   *
- *****************************************************************/
-
-function TicketSettingsCannedReplies() {
-
-	updateUiSettings({
-		activeTab: TICKET_SETTINGS_NAMES.CANNED_REPLIES,
-		background: {
-			height: "132px",
-			backgroundImage: ""
-		}
-	})
+const CannedRepliesDetails = ({ dataCannedReply, onClick }) => {
+	if (dataCannedReply.length === 0) {
+		return (
+			<SettingsContent>
+				<Typography>There is something happen! Selected department not found!</Typography>
+			</SettingsContent>
+		)
+	}
 
 	return (
-		<>
-			<Typography variant="h1">Canned Replies</Typography>
-		</>
+		<SettingsContent>
+
+			<SettingsContentHeader>
+				{dataCannedReply.department}
+			</SettingsContentHeader>
+
+			<Container sx={{ pt: { xs: 3, sm: 2 } }}>
+				<Grid container spacing={4}>
+
+					<Grid item xs={12}>
+						<TextField
+							value={dataCannedReply.department}
+							label="Name of the department"
+							placeholder="eg. Sales, Accounting..."
+							fullWidth
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<TextField
+							value={dataCannedReply.description}
+							label="Department description (Optional)"
+							fullWidth
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<SettingsSwitch
+							title="All members"
+							state={dataCannedReply.availableForAll}
+							setState={() => { }}
+							stateDescription={["Only selected members", "All members"]}
+							description="Allow access to the department to all members, or exclusively to a specified group of members."
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<SettingsSwitch
+							title="Public"
+							state={dataCannedReply.isPublic}
+							setState={() => { }}
+							stateDescription={["For internal use only", "Available for all users"]}
+							description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<MembersList
+							dataSource={dataCannedReply.members}
+							addMemberCallback={() => { }}
+						/>
+						<div style={{ height: "2rem" }}></div>
+					</Grid>
+				</Grid>
+			</Container>
+
+		</SettingsContent >
 	)
 }
 
-TicketSettingsCannedReplies.getLayout = getLayout
-export default TicketSettingsCannedReplies
+CannedRepliesDetails.propTypes = {
+	dataCannedReply: PropTypes.array,
+	onClick: PropTypes.func,
+}
+
+export default CannedRepliesDetails

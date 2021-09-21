@@ -27,66 +27,42 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { IconButton, Tooltip, Typography } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
+import { Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
-
-
 //PROJECT IMPORT
-
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
 import HomeIcon from "@mui/icons-material/Home"
-import { useSnackbar } from "notistack"
-import { signOut } from "../../../helpers/userAuthentication"
-import { useDispatch, useSelector } from "react-redux"
-import { getAuth } from "../../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	dashboard: {
-		display: "flex",
-		alignItems: "center",
-		color: "#669df6",
-		padding: theme.spacing(1, 0.5, 1, 3),
-		"&:hover": {
-			backgroundColor: "#ffffff14",
-			cursor: "pointer",
-		},
-		borderTop: "1px solid #2A4257",
-		borderBottom: "1px solid #2A4257",
-	},
-	miniDashboard: {
-		display: "flex",
-		justifyContent: "center",
-		textAlign: "center",
-		color: "#669df6",
-		padding: theme.spacing(1, 0, 1, 0),
-		"&:hover": {
-			backgroundColor: "#ffffff14",
-			cursor: "pointer",
-		},
-		borderTop: "1px solid #2A4257",
-	},
-}))
-
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
-	const classes = useStyles()
 	return <>
 		{
 			isExpanded ?
-				<div className={classes.dashboard}>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						color: "#669df6",
+						padding: (theme) => theme.spacing(1, 0.5, 1, 3),
+						"&:hover": {
+							backgroundColor: "#ffffff14",
+							cursor: "pointer",
+						},
+						borderTop: "1px solid #2A4257",
+						borderBottom: "1px solid #2A4257",
+					}}
+				>
 					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
 					<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
@@ -103,13 +79,26 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 							</a>
 						</Link>
 					</div>
-				</div>
+				</Box>
 				:
 				<Link href={homeUrl}>
 					<Tooltip title="Dashboard" placement="right">
-						<div className={classes.miniDashboard}>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "center",
+								textAlign: "center",
+								color: "#669df6",
+								padding: (theme) => theme.spacing(1, 0, 1, 0),
+								"&:hover": {
+									cursor: "pointer",
+									backgroundColor: "#ffffff14",
+								},
+								borderTop: "1px solid #2A4257",
+							}}
+						>
 							<HomeIcon style={{ height: "20px", width: "20px" }} />
-						</div>
+						</Box>
 					</Tooltip>
 				</Link>
 		}

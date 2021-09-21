@@ -40,7 +40,7 @@ import { regAdminURL } from "../helpers/regex"
 import { useRouter } from "next/router"
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function RootLayout({ children }) {

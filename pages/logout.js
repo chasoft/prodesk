@@ -18,11 +18,23 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { useSnackbar } from "notistack"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React from "react"
+
+//THIRD-PARTY
+import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
+
+//PROJECT IMPORT
 import { ReduxRedirect } from "../components/AuthCheck"
 import { signOut } from "../helpers/userAuthentication"
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 function Logout() {
 	const dispatch = useDispatch()

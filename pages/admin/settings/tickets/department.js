@@ -25,30 +25,37 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Button, IconButton, Tooltip, Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../../components/Settings/InnerLayoutTickets"
-import updateUiSettings from "../../../../../helpers/updateUiSettings"
-import GeneralList from "../../../../../components/common/GeneralList"
-import GeneralListItem, { GeneralListItemEmpty } from "../../../../../components/common/GeneralList/GeneralListItem"
-import AvatarList from "../../../../../components/common/AvatarList"
+import { getUiSettings } from "../../../../redux/selectors"
+import updateUiSettings from "../../../../helpers/updateUiSettings"
+import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
+import DepartmentsAddNew from "../../../../components/Settings/Tickets/DepartmentsAddNew"
+import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
+import DepartmentsOverview from "../../../../components/Settings/Tickets/DepartmentsOverview"
+import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
+import { ListItem, ListTitle, SettingsContainer, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import TicketDepartmentDetailsDialog from "../../../../../components/Settings/TicketDepartmentDetailsDialog"
-import MembersListCheckBox from "../../../../../components/Settings/AddMemberList"
+import InfoIcon from "@mui/icons-material/Info"
+import BusinessIcon from "@mui/icons-material/Business"
 
 /*****************************************************************
- * INIT                                                          *
+ * DUMMY DATA                                                    *
  *****************************************************************/
 
-const DUMMY_DEPARTMENT = [
+const DUMMY_DEPARTMENTS = [
 	{
 		id: 1,
-		department: "Sales", note: "",
+		department: "Sales",
+		description: "Sales Department",
+		availableForAll: false,
+		isPublic: false,
 		members: [
 			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
 			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
@@ -57,7 +64,10 @@ const DUMMY_DEPARTMENT = [
 	},
 	{
 		id: 2,
-		department: "Accounts", note: "",
+		department: "Accounts",
+		description: "Accounts Department",
+		availableForAll: true,
+		isPublic: true,
 		members: [
 			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
 		]
@@ -65,13 +75,19 @@ const DUMMY_DEPARTMENT = [
 	{
 		id: 3,
 		department: "Complain",
-		note: "",
+		description: "Take care our users",
+		availableForAll: false,
+		isPublic: true,
 		members: [
+
 		]
 	},
 	{
 		id: 4,
-		department: "Technical", note: "Solve technical questions",
+		department: "Technical",
+		description: "Let our core value bright",
+		availableForAll: true,
+		isPublic: false,
 		head: "caoanh",
 		members: [
 			{ username: "brian", displayName: "Brian", photoURL: "/default-avatar/1.png" },
@@ -83,14 +99,32 @@ const DUMMY_DEPARTMENT = [
 	},
 ]
 
+const getDepartmentById = (id) => {
+	const index = Object.entries(DUMMY_DEPARTMENTS).map(item => item[1].id).indexOf(id)
+	return DUMMY_DEPARTMENTS[index]
+}
+
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * INIT                                                          *
+ *****************************************************************/
+
+export const DEPARTMENT_PAGES = {
+	OVERVIEW: "",
+	ADD_NEW_DEPARTMENT: "Add new ticket department"
+}
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function TicketSettingsDepartment() {
 
+	const dispatch = useDispatch()
+	const { activeSettingPanel } = useSelector(getUiSettings)
+
 	updateUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
+		activePanel: DEPARTMENT_PAGES.OVERVIEW,
 		background: {
 			height: "132px",
 			backgroundImage: ""
@@ -99,10 +133,59 @@ function TicketSettingsDepartment() {
 
 	return (
 		<>
+			<SettingsHeader>
+				<Typography variant="h2" style={{ margin: 0 }}>Departments</Typography>
+				<Button
+					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
+					onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)) }}
+				>
+					Add department
+				</Button>
+			</SettingsHeader>
 
+			<SettingsContainer>
+
+				<SettingsList>
+
+					<ListItem
+						selected={activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW}
+						icon={<InfoIcon fontSize="small" />}
+						onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW)) }}
+					>
+						Overview
+					</ListItem>
+
+					<ListTitle>Available departments</ListTitle>
+
+					{DUMMY_DEPARTMENTS.map((item) => (
+						<ListItem
+							key={item.id}
+							selected={activeSettingPanel === item.id}
+							icon={<BusinessIcon fontSize="small" />}
+							onClick={() => { dispatch(setActiveSettingPanel(item.id)) }}
+						>
+							{item.department}
+						</ListItem>
+					))}
+
+				</SettingsList>
+
+				{
+					(activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
+						? <DepartmentsOverview
+							dataDepartments={DUMMY_DEPARTMENTS}
+							callback={(id) => dispatch(setActiveSettingPanel(id))}
+						/>
+						: (activeSettingPanel === DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)
+							? <DepartmentsAddNew />
+							: <DepartmentsDetails dataDepartment={getDepartmentById(activeSettingPanel)} />
+				}
+
+			</SettingsContainer>
 		</>
 	)
 }
 
 TicketSettingsDepartment.getLayout = getLayout
+
 export default TicketSettingsDepartment

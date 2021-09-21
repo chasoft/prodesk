@@ -45,19 +45,19 @@ import TabsSettings from "./TabsSettings"
 export const TICKET_SETTINGS_NAMES = {
 	GENERAL: "General",		//Explained fix Status & Priority
 	DEPARTMENT: "Department",
-	TAGS: "Tags",
-	CANNED_REPLIES: "Canned Replies",
+	LABEL: "Label",
+	CANNED_REPLY: "Canned Reply",
 }
 
 export const TICKET_SETTINGS_TABS = [
 	[TICKET_SETTINGS_NAMES.GENERAL, "/admin/settings/tickets"],
 	[TICKET_SETTINGS_NAMES.DEPARTMENT, "/admin/settings/tickets/department"],
-	[TICKET_SETTINGS_NAMES.TAGS, "/admin/settings/tickets/tags"],
-	[TICKET_SETTINGS_NAMES.CANNED_REPLIES, "/admin/settings/tickets/canned-replies"],
+	[TICKET_SETTINGS_NAMES.LABEL, "/admin/settings/tickets/label"],
+	[TICKET_SETTINGS_NAMES.CANNED_REPLY, "/admin/settings/tickets/canned-reply"],
 ]
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InnerLayoutTickets({ children }) {

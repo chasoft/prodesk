@@ -27,132 +27,49 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
+import { styled } from "@mui/material/styles"
+import { Alert, Avatar, Box, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-
 import LaunchIcon from "@mui/icons-material/Launch"
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
-
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-		marginTop: theme.spacing(5),
-	},
-	container: {
-		display: "flex",
-		marginTop: theme.spacing(1),
-		[theme.breakpoints.down("md")]: {
-			marginTop: theme.spacing(3),
-		},
-	},
-	list: {
-		backgroundColor: "#FAFAFA",
-		borderBottomLeftRadius: "0.5rem",
-		borderTopLeftRadius: "0.5rem",
-		minWidth: theme.spacing(37),
-		padding: theme.spacing(1, 0, 1),
-		[theme.breakpoints.down("lg")]: {
-			minWidth: theme.spacing(27)
-		},
-		[theme.breakpoints.down("md")]: {
-			display: "none",
-			borderTopRightRadius: "0.5rem",
-			borderBottomRightRadius: "0.5rem",
-		},
-	},
-	content: {
-		flexGrow: 1,
-	},
-	contentHeader: {
-		display: "flex",
-		alignItems: "center",
-		padding: theme.spacing(2, 2, 2),
-		[theme.breakpoints.down("md")]: {
-			padding: theme.spacing(1),
-			backgroundColor: "#FAFAFA",
-		},
-	},
-	contentHelper: {
-		borderBottom: `1px solid ${theme.palette.divider}`,
-	},
-	contentHelperText: {
-		padding: theme.spacing(0, 2, 0),
-		color: theme.palette.grey[600],
-		paddingBottom: theme.spacing(2),
-		[theme.breakpoints.down("md")]: {
-			paddingTop: theme.spacing(1),
-		},
-		"& > span > div:last-child": {
-			marginTop: "0.5rem"
-		}
-	},
-	learnMore: {
-		display: "flex",
-		alignItems: "center",
-		color: theme.palette.primary.main,
-		cursor: "pointer",
-		textDecoration: "underline"
-	},
-	listTitle: {
-		padding: theme.spacing(2),
-		color: theme.palette.grey[600],
-	},
-	listItem: {
-		padding: theme.spacing(1, 3, 1),
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: "12px",
-			width: theme.spacing(3),
-			height: theme.spacing(3)
-		},
-		"&:hover": {
-			backgroundColor: theme.palette.action.hover,
-			cursor: "pointer",
-		}
-	},
-	details: {
-		padding: theme.spacing(2, 3, 2),
-	},
-	alert: {
-		padding: theme.spacing(2),
-	},
-}))
-
-export const ListTitle = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.listTitle}>
-			<Typography variant="caption">
-				{children}
-			</Typography>
-		</div>
-	)
-}
-ListTitle.propTypes = { children: PropTypes.node }
+export const ListTitle = ({ children }) => (
+	<Box sx={{
+		padding: 2,
+		color: (theme) => theme.palette.grey[600],
+	}}>
+		<Typography variant="caption">
+			{children}
+		</Typography>
+	</Box>
+); ListTitle.propTypes = { children: PropTypes.node }
 
 export const ListItem = ({ icon, onClick, children }) => {
-	const classes = useStyles()
 	return (
-		<div className={classes.listItem} onClick={onClick}>
-			{
-				icon ? <Avatar>{icon}</Avatar> : null
-			}
-			<Typography variant="button">
+		<Box
+			onClick={onClick}
+			sx={{
+				padding: (theme) => theme.spacing(1, 3, 1),
+				display: "flex",
+				alignItems: "center",
+				"&:hover": {
+					backgroundColor: "action.hover",
+					cursor: "pointer",
+				}
+			}}
+		>
+			{icon}
+			<Typography variant="button" sx={{ ml: 2 }}>
 				{children}
 			</Typography>
-		</div>
+		</Box>
 	)
 }
 ListItem.propTypes = {
@@ -161,82 +78,89 @@ ListItem.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsHeader = ({ children }) => {
-	return (
-		<div
-			style={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "space-between",
-				marginBottom: "1rem"
-			}}
-		>
-			{children}
-		</div>
-	)
-}
-SettingsHeader.propTypes = { children: PropTypes.node }
+export const SettingsHeader = ({ children }) => (
+	<Box sx={{
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginBottom: "1rem"
+	}}
+	>{children}</Box>
+); SettingsHeader.propTypes = { children: PropTypes.node }
 
-export const SettingsContainer = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<Paper className={classes.container}>
-			{children}
-		</Paper>
-	)
-}
-SettingsContainer.propTypes = { children: PropTypes.node }
+export const SettingsContainer = ({ children }) => (
+	<Paper sx={{
+		display: "flex",
+		mt: { xs: 3, md: 1 },
+		borderRadius: 2
+	}}
+	>{children}</Paper>
+); SettingsContainer.propTypes = { children: PropTypes.node }
 
-export const SettingsList = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.list}>
-			{children}
-		</div>
-	)
-}
-SettingsList.propTypes = { children: PropTypes.node }
+export const SettingsList = ({ children }) => (
+	<Box
+		sx={{
+			backgroundColor: "#FAFAFA",
+			borderTopLeftRadius: "0.5rem",
+			borderBottomLeftRadius: "0.5rem",
+			minWidth: {
+				xs: 20 * 8,
+				sm: 27 * 8,
+				lg: 37 * 8
+			},
+			padding: (theme) => theme.spacing(1, 0, 1),
+			display: { xs: "none", sm: "initial" },
+			borderTopRightRadius: { xs: "0.5rem", md: 0 },
+			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
+		}}
+	>{children}</Box>
+); SettingsList.propTypes = { children: PropTypes.node }
 
-export const SettingsContent = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.content} >
-			{children}
-		</div>
-	)
-}
-SettingsContent.propTypes = { children: PropTypes.node }
+export const SettingsContent = ({ children }) => (
+	<Box sx={{ flexGrow: 1 }}>
+		{children}
+	</Box>
+); SettingsContent.propTypes = { children: PropTypes.node }
+
+const ContentHeader = ({ children }) => (
+	<Box sx={{
+		display: "flex",
+		alignItems: "center",
+		px: 3,
+		py: { xs: 1, sm: 2 },
+		backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
+	}}> {children} </Box>
+); ContentHeader.propTypes = { children: PropTypes.node }
 
 export const SettingsContentHeader = ({ hasBackBtn, backBtnOnClick, children }) => {
 	const theme = useTheme()
-	const classes = useStyles()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"))
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
-			<div className={classes.contentHeader}>
+			<ContentHeader>
 				<Tooltip title="Go back" placement="top">
 					<IconButton size="small" onClick={backBtnOnClick} style={{ marginRight: "5px" }}>
 						<NavigateBeforeIcon />
 					</IconButton>
 				</Tooltip>
 				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
-			</div>
+			</ContentHeader>
 		)
 	}
 
 	if (isSmallScreen && hasBackBtn === false) {
 		return (
-			<div className={classes.contentHeader}>
+			<ContentHeader>
 				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
-			</div>
+			</ContentHeader>
 		)
 	}
 
 	return (
-		<Typography variant="button" className={classes.contentHeader}>
-			{children}
-		</Typography>
+		<ContentHeader>
+			<Typography variant="button">{children}</Typography>
+		</ContentHeader>
 	)
 }
 SettingsContentHeader.propTypes = {
@@ -245,51 +169,64 @@ SettingsContentHeader.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentHelper = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.contentHelper}>
+export const SettingsContentHelper = ({ children }) => (
+	<Box sx={{
+		borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+		"& > div:last-child": { pt: 0 }
+	}}>{children}</Box>
+); SettingsContentHelper.propTypes = { children: PropTypes.node }
+
+const ContentHelperText = ({ children }) => (
+	<Box sx={{
+		color: (theme) => theme.palette.grey[600],
+		px: 3,
+		pb: 2,
+		pt: { xs: 2, sm: 0 },
+		"& > span > div:last-child": {
+			marginTop: "0.5rem"
+		}
+	}}> {children} </Box>
+); ContentHelperText.propTypes = { children: PropTypes.node }
+
+export const SettingsContentHelperText = ({ children }) => (
+	<ContentHelperText>
+		<Typography variant="caption">
 			{children}
-		</div>
-	)
-}
-SettingsContentHelper.propTypes = { children: PropTypes.node }
+		</Typography>
+	</ContentHelperText>
+); SettingsContentHelperText.propTypes = { children: PropTypes.node }
 
-export const SettingsContentHelperText = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.contentHelperText}>
+export const SettingsContentHelperAlert = ({ severity, children }) => (
+	<ContentHelperText>
+		<Alert severity={severity}>
 			<Typography variant="caption">
 				{children}
 			</Typography>
-		</div>
-	)
+		</Alert>
+	</ContentHelperText>
+)
+SettingsContentHelperAlert.propTypes = {
+	severity: PropTypes.oneOf(["error", "warning", "info", "success"]),
+	children: PropTypes.node
 }
-SettingsContentHelperText.propTypes = { children: PropTypes.node }
 
-export const SettingsContentHelperAlert = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.contentHelperText}>
-			<Typography variant="caption">
-				{children}
-			</Typography>
-		</div>
-	)
-}
-SettingsContentHelperAlert.propTypes = { children: PropTypes.node }
+const LearnMore = styled(Box)({
+	display: "flex",
+	alignItems: "center",
+	color: "primary.main",
+	cursor: "pointer",
+	textDecoration: "underline"
+})
 
 export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) => {
-	const classes = useStyles()
-
 	if (target) {
 		return (
 			<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
 				<Link href={target ?? ""}>
 					<a>
-						<div className={classes.learnMore}>
+						<LearnMore>
 							Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-						</div>
+						</LearnMore>
 					</a>
 				</Link>
 			</span>
@@ -298,20 +235,25 @@ export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) =
 
 	return (
 		<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
-			<div className={classes.learnMore}>
+			<LearnMore>
 				Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-			</div>
+			</LearnMore>
 		</span>
 	)
 }
 SettingsContentHelperLearnMore.propTypes = { target: PropTypes.string, action: PropTypes.func }
 
-export const SettingsContentActionBar = ({ children }) => {
-	const classes = useStyles()
-	return (
-		<div className={classes.actionBar}>
-			{children}
-		</div>
-	)
-}
-SettingsContentActionBar.propTypes = { children: PropTypes.node }
+export const SettingsContentActionBar = ({ children }) => (
+	<Box sx={{
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-end",
+		px: 3,
+		py: { xs: 1, sm: 2 },
+		backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
+		"> *:last-child": {
+			ml: 2,
+			minWidth: 100
+		}
+	}}>{children}</Box>
+); SettingsContentActionBar.propTypes = { children: PropTypes.node }

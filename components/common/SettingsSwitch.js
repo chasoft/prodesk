@@ -28,38 +28,21 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 import { FormControlLabel, Switch, Typography } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
 //THIRD-PARTY
-
 
 //PROJECT IMPORT
 
-
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	},
-	description: {
-		color: theme.palette.grey[600],
-		// padding: theme.spacing(2),
-		fontSize: "0.75rem"
-	}
-}))
-
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const SettingsSwitch = ({ title, state, setState, stateDescription, description }) => {
-	const classes = useStyles()
 	return (
 		<>
 			<Typography variant="caption" style={{ display: "block" }}>{title}</Typography>
@@ -74,7 +57,14 @@ const SettingsSwitch = ({ title, state, setState, stateDescription, description 
 				}
 				label={stateDescription[state ? 1 : 0]}
 			/>
-			<Typography className={classes.description}>{description}</Typography>
+			<Typography
+				sx={{
+					color: "grey.600",
+					fontSize: "0.75rem"
+				}}
+			>
+				{description}
+			</Typography>
 		</>
 	)
 }

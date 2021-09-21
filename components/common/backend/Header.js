@@ -22,77 +22,28 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
-import PropTypes from "prop-types"
 import Link from "next/link"
+import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 //MATERIAL-UI
-import { AppBar, Badge, IconButton, Tooltip, Typography } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
 import withStyles from "@mui/styles/withStyles"
+import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import clsx from "clsx"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
+import NotificationDrawer from "./NotificationDrawer"
+import { getPageMeta } from "../../../redux/selectors"
 
 //ASSETS
 import NotificationsIcon from "@mui/icons-material/Notifications"
-import NotificationDrawer from "./NotificationDrawer"
-import { getPageMeta } from "../../../redux/selectors"
-import { useSelector } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		padding: theme.spacing(0.5, 2, 0.5, 2),
-		// width: `calc(100% - ${68}px)`,
-		transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
-	},
-	link: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		cursor: "pointer",
-		"&:hover": {
-			fontWeight: 500
-		}
-	},
-	headerLeft: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		fontFamily: "\"Google Sans\", Roboto, sans-serif"
-	},
-	headerRight: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "flex-end",
-		"& > *": {
-			marginLeft: theme.spacing(1)
-		}
-	},
-	avatar: {
-		height: theme.spacing(4),
-		width: theme.spacing(4),
-	},
-	avatarOutline: {
-		border: "1px dashed ",
-		borderRadius: "50%",
-		padding: theme.spacing(0.4),
-		"&:hover": {
-			cursor: "pointer",
-			borderColor: "blue"
-		}
-	},
-}))
 
 const StyledBadge = withStyles((theme) => ({
 	badge: {
@@ -106,27 +57,57 @@ const StyledBadge = withStyles((theme) => ({
 }))(Badge)
 
 /*****************************************************************
- * MAIN RENDER                                                   *
+ * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const Header = ({ scrolled }) => {
-	const classes = useStyles()
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 	const { title } = useSelector(getPageMeta)
 
 	return (
 		<AppBar
 			position="sticky"
-			className={clsx([classes.root, classes.nav_bg])}
+			sx={{
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center",
+				justifyContent: "space-between",
+				padding: (theme) => theme.spacing(0.5, 2, 0.5, 2),
+				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
+			}}
 			elevation={scrolled ? 4 : 0}
 		>
-			<div className={classes.headerLeft}>{scrolled ? title : null}</div>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "flex-start",
+					fontFamily: "\"Google Sans\", Roboto, sans-serif"
+				}}
+			>
+				{scrolled ? title : null}
+			</Box>
 
 			<div style={{ flexGrow: 1 }}></div>
 
-			<div className={classes.headerRight}>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "flex-end",
+					"& > *": { ml: 1 }
+				}}
+			>
 				<Tooltip title="Go to Docs" placement="bottom">
-					<Typography className={classes.link}><Link href="/docs">Go to Docs</Link></Typography>
+					<Typography
+						sx={{
+							fontFamily: "\"Google Sans\", Roboto, sans-serif",
+							cursor: "pointer",
+							"&:hover": { fontWeight: 500 }
+						}}
+					>
+						<Link href="/docs">Go to Docs</Link>
+					</Typography>
 				</Tooltip>
 
 				<Tooltip title="Recent Notifications" placement="bottom">
@@ -139,11 +120,9 @@ const Header = ({ scrolled }) => {
 
 				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
 
-
 				<UserIcon />
 
-			</div>
-
+			</Box>
 
 		</AppBar>
 	)
