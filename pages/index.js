@@ -25,19 +25,23 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { getLayout } from "./../layout/BlankLayout"
-import MainNav from "./../components/common/frontend/MainNav"
-import PromotedSearch from "./../components/common/frontend/PromotedSearch"
-import FrontAccordions from "./../components/common/frontend/FrontAccordions"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
+import PromotedSearch from "../components/FrontEnd/PromotedSearch"
+import FrontAccordions from "../components/FrontEnd/FrontAccordions"
+import updateUiSettings from "../helpers/updateUiSettings"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Home() {
+
+	updateUiSettings({
+		activeTab: FRONT_PAGE_TABS_NAME.HOME,
+	})
+
 	return (
 		<>
-			<MainNav />
 			<PromotedSearch />
 			<FrontAccordions />
 		</>

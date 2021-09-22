@@ -22,80 +22,111 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
-// MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+//MATERIAL-UI
+import withStyles from "@mui/styles/withStyles"
+import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import UserIcon from "./UserIcon"
+import NotificationDrawer from "./NotificationDrawer"
+import { getPageMeta } from "./../../redux/selectors"
 
 //ASSETS
+import NotificationsIcon from "@mui/icons-material/Notifications"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const StyledBadge = withStyles((theme) => ({
+	badge: {
+		right: 1,
+		top: 6,
+		border: `1px solid ${theme.palette.background.paper}`,
+		padding: "0 4px",
+		color: "white",
+		backgroundColor: theme.palette.warning.dark
+	},
+}))(Badge)
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+const Header = ({ scrolled }) => {
+	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+	const { title } = useSelector(getPageMeta)
+
 	return (
-		<Box
+		<AppBar
+			position="sticky"
 			sx={{
-				marginTop: { xs: 3, md: 8 },
 				display: "flex",
-				flexDirection: "column",
+				flexDirection: "row",
 				alignItems: "center",
+				justifyContent: "space-between",
+				padding: (theme) => theme.spacing(0.5, 2, 0.5, 2),
+				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
 			}}
+			elevation={scrolled ? 4 : 0}
 		>
-			<div style={{ width: "100%" }}>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "flex-start",
+					fontFamily: "\"Google Sans\", Roboto, sans-serif"
+				}}
+			>
+				{scrolled ? title : null}
+			</Box>
 
-				<Typography variant="h2">{title}</Typography>
+			<div style={{ flexGrow: 1 }}></div>
 
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "flex-end",
+					"& > *": { ml: 1 }
+				}}
+			>
+				<Tooltip title="Go to Docs" placement="bottom">
+					<Typography
 						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
+							fontFamily: "\"Google Sans\", Roboto, sans-serif",
 							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
+							"&:hover": { fontWeight: 500 }
 						}}
 					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
+						<Link href="/docs">Go to Docs</Link>
+					</Typography>
+				</Tooltip>
 
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
+				<Tooltip title="Recent Notifications" placement="bottom">
+					<IconButton size="medium" color="inherit" onClick={() => setShowNotificationDraw(p => !p)} >
+						<StyledBadge badgeContent={4} >
+							<NotificationsIcon />
+						</StyledBadge>
+					</IconButton>
+				</Tooltip>
 
-			</div>
-		</Box >
+				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
+
+				<UserIcon />
+
+			</Box>
+
+		</AppBar>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
+Header.propTypes = { scrolled: PropTypes.bool }
 
-export default ListGroup
+export default Header

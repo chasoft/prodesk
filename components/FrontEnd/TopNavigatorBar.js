@@ -23,13 +23,16 @@
  *****************************************************************/
 
 import React from "react"
-import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+import { Paper, Tab, Tabs } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
+import { getUiSettings } from "../../redux/selectors"
+import { setRedirect } from "../../redux/slices/redirect"
+import { FRONT_PAGE_TABS_NAME } from "../../layout/EntryLayout"
 
 //PROJECT IMPORT
 
@@ -39,63 +42,48 @@ import { Box, Paper, Typography } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
+const getTabId = (tabName, dataSet) => {
+	for (let i = 0; i < dataSet.length; i++) {
+		if (dataSet[i].indexOf(tabName) !== -1) return i
+	}
+	return 0
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+const TopNavigatorBar = ({ dataSet }) => {
+
+	const dispatch = useDispatch()
+
+	const { activeSettingTab } = useSelector(getUiSettings)
+
+	const handleChange = (event, selectedTabId) => {
+		dispatch(setRedirect(dataSet[selectedTabId][1]))
+	}
+
 	return (
-		<Box
-			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-			}}
-		>
-			<div style={{ width: "100%" }}>
-
-				<Typography variant="h2">{title}</Typography>
-
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
-
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
-
-			</div>
-		</Box >
+		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
+			<Tabs
+				value={getTabId(activeSettingTab, dataSet)}
+				onChange={handleChange}
+				indicatorColor="primary"
+				textColor="primary"
+				variant="scrollable"
+			>
+				{
+					dataSet.map((item, idx) => (
+						<Tab key={idx} label={item[0]} />
+					))
+				}
+			</Tabs>
+		</Paper>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
+TopNavigatorBar.propTypes = {
+	dataSet: PropTypes.array,
+	borderBottom: PropTypes.bool
 }
 
-export default ListGroup
+export default TopNavigatorBar

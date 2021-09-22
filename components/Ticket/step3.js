@@ -9,7 +9,7 @@ import { setMessage } from "./../../redux/slices/newTicket"
 import TicketUploader from "../Gallery/TicketUploader"
 import { TabPanel } from "@mui/lab"
 
-const TextEditor = dynamic(() => import("./../common/backend/TextEditor"), {
+const TextEditor = dynamic(() => import("./../BackEnd/TextEditor"), {
 	ssr: false,
 	loading: function pleaseWait() { return <Skeleton variant="rectangular" width="100%" height={85} /> }
 })

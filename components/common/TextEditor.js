@@ -69,6 +69,12 @@ const LinearProgressWithLabel = (props) => (
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+//TODO: Embeded URLs... yeah, great!!!!
+/*
+	=> Youtube and some video sharing platform.. yeah,
+	=> Music => turn to HTML5 player for .mp3, .wav...v.v.
+ */
+
 const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDestination }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [uploading, setUploading] = useState(false)

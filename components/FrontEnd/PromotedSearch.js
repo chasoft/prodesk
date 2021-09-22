@@ -18,73 +18,98 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-
-import React from "react"
-import PostListItem, { PostListEmpty } from "./../../../Post/PostListItem"
-import ListGroup from "../../ListGroup"
-
 /*****************************************************************
- * INIT                                                          *
+ * IMPORTING                                                     *
  *****************************************************************/
 
-// const useStyles = makeStyles((theme) => ({
-// 	root: {
+import React from "react"
 
-// 	}
-// }))
+// MATERIAL-UI
+import { Box, InputBase, Paper, Typography, Avatar } from "@mui/material"
 
-const LatestFeedbackDummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: []
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: []
-	},
-]
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import SearchIcon from "@mui/icons-material/Search"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const LatestFAQs = () => {
-	// const classes = useStyles()
+function PromotedSearch() {
 	return (
-		<ListGroup
-			title="Latest Support Activities"
-			viewAllText="View all tickets"
-			viewAllLink="/client/tickets"
+		<Box
+			sx={{
+				backgroundPosition: { sm: "50% 100%", md: "50%" },
+				height: { sm: "16.5rem", md: "19rem" },
+				minHeight: { xs: "14rem" },
+				marginTop: "1.5rem",
+				backgroundImage: { xs: "", sm: "url('/img/homepage_header_background_v2.svg')" },
+				backgroundRepeat: { xs: "", sm: "no-repeat" }
+			}}
 		>
-			{
-				LatestFAQs.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
-		</ListGroup>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center"
+				}}
+			>
+				<Box
+					sx={{
+						display: "flex",
+						background: "#ffffff",
+						boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30 %), 0 1px 3px 1px rgb(60 64 67 / 15 %)",
+						boxSizing: "border-box",
+						alignItems: "center",
+						height: "3.5rem", width: "3.5rem",
+						margin: "0 auto 1.125rem auto",
+						padding: "0.5rem",
+					}}
+				>
+					<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+				</Box>
+				<Typography variant="h4"
+					sx={{
+						width: "100%",
+						textAlign: "center",
+						fontSize: "2rem",
+						fontWeight: 400,
+						lineHeight: "2.5rem",
+						marginBottom: "1.625rem",
+						mx: { xs: 1, md: "" },
+						color: "primary.main"
+					}}
+				>
+					How can we help you?
+				</Typography>
+			</Box>
+
+			<Box component="form" sx={{ mx: 2, mb: 5 }}>
+				<Paper
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						borderRadius: "0.5rem",
+						margin: "0 auto",
+						maxWidth: "32.5rem",
+						padding: (theme) => theme.spacing(1, 3, 1, 4),
+						mx: "auto",
+					}}
+				>
+					<SearchIcon />
+					<InputBase
+						sx={{ ml: 1, flexGrow: 1 }}
+						placeholder="Describe your issue"
+						inputProps={{ "aria-label": "search documentation" }}
+					/>
+				</Paper>
+			</Box>
+		</Box >
+
 	)
 }
 
-export default LatestFAQs
+export default PromotedSearch

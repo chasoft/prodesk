@@ -33,10 +33,10 @@ import { ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
-import { Logo } from ".."
+import { Logo } from "./../common"
 import HomeButton from "./HomeButton"
 import NavCollapse from "./NavCollapse"
-import { MENU_ITEM_TYPE } from "../../../helpers/constants"
+import { MENU_ITEM_TYPE } from "./../../helpers/constants"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"

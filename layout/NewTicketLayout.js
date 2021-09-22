@@ -25,7 +25,7 @@
 import Head from "next/head"
 import PropTypes from "prop-types"
 import React from "react"
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles"
 import { Grid } from "@mui/material"
 //PROJECT IMPORT
 
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
 		minHeight: "100vh",
 	},
 	mobile: {
-		[theme.breakpoints.down('md')]: {
+		[theme.breakpoints.down("md")]: {
 			display: "none"
 		},
 	},

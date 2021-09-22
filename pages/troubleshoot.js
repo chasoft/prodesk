@@ -18,22 +18,11 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import React from "react"
-import Link from "next/link"
-import PropTypes from "prop-types"
+import { Container } from "@mui/material"
 
-// MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-
-//ASSETS
+import { FRONT_PAGE_TABS_NAME, getLayout } from "../layout/EntryLayout"
+import updateUiSettings from "../helpers/updateUiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,59 +32,20 @@ import { Box, Paper, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+function Troubleshoot() {
+
+	updateUiSettings({
+		activeTab: FRONT_PAGE_TABS_NAME.TROUBLESHOOT,
+	})
+
 	return (
-		<Box
-			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-			}}
-		>
-			<div style={{ width: "100%" }}>
-
-				<Typography variant="h2">{title}</Typography>
-
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
-
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
-
-			</div>
-		</Box >
+		<>
+			<Container maxWidth="md">
+				Show All FAQs here!!!
+			</Container>
+		</>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
 
-export default ListGroup
+Troubleshoot.getLayout = getLayout
+export default Troubleshoot

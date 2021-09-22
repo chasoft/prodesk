@@ -18,65 +18,112 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import PostListItem from "./../../Post/PostListItem"
-import ListGroup from "../ListGroup"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import Link from "next/link"
+import React, { useState } from "react"
+
+// MATERIAL-UI
+import { styled } from "@mui/system"
+import { Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { Logo } from "../../common"
+
+//ASSETS
+import MenuIcon from "@mui/icons-material/Menu"
+import MailIcon from "@mui/icons-material/Mail"
+import { DUMMY_DATA_MENU_BOTTOM, DUMMY_DATA_MENU_TOP } from "./DUMMY_DATA"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: ["d"]
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: ["d"]
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: []
-	},
-]
+const ListItemStyle = styled(ListItem)({ color: "#1a73e8" })
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const FeaturedDocs = () => {
+const LeftIcon = () => {
+	const [showMenu, setShowMenu] = useState(false)
+
+	const handleClose = () => { setShowMenu(false) }
+
 	return (
-		<ListGroup
-			title="Featured Docs"
-			viewAllText="View all featured docs"
-			viewAllLink="/docs/featured"
-		>
-			{
-				DummyData.map((item, idx) => {
-					return (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					)
-				})
-			}
-		</ListGroup>
+		<>
+			<IconButton
+				edge="start" size="large" sx={{ mr: 2 }}
+				onClick={() => { setShowMenu(true) }}
+			>
+				<MenuIcon sx={{ fontSize: 24 }} />
+			</IconButton>
+			<Drawer
+				anchor="left"
+				open={showMenu}
+				onClose={handleClose}
+			>
+				<Box
+					sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
+					onClick={handleClose}
+					onKeyDown={handleClose}
+				>
+					<List>
+						<Link href="/">
+							<a>
+								<ListItem sx={{ p: 3 }}>
+									<Logo />
+								</ListItem>
+							</a>
+						</Link>
+
+						{DUMMY_DATA_MENU_TOP.map((item) => (
+							<Link key={item} href={item.url}>
+								<a>
+									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+										<ListItemIcon sx={{ minWidth: 40 }}>
+											<MailIcon />
+										</ListItemIcon>
+										<ListItemText primary={item.title} />
+									</ListItemStyle>
+								</a>
+							</Link>
+						))}
+
+						<Link href="/">
+							<a>
+								<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+									<ListItemText primary="Privacy" />
+								</ListItemStyle>
+							</a>
+						</Link>
+					</List>
+
+					<div style={{ flexGrow: 1 }} />
+
+					<List sx={{ mb: 3 }}>
+						{DUMMY_DATA_MENU_BOTTOM.map((item) => (
+							<Link key={item} href={item.url}>
+								<a>
+									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+										<ListItemIcon sx={{ minWidth: 40 }}>
+											<MailIcon />
+										</ListItemIcon>
+										<ListItemText primary={item.title} />
+									</ListItemStyle>
+								</a>
+							</Link>
+						))}
+					</List>
+
+				</Box>
+			</Drawer>
+		</>
 	)
 }
 
-export default FeaturedDocs
+export default LeftIcon

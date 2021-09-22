@@ -18,32 +18,56 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import { Container } from "@mui/material"
-
-import { getLayout } from "../layout/BlankLayout"
-import MainNav from "../components/common/frontend/MainNav"
-import AuthCheck from "../components/AuthCheck"
-
 /*****************************************************************
- * INIT                                                          *
+ * IMPORTING                                                     *
  *****************************************************************/
+
+import React from "react"
+
+// MATERIAL-UI
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
+import { Container, Grid } from "@mui/material"
+import updateUiSettings from "../../helpers/updateUiSettings"
+import { Box } from "@mui/system"
+import Banner from "../../components/widget/Banner"
+import ListAllCategories from "../../components/Category/ListAllCategories"
+
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function PublicTickets() {
+function ViewFull() {
+
+	updateUiSettings({
+		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "view full all category",
+	})
+
 	return (
-		<AuthCheck>
-			<MainNav />
-			<Container maxWidth="md">
-				Show All Public Ticket here!!!
-				Public Tickets... they are called Community
-			</Container>
-		</AuthCheck>
+		<Container maxWidth="lg">
+			<Grid container>
+				<Grid item xs={12} sm={12} md={8} >
+					<ListAllCategories />
+				</Grid>
+				<Grid item xs={12} sm={12} md={4}>
+					<Box
+						sx={{
+							marginLeft: { xs: 0, lg: "3rem" },
+							marginTop: { xs: "3rem", lg: "4rem" },
+						}}
+					>
+						<Banner />
+					</Box>
+				</Grid>
+			</Grid>
+		</Container>
 	)
 }
 
-PublicTickets.getLayout = getLayout
-export default PublicTickets
+ViewFull.getLayout = getLayout
+
+export default ViewFull

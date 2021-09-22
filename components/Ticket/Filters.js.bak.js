@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 				padding: "8px 14px"
 			}
 		},
-		"& .MuiInputAdornment-root .MuiSvgIcon-root": {
+		"&.MuiInputAdornment-root .MuiSvgIcon-root": {
 			color: theme.palette.text.secondary
 		},
 		"&:hover .MuiInputAdornment-root .MuiSvgIcon-root": {

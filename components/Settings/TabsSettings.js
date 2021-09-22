@@ -47,6 +47,7 @@ const getTabId = (tabName, dataSet) => {
 const TabsSettings = ({ dataSet }) => {
 	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
 	const dispatch = useDispatch()
+
 	const { activeSettingTab } = useSelector(getUiSettings)
 
 	const handleChange = (event, selectedTabId) => {

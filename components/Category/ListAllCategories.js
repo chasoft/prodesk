@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Grid, Typography } from "@mui/material"
+import { Box, ButtonBase, Grid, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material"
 
 
 //THIRD-PARTY
@@ -37,7 +37,9 @@ import { LINK_TYPE } from "../../helpers/constants"
 
 
 //ASSETS
-
+import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined"
+import GridOnOutlinedIcon from "@mui/icons-material/GridOnOutlined"
+import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined"
 
 /*****************************************************************
  * INIT                                                          *
@@ -83,76 +85,136 @@ const DummyData = [
 	}
 ]
 
+const LISTING_MODE = {
+	BASIC: "ONLY CATEGORY NAME",
+	STANDARD: "CAREGORY AND DESCRITION",
+	FULL: "FULL"
+
+}
+
+const CateogryListingMode = () => {
+	const [listingMode, setListingMode] = useState(LISTING_MODE.STANDARD)
+
+	const handleListingMode = (event, newListingMode) => {
+		if (newListingMode !== null) {
+			setListingMode(newListingMode)
+		}
+	}
+	return (
+		<ToggleButtonGroup
+			exclusive
+			size="small"
+			value={listingMode}
+			onChange={handleListingMode}
+		>
+			<ToggleButton value={LISTING_MODE.BASIC}>
+				<AppsOutlinedIcon />
+			</ToggleButton>
+			<ToggleButton value={LISTING_MODE.STANDARD}>
+				<GridViewOutlinedIcon />
+			</ToggleButton>
+			<ToggleButton value={LISTING_MODE.FULL}>
+				<GridOnOutlinedIcon />
+			</ToggleButton>
+		</ToggleButtonGroup>
+	)
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Category() {
+function ListAllCategories() {
 	return (
-		<Box component="main"
-			sx={{
-				border: "1px solid",
-				borderRadius: "0.5rem",
-				borderColor: "divider",
-				margin: { xs: "2rem 0 0", sm: "2.625rem 0 0" }
-			}}
-		>
-			<Box sx={{ padding: { xs: 3, md: 8 } }}>
+		<Box>
 
-				<Typography variant="h1" sx={{ marginBottom: "1rem", fontSize: { xs: "1.5rem", sm: "1.75rem" } }}>
-					Get help with apps on your phone
-				</Typography>
 
-				<Box>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+			<Box component="main"
+				sx={{
+					border: "1px solid",
+					borderRadius: "0.5rem",
+					borderColor: "divider",
+					margin: { xs: "2rem 0 0", sm: "2.625rem 0 0" },
+				}}
+			>
+
+				<Box
+					sx={{
+						float: "right",
+						p: 1,
+					}}
+				>
+					<CateogryListingMode />
 				</Box>
 
-				<Grid container spacing={2}>
+				<Box
+					sx={{
+						px: { xs: 3, sm: 6, md: 8 },
+						py: { xs: 3, sm: 6, md: 8 }
+					}}
+				>
 
-					{DummyData.map(((block, idx) => (
-						<Grid
-							item key={idx} xs={12} sm={6}
-							sx={{
-								mt: 4,
-								"& > h2": { fontSize: "1rem" }
-							}}
-						>
-							<Typography variant="h2" sx={{ pl: 2 }}>{block.cat}</Typography>
+					<Typography variant="h1"
+						sx={{
+							marginBottom: "1rem",
+							fontSize: { xs: "1.5rem", sm: "1.75rem" }
+						}}
+					>
+						Get help with apps on your phone
+					</Typography>
 
-							{(idx === 2) && <Box sx={{ pl: 2 }}>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-							</Box>}
+					<Box>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+					</Box>
 
-							<Box
-								component="ul"
+					<Grid container spacing={2}>
+
+						{DummyData.map(((block, idx) => (
+							<Grid
+								item key={idx} xs={12} sm={6}
 								sx={{
-									padding: 0,
-									cursor: "pointer",
-									listStyle: "none",
-									color: "primary.main",
-									"& > li": { display: "flex", px: 2, py: 1 },
-									"& > li:hover": {
-										backgroundColor: "#E8F0FE"
-									}
+									mt: 4,
+									"& > h2": { fontSize: "1rem" }
 								}}
 							>
-								{block.items.map((link, idx) => (
-									<Link key={idx} href="/">
-										<li>
-											<ButtonBase sx={{ textAlign: "left" }}>
-												{link.subject}
-											</ButtonBase>
-										</li>
-									</Link>
-								))}
-							</Box>
-						</Grid>
-					)))}
+								<Typography variant="h2" sx={{ pl: 2 }}>{block.cat}</Typography>
 
-				</Grid>
+								{(idx === 2) && <Box sx={{ pl: 2 }}>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+								</Box>}
+
+								<Box
+									component="ul"
+									sx={{
+										padding: 0,
+										cursor: "pointer",
+										listStyle: "none",
+										color: "primary.main",
+										"& > li": { display: "flex", px: 2, py: 1 },
+										"& > li:hover": {
+											backgroundColor: "#E8F0FE"
+										}
+									}}
+								>
+									{block.items.map((link, idx) => (
+										<Link key={idx} href="/">
+											<li>
+												<ButtonBase sx={{ textAlign: "left" }}>
+													{link.subject}
+												</ButtonBase>
+											</li>
+										</Link>
+									))}
+								</Box>
+							</Grid>
+						)))}
+
+					</Grid>
+				</Box>
 			</Box>
 		</Box>
 	)
 }
 
-export default Category
+export default ListAllCategories

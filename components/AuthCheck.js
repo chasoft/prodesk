@@ -57,6 +57,11 @@ const LoadingIndicator = () => {
 
 /**
  * Redirect based on Redux
+ * @note redirectURL is under format as describe below:
+ * 		 URL = `"/a-valid/nice-url@note:this is a note only"`
+ * 		 URL.split("@note:") => ["/a-valid/nice-url", "this is a note only"]
+ * 		 redirect item[0]
+ * 
  */
 export function ReduxRedirect(props) {
 	const router = useRouter()
@@ -66,7 +71,7 @@ export function ReduxRedirect(props) {
 	if (redirectURL === "") return props.children
 	else {
 		dispatch(clearRedirect())
-		router.push(redirectURL)
+		router.push(redirectURL.split("@note:")[0])
 	}
 }
 

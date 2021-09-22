@@ -18,11 +18,29 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import { Container } from "@mui/material"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
-import { getLayout } from "./../layout/BlankLayout"
-import MainNav from "./../components/common/frontend/MainNav"
+import Link from "next/link"
+import PropTypes from "prop-types"
+import React, { useEffect, useState } from "react"
+
+// MATERIAL-UI
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { Logo } from "../../common"
+import { AuthFalse, AuthTrue } from "../../AuthCheck"
+import UserIcon from "../../BackEnd/UserIcon"
+import LeftIcon from "./LeftIcon"
+import SearchBox from "./SearchBox"
+import PortfolioLinks from "./PortfolioLinks"
+
+//ASSETS
+import { MORE_BTN } from "./DUMMY_DATA"
 
 /*****************************************************************
  * INIT                                                          *
@@ -32,16 +50,77 @@ import MainNav from "./../components/common/frontend/MainNav"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Faqs() {
+function Header({ showLogo = false, showSlogan = true, title, slogan, separator = " - ", showPortfolio = true }) {
+	const [scrolled, setScrolled] = useState(false)
+
+	const animateHeader = () => {
+		setScrolled(window.scrollY > 50 ? true : false)
+	}
+
+	useEffect(() => {
+		window.addEventListener("scroll", animateHeader)
+		return () => window.removeEventListener("scroll", animateHeader)
+	}, [])
+
 	return (
-		<>
-			<MainNav />
-			<Container maxWidth="md">
-				Show All FAQs here!!!
-			</Container>
-		</>
+		<AppBar position="sticky" color="inherit" elevation={scrolled ? 4 : 0}>
+			<Toolbar>
+
+				<LeftIcon />
+
+				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 2, justifyContent: { xs: showLogo ? null : "center", sm: "left" } }}>
+
+					{showLogo &&
+						<Box sx={{ mt: "4px", mr: 1 }}>
+							<Logo />
+						</Box>}
+
+
+					<Typography sx={{ fontWeight: 400, fontSize: "1.25rem" }} noWrap>
+
+						{showLogo ? null : title}
+
+						{showSlogan &&
+							<Box component="span" sx={{ display: { xs: "none", md: slogan ? "initial" : "none" } }}>
+								{showLogo ? null : separator}
+								{slogan ?? ""}
+							</Box>}
+
+					</Typography>
+
+				</Box>
+
+				<SearchBox />
+
+				<Box sx={{ alignItems: "center" }} >
+
+					{showPortfolio && <PortfolioLinks moreBtn={MORE_BTN} />}
+
+					<AuthFalse>
+						<Link href="/login">
+							<Button variant="contained" color="primary">
+								Sign in
+							</Button>
+						</Link>
+					</AuthFalse>
+
+					<AuthTrue>
+						<UserIcon />
+					</AuthTrue>
+
+				</Box>
+
+			</Toolbar>
+		</AppBar >
 	)
 }
+Header.propTypes = {
+	showLogo: PropTypes.bool,
+	showSlogan: PropTypes.bool,
+	showPortfolio: PropTypes.bool,
+	title: PropTypes.string,
+	slogan: PropTypes.string,
+	separator: PropTypes.string
+}
 
-Faqs.getLayout = getLayout
-export default Faqs
+export default Header

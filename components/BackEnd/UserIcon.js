@@ -13,10 +13,10 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../../redux/selectors"
-import { setRedirect } from "../../../redux/slices/redirect"
-import { AuthAdminTrue, AuthUserTrue } from "../../AuthCheck"
-import { signOut } from "../../../helpers/userAuthentication"
+import { getAuth } from "./../../redux/selectors"
+import { setRedirect } from "./../../redux/slices/redirect"
+import { AuthAdminTrue, AuthUserTrue } from "./../AuthCheck"
+import { signOut } from "./../../helpers/userAuthentication"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"

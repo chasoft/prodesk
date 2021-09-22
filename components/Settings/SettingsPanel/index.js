@@ -113,6 +113,11 @@ export const SettingsList = ({ sx, children }) => (
 				sm: 27 * 8,
 				lg: 37 * 8
 			},
+			maxWidth: {
+				xs: "100%",
+				sm: 27 * 8,
+				lg: 37 * 8
+			},
 			padding: (theme) => theme.spacing(1, 0, 1),
 			// display: { xs: "none", sm: "initial" },
 			borderTopRightRadius: { xs: "0.5rem", md: 0 },
@@ -150,6 +155,8 @@ const ContentHeader = ({ children }) => (
 		alignItems: "center",
 		px: 3,
 		py: { xs: 1, sm: 2 },
+		borderTopLeftRadius: 8,
+		borderTopRightRadius: 8,
 		backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
 	}}> {children} </Box>
 ); ContentHeader.propTypes = { children: PropTypes.node }

@@ -18,84 +18,66 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import React from "react"
-import Link from "next/link"
-import PropTypes from "prop-types"
-
-// MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-
-//ASSETS
+import PostListItem from "./../Post/PostListItem"
+import ListGroup from "./../common/ListGroup"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const DummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: ["d"]
+	},
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: ["d"]
+	},
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
+	},
+]
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+const PopularArticles = () => {
+
 	return (
-		<Box
-			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-			}}
+		<ListGroup
+			title="Popular Articles"
+			viewAllText="View all popular articles"
+			viewAllLink="/docs/featured"
 		>
-			<div style={{ width: "100%" }}>
-
-				<Typography variant="h2">{title}</Typography>
-
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
-
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
-
-			</div>
-		</Box >
+			{
+				DummyData.map((item, idx) => {
+					return (
+						<PostListItem
+							key={item.docId}
+							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
+							subject={item.subject}
+							excerpt={item.excerpt}
+							link={item.link}
+							metaData={item.metaData}
+						/>
+					)
+				})
+			}
+		</ListGroup>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
 
-export default ListGroup
+export default PopularArticles

@@ -18,23 +18,55 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React from "react"
 
-import { getLayout } from "../../layout/BlankLayout"
-import MainNav from "../../components/common/frontend/MainNav"
+// MATERIAL-UI
 
+
+//THIRD-PARTY
+
+
+//PROJECT IMPORT
 import Category from "./../../components/Category"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
+import { Container, Grid } from "@mui/material"
+import updateUiSettings from "../../helpers/updateUiSettings"
+import { Box } from "@mui/system"
+import Banner from "../../components/widget/Banner"
+
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function ViewAllCategories() {
+
+	updateUiSettings({
+		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "single-category",
+	})
+
 	return (
-		<>
-			<MainNav borderBottom={true} />
-			<Category />
-		</>
+		<Container maxWidth="lg">
+			<Grid container>
+				<Grid item xs={12} sm={12} md={8} >
+					<Category />
+				</Grid>
+				<Grid item xs={12} sm={12} md={4}>
+					<Box
+						sx={{
+							marginLeft: { xs: 0, lg: "3rem" },
+							marginTop: { xs: "3rem", lg: "4rem" },
+						}}
+					>
+						<Banner />
+					</Box>
+				</Grid>
+			</Grid>
+		</Container>
 	)
 }
 

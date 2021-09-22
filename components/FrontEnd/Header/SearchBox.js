@@ -23,17 +23,20 @@
  *****************************************************************/
 
 import React from "react"
-import Link from "next/link"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+import { alpha } from "@mui/material/styles"
+import { Box, InputBase } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 
 //ASSETS
+import SearchIcon from "@mui/icons-material/Search"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "../../../redux/selectors"
+import { FRONT_PAGE_TABS_NAME } from "../../../layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,59 +46,53 @@ import { Box, Paper, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+const SearchBox = () => {
+	const { activeSettingTab } = useSelector(getUiSettings)
+
+	//Only show this SearchBox when not at HOME!
+	//(that means... user would be at Docs || troubleshoot page)
+	if (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) {
+		return null
+	}
+
 	return (
 		<Box
 			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+				position: "relative",
+				borderRadius: (theme) => theme.shape.borderRadius,
+				backgroundColor: (theme) => alpha(theme.palette.common.white, 0.15),
+				"&:hover": {
+					backgroundColor: (theme) => alpha(theme.palette.common.white, 0.25),
+				},
+				mr: 2, ml: { xs: 0, sm: 3 },
+				width: { xs: "100%", sm: "auto" },
 			}}
 		>
-			<div style={{ width: "100%" }}>
-
-				<Typography variant="h2">{title}</Typography>
-
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
-
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
-
-			</div>
-		</Box >
+			<Box
+				sx={{
+					padding: (theme) => theme.spacing(0, 2),
+					height: "100%",
+					position: "absolute",
+					pointerEvents: "none",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<SearchIcon />
+			</Box>
+			<InputBase
+				placeholder="Search…"
+				sx={{
+					padding: 1,
+					paddingLeft: "3rem",
+					transition: (theme) => theme.transitions.create("width"),
+					width: { xs: "100%", md: "20ch" },
+				}}
+				inputProps={{ "aria-label": "search" }}
+			/>
+		</Box>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
 
-export default ListGroup
+export default SearchBox

@@ -28,7 +28,7 @@ import React from "react"
 import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 // import { getUiSettings } from "../../../../redux/selectors"
@@ -87,8 +87,6 @@ export const TAG_PAGES = {
 
 function TicketSettingsLabel() {
 
-	const dispatch = useDispatch()
-
 	updateUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.LABEL,
 		background: {
@@ -105,7 +103,7 @@ function TicketSettingsLabel() {
 					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
 					onClick={() => { }}
 				>
-					Add new label
+					Add New
 				</Button>
 			</SettingsHeader>
 
@@ -124,7 +122,6 @@ function TicketSettingsLabel() {
 							Department Overview Department Overview Department Overview Department
 							<SettingsContentHelperLearnMore target="/admin" />
 						</SettingsContentHelperText>
-
 
 					</SettingsContentHelper>
 

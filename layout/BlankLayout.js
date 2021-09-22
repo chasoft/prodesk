@@ -34,7 +34,7 @@ import { Box } from "@mui/system"
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
 import Footer from "../components/common/Footer"
-import Header from "../components/common/frontend/Header"
+import Header from "../components/FrontEnd/Header"
 
 /*****************************************************************
  * INIT                                                          *

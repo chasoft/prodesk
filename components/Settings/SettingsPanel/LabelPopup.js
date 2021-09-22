@@ -28,7 +28,7 @@ import { Box } from "@mui/system"
 
 // MATERIAL-UI
 import { Button, Popover, TextField } from "@mui/material"
-import { ColorPickerBase } from "../ColorPicker"
+import { ColorPickerBase } from "../../common/ColorPicker"
 
 //THIRD-PARTY
 

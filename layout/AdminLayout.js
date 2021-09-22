@@ -26,14 +26,14 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
-import Header from "../components/common/backend/Header"
-import SideBar from "../components/common/backend/SideBar"
+import Header from "../components/BackEnd/Header"
+import SideBar from "../components/BackEnd/SideBar"
 import Footer from "../components/common/Footer"
 import { getUiSettings } from "../redux/selectors"
 import { MENU_ITEM_TYPE } from "../helpers/constants"
@@ -41,7 +41,6 @@ import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
 
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *

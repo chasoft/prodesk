@@ -25,23 +25,21 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
+import { getUiSettings } from "../../../../redux/selectors"
 import updateUiSettings from "../../../../helpers/updateUiSettings"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
+import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
 
 //ASSETS
-import AddIcon from "@mui/icons-material/Add"
 import InfoIcon from "@mui/icons-material/Info"
 import BusinessIcon from "@mui/icons-material/Business"
-import { getUiSettings } from "../../../../redux/selectors"
-import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
-import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
 
 /*****************************************************************
  * INIT                                                          *
@@ -103,11 +101,21 @@ function ApplicationSettings() {
 
 				</SettingsList>
 
+
 				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
 
 					<SettingsContentHeader backBtnOnClick={() => setShowContent(false)}>
 						Application Settings
 					</SettingsContentHeader>
+
+					<SettingsContentHelper>
+
+						<SettingsContentHelperText>
+							Department Overview Department Overview Department Overview Department Overview Department Overview
+							<SettingsContentHelperLearnMore target="/admin" />
+						</SettingsContentHelperText>
+
+					</SettingsContentHelper>
 
 					<SettingsContentDetails>
 						<Typography>Content goes here!!!!</Typography>
@@ -115,6 +123,7 @@ function ApplicationSettings() {
 					</SettingsContentDetails>
 
 				</SettingsContent>
+
 
 			</SettingsContainer>
 		</>

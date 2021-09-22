@@ -23,79 +23,77 @@
  *****************************************************************/
 
 import React from "react"
-import Link from "next/link"
+import Head from "next/head"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+import { Box } from "@mui/system"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-
-//ASSETS
+import { getRootLayout } from "./RootLayout"
+import Footer from "./../components/common/Footer"
+import Header from "../components/FrontEnd/Header"
+import TopNavigatorBar from "../components/FrontEnd/TopNavigatorBar"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+export const FRONT_PAGE_TABS_NAME = {
+	HOME: "Help Center",
+	DOCS: "Docs",
+	TROUBLESHOOT: "Troubleshoot"
+}
+
+
+export const FRONT_PAGE_TABS = [
+	[FRONT_PAGE_TABS_NAME.HOME, "/"],
+	[FRONT_PAGE_TABS_NAME.DOCS, "/docs"],
+	[FRONT_PAGE_TABS_NAME.TROUBLESHOOT, "/troubleshoot"],
+]
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+function EntryLayout({ children }) {
 	return (
-		<Box
-			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-			}}
-		>
-			<div style={{ width: "100%" }}>
+		<>
+			<Head>
+				<title>Site Layout</title>
+				<meta name="description" content="Site Layout Description" />
+			</Head>
 
-				<Typography variant="h2">{title}</Typography>
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					minHeight: "100vh",
+				}}
+			>
+				<Header
+					showLogo={true}
+					showSlogan={false}
+					title="ProDesk"
+					slogan={"Your Elegant & Powerful Support System"}
+				/>
 
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
+				<TopNavigatorBar dataSet={FRONT_PAGE_TABS} />
 
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
 
-			</div>
-		</Box >
+				{children}
+
+
+				<Footer />
+			</Box>
+		</>
 	)
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
 
-export default ListGroup
+EntryLayout.propTypes = { children: PropTypes.node }
+
+export const getLayout = page => getRootLayout(<EntryLayout>{page}</EntryLayout>)
+
+export default EntryLayout

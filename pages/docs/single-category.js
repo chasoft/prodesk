@@ -23,110 +23,51 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Grid } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import NavLink from "./NavLink"
-import { AuthTrue } from "../../AuthCheck"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
+import { Container, Grid } from "@mui/material"
+import updateUiSettings from "../../helpers/updateUiSettings"
+import { Box } from "@mui/system"
+import Banner from "../../components/widget/Banner"
+import SingleCategory from "../../components/Category/SingleCategory"
 
-//ASSETS
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const MainNav = ({ borderBottom = false }) => {
+function ViewSingleCategory() {
+
+	updateUiSettings({
+		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "single-category",
+	})
+
 	return (
-		<Grid
-			container
-			sx={{
-				display: "flex",
-				alignItems: "center",
-				padding: "0 1rem",
-				"a[aria-current]": {
-					backgroundColor: "transparent",
-				},
-				...(borderBottom && {
-					borderBottom: ".0625rem solid #dadce0",
-				})
-			}}
-		>
-			<Grid item>
-				<NavLink href="/" passHref >
+		<Container maxWidth="lg">
+			<Grid container>
+				<Grid item xs={12} sm={12} md={8} >
+					<SingleCategory />
+				</Grid>
+				<Grid item xs={12} sm={12} md={4}>
 					<Box
-						component="span"
 						sx={{
-							color: "#1a73e8",
-							lineHeight: "3rem",
-							fontSize: ".875rem",
-							fontWeight: 500,
-							borderBottom: "2px solid #1a73e8",
-							padding: 2,
-							px: 1,
-							mr: 1,
+							marginLeft: { xs: 0, lg: "3rem" },
+							marginTop: { xs: "3rem", lg: "4rem" },
 						}}
 					>
-						<Box
-							component="span"
-							sx={{
-								borderBottom: "2px solid #1a73e8",
-								padding: (theme) => theme.spacing(2) - 2,
-							}}
-						>
-							Help Center
-						</Box>
+						<Banner />
 					</Box>
-				</NavLink>
-
-				<AuthTrue>
-					<NavLink href="/public-tickets" passHref>
-						<span>Public Tickets</span>
-					</NavLink>
-				</AuthTrue>
-
-				{/*
-					//TODO: Community Feature would be implemented in version 2.0
-					<NavLink href="/community" passHref>
-						<span className={classes.link}>Community</span>
-					</NavLink>
-				*/}
-
-				<NavLink href="/faqs" passHref>
-					<Box
-						component="span"
-						sx={{
-							color: "#5f6368",
-							lineHeight: "3rem",
-							fontSize: ".875rem",
-							fontWeight: 500,
-							padding: (theme) => theme.spacing(2) - 3,
-							mr: 1,
-							px: { xs: "1", md: (theme) => theme.spacing(2) - 3 }
-						}}
-					>
-						Frequently Asked Questions
-					</Box>
-				</NavLink>
+				</Grid>
 			</Grid>
-			<Grid item>
-
-			</Grid>
-			<Grid item>
-
-
-			</Grid>
-		</Grid >
+		</Container>
 	)
 }
-MainNav.propTypes = { borderBottom: PropTypes.bool }
 
-export default MainNav
+ViewSingleCategory.getLayout = getLayout
+
+export default ViewSingleCategory

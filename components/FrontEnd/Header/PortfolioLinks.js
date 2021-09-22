@@ -22,18 +22,20 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Button, IconButton, Typography, Tooltip, Popover, ButtonBase, Grid } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 
 //ASSETS
+import AppsIcon from "@mui/icons-material/Apps"
+import { DUMMY_PORTFOLIO_LINK } from "./DUMMY_DATA"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,59 +45,102 @@ import { Box, Paper, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
-	return (
-		<Box
-			sx={{
-				marginTop: { xs: 3, md: 8 },
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
+const PortfolioLinks = ({ moreBtn }) => {
+	const [anchorEl, setAnchorEl] = useState(null)
+
+	const handleClick = (e) => { setAnchorEl(e.currentTarget) }
+	const handleClose = () => { setAnchorEl(null) }
+	const open = Boolean(anchorEl)
+	const id = open ? "PortfolioLinks" : undefined
+
+	return <>
+		<Tooltip title="User Menu" placement="bottom">
+			<IconButton size="large" onClick={handleClick}>
+				<AppsIcon sx={{ fontSize: 24 }} />
+			</IconButton>
+		</Tooltip>
+
+		<Popover
+			id={id}
+			open={open}
+			anchorEl={anchorEl}
+			onClose={handleClose}
+			anchorOrigin={{
+				vertical: "bottom",
+				horizontal: "right",
 			}}
+			transformOrigin={{
+				vertical: "top",
+				horizontal: "right",
+			}}
+			elevation={4}
 		>
-			<div style={{ width: "100%" }}>
+			<Grid container spacing={1} sx={{ m: 1, pr: 1, maxWidth: "310px" }}>
+				{
+					DUMMY_PORTFOLIO_LINK.map((item, idx) => (
+						<Grid item key={idx}>
+							<Link href={item.url}>
+								<a>
+									<ButtonBase>
+										<Box button
+											sx={{
+												display: "flex",
+												flexDirection: "column",
+												justifyContent: "space-between",
+												height: "92px", width: "92px",
+												":hover": {
+													bgcolor: "#E8F0FE",
+													borderRadius: "8px",
+													overflow: "visible",
+													textOverflow: "initial",
+												},
+												overflow: "hidden",
+												textOverflow: "ellipsis",
+												"& > p": {
+													lineHeight: 1.5,
+												}
+											}}
+										>
+											<div style={{
+												flexGrow: 1,
+												display: "flex",
+												justifyContent: "center",
+												alignItems: "center"
+											}}>
+												<Box
+													sx={{
+														backgroundImage: "url(\"/img/default-avatar.png\")",
+														backgroundPosition: `0 -${idx * 64}px`,
+														height: "64px",
+														width: "64px"
+													}}
+												/>
+											</div>
+											<Typography sx={{ px: 1, py: 0.5 }}>{item.title}</Typography>
+										</Box>
+									</ButtonBase>
+								</a>
+							</Link>
+						</Grid>
+					))
+				}
 
-				<Typography variant="h2">{title}</Typography>
+				{moreBtn &&
+					<Box sx={{ display: "flex", justifyContent: "center", m: 2, mt: 3, flexGrow: 1, textAlign: "center" }}>
+						<Link href={moreBtn.url}>
+							<a>
+								<Button variant="outlined" color="primary" size="small" sx={{ fontWeight: 400 }}>
+									{moreBtn.title}
+								</Button>
+							</a>
+						</Link>
+					</Box>}
 
-				{viewAllLink &&
-					<Link
-						href={viewAllLink}
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							"&:hover": {
-								textDecoration: "underline"
-							}
-						}}
-					>
-						<a>
-							<Typography variant="button">{viewAllText}</Typography>
-						</a>
-					</Link>}
+			</Grid>
 
-				<Paper
-					elevation={0}
-					sx={{
-						margin: { xs: "1.625rem 0 0", md: "1.5rem 0 0" },
-						border: 1,
-						borderColor: "divider",
-						borderRadius: "8px"
-					}}
-				>
-					{children}
-				</Paper>
-
-			</div>
-		</Box >
-	)
+		</Popover>
+	</>
 }
-ListGroup.propTypes = {
-	title: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	children: PropTypes.node,
-}
+PortfolioLinks.propTypes = { moreBtn: PropTypes.object }
 
-export default ListGroup
+export default PortfolioLinks

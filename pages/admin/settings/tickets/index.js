@@ -64,7 +64,9 @@ function TicketSettings() {
 			<SettingsContainer>
 				<SettingsContent>
 
-					<SettingsContentHeader>Ticket Settings</SettingsContentHeader>
+					<SettingsContentHeader hasBackBtn={false}>
+						Ticket
+					</SettingsContentHeader>
 
 					<SettingsContentHelper>
 

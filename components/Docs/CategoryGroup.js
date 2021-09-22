@@ -28,7 +28,7 @@ import { Container, Grid, Typography } from "@mui/material"
 import makeStyles from "@mui/styles/makeStyles"
 import CategoryGroupItem from "./CategoryGroupItem"
 import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
-import LatestFAQs from "../common/backend/client/LatestFAQs"
+import LatestFAQs from "../BackEnd/client/LatestFAQs"
 
 //PROJECT IMPORT
 

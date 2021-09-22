@@ -171,6 +171,7 @@ function RegLayout({ children }) {
 				<SideImage />
 
 				<Container
+					maxWidth={false}
 					sx={{
 						display: "flex",
 						flexDirection: "column",

@@ -10,10 +10,9 @@ import React from "react"
 
 import { getLayout } from "../../layout/BlankLayout"
 import Article from "../../components/Article"
-import MainNav from "../../components/common/frontend/MainNav"
-import Category from "../../components/Category"
 
 import { useRouter } from "next/router"
+
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
@@ -34,7 +33,6 @@ function AnArticle() {
 			{
 				JSON.stringify(docId)
 			}
-			<MainNav borderBottom={true} />
 			<Article />
 		</>
 	)
