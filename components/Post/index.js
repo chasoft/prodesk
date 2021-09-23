@@ -1,44 +1,58 @@
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React from "react"
-import makeStyles from "@mui/styles/makeStyles"
+
+// MATERIAL-UI
 import { Container, Grid, Box, } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import HistoryTimeline from "./HistoryTimeline"
 import PostContent from "./PostContent"
 import Replies from "./Replies"
-import HistoryTimeline from "./HistoryTimeline"
 
+//ASSETS
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		// maxWidth: "1440px",
-		// left: 0
-	},
-	nav: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "flex-start",
-		marginTop: theme.spacing(2),
-		marginBottom: theme.spacing(2),
-		"& > button": {
-			paddingLeft: theme.spacing(3),
-			paddingRight: theme.spacing(3),
-		},
-	}
-}))
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 function Post() {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
+		<div>
 			<Container>
 				<Grid container>
 					<Grid item xs={12} sm={12} md={8} >
-						{/* <nav className={classes.nav}>
-							<Button color="primary" startIcon={<ArrowBackOutlinedIcon />}>Back</Button>
-						</nav> */}
-
-						<main className={classes.main}>
+						<main>
 							<PostContent />
-							<div className={classes.spacer}></div>
+							<div>{/* this is empty intentionally */}</div>
 							<Replies />
 						</main>
 					</Grid>

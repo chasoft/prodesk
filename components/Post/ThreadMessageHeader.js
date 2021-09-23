@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -23,52 +23,28 @@
  *****************************************************************/
 
 import React from "react"
+
+// MATERIAL-UI
 import { Avatar, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
+//THIRD-PARTY
 
+//PROJECT IMPORT
+
+//ASSETS
 import FingerprintIcon from "@mui/icons-material/Fingerprint"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import LinkIcon from "@mui/icons-material/Link"
 
-//PROJECT IMPORT
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-		marginBottom: theme.spacing(2),
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center"
-	},
-	leftAvatar: {
-
-	},
-	middleContent: {
-		display: "flex",
-		alignItems: "center",
-		flexGrow: 1,
-		paddingLeft: theme.spacing(3),
-		"& > *": {
-			marginRight: theme.spacing(1)
-		}
-	},
-	rightMenu: {
-		display: "flex",
-		alignItems: "center"
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ThreadMessageHeader = () => {
-	const classes = useStyles()
 	const [anchorEl, setAnchorEl] = React.useState(null)
 	const open = Boolean(anchorEl)
 
@@ -82,18 +58,40 @@ const ThreadMessageHeader = () => {
 
 
 	return (
-		<Grid container className={classes.root}>
-			<Grid item className={classes.leftAvatar}>
+		<Grid container
+			sx={{
+				m: 1, mb: 2,
+				display: "flex",
+				flexDirection: "row",
+				alignItems: "center"
+			}}
+		>
+			<Grid item>
 				{/* <div className={classes.logoContainer}> */}
 				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
 				{/* </div> */}
 			</Grid>
-			<Grid item className={classes.middleContent}>
+			<Grid item
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					flexGrow: 1,
+					pl: 3,
+					"& > *": {
+						mr: 1
+					}
+				}}
+			>
 				<Typography variant="caption">Camille V.</Typography>
 				<div style={{ marginTop: "0.3rem" }}><FingerprintIcon style={{ fontSize: "1.2rem" }} /></div>
 				<Typography variant="caption">Community Manager</Typography>
 			</Grid>
-			<Grid item className={classes.rightMenu}>
+			<Grid item
+				sx={{
+					display: "flex",
+					alignItems: "center"
+				}}
+			>
 				<Typography variant="caption">28/08/2021</Typography>
 				<IconButton
 					aria-label="more"

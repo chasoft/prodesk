@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -23,43 +23,40 @@
  *****************************************************************/
 
 import React from "react"
-import { Avatar, Chip, Typography } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Avatar, Box, Chip, Typography } from "@mui/material"
 
-import FaceIcon from "@mui/icons-material/Face"
-import DoneIcon from "@mui/icons-material/Done"
+//THIRD-PARTY
 
 //PROJECT IMPORT
+
+//ASSETS
+import FaceIcon from "@mui/icons-material/Face"
+import DoneIcon from "@mui/icons-material/Done"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: theme.spacing(2)
-	},
-	content: {
-		display: "flex",
-		justifyContent: "flex-start",
-		flexWrap: "wrap",
-		"& > *": {
-			margin: theme.spacing(0.5),
-		},
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ThreadMessageDetails = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
+		<Box sx={{ mt: 2 }}>
 			<Typography style={{ fontWeight: "500" }}>Details</Typography>
-			<div className={classes.content}>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "flex-start",
+					flexWrap: "wrap",
+					"& > *": {
+						margin: 0.5,
+					},
+				}}
+			>
 				<Chip size="small" avatar={<Avatar>M</Avatar>} label="Clickable" onClick={() => { }} />
 				<Chip size="small" label="Deletable Primary" onDelete={() => { }} color="primary" />
 				<Chip
@@ -78,8 +75,8 @@ const ThreadMessageDetails = () => {
 					// onDelete={handleDelete}
 					deleteIcon={<DoneIcon />}
 				/>
-			</div>
-		</div>
+			</Box>
+		</Box>
 	)
 }
 

@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -23,30 +23,29 @@
  *****************************************************************/
 
 import React from "react"
-import makeStyles from "@mui/styles/makeStyles"
+
+// MATERIAL-UI
+import { Box } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		// margin: theme.spacing(1),
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ThreadMessagePayload = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
+		<Box>
 			Payload
-		</div>
+		</Box>
 	)
 }
 

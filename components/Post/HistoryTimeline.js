@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Ticket/Docs/Blog System     ║ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -23,16 +23,23 @@
  *****************************************************************/
 
 import React, { useEffect, useRef, useState } from "react"
-import makeStyles from "@mui/styles/makeStyles"
+
+// MATERIAL-UI
+import { Box, Typography } from "@mui/material"
 import Timeline from "@mui/lab/Timeline"
+import TimelineDot from "@mui/lab/TimelineDot"
 import TimelineItem from "@mui/lab/TimelineItem"
+import TimelineContent from "@mui/lab/TimelineContent"
 import TimelineSeparator from "@mui/lab/TimelineSeparator"
 import TimelineConnector from "@mui/lab/TimelineConnector"
-import TimelineContent from "@mui/lab/TimelineContent"
-import TimelineDot from "@mui/lab/TimelineDot"
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent"
-import Typography from "@mui/material/Typography"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import UserInfo from "./../../components/common/UserInfo"
+
+//ASSETS
 
 //PROJECT IMPORT
 
@@ -40,43 +47,11 @@ import UserInfo from "./../../components/common/UserInfo"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: "4rem",
-		marginLeft: "3rem"
-	},
-	datetime: {
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
-		top: "-0.8rem",
-		position: "relative",
-		cursor: "pointer",
-		"& > p": {
-			whiteSpace: "nowrap"
-		},
-		"& > :hover": {
-			color: theme.palette.primary.main
-		}
-	},
-	userInfo: {
-
-	},
-	leftAvatar: {
-
-	},
-	rightContent: {
-		top: "-0.8rem",
-		position: "relative"
-	}
-}))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const HistoryTimeline = () => {
-	const classes = useStyles()
 	const [fixed, setFixed] = useState(false)
 	const listRef = useRef(null)
 
@@ -97,74 +72,141 @@ const HistoryTimeline = () => {
 
 	return (
 		<div>
-			<div ref={listRef} className={classes.root} style={{ position: fixed ? "fixed" : "static" }}>
+			<Box
+				ref={listRef}
+				sx={{
+					mt: "4rem", ml: "3rem",
+					position: fixed ? "fixed" : "static"
+				}}
+			>
 
 				<Timeline>
 
 					<TimelineItem>
 						<TimelineOppositeContent>
-							<div className={classes.datetime} onClick={() => { }}>
+							<Box
+								onClick={() => { }}
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									justifyContent: "center",
+									top: "-0.8rem",
+									position: "relative",
+									cursor: "pointer",
+									"& > p": {
+										whiteSpace: "nowrap"
+									},
+									"& > :hover": {
+										color: "primary.main"
+									}
+								}}
+							>
 								<Typography color="textSecondary">
 									28-06-21<br />
 									09:30 AM
 								</Typography>
-							</div>
+							</Box>
 						</TimelineOppositeContent>
 						<TimelineSeparator>
 							<TimelineDot />
 							<TimelineConnector />
 						</TimelineSeparator>
 						<TimelineContent>
-							<div className={classes.rightContent}>
+							<Box
+								sx={{
+									top: "-0.8rem",
+									position: "relative"
+								}}
+							>
 								<UserInfo />
-							</div>
+							</Box>
 						</TimelineContent>
 					</TimelineItem>
 
 					<TimelineItem>
 						<TimelineOppositeContent>
-							<div className={classes.datetime}>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									justifyContent: "center",
+									top: "-0.8rem",
+									position: "relative",
+									cursor: "pointer",
+									"& > p": {
+										whiteSpace: "nowrap"
+									},
+									"& > :hover": {
+										color: "primary.main"
+									}
+								}}
+							>
 								<Typography color="textSecondary">
 									28-06-21<br />
 									09:30 AM
 								</Typography>
-							</div>
+							</Box>
 						</TimelineOppositeContent>
 						<TimelineSeparator>
 							<TimelineDot />
 							<TimelineConnector />
 						</TimelineSeparator>
 						<TimelineContent>
-							<div className={classes.rightContent}>
+							<Box
+								sx={{
+									top: "-0.8rem",
+									position: "relative"
+								}}
+							>
 								<UserInfo />
-							</div>
+							</Box>
 						</TimelineContent>
 					</TimelineItem>
 
 					<TimelineItem>
 						<TimelineOppositeContent>
-							<div className={classes.datetime}>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									justifyContent: "center",
+									top: "-0.8rem",
+									position: "relative",
+									cursor: "pointer",
+									"& > p": {
+										whiteSpace: "nowrap"
+									},
+									"& > :hover": {
+										color: "primary.main"
+									}
+								}}
+							>
 								<Typography color="textSecondary">
 									28-06-21<br />
 									09:30 AM
 								</Typography>
-							</div>
+							</Box>
 						</TimelineOppositeContent>
 						<TimelineSeparator>
 							<TimelineDot />
 							<TimelineConnector />
 						</TimelineSeparator>
 						<TimelineContent>
-							<div className={classes.rightContent}>
+							<Box
+								sx={{
+									top: "-0.8rem",
+									position: "relative"
+								}}
+							>
 								<UserInfo />
-							</div>
+							</Box>
 						</TimelineContent>
 					</TimelineItem>
 
 				</Timeline>
 
 
-			</div>
+			</Box>
 		</div>
 	)
 }

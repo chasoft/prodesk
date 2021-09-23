@@ -1,170 +1,203 @@
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React from "react"
 import Link from "next/link"
-import makeStyles from "@mui/styles/makeStyles"
-import { Typography } from "@mui/material"
 import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Box, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+
+//ASSETS
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 
-const useStyles = makeStyles((theme) => ({
-	border: {
-		borderTop: "1px solid",
-		borderColor: theme.palette.divider
-	},
-	main: {
-		cursor: "pointer",
-		"&:hover": {
-			background: theme.palette.action.hover
-		},
-	},
-	main_shorten: {
-		cursor: "pointer",
-		"&:hover": {
-			background: theme.palette.action.hover
-		},
-		padding: theme.spacing(2, 3),
-		[theme.breakpoints.down("md")]: {
-			padding: theme.spacing(2, 2)
-		},
-	},
-	paper: {
-		display: "flex",
-		[theme.breakpoints.down("md")]: {
-			flexDirection: "column",
-			alignItems: "flex-start",
-		},
-		// "&:hover > #moreInfo > #extraInfo": {
-		// 	visibility: "visible",
-		// 	width: "100%",
-		// 	opacity: 1,
-		// },
-	},
-	subject: {
-
-	},
-	content: {
-		minWidth: 0, //this property is important
-		[theme.breakpoints.down("md")]: {
-			maxWidth: "100%",
-			padding: theme.spacing(1),
-			paddingLeft: theme.spacing(2),
-			paddingRight: theme.spacing(2),
-		},
-	},
-	content_addon: {
-		padding: theme.spacing(3),
-	},
-	excerpt: {
-		[theme.breakpoints.down("md")]: {
-			display: "none"
-		},
-	},
-	state: {
-		display: "flex",
-		alignItems: "center",
-		flexDirection: "column",
-		justifyContent: "center",
-		padding: theme.spacing(1, 2, 1, 0),
-		[theme.breakpoints.down("md")]: {
-			flexDirection: "row",
-			padding: theme.spacing(0, 2, 1)
-		}
-	},
-	state1: {
-		textAlign: "center",
-		paddingLeft: "0.5rem",
-		paddingRight: "0.5rem",
-	},
-	extraInfo: {
-		// visibility: "hidden",
-		// width: 0,
-		// opacity: 0,
-		textAlign: "center"
-	},
-	isLast: {
-		borderBottomRightRadius: "0.5rem",
-		borderBottomLeftRadius: "0.5rem"
-	},
-	isFirst: {
-		borderTopRightRadius: "0.5rem",
-		borderTopLeftRadius: "0.5rem"
-	}
-}))
-
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 export const PostListEmpty = ({ message }) => {
-	const classes = useStyles()
 	return (
-		<div
-			className={`${classes.main} ${classes.isFirst} ${classes.isLast}`}
-			style={{ cursor: "default" }}
+		<Box
+			sx={{
+				borderRadius: "0.5rem",
+				"&:hover": {
+					background: "action.hover"
+				},
+			}}
 		>
-			<div className={classes.paper}>
-				<div className={`${classes.content} ${classes.content_addon}`} style={{ textAlign: "center" }}>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: { xs: "flex-start", md: "center" },
+					flexDirection: { xs: "column", md: "row" },
+				}}
+			>
+				<Box
+					sx={{
+						textAlign: "center",
+						p: {
+							xs: (theme) => theme.spacing(1, 2, 1),
+							md: 3
+						},
+						minWidth: {
+							xs: "none",
+							md: 0 /*this property is important*/
+						},
+					}}
+				>
 					<Typography>{message}</Typography>
-				</div>
-			</div>
-		</div>
+				</Box>
+			</Box>
+		</Box>
 	)
 }
 PostListEmpty.propTypes = { message: PropTypes.string }
 
 
 export const PostListItemShorten = ({ subject, link }) => {
-	const classes = useStyles()
 	return (
-		<div className={classes.border}>
+		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
 			<Link href={link}>
 				<a>
-					<div className={classes.main_shorten}>
+					<Box
+						sx={{
+							cursor: "pointer",
+							"&:hover": {
+								background: "action.hover"
+							},
+							padding: {
+								xs: (theme) => theme.spacing(2, 2),
+								md: (theme) => theme.spacing(2, 3),
+							}
 
-						<div className={classes.paper}>
-							<div className={classes.content}>
+						}}
+					>
+
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: { xs: "column", md: "row" },
+								alignItems: { xs: "flex-start", md: "center" },
+							}}
+						>
+							<Box
+								sx={{
+									minWidth: 0, /*this property is important*/
+									maxWidth: { xs: "100%", md: "none" },
+									p: {
+										xs: (theme) => theme.spacing(1, 2, 1),
+										md: "inherit "
+									}
+								}}
+							>
 								<Typography noWrap>{subject}</Typography>
-							</div>
-						</div>
+							</Box>
+						</Box>
 
-					</div>
+					</Box>
 				</a>
 			</Link>
-		</div>
+		</Box >
 	)
 }
 PostListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
 
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLast = false, isShort = false }) {
-	const classes = useStyles()
 	return (
-		<div className={(!isFirst) ? classes.border : ""} >
+		<Box
+			sx={{
+				borderColor: "divider",
+				borderTop: isFirst ? "0" : "1px solid",
+			}}
+		>
 			<Link href={link}>
 				<a>
-					<div className={`${classes.main} ${isFirst ? classes.isFirst : ""} ${isLast ? classes.isLast : ""}`}>
+					<Box
+						sx={{
+							cursor: "pointer",
+							"&:hover": {
+								background: "action.hover"
+							},
+							borderTopLeftRadius: isFirst ? "0.5rem" : 0,
+							borderTopRightRadius: isFirst ? "0.5rem" : 0,
+							borderBottomLeftRadius: isLast ? "0.5rem" : 0,
+							borderBottomRightRadius: isLast ? "0.5rem" : 0,
+						}}
+					>
 
-						<div className={classes.paper}>
+						<div>
 
-							<div id="content" className={`${classes.content} ${classes.content_addon}`}>
-								<Typography variant="h5" className={classes.subject} noWrap>
+							<Box
+								id="content"
+								sx={{ padding: 3 }}
+							>
+								<Typography variant="h5" noWrap>
 									{subject}
 								</Typography>
-								{
-									isShort ?
-										null
-										: <Typography className={classes.excerpt} noWrap>
-											{excerpt}
-										</Typography>
-								}
-							</div>
+
+								{(isShort === false) &&
+									<Typography noWrap sx={{ display: { xs: "none", md: "initial" } }}>
+										{excerpt}
+									</Typography>}
+
+							</Box>
 
 							{
 								isShort ?
 									null
-									: <div id="moreInfo" className={classes.state}>
+									: <Box id="moreInfo"
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											flexDirection: { xs: "row", md: "column" },
+											padding: {
+												xs: (theme) => theme.spacing(0, 2, 1),
+												md: (theme) => theme.spacing(1, 2, 1, 0)
+											}
+										}}>
+
 										{
 											metaData.length > 0 ?
 												metaData.map(() => {
 													return (
 														<>
-															<div className={classes.state1}>
+															<Box
+																sx={{
+																	textAlign: "center",
+																	paddingLeft: "0.5rem",
+																	paddingRight: "0.5rem",
+																}}
+															>
 
 																<PriorityHighIcon
 																	style={{
@@ -176,27 +209,31 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 																	}}
 																/>
 
-															</div>
+															</Box>
 
-															<div id="extraInfo" className={classes.extraInfo}>
+															<Box id="extraInfo"
+																sx={{
+																	textAlign: "center"
+																}}
+															>
 																<Typography variant="caption" noWrap>
 																	0 replies
 																</Typography>
-															</div>
+															</Box>
 														</>
 													)
 												})
 												: null
 										}
-									</div>
+									</Box>
 							}
 
 						</div>
 
-					</div>
+					</Box>
 				</a>
 			</Link>
-		</div >
+		</Box>
 	)
 }
 PostListItem.propTypes = {
