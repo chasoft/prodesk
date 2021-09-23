@@ -2,8 +2,6 @@ import React from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
 import { getNewTicket } from "./../../redux/selectors"
 import {
 	setSelectedCategory, setSelectedSubCategory,
@@ -11,16 +9,8 @@ import {
 	setSelectedDepartment
 } from "./../../redux/slices/newTicket"
 
-const useStyles = makeStyles((theme) => ({
-	formControl: {
-		margin: theme.spacing(1),
-		minWidth: 120,
-		// border: '1px solid #ced4da',
-	}
-}))
 
 const NewTicketStep2 = () => {
-	const classes = useStyles()
 	const dispatch = useDispatch()
 	const { newTicket } = useSelector(getNewTicket)
 	const {
@@ -52,7 +42,7 @@ const NewTicketStep2 = () => {
 							Please setup Department information!...
 						</div>
 						:
-						<FormControl className={classes.formControl} fullWidth>
+						<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 							<InputLabel shrink id="department">Department</InputLabel>
 							<Select
 								labelId="department"
@@ -87,7 +77,7 @@ const NewTicketStep2 = () => {
 							Please setup Priority information!...
 						</div>
 						:
-						<FormControl className={classes.formControl} fullWidth>
+						<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 							<InputLabel shrink id="priority">Priority</InputLabel>
 							<Select
 								labelId="priority"
@@ -121,7 +111,7 @@ const NewTicketStep2 = () => {
 							Please setup Category information!...
 						</div>
 						: <>
-							<FormControl className={classes.formControl} fullWidth>
+							<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 								<InputLabel shrink id="category">Category</InputLabel>
 								<Select
 									labelId="category"
@@ -155,7 +145,7 @@ const NewTicketStep2 = () => {
 				{(categories[currentCategory]?.length === 0) ? null
 					:
 					<Grid item xs={12} sm={6} >
-						<FormControl className={classes.formControl} fullWidth>
+						<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 							<InputLabel shrink id="category">Sub-Category</InputLabel>
 							<Select
 								labelId="sub-category"

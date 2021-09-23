@@ -10,8 +10,8 @@ function ArticleContent() {
 			sx={{
 				border: "1px solid",
 				borderRadius: "0.5rem",
-				borderColor: (theme) => theme.palette.divider,
-				margin: "2.625rem 0 0"
+				borderColor: "divider",
+				margin: "1rem 0 0"
 			}}
 		>
 			<Box
@@ -29,7 +29,10 @@ function ArticleContent() {
 					}
 				}}
 			>
-				<Typography variant="h1">Listen to music, calls &amp; more on your Pixel phone</Typography>
+				<Typography variant="h1">
+					Listen to music, calls &amp; more on your Pixel phone
+				</Typography>
+
 				<Typography paragraph={true}>
 					You can listen to music, calls, videos, and other sounds on your phone. You can use your phone&apos;s built-in speakers or audio accessories like headphones, earbuds, and speakers.
 				</Typography>
@@ -98,6 +101,7 @@ function ArticleContent() {
 				</Typography>
 			</Box>
 			<Box sx={{ borderTop: "1px solid", borderColor: (theme) => theme.palette.divider }}></Box>
+
 			<HelpfulSurvey />
 		</Box>
 	)

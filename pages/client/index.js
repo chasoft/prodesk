@@ -25,8 +25,8 @@
 import React from "react"
 import Link from "next/link"
 
-import makeStyles from "@mui/styles/makeStyles"
-import { Container, IconButton, Tooltip, Typography } from "@mui/material"
+// MATERIAL-UI
+import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -34,8 +34,8 @@ import { Container, IconButton, Tooltip, Typography } from "@mui/material"
 import { getLayout } from "./../../layout/ClientLayout"
 import updateUiSettings from "../../helpers/updateUiSettings"
 import ClientStats from "../../components/BackEnd/client/ClientStats"
-import LatestTicketFeedback from "../../components/BackEnd/client/LatestTicketFeedback"
 import RecentActivities from "../../components/BackEnd/client/RecentActivities"
+import LatestTicketFeedback from "../../components/BackEnd/client/LatestTicketFeedback"
 
 //ASSETS
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
@@ -44,39 +44,11 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-
-	},
-	boxTitle: {
-		display: "flex",
-		justifyContent: "space-between",
-		padding: theme.spacing(8, 0, 4),
-		color: "white",
-	},
-	siteTitle: {
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontWeight: "500",
-		fontSize: "2.5rem",
-		lineHeight: "2.5rem",
-		[theme.breakpoints.down("lg")]: {
-			fontSize: "2.2rem",
-			lineHeight: "2.2rem",
-		},
-		[theme.breakpoints.down("md")]: {
-			fontSize: "2rem",
-			lineHeight: "2rem",
-		}
-	}
-}))
-
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Client() {
-	const classes = useStyles()
 
 	updateUiSettings({
 		title: "",
@@ -88,14 +60,28 @@ function Client() {
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 
-			<div className={classes.boxTitle}>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					pt: 8, px: 0, pb: 4,
+					color: "white",
+				}}
+			>
 				<div>
-					<Typography className={classes.siteTitle}>
+					<Typography
+						sx={{
+							fontFamily: "\"Google Sans\", Roboto, sans-serif",
+							fontWeight: "500",
+							fontSize: { xs: "2rem", md: "2.2rem", lg: "2.5rem" },
+							lineHeight: { xs: "2rem", md: "2.2rem", lg: "2.5rem" },
+						}}
+					>
 						prodesk
 					</Typography>
 
 					<Typography variant="subtitle1">
-						Your Elegant &amp; Powerful Ticket System
+						{"Your Elegant & Powerful Ticket System"}
 					</Typography>
 				</div>
 				<div>
@@ -107,7 +93,7 @@ function Client() {
 						</Tooltip>
 					</Link>
 				</div>
-			</div>
+			</Box>
 
 			<ClientStats />
 

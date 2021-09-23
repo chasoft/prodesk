@@ -23,7 +23,7 @@ import { createSlice } from "@reduxjs/toolkit"
 export const initialState = {
 	id: "",
 	title: "ProDesk",
-	subTitle: "Your Elegant & Powerful Ticket System"
+	subTitle: "Your Elegant & Powerful Support System"
 }
 
 const pageMetaSlice = createSlice({

@@ -22,22 +22,20 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
 import Link from "next/link"
+import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Grid, Typography } from "@mui/material"
-
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-import { LINK_TYPE } from "../../helpers/constants"
-import ViewModeSwitcher, { VIEW_LISTING_MODE } from "../common/ViewModeSwitcher"
-
 
 //ASSETS
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import ViewModeSwitcher, { VIEW_LISTING_MODE } from "../common/ViewModeSwitcher"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,50 +43,58 @@ import ViewModeSwitcher, { VIEW_LISTING_MODE } from "../common/ViewModeSwitcher"
 
 const DummyData = [
 	{
-		cat: "Communication apps",
-		items: [
-			{ subject: "Phone app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Messages app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Contacts app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Duo app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" }
-		]
+		id: 1,
+		title: "Communication apps",
+		short: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+		url: "/admin"
 	},
 	{
-		cat: "Tool apps",
-		items: [
-			{ subject: "Camera app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Clock app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Calculator  app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Gboard  app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" }
-		]
+		id: 2,
+		title: "Fix your Camera app on your Pixel phone",
+		short: "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+		url: "/client"
 	},
 	{
-		cat: "Google app",
-		items: [
-			{ subject: "Get help from your Google Assistant", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Get info before you ask in Discover", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Search the Web with Google", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-		]
+		id: 3,
+		title: "Fix Bluetooth problems on your Pixel",
+		short: "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+		url: "/client"
 	},
-	{
-		cat: "Other Google apps on your phone",
-		items: [
-			{ subject: "Android Auto app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Family Link app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Gmail app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Docs app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Earth app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Keep app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-		]
-	}
 ]
 
+const ReadMoreBtn = ({ url }) => {
+	return (
+		<Box
+			sx={{
+				py: 1.5,
+				display: "flex",
+				alignItems: "center",
+				color: "primary.main"
+			}}
+		>
+			<Link href={url}>
+				<Box component="a"
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						cursor: "pointer",
+						"&:hover": { textDecoration: "underline" }
+					}}
+				>
+					<Typography sx={{ mr: 0.5 }}>Read more</Typography>
+					<ArrowForwardIcon fontSize="small" />
+				</Box>
+			</Link>
+		</Box>
+	)
+}
+ReadMoreBtn.propTypes = { url: PropTypes.string }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ListAllCategories() {
+function ListTroubleshoot() {
 	const [listingMode, setListingMode] = useState(VIEW_LISTING_MODE.DETAILS)
 	return (
 		<Box component="main"
@@ -100,7 +106,7 @@ function ListAllCategories() {
 			}}
 		>
 
-			<Box sx={{ float: "right", p: 1, }}>
+			<Box sx={{ float: "right", p: 1 }}>
 				<ViewModeSwitcher
 					listingMode={listingMode}
 					setListingMode={(mode) => setListingMode(mode)}
@@ -120,59 +126,56 @@ function ListAllCategories() {
 						fontSize: { xs: "1.5rem", sm: "1.75rem" }
 					}}
 				>
-					Get help with apps on your phone
+					Troubleshoot your phone
 				</Typography>
 
-				<Box>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-				</Box>
-
-				<Grid container spacing={2}>
-
-					{DummyData.map(((block, idx) => (
-						<Grid
-							item key={idx} xs={12} sm={6}
+				{DummyData.map((item, idx) => {
+					return (
+						<Box key={item.id}
 							sx={{
-								mt: 4,
-								"& > h2": { fontSize: "1rem" }
+								display: "flex",
+								flexDirection: "column",
+								width: "100%"
 							}}
 						>
-							<Typography variant="h2" sx={{ pl: 2 }}>{block.cat}</Typography>
-
-							{(idx === 2) && <Box sx={{ pl: 2 }}>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-							</Box>}
-
 							<Box
-								component="ul"
 								sx={{
-									padding: 0,
-									cursor: "pointer",
-									listStyle: "none",
-									color: "primary.main",
-									"& > li": { display: "flex", px: 2, py: 1 },
-									"& > li:hover": {
-										backgroundColor: "#E8F0FE"
-									}
+									display: "flex",
+									borderTop: (idx === 0) ? "" : "1px solid",
+									borderColor: "divider",
+									pt: (idx === 0) ? "" : "1.5rem",
 								}}
 							>
-								{block.items.map((link, idx) => (
-									<Link key={idx} href="/">
-										<li>
-											<ButtonBase sx={{ textAlign: "left" }}>
-												{link.subject}
-											</ButtonBase>
-										</li>
-									</Link>
-								))}
-							</Box>
-						</Grid>
-					)))}
+								<Box
+									sx={{
+										color: "#1a73e8",
+										borderLeft: ".125rem solid #1a73e8",
+										margin: ".25rem -2rem .25rem -1rem",
+										minWidth: "3rem",
+										paddingLeft: ".875rem",
+										width: "3rem",
+										display: { xs: "none", sm: "initial", }
+									}}
+								/>
 
-				</Grid>
+								<Typography variant="h2"
+									sx={{
+
+									}}
+								>
+									{item.title}
+								</Typography>
+
+							</Box>
+							<Typography variant="body1">{item.short}</Typography>
+							<ReadMoreBtn url={item.url} />
+						</Box>
+					)
+				})}
+
 			</Box>
-		</Box>
+		</Box >
 	)
 }
 
-export default ListAllCategories
+export default ListTroubleshoot

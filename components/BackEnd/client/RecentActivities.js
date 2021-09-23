@@ -22,8 +22,8 @@
 import React from "react"
 import { Grid, Typography } from "@mui/material"
 import makeStyles from "@mui/styles/makeStyles"
-import CategoryGroupLatestFAQs from "../../../Docs/CategoryGroupLatestFAQs"
-import CategoryGroupLatestPublicTickets from "../../../Docs/CategoryGroupLatestPublicTickets"
+import CategoryGroupLatestFAQs from "./../../Docs/CategoryGroupLatestFAQs"
+import CategoryGroupLatestPublicTickets from "./../../Docs/CategoryGroupLatestPublicTickets"
 
 /*****************************************************************
  * INIT                                                          *

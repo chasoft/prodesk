@@ -57,7 +57,7 @@ const LeftIcon = () => {
 	return (
 		<>
 			<IconButton
-				edge="start" size="large" sx={{ mr: 2 }}
+				edge="start" size="large" sx={{ mr: { xs: 0, sm: 2 } }}
 				onClick={() => { setShowMenu(true) }}
 			>
 				<MenuIcon sx={{ fontSize: 24 }} />

@@ -25,17 +25,16 @@
 import React from "react"
 
 // MATERIAL-UI
+import { Box, Container, Grid } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
-import { Container, Grid } from "@mui/material"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import { Box } from "@mui/system"
 import Banner from "../../components/widget/Banner"
+import updateUiSettings from "../../helpers/updateUiSettings"
 import SingleCategory from "../../components/Category/SingleCategory"
-
+import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
+import ProBreadcrumbs from "../../components/FrontEnd/ProBreadcrumbs"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -51,6 +50,7 @@ function ViewSingleCategory() {
 		<Container maxWidth="lg">
 			<Grid container>
 				<Grid item xs={12} sm={12} md={8} >
+					<ProBreadcrumbs />
 					<SingleCategory />
 				</Grid>
 				<Grid item xs={12} sm={12} md={4}>

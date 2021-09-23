@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -47,7 +47,6 @@ import AccountTreeIcon from "@mui/icons-material/AccountTree"
 import BarChartIcon from "@mui/icons-material/BarChart"
 import CategoryIcon from "@mui/icons-material/Category"
 import CreditCardIcon from "@mui/icons-material/CreditCard"
-import { Box } from "@mui/system"
 
 /*****************************************************************
  * INIT                                                          *

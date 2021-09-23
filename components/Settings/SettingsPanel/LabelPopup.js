@@ -24,10 +24,9 @@
 
 import React, { useState } from "react"
 import PropTypes from "prop-types"
-import { Box } from "@mui/system"
 
 // MATERIAL-UI
-import { Button, Popover, TextField } from "@mui/material"
+import { Box, Button, Popover, TextField } from "@mui/material"
 import { ColorPickerBase } from "../../common/ColorPicker"
 
 //THIRD-PARTY

@@ -24,77 +24,68 @@
 
 import React from "react"
 import Link from "next/link"
-import { Paper, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
 import { PropTypes } from "prop-types"
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+
+// MATERIAL-UI
+import { Box, Paper, Typography } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
+
+//ASSETS
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-		[theme.breakpoints.down("md")]: {
-			marginLeft: theme.spacing(0),
-			marginRight: theme.spacing(0),
-		},
-	},
-	docHeading: {
-		padding: theme.spacing(2, 3),
-		fontFamily: "\"Google Sans\", Roboto, sans-serif",
-		fontSize: "1rem",
-		fontWeight: 500,
-		lineHeight: "1.25rem"
-	},
-	docFooter: {
-		padding: theme.spacing(2, 3)
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		},
-		borderTop: "1px solid",
-		borderColor: theme.palette.divider,
-	},
-	link: {
-		display: "flex",
-		alignItems: "center",
-		cursor: "pointer",
-		"&:hover": {
-			textDecoration: "underline",
-		}
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
-	const classes = useStyles()
 	return (
 		<Paper elevation={1}>
-			<div className={classes.docHeading}>{header}</div>
+			<Box
+				sx={{
+					py: 2, px: 3,
+					fontFamily: "\"Google Sans\", Roboto, sans-serif",
+					fontSize: "1rem",
+					fontWeight: 500,
+					lineHeight: "1.25rem"
+				}}
+			>
+				{header}
+			</Box>
 
 			{children}
 
-			<div className={`${classes.viewAll} ${classes.docFooter}`}>
+			<Box
+				sx={{
+					py: 2, px: 3,
+					display: "flex",
+					alignItems: "center",
+					borderTop: "1px solid",
+					borderColor: "divider",
+					"& > :first-child": { mr: 1 },
+					"& > *": { color: "primary.main" },
+				}}
+			>
 				<Link href={viewAllLink}>
-					<a className={classes.link}>
+					<Box component="a"
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							cursor: "pointer",
+							"&:hover": { textDecoration: "underline" }
+						}}
+					>
 						<Typography>{viewAllText}</Typography>
 						<ArrowForwardIcon fontSize="small" />
-					</a>
+					</Box>
 				</Link>
-			</div>
+			</Box>
 		</Paper>
 	)
 }

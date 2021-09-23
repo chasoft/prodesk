@@ -70,7 +70,7 @@ function SingleCategory() {
 				border: "1px solid",
 				borderRadius: "0.5rem",
 				borderColor: "divider",
-				margin: "2.625rem 0 0"
+				margin: "1rem 0 0"
 			}}
 		>
 			<Box sx={{ padding: { xs: 3, md: 8 } }}>

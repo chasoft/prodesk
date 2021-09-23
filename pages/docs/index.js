@@ -19,14 +19,15 @@
  ************************************************************************/
 
 import React from "react"
-import FeaturedDocs from "./../../components/FrontEnd/FeaturedDocs"
+import PopularArticles from "./../../components/FrontEnd/PopularArticles"
 import CategoryGroup from "../../components/Docs/CategoryGroup"
 import ListAllCategories from "./../../components/Category/ListAllCategories"
 import { getLayout } from "../../layout/EntryLayout"
 import AskNowFrame from "../../components/Docs/AskNowFrame"
-import { Container, Grid } from "@mui/material"
+import { Container, Grid, Typography } from "@mui/material"
 import updateUiSettings from "../../helpers/updateUiSettings"
 import { FRONT_PAGE_TABS_NAME } from "../../layout/EntryLayout"
+import CategoryGroupLatestFAQs from "../../components/Docs/CategoryGroupLatestFAQs"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,22 +45,17 @@ function Docs() {
 
 	return (
 		<>
+			<Container maxWidth="md" sx={{ mt: { xs: 3, md: 6 } }}>
 
-
-			<Container maxWidth="md" sx={{ mt: { xs: 3, md: 8 } }}>
 				<Grid container>
-					<Grid item xs={12} >
-						<FeaturedDocs />
-					</Grid>
 					<Grid item xs={12} >
 						<ListAllCategories />
 					</Grid>
 				</Grid>
+
 			</Container>
 
 			<AskNowFrame />
-
-			<CategoryGroup />
 		</>
 	)
 }

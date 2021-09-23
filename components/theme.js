@@ -24,14 +24,14 @@ export const theme = createTheme({
 		h1: {
 			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
 			fontSize: "1.75rem",
-			fontWeight: 500,
+			fontWeight: 400,
 			lineHeight: "2rem",
 			margin: "0 0 .5rem",
 		},
 		h2: {
 			fontFamily: ["\"Google Sans\"", "Roboto", "sans-serif"].join(","),
 			fontSize: "1.25rem",
-			fontWeight: 500,
+			fontWeight: 400,
 			lineHeight: "2rem",
 			margin: "0 0 .25rem",
 		},

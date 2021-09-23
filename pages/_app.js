@@ -28,13 +28,16 @@ import PropTypes from "prop-types"
 import Router, { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { CssBaseline, ThemeProvider, StyledEngineProvider } from "@mui/material"
+import { CssBaseline, ThemeProvider } from "@mui/material"
 
 //THIRD-PARTY
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
 import { SnackbarProvider } from "notistack"
 import { configureStore } from "@reduxjs/toolkit"
+import createEmotionCache from "./../helpers/createEmotionCache"
+import { CacheProvider } from "@emotion/react"
+
 
 //PROJECT IMPORT
 import rootReducer from "./../redux/slices"
@@ -53,6 +56,10 @@ import PageTransition from "../components/PageTransition"
  * INIT                                                          *
  *****************************************************************/
 
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createEmotionCache()
+
+
 const store = configureStore({ reducer: rootReducer })
 
 /* Implement nprogress */
@@ -64,7 +71,7 @@ Router.events.on("routeChangeError", () => NProgress.done())
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
 	const getLayout = Component.getLayout || ((page) => page)
 	const router = useRouter()
 
@@ -77,31 +84,31 @@ function MyApp({ Component, pageProps }) {
 	}, [])
 
 	return <>
-		<Head>
-			<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
-			<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-		</Head>
-		<Provider store={store}>
-			<StyledEngineProvider injectFirst>
+		<CacheProvider value={emotionCache}>
+			<Head>
+				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
+				<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+			</Head>
+			<Provider store={store}>
 				<ThemeProvider theme={theme}>
+					<CssBaseline />
 					<SnackbarProvider maxSnack={3}>
-						{
-							getLayout(
-								<PageTransition location={router.pathname}>
-									<CssBaseline />
-									<Component {...pageProps} />
-								</PageTransition>
-							)
-						}
+						{getLayout(
+							<PageTransition location={router.pathname}>
+								<CssBaseline />
+								<Component {...pageProps} />
+							</PageTransition>
+						)}
 					</SnackbarProvider>
 				</ThemeProvider>
-			</StyledEngineProvider>
-		</Provider>
+			</Provider>
+		</CacheProvider>
 	</>
 }
 
 MyApp.propTypes = {
 	Component: PropTypes.elementType.isRequired,
+	emotionCache: PropTypes.object,
 	pageProps: PropTypes.object.isRequired
 }
 

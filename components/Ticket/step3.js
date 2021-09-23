@@ -1,25 +1,16 @@
 import dynamic from "next/dynamic"
 import React, { useState } from "react"
-import { Tab, Tabs, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
+import { TabPanel, Tab, Tabs, Typography } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 import Skeleton from "@mui/material/Skeleton"
 import { getNewTicket } from "./../../redux/selectors"
 import { setMessage } from "./../../redux/slices/newTicket"
 import TicketUploader from "../Gallery/TicketUploader"
-import { TabPanel } from "@mui/lab"
 
 const TextEditor = dynamic(() => import("./../BackEnd/TextEditor"), {
 	ssr: false,
 	loading: function pleaseWait() { return <Skeleton variant="rectangular" width="100%" height={85} /> }
 })
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		// flexGrow: 1,
-		// backgroundColor: theme.palette.background.paper,
-	},
-}))
 
 function a11yProps(index) {
 	return {
@@ -33,7 +24,6 @@ const NewTicketStep3 = () => {
 	const { newTicket } = useSelector(getNewTicket)
 	const { message } = newTicket
 
-	const classes = useStyles()
 	const [value, setValue] = useState("one")
 
 	const handleChange = (event, newValue) => {
@@ -43,7 +33,7 @@ const NewTicketStep3 = () => {
 	//https://stackoverflow.com/questions/57899608/how-to-make-my-custom-tab-component-work-with-passing-index-to-children-and-hidi
 
 	return (
-		<div className={classes.root}>
+		<div>
 			<Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
 				<Tab
 					value="one"

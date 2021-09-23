@@ -1,1 +1,1 @@
-# ProDesk - Your Elegant & Powerful Ticket System
+# ProDesk - Your Elegant & Powerful Support System

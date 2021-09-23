@@ -26,11 +26,10 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //PROJECT IMPORT
 import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
-import { Box } from "@mui/system"
 import TextEditor from "../../common/TextEditor"
 
 //THIRD-PARTY

@@ -25,15 +25,11 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Button, Paper, Typography } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
+import { Box, Button, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-
 
 //ASSETS
 import ForumIcon from "@mui/icons-material/Forum"
@@ -43,68 +39,51 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: theme.spacing(4),
-		marginBottom: theme.spacing(4),
-		[theme.breakpoints.down("md")]: {
-			marginTop: theme.spacing(2),
-			marginBottom: theme.spacing(2),
-		}
-	},
-	paper: {
-		display: "flex",
-		alignItems: "center",
-		"& > *:not(:last-child)": {
-			marginRight: theme.spacing(4)
-		},
-		padding: theme.spacing(3, 8),
-		[theme.breakpoints.down("md")]: {
-			padding: theme.spacing(5, 4, 4, 4)
-		}
-	},
-	ask: {
-		display: "flex",
-		alignItems: "center",
-		flexGrow: 1,
-		"& > *": {
-			marginRight: theme.spacing(2)
-		},
-		[theme.breakpoints.down("md")]: {
-			flexDirection: "column",
-			alignItems: "flex-start"
-		}
-	}
-}))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const AskNow = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
-			<Paper elevation={2} className={classes.paper}>
-				<div>
-					<ForumIcon color="primary" />
-				</div>
-				<div className={classes.ask} >
+		<Box sx={{ my: { xs: 2, md: 4 } }}>
+			<Paper elevation={2}
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					"& > *:not(:last-child)": { mr: 4 },
+					px: { xs: 4, md: 4 },
+					py: { xs: 3, md: 4 }
+				}}
+			>
 
-					<Typography><span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.</Typography>
+				<ForumIcon color="primary" />
+
+				<Box
+					sx={{
+						display: "flex",
+						flexGrow: 1,
+						alignItems: { xs: "flex-start", md: "center" },
+						flexDirection: { xs: "column", md: "row" },
+						"& > *": { mr: 2 },
+					}}
+				>
+
+					<Typography>
+						<span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.
+					</Typography>
 
 					<Button
-						color="primary"
 						size="small"
-						// className={classes.button}
+						color="primary"
 						endIcon={<ArrowForwardIcon />}
-						style={{ whiteSpace: "nowrap" }}
+						sx={{ whiteSpace: "nowrap" }}
 					>
 						Ask now
 					</Button>
-				</div>
+
+				</Box>
 			</Paper>
-		</div>
+		</Box >
 	)
 }
 

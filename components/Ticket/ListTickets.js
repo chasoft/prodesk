@@ -23,9 +23,7 @@
  *****************************************************************/
 
 import React, { useEffect, useState } from "react"
-
-import makeStyles from "@mui/styles/makeStyles"
-import { Fab, Paper, Typography } from "@mui/material"
+import { Box, Fab, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -43,50 +41,6 @@ import { resetTicketsFilter } from "../../redux/slices/uiSettings"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minWidth: 0
-	},
-	group: {
-		minWidth: 0
-	},
-	header: {
-		marginLeft: theme.spacing(3),
-		marginTop: "3rem",
-		[theme.breakpoints.down("md")]: {
-			marginTop: "0.5rem",
-		},
-	},
-	heading: {
-		marginTop: theme.spacing(5),
-		textAlign: "center",
-		fontSize: "2rem",
-		lineHeight: "2.5rem",
-		color: "#ffffff",
-		[theme.breakpoints.down("md")]: {
-			marginTop: theme.spacing(3),
-			color: "#1a73e8",
-			fontSize: "1.5rem",
-		}
-	},
-	fab: {
-		position: "fixed",
-		bottom: theme.spacing(2),
-		right: theme.spacing(2),
-	},
-	link: {
-		cursor: "pointer",
-		fontWeight: 500,
-		"&:hover": {
-			textDecoration: "underline",
-		}
-	}
-
-}))
-
 
 const DummyData = [
 	{
@@ -158,7 +112,7 @@ const DummyData = [
  *****************************************************************/
 
 function ListTickets() {
-	const classes = useStyles()
+
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 	const [filteredTickets, setFilteredTickets] = useState([])
 
@@ -193,7 +147,13 @@ function ListTickets() {
 	}, [DummyData, ticketSearchTerm, selectedPriority, selectedStatus])
 
 	return (
-		<div className={classes.root}>
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				minWidth: 0
+			}}
+		>
 			<Typography variant="h1" style={{ color: "white", textAlign: "center" }}>All tickets</Typography>
 
 			{
@@ -204,11 +164,20 @@ function ListTickets() {
 							<div key={item.status}>
 								<Typography
 									variant="h2"
-									className={classes.header} style={(idx === 0) ? { color: "white" } : null}
+									sx={{
+										ml: 3,
+										marginTop: "3rem",
+										mt: { xs: "0.5rem", md: "3rem" },
+									}}
+									style={(idx === 0) ? { color: "white" } : null}
 								>
 									{item.status}
 								</Typography>
-								<Paper elevation={2} className={classes.group}>
+								<Paper elevation={2}
+									sx={{
+										minWidth: 0
+									}}
+								>
 									{
 										item.data.length > 0 ?
 											item.data.map((ticket, idx) => {
@@ -231,21 +200,38 @@ function ListTickets() {
 					})
 
 					:
-					<div className={classes.header}>
+					<Box
+						sx={{
+							ml: 3,
+							mt: { xs: "0.5rem", md: "3rem" },
+						}}
+					>
 						<Typography variant="h2" style={{ color: "white" }}>
 							There are no tickets that matched your criteria
 						</Typography>
 						<Typography variant="body" style={{ color: "white" }}>
-							Try again by using other search criteria or click &quot;<span onClick={handleResetSearchCriteria} className={classes.link}>here</span>&quot; to reset.
+							Try again by using other search criteria or click &quot;<Box component="span" onClick={handleResetSearchCriteria} sx={{
+								cursor: "pointer",
+								fontWeight: 500,
+								"&:hover": {
+									textDecoration: "underline",
+								}
+							}}>here</Box>&quot; to reset.
 						</Typography>
-					</div>
+					</Box>
 			}
 
 			<AskNow />
-			<Fab color="primary" aria-label="add" className={classes.fab}>
+			<Fab color="primary" aria-label="add"
+				sx={{
+					position: "fixed",
+					bottom: (theme) => theme.spacing(2),
+					right: (theme) => theme.spacing(2),
+				}}
+			>
 				<AddIcon />
 			</Fab>
-		</div>
+		</Box>
 	)
 }
 

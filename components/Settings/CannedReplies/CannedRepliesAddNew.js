@@ -23,15 +23,13 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
-import { Box } from "@mui/system"
 import TextEditor from "../../common/TextEditor"
-import { useDispatch } from "react-redux"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
 
 //PROJECT IMPORT
 
@@ -43,7 +41,6 @@ import { useDispatch } from "react-redux"
 
 const CannedRepliesAddNew = ({ backBtnClick }) => {
 	const [textEditorData, setTextEditorData] = useState("")
-	const dispatch = useDispatch()
 	return (
 		<>
 

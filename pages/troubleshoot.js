@@ -19,10 +19,12 @@
  ************************************************************************/
 
 import React from "react"
-import { Container } from "@mui/material"
-
-import { FRONT_PAGE_TABS_NAME, getLayout } from "../layout/EntryLayout"
-import updateUiSettings from "../helpers/updateUiSettings"
+import ListTroubleshoot from "./../components/Category/ListTroubleshoot"
+import { getLayout } from "./../layout/EntryLayout"
+import AskNowFrame from "./../components/Docs/AskNowFrame"
+import { Container, Grid } from "@mui/material"
+import updateUiSettings from "./../helpers/updateUiSettings"
+import { FRONT_PAGE_TABS_NAME } from "./../layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -32,7 +34,7 @@ import updateUiSettings from "../helpers/updateUiSettings"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Troubleshoot() {
+function Docs() {
 
 	updateUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.TROUBLESHOOT,
@@ -40,12 +42,20 @@ function Troubleshoot() {
 
 	return (
 		<>
-			<Container maxWidth="md">
-				Show All FAQs here!!!
+			<Container maxWidth="md" sx={{ mt: { xs: 3, md: 6 } }}>
+
+				<Grid container>
+					<Grid item xs={12} >
+						<ListTroubleshoot />
+					</Grid>
+				</Grid>
+
 			</Container>
+
+			<AskNowFrame />
 		</>
 	)
 }
 
-Troubleshoot.getLayout = getLayout
-export default Troubleshoot
+Docs.getLayout = getLayout
+export default Docs

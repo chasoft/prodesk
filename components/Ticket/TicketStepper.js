@@ -1,24 +1,17 @@
 import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import {
+	Box,
 	Button,
-	Grid,
-	IconButton,
 	Paper,
 	Step,
 	StepContent,
 	StepLabel,
 	Stepper,
-	Tooltip,
 	Typography,
 } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-
-
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
-
 import { getNewTicket } from "../../redux/selectors"
 import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
 import NewTicketStep1 from "./step1"
@@ -26,50 +19,6 @@ import NewTicketStep2 from "./step2"
 import NewTicketStep3 from "./step3"
 import { batch } from "react-redux"
 import { setRedirect } from "../../redux/slices/redirect"
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-	button: {
-		marginTop: theme.spacing(1),
-		marginRight: theme.spacing(1),
-		paddingLeft: theme.spacing(2),
-		paddingRight: theme.spacing(2),
-	},
-	actionsContainer: {
-		marginTop: theme.spacing(1),
-		marginBottom: theme.spacing(0),
-		display: "flex",
-		justifyContent: "space-between"
-	},
-	uploadDiv: {
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "flex-end",
-		flexGrow: 1,
-		border: "1px solid red"
-	},
-	resetContainer: {
-		padding: theme.spacing(3),
-	},
-	user: {
-		paddingLeft: theme.spacing(3),
-		paddingTop: theme.spacing(2),
-		paddingBottom: theme.spacing(2),
-		borderBottom: "1px solid",
-		borderBottomColor: theme.palette.divider,
-		"& > div": {
-			display: "flex",
-			flexDirection: "row",
-			marginRight: "1rem",
-			alignItems: "center"
-		}
-	},
-	hide: {
-		display: "none"
-	}
-}))
 
 const getStepContent = (step, callback) => {
 	switch (step) {
@@ -81,7 +30,6 @@ const getStepContent = (step, callback) => {
 }
 
 export default function TicketStepper() {
-	const classes = useStyles()
 	const dispatch = useDispatch()
 	const { newTicket } = useSelector(getNewTicket)
 	const { currentStep, isReadyNextStep,
@@ -161,7 +109,7 @@ export default function TicketStepper() {
 
 
 	return (
-		<div className={classes.root}>
+		<Box sx={{ width: "100%" }}>
 
 
 			<Stepper activeStep={currentStep} orientation="vertical">
@@ -172,46 +120,70 @@ export default function TicketStepper() {
 						> {label}</StepLabel>
 						<StepContent style={{ paddingTop: "1rem" }}>
 							<div>{getStepContent(index, handleNext)}</div>
-							<div className={classes.actionsContainer}>
+							<Box
+								sx={{
+									marginTop: theme.spacing(1),
+									marginBottom: theme.spacing(0),
+									display: "flex",
+									justifyContent: "space-between"
+								}}
+							>
 								<div>
 									<Button
 										onClick={handleBack}
-										className={`${classes.button} ${(currentStep === 0) ? classes.hide : null}`}
+										sx={{
+											mt: 1, mr: 1,
+											pl: 2, pr: 2,
+											display: (currentStep === 0) ? "none" : "initial"
+										}}
 									>
 										Back
 									</Button>
 									<Button
 										disabled={!isReadyNextStep}
 										variant="outlined" color="primary"
-										onClick={handleNext} className={classes.button} >
+										onClick={handleNext}
+										sx={{
+											mt: 1, mr: 1,
+											pl: 2, pr: 2,
+										}}
+									>
 										{currentStep === steps.length - 1 ? "Submit" : "Continue"}
 									</Button>
 								</div>
-							</div>
+							</Box>
 						</StepContent>
 					</Step>
 				))
 				}
 			</Stepper >
 			{currentStep === steps.length && (
-				<Paper square elevation={0} className={classes.resetContainer}>
+				<Paper square elevation={0} sx={{ padding: theme.spacing(3), }}>
 					<Typography>All steps completed - you&apos;re finished</Typography>
 					<Button
 						onClick={() => handleViewTicket(newTicket.tid)}
 						fullWidth={isSmallScreen ? true : false}
-						className={classes.button} variant="outlined"
+						variant="outlined"
+						sx={{
+							mt: 1, mr: 1,
+							pl: 2, pr: 2,
+						}}
 					>
 						View your ticket
 					</Button>
 					<Button
 						onClick={() => dispatch(setRedirect("/client/tickets"))}
 						fullWidth={isSmallScreen ? true : false}
-						className={classes.button} variant="contained" color="primary"
+						variant="contained" color="primary"
+						sx={{
+							mt: 1, mr: 1,
+							pl: 2, pr: 2,
+						}}
 					>
 						Go to Dashboard
 					</Button>
 				</Paper>
 			)}
-		</div >
+		</Box >
 	)
 }

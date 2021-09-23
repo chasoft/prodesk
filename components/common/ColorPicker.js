@@ -24,22 +24,18 @@
 
 import React, { useCallback, useState } from "react"
 import PropTypes from "prop-types"
-import { Box } from "@mui/system"
 
 // MATERIAL-UI
-import {
-	red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, grey, blueGrey
-} from "@mui/material/colors"
-import { Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
 
-
 //ASSETS
-
+import {
+	red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, grey, blueGrey
+} from "@mui/material/colors"
 
 /*****************************************************************
  * INIT                                                          *

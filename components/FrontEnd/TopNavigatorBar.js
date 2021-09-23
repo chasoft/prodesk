@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -54,7 +54,6 @@ const getTabId = (tabName, dataSet) => {
  *****************************************************************/
 
 const TopNavigatorBar = ({ dataSet }) => {
-
 	const dispatch = useDispatch()
 
 	const { activeSettingTab } = useSelector(getUiSettings)
@@ -64,21 +63,37 @@ const TopNavigatorBar = ({ dataSet }) => {
 	}
 
 	return (
-		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
+		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab.split("@note:")[0] === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
 			<Tabs
-				value={getTabId(activeSettingTab, dataSet)}
+				value={getTabId(activeSettingTab.split("@note:")[0], dataSet)}
 				onChange={handleChange}
 				indicatorColor="primary"
 				textColor="primary"
 				variant="scrollable"
+				sx={{
+					pl: { xs: 1, sm: 2 },
+					".MuiTabs-indicator": {
+						backgroundColor: "transparent",
+						borderLeft: "3px solid transparent",
+						borderRight: "3px solid transparent",
+						borderBottom: (theme) => `3px solid ${theme.palette.primary.main}`,
+					}
+				}}
+
 			>
 				{
 					dataSet.map((item, idx) => (
-						<Tab key={idx} label={item[0]} />
+						<Tab
+							key={idx} label={item[0]}
+							sx={{
+								fontSize: "0.875rem",
+								color: "#5f6368"
+							}}
+						/>
 					))
 				}
 			</Tabs>
-		</Paper>
+		</Paper >
 	)
 }
 TopNavigatorBar.propTypes = {

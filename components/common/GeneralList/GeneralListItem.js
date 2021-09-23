@@ -35,13 +35,13 @@ import makeStyles from "@mui/styles/makeStyles"
 const useStyles = makeStyles((theme) => ({
 	main: {
 		"&:hover": {
-			background: theme.palette.action.hover
+			backgroundColor: theme.palette.action.hover
 		},
 	},
 	main_shorten: {
 		cursor: "pointer",
 		"&:hover": {
-			background: theme.palette.action.hover
+			backgroundColor: theme.palette.action.hover
 		},
 		padding: theme.spacing(2, 3),
 		[theme.breakpoints.down("md")]: {

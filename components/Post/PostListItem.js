@@ -45,9 +45,7 @@ export const PostListEmpty = ({ message }) => {
 		<Box
 			sx={{
 				borderRadius: "0.5rem",
-				"&:hover": {
-					background: "action.hover"
-				},
+				"&:hover": { backgroundColor: "action.hover" },
 			}}
 		>
 			<Box
@@ -78,7 +76,6 @@ export const PostListEmpty = ({ message }) => {
 }
 PostListEmpty.propTypes = { message: PropTypes.string }
 
-
 export const PostListItemShorten = ({ subject, link }) => {
 	return (
 		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
@@ -87,38 +84,14 @@ export const PostListItemShorten = ({ subject, link }) => {
 					<Box
 						sx={{
 							cursor: "pointer",
-							"&:hover": {
-								background: "action.hover"
-							},
-							padding: {
-								xs: (theme) => theme.spacing(2, 2),
-								md: (theme) => theme.spacing(2, 3),
-							}
-
+							"&:hover": { backgroundColor: "action.hover" },
+							px: { xs: 2, md: 3 },
+							py: 2,
+							minWidth: 0, /*this property is important*/
+							maxWidth: { xs: "100%", md: "none" },
 						}}
 					>
-
-						<Box
-							sx={{
-								display: "flex",
-								flexDirection: { xs: "column", md: "row" },
-								alignItems: { xs: "flex-start", md: "center" },
-							}}
-						>
-							<Box
-								sx={{
-									minWidth: 0, /*this property is important*/
-									maxWidth: { xs: "100%", md: "none" },
-									p: {
-										xs: (theme) => theme.spacing(1, 2, 1),
-										md: "inherit "
-									}
-								}}
-							>
-								<Typography noWrap>{subject}</Typography>
-							</Box>
-						</Box>
-
+						<Typography noWrap>{subject}</Typography>
 					</Box>
 				</a>
 			</Link>
@@ -135,18 +108,18 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 	return (
 		<Box
 			sx={{
+				borderTop: isFirst ? 0 : "1px solid",
 				borderColor: "divider",
-				borderTop: isFirst ? "0" : "1px solid",
 			}}
 		>
 			<Link href={link}>
 				<a>
 					<Box
 						sx={{
+							display: "flex",
 							cursor: "pointer",
-							"&:hover": {
-								background: "action.hover"
-							},
+							flexDirection: { xs: "column", sm: "row" },
+							"&:hover": { backgroundColor: "action.hover" },
 							borderTopLeftRadius: isFirst ? "0.5rem" : 0,
 							borderTopRightRadius: isFirst ? "0.5rem" : 0,
 							borderBottomLeftRadius: isLast ? "0.5rem" : 0,
@@ -154,81 +127,58 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 						}}
 					>
 
-						<div>
+						<Box id="content"
+							sx={{
+								flexGrow: 1,
+								minWidth: 0, /*this property is important*/
+								p: 3,
+							}}
+						>
+							<Typography variant="h5" noWrap>
+								{subject}
+							</Typography>
 
-							<Box
-								id="content"
-								sx={{ padding: 3 }}
-							>
-								<Typography variant="h5" noWrap>
-									{subject}
-								</Typography>
+							{(isShort === false) &&
+								<Typography sx={{ display: { xs: "none", md: "block" } }} noWrap>
+									{excerpt}
+								</Typography>}
+						</Box>
 
-								{(isShort === false) &&
-									<Typography noWrap sx={{ display: { xs: "none", md: "initial" } }}>
-										{excerpt}
-									</Typography>}
+						{(isShort === false) &&
+							<Box id="moreInfo"
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									flexDirection: { xs: "row", md: "column" },
+									mt: { xs: -2.5, sm: 2 },
+									pt: { xs: 0, md: 1 },
+									pr: 2,
+									pb: 2.5,
+									pl: { xs: 2, md: 0 },
+								}}>
 
-							</Box>
+								{(metaData.length > 0) &&
+									metaData.map(() => (
+										<>
+											<Box sx={{ textAlign: "center", px: "0.5rem" }}>
+												<PriorityHighIcon
+													style={{
+														color: "#f44336",
+														width: "1.25rem", height: "1.25rem",
+														border: "1px solid",
+														borderRadius: "50%"
+													}}
+												/>
+											</Box>
 
-							{
-								isShort ?
-									null
-									: <Box id="moreInfo"
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "center",
-											flexDirection: { xs: "row", md: "column" },
-											padding: {
-												xs: (theme) => theme.spacing(0, 2, 1),
-												md: (theme) => theme.spacing(1, 2, 1, 0)
-											}
-										}}>
-
-										{
-											metaData.length > 0 ?
-												metaData.map(() => {
-													return (
-														<>
-															<Box
-																sx={{
-																	textAlign: "center",
-																	paddingLeft: "0.5rem",
-																	paddingRight: "0.5rem",
-																}}
-															>
-
-																<PriorityHighIcon
-																	style={{
-																		color: "#f44336",
-																		width: "1.25rem",
-																		height: "1.25rem",
-																		border: "1px solid",
-																		borderRadius: "50%"
-																	}}
-																/>
-
-															</Box>
-
-															<Box id="extraInfo"
-																sx={{
-																	textAlign: "center"
-																}}
-															>
-																<Typography variant="caption" noWrap>
-																	0 replies
-																</Typography>
-															</Box>
-														</>
-													)
-												})
-												: null
-										}
-									</Box>
-							}
-
-						</div>
+											<Box id="extraInfo" sx={{ textAlign: "center" }}>
+												<Typography variant="caption" noWrap>
+													0 replies
+												</Typography>
+											</Box>
+										</>
+									))}
+							</Box>}
 
 					</Box>
 				</a>

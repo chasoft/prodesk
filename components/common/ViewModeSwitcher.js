@@ -22,81 +22,65 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import Head from "next/head"
 import PropTypes from "prop-types"
+import React from "react"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getRootLayout } from "./RootLayout"
-import Footer from "./../components/common/Footer"
-import Header from "../components/FrontEnd/Header"
-import TopNavigatorBar from "../components/FrontEnd/TopNavigatorBar"
+
+//ASSETS
+import GridOnOutlinedIcon from "@mui/icons-material/GridOnOutlined"
+import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const FRONT_PAGE_TABS_NAME = {
-	HOME: "Help Center",
-	DOCS: "Docs",
-	BLOG: "Blog",
-	TROUBLESHOOT: "Troubleshoot",
-	CUSTOM: "Custom"
+export const VIEW_LISTING_MODE = {
+	OUTLINE: "Outline View",
+	DETAILS: "Details View",
 }
-
-
-export const FRONT_PAGE_TABS = [
-	[FRONT_PAGE_TABS_NAME.HOME, "/"],
-	[FRONT_PAGE_TABS_NAME.DOCS, "/docs"],
-	[FRONT_PAGE_TABS_NAME.BLOG, "/blog"],
-	[FRONT_PAGE_TABS_NAME.TROUBLESHOOT, "/troubleshoot"],
-]
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function EntryLayout({ children }) {
+const ViewModeSwitcher = ({ listingMode, setListingMode }) => {
+
+	const handleListingMode = (event, newListingMode) => {
+		if (newListingMode !== null) {
+			setListingMode(newListingMode)
+		}
+	}
+
 	return (
-		<>
-			<Head>
-				<title>Site Layout</title>
-				<meta name="description" content="Site Layout Description" />
-			</Head>
-
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					minHeight: "100vh",
-				}}
-			>
-				<Header
-					showLogo={true}
-					showSlogan={false}
-					title="ProDesk"
-					slogan={"Your Elegant & Powerful Support System"}
-				/>
-
-				<TopNavigatorBar dataSet={FRONT_PAGE_TABS} />
-
-
-				{children}
-
-
-				<Footer />
-			</Box>
-		</>
+		<ToggleButtonGroup
+			exclusive
+			size="small"
+			value={listingMode}
+			onChange={handleListingMode}
+		>
+			<ToggleButton value={VIEW_LISTING_MODE.OUTLINE}>
+				<Tooltip title="Outline View" placement="top">
+					<GridViewOutlinedIcon sx={{ fontSize: 20 }} />
+				</Tooltip>
+			</ToggleButton>
+			<ToggleButton value={VIEW_LISTING_MODE.DETAILS}>
+				<Tooltip title="Detail View" placement="top">
+					<GridOnOutlinedIcon sx={{ fontSize: 20 }} />
+				</Tooltip>
+			</ToggleButton>
+		</ToggleButtonGroup>
 	)
 }
 
-EntryLayout.propTypes = { children: PropTypes.node }
+ViewModeSwitcher.propTypes = {
+	listingMode: PropTypes.oneOf[VIEW_LISTING_MODE.OUTLINE, VIEW_LISTING_MODE.DETAILS],
+	setListingMode: PropTypes.func
+}
 
-export const getLayout = page => getRootLayout(<EntryLayout>{page}</EntryLayout>)
-
-export default EntryLayout
+export default ViewModeSwitcher

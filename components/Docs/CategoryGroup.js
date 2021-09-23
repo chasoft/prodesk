@@ -24,86 +24,81 @@
 
 import React from "react"
 import Link from "next/link"
-import { Container, Grid, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
-import CategoryGroupItem from "./CategoryGroupItem"
-import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
-import LatestFAQs from "../BackEnd/client/LatestFAQs"
+
+// MATERIAL-UI
+import { Box, Container, Grid, Typography } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
+import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-	paper: {
-		// marginTop: theme.spacing(0),
-		// [theme.breakpoints.down("xs")]: {
-		// marginTop: theme.spacing(3),
-		// },
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
-	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		padding: theme.spacing(6, 1, 3)
-	},
-	link: {
-		color: theme.palette.primary.main,
-		"&:hover": {
-			textDecoration: "underline",
-			cursor: "pointer",
-		}
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CategoryGroup = () => {
-	const classes = useStyles()
 	return (
 		<Container maxWidth="md">
-			<div className={classes.paper}>
-				<div className={classes.root} >
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					width: "100%",
+				}}
+			>
+
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						pt: 6, px: 1, pb: 3,
+						width: "100%"
+					}}
+				>
+
+					<Typography variant="h2">Categories</Typography>
+
+					<Link href="/docs/categories">
+						<a>
+							<Typography
+								sx={{
+									color: "primary.main",
+									"&:hover": {
+										textDecoration: "underline",
+										cursor: "pointer",
+									}
+								}}
+							>
+								View all Categories
+							</Typography>
+						</a>
+					</Link>
+
+				</Box>
 
 
-					<div className={classes.viewAll}>
+				<Grid container spacing={4}>
 
-						<Typography variant="h2">Categories</Typography>
-						<Link href="/docs/categories">
-							<a>
-								<Typography className={classes.link}>View all Categories</Typography>
-							</a>
-						</Link>
-
-					</div>
-
-
-					<Grid container spacing={4}>
-
-						<Grid item xs={12} sm={6}>
-							<CategoryGroupLatestFAQs />
-						</Grid>
-
-						<Grid item xs={12} sm={6}>
-							<CategoryGroupLatestFAQs />
-						</Grid>
-
-
-
+					<Grid item xs={12} sm={6}>
+						<CategoryGroupLatestFAQs />
 					</Grid>
 
-				</div>
-			</div>
+					<Grid item xs={12} sm={6}>
+						<CategoryGroupLatestFAQs />
+					</Grid>
+
+				</Grid>
+
+			</Box>
 		</Container >
 	)
 }

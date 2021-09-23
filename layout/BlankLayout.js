@@ -27,7 +27,7 @@ import Head from "next/head"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/system"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 

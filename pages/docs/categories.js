@@ -25,6 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
+import { Box, Container, Grid } from "@mui/material"
 
 
 //THIRD-PARTY
@@ -33,9 +34,7 @@ import React from "react"
 //PROJECT IMPORT
 import Category from "./../../components/Category"
 import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
-import { Container, Grid } from "@mui/material"
 import updateUiSettings from "../../helpers/updateUiSettings"
-import { Box } from "@mui/system"
 import Banner from "../../components/widget/Banner"
 
 
