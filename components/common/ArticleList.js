@@ -18,100 +18,102 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
-import React, { useState } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, ButtonBase, Link, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TextEditor from "../../common/TextEditor"
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
-
-//PROJECT IMPORT
 
 //ASSETS
+import { SvgItemIcon } from "./SvgIcons"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesAddNew = ({ backBtnClick }) => {
-	const [textEditorData, setTextEditorData] = useState("")
+const ArticlesList = ({ header, viewAllText, viewAllLink, dataSource }) => {
 	return (
-		<>
+		<div>
 
-			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
-				New canned reply
-			</SettingsContentHeader>
-
-			<SettingsContentDetails
+			<Typography noWrap
 				sx={{
-					display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 }
+					fontFamily: "\"Google Sans\", Roboto, sans-serif",
+					fontSize: "1rem",
+					fontWeight: 500,
+					lineHeight: "1.25rem"
 				}}
 			>
-				<FormControl variant="standard" fullWidth>
-					<InputLabel id="demo-simple-select-label">Group</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						id="demo-simple-select"
-						value={20}
-						label="Age"
-						onChange={() => { }}
-					>
-						<MenuItem value={10}>Group 1</MenuItem>
-						<MenuItem value={20}>Group 2</MenuItem>
-						<MenuItem value={30}>Group 3</MenuItem>
-						<MenuItem value={40}>Group 4</MenuItem>
-					</Select>
-				</FormControl>
+				{header}
+			</Typography>
 
-				<Box sx={{ py: 2 }}>
-					<TextField
-						id="lableName" label="Canned reply description" variant="standard"
-						fullWidth
-					/>
-				</Box>
+			<Box
+				component="ul"
+				sx={{
+					padding: 0,
+					cursor: "pointer",
+					listStyle: "none",
+					color: "primary.main",
+					"& > a": { textDecoration: "none" },
+					"& > a > li": {
+						display: "flex", mx: -1, px: 2, py: 0.5,
+						flexDirection: "row",
+						"&:hover": {
+							backgroundColor: "#E8F0FE"
+						},
+						"& > svg": {
+							marginTop: ".5rem",
+							height: "1.25rem",
+							width: "1.25rem",
+							minWidth: "1.25rem",
+							fill: (theme) => theme.palette.primary.main
+						},
+						"& > button": { padding: ".625rem 0 .625rem .875rem" }
+					}
+				}}
+			>
+				{dataSource.map((item) => (
+					<Link href={item.url} key={item.id}>
+						<li>
+							<SvgItemIcon />
+							<ButtonBase sx={{ textAlign: "left" }}>
+								{item.subject}
+							</ButtonBase>
+						</li>
+					</Link>
+				))}
 
-				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
-					<TextEditor
-						defaultValue=""
-						pullEditorData={setTextEditorData}
-					/>
-				</Box>
+				<Link href={viewAllLink}>
+					<li>
+						<ArrowForwardIcon />
+						<ButtonBase sx={{ fontWeight: "bold" }}>
+							{viewAllText}
+						</ButtonBase>
+					</li>
+				</Link>
 
-			</SettingsContentDetails>
+			</Box>
 
-			<SettingsContentActionBar>
-
-				<Button
-					variant="outlined"
-					onClick={() => { backBtnClick(false) }}
-				>
-					Cancel
-				</Button>
-
-				<Button
-					variant="contained" color="primary"
-					onClick={() => {
-						console.log("Add new canned replied:", textEditorData)
-						// Go to the group of new canned 
-						// dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-					}}
-				>
-					Add
-				</Button>
-
-			</SettingsContentActionBar>
-		</>
+		</div>
 	)
 }
-
-CannedRepliesAddNew.propTypes = {
-	backBtnClick: PropTypes.func,
+ArticlesList.propTypes = {
+	header: PropTypes.string,
+	viewAllText: PropTypes.string,
+	viewAllLink: PropTypes.string,
+	dataSource: PropTypes.array
 }
 
-export default CannedRepliesAddNew
+export default ArticlesList

@@ -34,12 +34,12 @@ import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
 // import { getUiSettings } from "../../../../redux/selectors"
 import updateUiSettings from "../../../../helpers/updateUiSettings"
 import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/common/SettingsPanel"
+import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import EditIcon from "@mui/icons-material/Edit"
-import LabelPopupAddOrModify, { LabelPopupModifyColor } from "../../../../components/common/SettingsPanel/LabelPopup"
+import LabelPopupAddOrModify, { LabelPopupModifyColor } from "../../../../components/Settings/SettingsPanel/LabelPopup"
 
 /*****************************************************************
  * DUMMY DATA                                                    *

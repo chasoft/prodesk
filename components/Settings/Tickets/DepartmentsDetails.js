@@ -31,7 +31,7 @@ import { Container, Grid, TextField, Typography } from "@mui/material"
 //PROJECT IMPORT
 import MembersList from "../MembersList"
 import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
 
 //THIRD-PARTY
 

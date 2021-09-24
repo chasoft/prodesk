@@ -25,9 +25,8 @@
 import React, { useState } from "react"
 import { PropTypes } from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
 import withStyles from "@mui/styles/withStyles"
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -45,58 +44,6 @@ import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSe
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: "5rem 0 0 2rem",
-		width: "12rem",
-		display: "flex",
-		flexDirection: "column",
-	},
-	nav: {
-		// maxWidth: "100%",
-	},
-	list: {
-		display: "flex",
-		flexDirection: "column",
-		listStyle: "none",
-		paddingLeft: 0,
-		"& > li": {
-			display: "flex",
-			flexDirection: "row",
-			"& > :first-child": {
-				marginTop: ".7rem",
-				height: "1.25rem",
-				width: "1.25rem",
-				minWidth: "1.25rem"
-			},
-			"& > :last-child": {
-				padding: ".625rem 0 .625rem .875rem"
-			}
-
-		}
-	},
-	margin: {
-		border: "1px solid #ced4da",
-		borderRadius: "0.25rem"
-	},
-	outlinedInput: {
-		root: {
-			input: {
-				padding: "8px 14px"
-			}
-		},
-		"&.MuiInputAdornment-root .MuiSvgIcon-root": {
-			color: theme.palette.text.secondary
-		},
-		"&:hover .MuiInputAdornment-root .MuiSvgIcon-root": {
-			color: theme.palette.text.primary
-		},
-		"&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root": {
-			color: theme.palette.primary.main
-		}
-	}
-}))
 
 const FilterCategory = withStyles({
 	root: {
@@ -200,7 +147,6 @@ FilterFrame.propTypes = { title: PropTypes.string, children: PropTypes.any }
  *****************************************************************/
 
 function ListTicketsFilter() {
-	const classes = useStyles()
 	const dispatch = useDispatch()
 	const { scrollTop, ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
@@ -209,7 +155,14 @@ function ListTicketsFilter() {
 	}
 
 	return (
-		<div className={classes.root}>
+		<Box
+			sx={{
+				margin: "5rem 0 0 2rem",
+				width: "12rem",
+				display: "flex",
+				flexDirection: "column",
+			}}
+		>
 
 			<div style={{ position: "fixed" }}>
 				<div style={{ display: "flex", alignItems: "center", marginBottom: "8px" }} >
@@ -225,7 +178,7 @@ function ListTicketsFilter() {
 				</div>
 
 				<FilterFrame title="Status">
-					<FormControl component="fieldset" className={classes.formControl}>
+					<FormControl component="fieldset">
 						<FormGroup>
 							<FormControlLabel
 								control={
@@ -272,13 +225,17 @@ function ListTicketsFilter() {
 				</FilterFrame>
 
 				<FilterFrame title="Priority">
-					<FormControl className={classes.margin} fullWidth>
+					<FormControl fullWidth
+						sx={{
+							border: "1px solid #ced4da",
+							borderRadius: "0.25rem"
+						}}
+					>
 						<FilterSelect
 							MenuProps={{
 								anchorOrigin: { vertical: "bottom", horizontal: "left" },
 								getContentAnchorEl: null
 							}}
-							className={classes.select}
 							disableUnderline={true}
 							value={selectedPriority}
 							onChange={(e) => { dispatch(setSelectedPriority(e.target.value)) }}
@@ -303,17 +260,33 @@ function ListTicketsFilter() {
 							}
 							aria-describedby="ticket-search-term"
 							labelWidth={0}
-							className={classes.outlinedInput}
 							margin="dense"
 							value={ticketSearchTerm}
 							onChange={(e) => { dispatch(setTicketSearchTerm(e.target.value)) }}
+
+							sx={{
+								root: {
+									input: {
+										padding: "8px 14px"
+									}
+								},
+								"&.MuiInputAdornment-root .MuiSvgIcon-root": {
+									color: "text.secondary"
+								},
+								"&:hover .MuiInputAdornment-root .MuiSvgIcon-root": {
+									color: "text.primary"
+								},
+								"&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root": {
+									color: "primary.main"
+								}
+							}}
 						/>
 					</FormControl>
 				</FilterFrame>
 			</div>
 			{/* the empty block below is used to fixed the bug when setting position of theFilter to fixed */}
 			<div style={{ width: "200px" }}></div>
-		</div >
+		</Box >
 	)
 }
 

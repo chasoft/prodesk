@@ -38,7 +38,7 @@ import DepartmentsAddNew from "../../../../components/Settings/Tickets/Departmen
 import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
 import DepartmentsOverview from "../../../../components/Settings/Tickets/DepartmentsOverview"
 import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"

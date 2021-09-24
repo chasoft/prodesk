@@ -47,7 +47,7 @@ const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
 	return (
 		<Box
 			sx={{
-				marginTop: { xs: 3, md: 8 },
+				mt: { xs: 5, md: 8 },
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",

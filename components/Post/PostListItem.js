@@ -48,29 +48,14 @@ export const PostListEmpty = ({ message }) => {
 				"&:hover": { backgroundColor: "action.hover" },
 			}}
 		>
-			<Box
+			<Typography
 				sx={{
-					display: "flex",
-					alignItems: { xs: "flex-start", md: "center" },
-					flexDirection: { xs: "column", md: "row" },
+					p: 3,
+					minWidth: { xs: "none", md: 0 /*this property is important*/ },
 				}}
 			>
-				<Box
-					sx={{
-						textAlign: "center",
-						p: {
-							xs: (theme) => theme.spacing(1, 2, 1),
-							md: 3
-						},
-						minWidth: {
-							xs: "none",
-							md: 0 /*this property is important*/
-						},
-					}}
-				>
-					<Typography>{message}</Typography>
-				</Box>
-			</Box>
+				{message}
+			</Typography>
 		</Box>
 	)
 }
@@ -87,8 +72,7 @@ export const PostListItemShorten = ({ subject, link }) => {
 							"&:hover": { backgroundColor: "action.hover" },
 							px: { xs: 2, md: 3 },
 							py: 2,
-							minWidth: 0, /*this property is important*/
-							maxWidth: { xs: "100%", md: "none" },
+							// minWidth: 0, /*this property is important*/
 						}}
 					>
 						<Typography noWrap>{subject}</Typography>

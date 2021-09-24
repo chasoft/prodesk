@@ -47,7 +47,8 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
 	return (
 		<Paper elevation={1}>
-			<Box
+
+			<Typography noWrap
 				sx={{
 					py: 2, px: 3,
 					fontFamily: "\"Google Sans\", Roboto, sans-serif",
@@ -55,9 +56,7 @@ const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
 					fontWeight: 500,
 					lineHeight: "1.25rem"
 				}}
-			>
-				{header}
-			</Box>
+			>{header}</Typography>
 
 			{children}
 

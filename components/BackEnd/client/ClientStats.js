@@ -5,7 +5,7 @@ function ClientStats() {
 
 	return (
 		<Grid container spacing={2} >
-			<Grid item xs>
+			<Grid item xs={12} sm={6}>
 				<Card sx={{ width: "100%" }}>
 					<CardContent>
 						<Typography color="textSecondary" gutterBottom>
@@ -26,7 +26,7 @@ function ClientStats() {
 				</Card>
 			</Grid>
 
-			<Grid item xs>
+			<Grid item xs={12} sm={6}>
 				<Card sx={{ width: "100%" }}>
 					<CardContent>
 						<Typography color="textSecondary" gutterBottom>

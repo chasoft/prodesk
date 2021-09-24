@@ -31,7 +31,7 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import MembersList from "../MembersList"
 import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
 import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
 import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
 

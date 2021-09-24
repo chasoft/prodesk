@@ -7,10 +7,7 @@ import { getNewTicket } from "./../../redux/selectors"
 import { setMessage } from "./../../redux/slices/newTicket"
 import TicketUploader from "../Gallery/TicketUploader"
 
-const TextEditor = dynamic(() => import("./../BackEnd/TextEditor"), {
-	ssr: false,
-	loading: function pleaseWait() { return <Skeleton variant="rectangular" width="100%" height={85} /> }
-})
+import TextEditor from "../../common/TextEditor"
 
 function a11yProps(index) {
 	return {

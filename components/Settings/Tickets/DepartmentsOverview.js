@@ -27,7 +27,7 @@ import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import AvatarList from "../../common/AvatarList"
-import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../common/SettingsPanel"
+import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
 

@@ -1,5 +1,5 @@
 import React from "react"
-import { Box, Container, Grid } from "@mui/material"
+import { Container, Grid } from "@mui/material"
 import ArticleContent from "./ArticleContent"
 import ListArticles from "./ListArticles"
 import ProBreadcrumbs from "../FrontEnd/ProBreadcrumbs"

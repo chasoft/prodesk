@@ -56,7 +56,6 @@ const LatestFeedbackDummyData = [
  *****************************************************************/
 
 const LatestTicketFeedback = () => {
-	// const classes = useStyles()
 	return (
 		<ListGroup
 			title="Latest Support Activities"

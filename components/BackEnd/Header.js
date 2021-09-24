@@ -73,7 +73,8 @@ const Header = ({ scrolled }) => {
 				alignItems: "center",
 				justifyContent: "space-between",
 				padding: (theme) => theme.spacing(0.5, 2, 0.5, 2),
-				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)"
+				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)",
+				width: "100%"
 			}}
 			elevation={scrolled ? 4 : 0}
 		>

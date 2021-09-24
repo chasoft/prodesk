@@ -26,7 +26,8 @@ import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -47,42 +48,6 @@ import { getUiSettings } from "./../redux/selectors"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles({
-	root: {
-		display: "flex",
-		flexDirection: "row",
-		minHeight: "100vh"
-	},
-	content: {
-		width: "100%",
-		height: "100vh",
-		transition: "margin .3s cubic-bezier(0.4, 0, 0.2, 1)"
-	}
-})
-
-// const backgroundInfo = {
-// 	"Empty": {
-// 		backgroundRepeat: "",
-// 	},
-// 	"AdminIndex": {
-// 		backgroundImage: "",
-// 		backgroundRepeat: "no-repeat",
-// 	},
-// 	"AdminProfile": {
-// 		backgroundImage: "",
-// 		backgroundRepeat: "",
-// 	},
-// 	"AdminTicket": {
-// 		backgroundImage: "",
-// 		backgroundRepeat: "",
-// 	},
-// 	"AdminUsers": {
-// 		backgroundImage: "",
-// 		backgroundRepeat: "",
-// 	}
-// }
-
 
 const CLIENT_MENU = [
 	{
@@ -116,7 +81,6 @@ const CLIENT_MENU = [
  *****************************************************************/
 
 function ClientLayout({ children }) {
-	const classes = useStyles()
 	const [scrolled, setScrolled] = useState(false)
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const dispatch = useDispatch()
@@ -135,15 +99,38 @@ function ClientLayout({ children }) {
 	return (
 		<ReduxRedirect>
 			<AuthCheck>
-				<div className={classes.root}>
+
+				<Box sx={{ ...backgroundForLoggedinPage }} />
+
+				<Box style={{ display: "flex", minHeight: "100vh" }}>
+
 					<SideBar
 						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
 						homeUrl="/client" settingsUrl=""
 						data={CLIENT_MENU}
 					/>
 
-					<PerfectScrollbar
-						component="div" className={classes.content}
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							flexGrow: 1,
+							width: "100%",
+							overflowX: "hidden"
+						}}
+					>
+						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
+						{children}
+						<Footer />
+					</Box>
+
+					{/* <PerfectScrollbar
+						component="div"
+						style={{
+							width: "100%",
+							height: "100vh",
+							transition: "margin .3s cubic-bezier(0.4, 0, 0.2, 1)"
+						}}
 						options={{ wheelSpeed: 1, wheelPropagation: true }}
 						onScrollY={(e) => {
 							if (e.scrollTop > 50) { setScrolled(true) } else { setScrolled(false) }
@@ -156,8 +143,8 @@ function ClientLayout({ children }) {
 							{children}
 							<Footer />
 						</div>
-					</PerfectScrollbar>
-				</div>
+					</PerfectScrollbar> */}
+				</Box>
 			</AuthCheck>
 		</ReduxRedirect >
 	)

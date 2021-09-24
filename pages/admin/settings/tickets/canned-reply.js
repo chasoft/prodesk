@@ -38,7 +38,7 @@ import CannedRepliesAddNew from "../../../../components/Settings/CannedReplies/C
 import CannedRepliesGroup from "../../../../components/Settings/CannedReplies/CannedRepliesGroup"
 import CannedRepliesOverview from "../../../../components/Settings/CannedReplies/CannedRepliesOverview"
 import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/common/SettingsPanel"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"

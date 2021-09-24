@@ -34,16 +34,6 @@ const DummyData = [
 		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
 		link: "/faqs/some-faqs-2"
 	},
-	{
-		id: 3,
-		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
-		link: "/faqs/some-faqs-3"
-	},
-	{
-		id: 4,
-		subject: "i m facing problem in my pixel 4a 5g phone the problem is touch sensitiveness that while scrolling i",
-		link: "/faqs/some-faqs-4"
-	},
 ]
 
 

@@ -254,9 +254,10 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 	return (
 		<Box
 			sx={{
+				position: "sticky", top: 0,
 				display: "flex",
 				flexDirection: "column",
-				width: "68px",
+				width: isExpanded ? "256px" : "68px",
 				height: "100vh",
 				backgroundAttachment: "fixed",
 				backgroundColor: "#051e34",
@@ -264,7 +265,6 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 				backgroundRepeat: "no-repeat",
 				backgroundSize: "256px 556px",
 				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)",
-				...(isExpanded && { width: "256px" })
 			}}
 		>
 

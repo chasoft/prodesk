@@ -72,7 +72,7 @@ function Tickets() {
 
 				<ListTickets />
 
-				<Box sx={{ display: { xs: "none", lg: "block" } }}>
+				<Box sx={{ display: { xs: "none", md: "block" } }}>
 					<ListTicketsFilter />
 				</Box>
 

@@ -20,73 +20,86 @@
 
 
 import React from "react"
-import { Grid, Typography } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
-import CategoryGroupLatestFAQs from "./../../Docs/CategoryGroupLatestFAQs"
-import CategoryGroupLatestPublicTickets from "./../../Docs/CategoryGroupLatestPublicTickets"
+import { Box, Grid, Typography } from "@mui/material"
+import ArticlesList from "../../common/ArticleList"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
+const DUMMY_PUBLIC_TICKETS = [
+	{
+		id: 1,
+		subject: "in my pixel 4a 5g phone",
+		url: "/faqs/some-faqs-1"
 	},
-	paper: {
-		marginTop: theme.spacing(8),
-		[theme.breakpoints.down("md")]: {
-			marginTop: theme.spacing(3),
-		},
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "center",
+	{
+		id: 2,
+		subject: "touch sensitiveness that while scrolling i",
+		url: "/faqs/some-faqs-2"
 	},
-	group: {
-		margin: "1.5rem 0",
-		[theme.breakpoints.down("md")]: {
-			margin: "1.625rem 0",
-		},
-		marginBottom: 0
+	{
+		id: 3,
+		subject: "touch sensitiveness that while scrolling i",
+		url: "/faqs/some-faqs-2"
 	},
-	viewAll: {
-		display: "flex",
-		alignItems: "center",
-		"& > :first-child": {
-			marginRight: theme.spacing(1)
-		},
-		"& > *": {
-			color: theme.palette.primary.main
-		}
-	}
-}))
+	{
+		id: 4,
+		subject: "touch sensitiveness that while scrolling i",
+		url: "/faqs/some-faqs-2"
+	},
+	{
+		id: 5,
+		subject: "touch sensitiveness that while scrolling i",
+		url: "/faqs/some-faqs-2"
+	},
+]
+
+
+
+
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const RecentActivities = () => {
-	const classes = useStyles()
+
 	return (
-		<div className={classes.paper}>
-			<div className={classes.root}>
-				<Typography variant="h2">Recent Activities</Typography>
-				<div className={classes.group}>
-					<Grid container spacing={4}>
+		<Box sx={{ mt: { xs: 5, md: 8 }, }}>
 
-						<Grid item xs={12} sm={6}>
-							<CategoryGroupLatestPublicTickets />
-						</Grid>
+			<Typography variant="h2">For your reference</Typography>
 
-						<Grid item xs={12} sm={6}>
-							<CategoryGroupLatestFAQs />
-						</Grid>
+			<Box sx={{ margin: { xs: "1.625rem 0", md: "1.5rem 0" }, mb: 0 }}>
+				<Grid container spacing={4}>
+
+					<Grid item xs={12} sm={6}>
+
+						<ArticlesList
+							header="Public tickets"
+							viewAllText="View all public tickets"
+							viewAllLink="/client/public-ticket"
+							dataSource={DUMMY_PUBLIC_TICKETS}
+						/>
 
 					</Grid>
-				</div>
 
-			</div>
-		</div>
+					<Grid item xs={12} sm={6}>
+
+						<ArticlesList
+							header="Popular documents"
+							viewAllText="View all popular documents"
+							viewAllLink="/client/popular-documents"
+							dataSource={DUMMY_PUBLIC_TICKETS}
+						/>
+
+					</Grid>
+
+				</Grid>
+			</Box>
+
+
+		</Box>
 	)
 }
 

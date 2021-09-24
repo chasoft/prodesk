@@ -32,7 +32,7 @@ import { Typography } from "@mui/material"
 //PROJECT IMPORT
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
 import updateUiSettings from "./../../../../helpers/updateUiSettings"
-import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/common/SettingsPanel"
+import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 

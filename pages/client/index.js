@@ -81,7 +81,7 @@ function Client() {
 					</Typography>
 
 					<Typography variant="subtitle1">
-						{"Your Elegant & Powerful Ticket System"}
+						{"Your Elegant & Powerful Support System"}
 					</Typography>
 				</div>
 				<div>
