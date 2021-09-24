@@ -36,7 +36,7 @@ import { useSelector } from "react-redux"
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
 import NotificationDrawer from "./NotificationDrawer"
-import { getPageMeta } from "./../../redux/selectors"
+import { getPageMeta, getUiSettings } from "./../../redux/selectors"
 
 //ASSETS
 import NotificationsIcon from "@mui/icons-material/Notifications"
@@ -60,14 +60,15 @@ const StyledBadge = withStyles((theme) => ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Header = ({ scrolled }) => {
+const Header = () => {
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 	const { title } = useSelector(getPageMeta)
+	const { scrolled } = useSelector(getUiSettings)
 
 	return (
 		<AppBar
-			position="sticky"
 			sx={{
+				position: "sticky", top: 0,
 				display: "flex",
 				flexDirection: "row",
 				alignItems: "center",
@@ -99,7 +100,7 @@ const Header = ({ scrolled }) => {
 					"& > *": { ml: 1 }
 				}}
 			>
-				<Tooltip title="Go to Docs" placement="bottom">
+				<Tooltip title="Help Center" placement="bottom">
 					<Typography
 						sx={{
 							fontFamily: "\"Google Sans\", Roboto, sans-serif",
@@ -111,15 +112,22 @@ const Header = ({ scrolled }) => {
 					</Typography>
 				</Tooltip>
 
-				<Tooltip title="Recent Notifications" placement="bottom">
-					<IconButton size="medium" color="inherit" onClick={() => setShowNotificationDraw(p => !p)} >
+				<Tooltip title="Notifications" placement="bottom">
+					<IconButton
+						size="medium" color="inherit"
+						onClick={() => setShowNotificationDraw(true)}
+						sx={{ mx: 1 }}
+					>
 						<StyledBadge badgeContent={4} >
 							<NotificationsIcon />
 						</StyledBadge>
 					</IconButton>
 				</Tooltip>
 
-				<NotificationDrawer isOpen={showNotificationDrawer} toggle={setShowNotificationDraw} />
+				<NotificationDrawer
+					isOpen={showNotificationDrawer}
+					handleClose={() => setShowNotificationDraw(false)}
+				/>
 
 				<UserIcon />
 

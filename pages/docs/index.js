@@ -28,6 +28,7 @@ import { Container, Grid, Typography } from "@mui/material"
 import updateUiSettings from "../../helpers/updateUiSettings"
 import { FRONT_PAGE_TABS_NAME } from "../../layout/EntryLayout"
 import CategoryGroupLatestFAQs from "../../components/Docs/CategoryGroupLatestFAQs"
+import FeaturedDocs from "../../components/FrontEnd/FeaturedDocs"
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,6 +50,7 @@ function Docs() {
 
 				<Grid container>
 					<Grid item xs={12} >
+						<FeaturedDocs />
 						<ListAllCategories />
 					</Grid>
 				</Grid>

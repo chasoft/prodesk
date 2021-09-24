@@ -30,7 +30,6 @@ import PropTypes from "prop-types"
 import { Box } from "@mui/material"
 
 //THIRD-PARTY
-import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
 import Header from "../components/BackEnd/Header"
@@ -117,7 +116,6 @@ const ADMIN_MENUS = [
 
 function AdminLayout({ children }) {
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
-	const [scrolled, setScrolled] = useState(false)
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 
 	const sideBarExpanding = () => {
@@ -153,7 +151,7 @@ function AdminLayout({ children }) {
 							overflowX: "hidden"
 						}}
 					>
-						<Header isSideBarExpanded={isSideBarExpanded} scrolled={scrolled} />
+						<Header isSideBarExpanded={isSideBarExpanded} />
 						{children}
 						<Footer />
 					</Box>

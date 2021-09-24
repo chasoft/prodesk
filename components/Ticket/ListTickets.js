@@ -105,7 +105,41 @@ const DummyData = [
 		priority: PRIORITY.HIGH,
 		isPublic: false,
 	},
+
+	{
+		docId: 7,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dodfdfdnt-know",
+		metaData: [],
+		status: STATUS_FILTER.CLOSED,
+		priority: PRIORITY.NORMAL,
+		isPublic: true,
+	},
+	{
+		docId: 8,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-33333docs-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN,
+		priority: PRIORITY.NORMAL,
+		isPublic: true,
+	},
+	{
+		docId: 9,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs45444444-i-dont-know",
+		metaData: [],
+		status: STATUS_FILTER.OPEN,
+		priority: PRIORITY.HIGH,
+		isPublic: false,
+	},
 ]
+
+
+
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -117,6 +151,7 @@ function ListTickets() {
 	const [filteredTickets, setFilteredTickets] = useState([])
 
 	const dispatch = useDispatch()
+
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
 
 	useEffect(() => {
@@ -162,22 +197,20 @@ function ListTickets() {
 					filteredTickets.map((item, idx) => {
 						return (
 							<div key={item.status}>
+
 								<Typography
 									variant="h2"
 									sx={{
 										ml: 3,
 										marginTop: "3rem",
 										mt: { xs: "0.5rem", md: "3rem" },
+										...((idx === 0) ? { color: "white" } : {})
 									}}
-									style={(idx === 0) ? { color: "white" } : null}
 								>
 									{item.status}
 								</Typography>
-								<Paper elevation={2}
-									sx={{
-										minWidth: 0
-									}}
-								>
+
+								<Paper elevation={2} >
 									{
 										item.data.length > 0 ?
 											item.data.map((ticket, idx) => {
@@ -200,6 +233,7 @@ function ListTickets() {
 					})
 
 					:
+
 					<Box
 						sx={{
 							ml: 3,
@@ -209,19 +243,23 @@ function ListTickets() {
 						<Typography variant="h2" style={{ color: "white" }}>
 							There are no tickets that matched your criteria
 						</Typography>
+
 						<Typography variant="body" style={{ color: "white" }}>
-							Try again by using other search criteria or click &quot;<Box component="span" onClick={handleResetSearchCriteria} sx={{
+							Try again by using other search criteria or click &quot;
+							<Box component="span" onClick={handleResetSearchCriteria} sx={{
 								cursor: "pointer",
 								fontWeight: 500,
-								"&:hover": {
-									textDecoration: "underline",
-								}
-							}}>here</Box>&quot; to reset.
+								"&:hover": { textDecoration: "underline" }
+							}}>
+								here
+							</Box>
+							&quot; to reset.
 						</Typography>
 					</Box>
 			}
 
 			<AskNow />
+
 			<Fab color="primary" aria-label="add"
 				sx={{
 					position: "fixed",

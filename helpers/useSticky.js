@@ -22,53 +22,68 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
+
 
 //THIRD-PARTY
 
+
 //PROJECT IMPORT
 
+
 //ASSETS
-import MailIcon from "@mui/icons-material/Mail"
-import InboxIcon from "@mui/icons-material/MoveToInbox"
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+
+
+/*****************************************************************
+ * MAIN RENDER                                                   *
+ *****************************************************************/
+
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NotificationDrawer = ({ isOpen, handleClose }) => {
-	return (
-		<Drawer
-			anchor="right"
-			open={isOpen}
-			onClose={handleClose}
-		>
-			<Box
-				sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
-				onClick={handleClose}
-				onKeyDown={handleClose}
-			>
-				<List>
-					{["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-						<ListItem button key={text}>
-							<ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-							<ListItemText primary={text} />
-						</ListItem>
-					))}
-				</List>
-			</Box>
-		</Drawer>
-	)
+const useSticky = ({ offsetTop, scrollY }) => {
+	const ref = useRef(null)
+	const [isSticky, setIsSticky] = useState(false)
+
+	const fixedPosition = () => {
+		if (ref.current === null) return
+		setIsSticky(
+			((ref.current.clientHeight + offsetTop) < window.innerHeight)
+				? (window.scrollY > scrollY) ? true : false
+				: false
+		)
+	}
+
+	/* Activate resize listener */
+	useEffect(() => {
+		fixedPosition()
+		window.addEventListener("resize", fixedPosition)
+		return () => window.removeEventListener("resize", fixedPosition)
+	}, [])
+
+	/* Activate resize listener */
+	useEffect(() => {
+		window.addEventListener("scroll", fixedPosition)
+		return () => window.removeEventListener("scroll", fixedPosition)
+	}, [])
+
+	return [ref, isSticky]
 }
 
-NotificationDrawer.propTypes = { isOpen: PropTypes.bool, handleClose: PropTypes.func }
+useSticky.propTypes = {
+	offsetTop: PropTypes.number,
+	scrollY: PropTypes.number
+}
 
-export default NotificationDrawer
+export default useSticky

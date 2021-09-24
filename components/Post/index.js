@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Grid, Box, } from "@mui/material"
+import { Grid, Box, } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -46,24 +46,19 @@ import Replies from "./Replies"
 
 function Post() {
 	return (
-		<div>
-			<Container>
-				<Grid container>
-					<Grid item xs={12} sm={12} md={8} >
-						<main>
-							<PostContent />
-							<div>{/* this is empty intentionally */}</div>
-							<Replies />
-						</main>
-					</Grid>
-					<Grid item xs={12} sm={12} md={4}>
-						<Box sx={{ display: { xs: "none", md: "block" } }}>
-							<HistoryTimeline />
-						</Box>
-					</Grid>
-				</Grid>
-			</Container>
-		</div>
+		<Grid container>
+			<Grid item xs={12} sm={12} md={8} >
+				<main>
+					<PostContent />
+					<Replies />
+				</main>
+			</Grid>
+			<Grid item xs={12} sm={12} md={4}>
+				<Box sx={{ display: { xs: "none", md: "block" }, bgcolor: "silver" }}>
+					<HistoryTimeline />
+				</Box>
+			</Grid>
+		</Grid>
 	)
 }
 

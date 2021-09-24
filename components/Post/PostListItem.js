@@ -118,12 +118,12 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 								p: 3,
 							}}
 						>
-							<Typography variant="h5" noWrap>
+							<Typography variant="h5">
 								{subject}
 							</Typography>
 
 							{(isShort === false) &&
-								<Typography sx={{ display: { xs: "none", md: "block" } }} noWrap>
+								<Typography sx={{ display: { xs: "none", md: "block" } }} >
 									{excerpt}
 								</Typography>}
 						</Box>
@@ -142,8 +142,8 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 								}}>
 
 								{(metaData.length > 0) &&
-									metaData.map(() => (
-										<>
+									metaData.map((item, idx) => (
+										<div key={idx}>
 											<Box sx={{ textAlign: "center", px: "0.5rem" }}>
 												<PriorityHighIcon
 													style={{
@@ -160,7 +160,7 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 													0 replies
 												</Typography>
 											</Box>
-										</>
+										</div>
 									))}
 							</Box>}
 

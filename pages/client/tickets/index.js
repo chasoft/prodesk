@@ -22,10 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box } from "@mui/material"
+import { Container, Box, Grid } from "@mui/material"
 import React from "react"
-
-import makeStyles from "@mui/styles/makeStyles"
 
 //THIRD-PARTY
 
@@ -34,6 +32,7 @@ import { getLayout } from "../../../layout/ClientLayout"
 import updateUiSettings from "../../../helpers/updateUiSettings"
 import ListTickets from "../../../components/Ticket/ListTickets"
 import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
+import FeaturedDocs from "../../../components/FrontEnd/FeaturedDocs"
 
 //ASSETS
 
@@ -41,23 +40,11 @@ import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles({
-	root: {
-		minHeight: "calc(100vh - 150px)",
-		width: "100%"
-	},
-	container: {
-		display: "flex",
-		minHeight: "calc(100vh - 200px)",
-	}
-})
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Tickets() {
-	const classes = useStyles()
 
 	updateUiSettings({
 		title: "All tickets",
@@ -67,16 +54,22 @@ function Tickets() {
 	})
 
 	return (
-		<Container maxWidth="lg" className={classes.root}>
-			<div className={classes.container}>
+		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
 
-				<ListTickets />
+			<Box sx={{
+				display: "flex"
+			}}>
 
-				<Box sx={{ display: { xs: "none", md: "block" } }}>
-					<ListTicketsFilter />
+				<Box sx={{ flexGrow: 1 }}>
+					<ListTickets />
 				</Box>
 
-			</div>
+				<div>
+					<ListTicketsFilter />
+				</div>
+
+			</Box>
+
 		</Container>
 	)
 }

@@ -236,7 +236,6 @@ function FiltersBackup() {
 									vertical: "bottom",
 									horizontal: "left"
 								},
-								getContentAnchorEl: null
 							}}
 							className={classes.select}
 							disableUnderline={true}
@@ -264,7 +263,6 @@ function FiltersBackup() {
 									vertical: "bottom",
 									horizontal: "left"
 								},
-								getContentAnchorEl: null
 							}}
 							className={classes.select}
 							disableUnderline={true}
@@ -305,7 +303,6 @@ function FiltersBackup() {
 							placeholder="Type keywords"
 							endAdornment={<InputAdornment position="end"><SearchIcon fontSize="small" /></InputAdornment>}
 							aria-describedby="outlined-weight-helper-text"
-							labelWidth={0}
 							className={classes.outlinedInput}
 							margin="dense"
 						/>

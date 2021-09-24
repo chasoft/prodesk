@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Avatar, Box, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -34,10 +34,11 @@ import FooterNotice from "./FooterNotice"
 import ThreadMessageHeader from "./ThreadMessageHeader"
 import ThreadMessagePayload from "./ThreadMessagePayload"
 import ThreadMessageDetails from "./ThreadMessageDetails"
+import ReplyNotice from "./Replies/ReplyNotice"
 
 //ASSETS
 
-/*****************************************************************
+/*****************************************************************	
  * INIT                                                          *
  *****************************************************************/
 
@@ -47,32 +48,38 @@ import ThreadMessageDetails from "./ThreadMessageDetails"
 
 function PostContent() {
 	return (
-		<Box component="main"
+		<Paper component="main"
 			sx={{
-				border: "1px solid",
 				borderRadius: "0.5rem",
-				borderColor: "divider",
+				mt: 2
 			}}
 		>
-			<Box
-				sx={{
-					p: { xs: 3, md: 8 },
-					backgroundColor: "white",
-					borderTopLeftRadius: "8px",
-					borderTopRightRadius: "8px",
-				}}
-			>
-				<ThreadMessageHeader />
 
-				<Typography variant="h1" sx={{ py: 2 }}>
-					Heading of the post
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+				top: "28px",
+				px: { xs: 3, md: 6 },
+				pt: { xs: 4, md: 4 },
+			}}>
+				<Avatar
+					alt="Remy Sharp" src="/img/demo-avatar.jpg"
+					sx={{
+						bgcolor: "#FFF",
+						width: 64, height: 64,
+						mr: 2
+					}}
+				/>
+				<Typography variant="h2">
+					Heading of the post Heading of the post Heading of the
 				</Typography>
-
-				<ThreadMessagePayload />
-				<ThreadMessageDetails />
 			</Box>
+
+			<ThreadMessagePayload />
+
 			<FooterNotice />
-		</Box>
+
+		</Paper>
 	)
 }
 

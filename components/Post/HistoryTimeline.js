@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Box, Typography } from "@mui/material"
@@ -38,6 +38,7 @@ import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent"
 
 //PROJECT IMPORT
 import UserInfo from "./../../components/common/UserInfo"
+import useSticky from "../../helpers/useSticky"
 
 //ASSETS
 
@@ -52,162 +53,145 @@ import UserInfo from "./../../components/common/UserInfo"
  *****************************************************************/
 
 const HistoryTimeline = () => {
-	const [fixed, setFixed] = useState(false)
-	const listRef = useRef(null)
-
-	const fixedPosition = () => {
-		setFixed(((listRef.current.clientHeight + 110) < window.innerHeight) ? true : false)
-	}
-
-	useEffect(() => {
-		fixedPosition()
-		window.addEventListener("resize", fixedPosition)
-		return () => window.removeEventListener("resize", fixedPosition)
-	}, [])
-
-	useEffect(() => {
-		window.addEventListener("scroll", fixedPosition)
-		return () => window.removeEventListener("scroll", fixedPosition)
-	}, [])
+	const [ref, isSticky] = useSticky({ offsetTop: 100, scrollY: 20 })
 
 	return (
-		<div>
-			<Box
-				ref={listRef}
-				sx={{
-					mt: "4rem", ml: "3rem",
-					position: fixed ? "fixed" : "static"
-				}}
-			>
+		<Box
+			ref={ref}
+			sx={{
+				mt: 15,
+				position: isSticky ? "sticky" : "static",
+				top: isSticky ? "100px" : "initial"
+			}}
+		>
 
-				<Timeline>
+			<Timeline>
 
-					<TimelineItem>
-						<TimelineOppositeContent>
-							<Box
-								onClick={() => { }}
-								sx={{
-									display: "flex",
-									flexDirection: "column",
-									justifyContent: "center",
-									top: "-0.8rem",
-									position: "relative",
-									cursor: "pointer",
-									"& > p": {
-										whiteSpace: "nowrap"
-									},
-									"& > :hover": {
-										color: "primary.main"
-									}
-								}}
-							>
-								<Typography color="textSecondary">
-									28-06-21<br />
-									09:30 AM
-								</Typography>
-							</Box>
-						</TimelineOppositeContent>
-						<TimelineSeparator>
-							<TimelineDot />
-							<TimelineConnector />
-						</TimelineSeparator>
-						<TimelineContent>
-							<Box
-								sx={{
-									top: "-0.8rem",
-									position: "relative"
-								}}
-							>
-								<UserInfo />
-							</Box>
-						</TimelineContent>
-					</TimelineItem>
+				<TimelineItem>
+					<TimelineOppositeContent>
+						<Box
+							onClick={() => { }}
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								top: "-0.8rem",
+								position: "relative",
+								cursor: "pointer",
+								"& > p": {
+									whiteSpace: "nowrap"
+								},
+								"& > :hover": {
+									color: "primary.main"
+								}
+							}}
+						>
+							<Typography color="textSecondary">
+								28-06-21<br />
+								09:30 AM
+							</Typography>
+						</Box>
+					</TimelineOppositeContent>
+					<TimelineSeparator>
+						<TimelineDot />
+						<TimelineConnector />
+					</TimelineSeparator>
+					<TimelineContent>
+						<Box
+							sx={{
+								top: "-0.8rem",
+								position: "relative"
+							}}
+						>
+							<UserInfo />
+						</Box>
+					</TimelineContent>
+				</TimelineItem>
 
-					<TimelineItem>
-						<TimelineOppositeContent>
-							<Box
-								sx={{
-									display: "flex",
-									flexDirection: "column",
-									justifyContent: "center",
-									top: "-0.8rem",
-									position: "relative",
-									cursor: "pointer",
-									"& > p": {
-										whiteSpace: "nowrap"
-									},
-									"& > :hover": {
-										color: "primary.main"
-									}
-								}}
-							>
-								<Typography color="textSecondary">
-									28-06-21<br />
-									09:30 AM
-								</Typography>
-							</Box>
-						</TimelineOppositeContent>
-						<TimelineSeparator>
-							<TimelineDot />
-							<TimelineConnector />
-						</TimelineSeparator>
-						<TimelineContent>
-							<Box
-								sx={{
-									top: "-0.8rem",
-									position: "relative"
-								}}
-							>
-								<UserInfo />
-							</Box>
-						</TimelineContent>
-					</TimelineItem>
+				<TimelineItem>
+					<TimelineOppositeContent>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								top: "-0.8rem",
+								position: "relative",
+								cursor: "pointer",
+								"& > p": {
+									whiteSpace: "nowrap"
+								},
+								"& > :hover": {
+									color: "primary.main"
+								}
+							}}
+						>
+							<Typography color="textSecondary">
+								28-06-21<br />
+								09:30 AM
+							</Typography>
+						</Box>
+					</TimelineOppositeContent>
+					<TimelineSeparator>
+						<TimelineDot />
+						<TimelineConnector />
+					</TimelineSeparator>
+					<TimelineContent>
+						<Box
+							sx={{
+								top: "-0.8rem",
+								position: "relative"
+							}}
+						>
+							<UserInfo />
+						</Box>
+					</TimelineContent>
+				</TimelineItem>
 
-					<TimelineItem>
-						<TimelineOppositeContent>
-							<Box
-								sx={{
-									display: "flex",
-									flexDirection: "column",
-									justifyContent: "center",
-									top: "-0.8rem",
-									position: "relative",
-									cursor: "pointer",
-									"& > p": {
-										whiteSpace: "nowrap"
-									},
-									"& > :hover": {
-										color: "primary.main"
-									}
-								}}
-							>
-								<Typography color="textSecondary">
-									28-06-21<br />
-									09:30 AM
-								</Typography>
-							</Box>
-						</TimelineOppositeContent>
-						<TimelineSeparator>
-							<TimelineDot />
-							<TimelineConnector />
-						</TimelineSeparator>
-						<TimelineContent>
-							<Box
-								sx={{
-									top: "-0.8rem",
-									position: "relative"
-								}}
-							>
-								<UserInfo />
-							</Box>
-						</TimelineContent>
-					</TimelineItem>
+				<TimelineItem>
+					<TimelineOppositeContent>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "center",
+								top: "-0.8rem",
+								position: "relative",
+								cursor: "pointer",
+								"& > p": {
+									whiteSpace: "nowrap"
+								},
+								"& > :hover": {
+									color: "primary.main"
+								}
+							}}
+						>
+							<Typography color="textSecondary">
+								28-06-21<br />
+								09:30 AM
+							</Typography>
+						</Box>
+					</TimelineOppositeContent>
+					<TimelineSeparator>
+						<TimelineDot />
+						<TimelineConnector />
+					</TimelineSeparator>
+					<TimelineContent>
+						<Box
+							sx={{
+								top: "-0.8rem",
+								position: "relative"
+							}}
+						>
+							<UserInfo />
+						</Box>
+					</TimelineContent>
+				</TimelineItem>
 
-				</Timeline>
+			</Timeline>
 
 
-			</Box>
-		</div>
+		</Box>
 	)
 }
 

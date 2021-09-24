@@ -35,10 +35,8 @@ function FooterNotice() {
 	return (
 		<Box
 			sx={{
-				padding: {
-					xs: (theme) => theme.spacing(1, 3),
-					md: (theme) => theme.spacing(2, 8)
-				},
+				px: { xs: 3, md: 6 },
+				py: { xs: 2, md: 2 },
 				backgroundColor: "#F8F9FA",
 				borderBottomLeftRadius: "0.5rem",
 				borderBottomRightRadius: "0.5rem",

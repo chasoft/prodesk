@@ -57,7 +57,6 @@ const NewTicketStep2 = () => {
 										vertical: "bottom",
 										horizontal: "left"
 									},
-									getContentAnchorEl: null
 								}}
 							>
 								{
@@ -92,7 +91,6 @@ const NewTicketStep2 = () => {
 										vertical: "bottom",
 										horizontal: "left"
 									},
-									getContentAnchorEl: null
 								}}
 							>
 								{
@@ -126,7 +124,6 @@ const NewTicketStep2 = () => {
 											vertical: "bottom",
 											horizontal: "left"
 										},
-										getContentAnchorEl: null
 									}}
 								>
 									{
@@ -160,7 +157,6 @@ const NewTicketStep2 = () => {
 										vertical: "bottom",
 										horizontal: "left"
 									},
-									getContentAnchorEl: null
 								}}
 							>
 								{

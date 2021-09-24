@@ -42,9 +42,10 @@ export const initialState = {
 	backgroundForLoggedinPage: defaultBackground,
 
 	/*
-		Note the PerfectScrollbar.scrollTop for component's usage
+		Does user scrollY > 50 ?
+		use this to enable elevation for header!
 	*/
-	scrollTop: 0,
+	scrolled: false,
 
 	/*
 		Settings for ListTicketsFilter
@@ -80,8 +81,8 @@ const uiSettingsSlice = createSlice({
 				...payload
 			}
 		},
-		setScrollTop: (state, { payload }) => {
-			state.scrollTop = payload
+		setScrolled: (state, { payload }) => {
+			state.scrolled = payload
 		},
 		setSelectedPriority: (state, { payload }) => {
 			state.selectedPriority = payload
@@ -117,7 +118,7 @@ const uiSettingsSlice = createSlice({
 export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
-	setScrollTop,
+	setScrolled,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
 	setActiveSettingTab, setActiveSettingPanel
 } = uiSettingsSlice.actions
