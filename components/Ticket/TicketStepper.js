@@ -109,8 +109,7 @@ export default function TicketStepper() {
 
 
 	return (
-		<Box sx={{ width: "100%" }}>
-
+		<div style={{ width: "100%" }}>
 
 			<Stepper activeStep={currentStep} orientation="vertical">
 				{steps.map((label, index) => (
@@ -122,21 +121,18 @@ export default function TicketStepper() {
 							<div>{getStepContent(index, handleNext)}</div>
 							<Box
 								sx={{
-									marginTop: theme.spacing(1),
-									marginBottom: theme.spacing(0),
+									mt: 1,
+									mb: 0,
 									display: "flex",
 									justifyContent: "space-between"
 								}}
 							>
 								<div>
-									<Button
-										onClick={handleBack}
-										sx={{
-											mt: 1, mr: 1,
-											pl: 2, pr: 2,
-											display: (currentStep === 0) ? "none" : "initial"
-										}}
-									>
+									<Button onClick={handleBack} sx={{
+										mt: 1, mr: 1,
+										pl: 2, pr: 2,
+										display: (currentStep === 0) ? "none" : "initial"
+									}}>
 										Back
 									</Button>
 									<Button
@@ -154,9 +150,9 @@ export default function TicketStepper() {
 							</Box>
 						</StepContent>
 					</Step>
-				))
-				}
+				))}
 			</Stepper >
+
 			{currentStep === steps.length && (
 				<Paper square elevation={0} sx={{ padding: theme.spacing(3), }}>
 					<Typography>All steps completed - you&apos;re finished</Typography>
@@ -184,6 +180,7 @@ export default function TicketStepper() {
 					</Button>
 				</Paper>
 			)}
-		</Box >
+
+		</div >
 	)
 }

@@ -1,13 +1,11 @@
-import dynamic from "next/dynamic"
 import React, { useState } from "react"
 import { TabPanel, Tab, Tabs, Typography } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
-import Skeleton from "@mui/material/Skeleton"
 import { getNewTicket } from "./../../redux/selectors"
 import { setMessage } from "./../../redux/slices/newTicket"
 import TicketUploader from "../Gallery/TicketUploader"
 
-import TextEditor from "../../common/TextEditor"
+import TextEditor from "./../common/TextEditor"
 
 function a11yProps(index) {
 	return {
@@ -43,12 +41,17 @@ const NewTicketStep3 = () => {
 			</Tabs>
 
 			<TabPanel value={value} index="one">
-				<TextEditor data={message} handleData={(data) => { dispatch(setMessage(data)) }} />
+				<TextEditor
+					defaultValue={message}
+					pullEditorData={(data) => { dispatch(setMessage(data)) }}
+				/>
 				<Typography variant="caption">Please describe your issue in detail.</Typography>
 			</TabPanel>
+
 			<TabPanel value={value} index="two">
 				<TicketUploader />
 			</TabPanel>
+
 			<TabPanel value={value} index="three">
 				Secret Sharing!!!
 			</TabPanel>

@@ -40,7 +40,7 @@ export const initialState = {
 
 		/* User Inputed value =============================== */
 		subject: "",
-		message: "<p></p>",
+		message: "",
 
 		/* Selection ======================================== */
 		categories: {},

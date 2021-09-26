@@ -33,6 +33,7 @@ import { Grid, Box, } from "@mui/material"
 import HistoryTimeline from "./HistoryTimeline"
 import PostContent from "./PostContent"
 import Replies from "./Replies"
+import PostMeta from "./PostMeta"
 
 //ASSETS
 
@@ -46,19 +47,28 @@ import Replies from "./Replies"
 
 function Post() {
 	return (
-		<Grid container>
-			<Grid item xs={12} sm={12} md={8} >
-				<main>
-					<PostContent />
-					<Replies />
-				</main>
+		<>
+			<Grid container>
+				<Grid item xs={12} sm={12} md={8} >
+					<main>
+						<PostContent />
+						<Replies />
+					</main>
+				</Grid>
+				<Grid item xs={12} sm={12} md={4} sx={{ alignItems: "stretch" /* for sticky working */ }}>
+					<Box sx={{
+						display: { xs: "none", md: "block" },
+						height: "100%" /* for sticky working */
+					}}>
+						<PostMeta />
+						<Box sx={{ position: "sticky", top: "100px", mt: "4rem" }}>
+							<HistoryTimeline />
+						</Box>
+					</Box>
+				</Grid>
 			</Grid>
-			<Grid item xs={12} sm={12} md={4}>
-				<Box sx={{ display: { xs: "none", md: "block" }, bgcolor: "silver" }}>
-					<HistoryTimeline />
-				</Box>
-			</Grid>
-		</Grid>
+
+		</>
 	)
 }
 

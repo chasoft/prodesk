@@ -90,8 +90,6 @@ const Header = () => {
 				{scrolled ? title : null}
 			</Box>
 
-			<div style={{ flexGrow: 1 }}></div>
-
 			<Box
 				sx={{
 					display: "flex",

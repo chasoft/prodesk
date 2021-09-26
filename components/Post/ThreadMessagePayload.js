@@ -45,6 +45,7 @@ const ThreadMessagePayload = () => {
 	return (
 		<Box sx={{
 			px: { xs: 3, md: 6 },
+			pb: { xs: 0, md: 3 }
 		}}
 		>
 			<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>

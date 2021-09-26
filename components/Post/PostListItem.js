@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -35,6 +35,7 @@ import { Box, Typography } from "@mui/material"
 
 //ASSETS
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
+import { deepOrange } from "@mui/material/colors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -100,10 +101,8 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 				<a>
 					<Box
 						sx={{
-							display: "flex",
-							cursor: "pointer",
-							flexDirection: { xs: "column", sm: "row" },
-							"&:hover": { backgroundColor: "action.hover" },
+							display: "flex", flexDirection: "column",
+							"&:hover": { backgroundColor: "action.hover", cursor: "pointer" },
 							borderTopLeftRadius: isFirst ? "0.5rem" : 0,
 							borderTopRightRadius: isFirst ? "0.5rem" : 0,
 							borderBottomLeftRadius: isLast ? "0.5rem" : 0,
@@ -111,59 +110,77 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 						}}
 					>
 
-						<Box id="content"
-							sx={{
-								flexGrow: 1,
-								minWidth: 0, /*this property is important*/
-								p: 3,
-							}}
-						>
-							<Typography variant="h5">
-								{subject}
-							</Typography>
-
-							{(isShort === false) &&
-								<Typography sx={{ display: { xs: "none", md: "block" } }} >
-									{excerpt}
-								</Typography>}
-						</Box>
+						<Typography variant="h5" sx={{
+							pt: 3, px: 3,
+							...(isShort ? { pb: 3 } : {})
+						}}>
+							{subject}
+						</Typography>
 
 						{(isShort === false) &&
-							<Box id="moreInfo"
-								sx={{
+							<Typography sx={{
+								display: { xs: "none", md: "block" },
+								px: 3
+							}}>
+								{excerpt}
+							</Typography>}
+
+						{((isShort === false) && (metaData.length > 0)) &&
+							metaData.map((item, idx) => (
+								<Box key={idx} sx={{
 									display: "flex",
 									alignItems: "center",
-									flexDirection: { xs: "row", md: "column" },
-									mt: { xs: -2.5, sm: 2 },
-									pt: { xs: 0, md: 1 },
-									pr: 2,
-									pb: 2.5,
-									pl: { xs: 2, md: 0 },
+									borderBottomLeftRadius: "0.5rem",
+									borderBottomRightRadius: "0.5rem",
+									pt: 1, px: 3, pb: 3,
+									"& > *": { mr: 0.5 }
 								}}>
 
-								{(metaData.length > 0) &&
-									metaData.map((item, idx) => (
-										<div key={idx}>
-											<Box sx={{ textAlign: "center", px: "0.5rem" }}>
-												<PriorityHighIcon
-													style={{
-														color: "#f44336",
-														width: "1.25rem", height: "1.25rem",
-														border: "1px solid",
-														borderRadius: "50%"
-													}}
-												/>
-											</Box>
+									<Tooltip title="Department" placement="top">
+										<Chip
+											size="small"
+											label="Sales"
+											variant="outlined"
+										/>
+									</Tooltip>
 
-											<Box id="extraInfo" sx={{ textAlign: "center" }}>
-												<Typography variant="caption" noWrap>
-													0 replies
-												</Typography>
-											</Box>
-										</div>
-									))}
-							</Box>}
+									<Tooltip title="Category" placement="top">
+										<Chip
+											size="small"
+											label="Hosting/Wordpress"
+											variant="outlined"
+										/>
+									</Tooltip>
 
+									<Chip
+										size="small"
+										avatar={<Avatar>2</Avatar>}
+										label="replies"
+										variant="outlined"
+										sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
+									/>
+
+									<Tooltip title="Priority" placement="top">
+										<Chip
+											size="small"
+											label="Low"
+											variant="outlined"
+											color="info"
+										/>
+									</Tooltip>
+
+
+									<Tooltip title="Priority" placement="top">
+										<Chip
+											size="small"
+											label="Important"
+											variant="outlined"
+											color="warning"
+										/>
+									</Tooltip>
+
+								</Box>
+							))}
 					</Box>
 				</a>
 			</Link>

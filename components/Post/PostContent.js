@@ -77,7 +77,22 @@ function PostContent() {
 
 			<ThreadMessagePayload />
 
-			<FooterNotice />
+			<Box
+				sx={{
+					display: { xs: "flex", md: "none" },
+					px: { xs: 3, md: 6 },
+					py: { xs: 2, md: 2 },
+					backgroundColor: "#F8F9FA",
+					borderBottomLeftRadius: "0.5rem",
+					borderBottomRightRadius: "0.5rem",
+					borderTop: "1px solid",
+					borderTopColor: "divider"
+				}}
+			>
+				<Typography variant="caption">
+					Community content may not be verified or up-to-date. Learn more.
+				</Typography>
+			</Box>
 
 		</Paper>
 	)

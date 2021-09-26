@@ -51,7 +51,7 @@ function NewTicket() {
 	updateUiSettings({
 		title: "Open New Ticket",
 		background: {
-			backgroundImage: ""
+			backgroundImage: "",
 		}
 	})
 

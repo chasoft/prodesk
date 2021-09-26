@@ -56,9 +56,7 @@ function Tickets() {
 	return (
 		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
 
-			<Box sx={{
-				display: "flex"
-			}}>
+			<Box sx={{ display: "flex" }}>
 
 				<Box sx={{ flexGrow: 1 }}>
 					<ListTickets />
@@ -70,7 +68,7 @@ function Tickets() {
 
 			</Box>
 
-		</Container>
+		</Container >
 	)
 }
 

@@ -33,7 +33,6 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getUiSettings } from "../../redux/selectors"
 import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
-import useSticky from "../../helpers/useSticky"
 
 //ASSETS
 import SearchIcon from "@mui/icons-material/Search"
@@ -87,7 +86,6 @@ const FilterCheckbox = (props) => (
  *****************************************************************/
 
 function ListTicketsFilter() {
-	const [ref, isSticky] = useSticky({ offsetTop: 80, scrollY: 60 })
 	const dispatch = useDispatch()
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
@@ -97,7 +95,6 @@ function ListTicketsFilter() {
 
 	return (
 		<Box
-			ref={ref}
 			sx={{
 				display: { xs: "none", md: "flex" },
 				flexDirection: "column",
@@ -106,8 +103,8 @@ function ListTicketsFilter() {
 				backgroundColor: "#FFF",
 				borderRadius: "0.5rem",
 				width: "250px",
-				position: isSticky ? "sticky" : "static",
-				top: isSticky ? "80px" : "initial"
+				position: "sticky",
+				top: "80px"
 			}}
 		>
 

@@ -23,9 +23,10 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Avatar, Box, Tooltip, Typography } from "@mui/material"
 import Timeline from "@mui/lab/Timeline"
 import TimelineDot from "@mui/lab/TimelineDot"
 import TimelineItem from "@mui/lab/TimelineItem"
@@ -33,12 +34,11 @@ import TimelineContent from "@mui/lab/TimelineContent"
 import TimelineSeparator from "@mui/lab/TimelineSeparator"
 import TimelineConnector from "@mui/lab/TimelineConnector"
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent"
+import { styled } from "@mui/material/styles"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import UserInfo from "./../../components/common/UserInfo"
-import useSticky from "../../helpers/useSticky"
 
 //ASSETS
 
@@ -48,150 +48,132 @@ import useSticky from "../../helpers/useSticky"
  * INIT                                                          *
  *****************************************************************/
 
+const TimeBlock = ({ date, time }) => {
+	return (
+		<TimelineOppositeContent>
+			<Box
+				onClick={() => { }}
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					cursor: "pointer",
+					"&>p": { whiteSpace: "nowrap" },
+					"&:hover>p": { color: "primary.main" }
+				}}
+			>
+				<Typography color="textSecondary">
+					{date}
+				</Typography>
+				<Typography color="textSecondary">
+					{time}
+				</Typography>
+			</Box>
+		</TimelineOppositeContent>
+	)
+}
+TimeBlock.propTypes = {
+	date: PropTypes.any,
+	time: PropTypes.any
+}
+
+const TimeConnector = () => {
+	return (
+		<TimelineSeparator>
+			<TimelineDot />
+			<TimelineConnector />
+		</TimelineSeparator>
+	)
+}
+
+const TimeAuthor = ({ photoURL = "/default-avatar/1.png", userInfo }) => {
+	return (
+
+		<TimelineContent
+			sx={{
+				top: "-0.8rem",
+				position: "relative",
+				display: "flex",
+				alignItems: "center"
+			}}
+		>
+
+			<Tooltip
+				title={<span>{userInfo.name} <br /> {userInfo.role}</span>}
+				placement="top"
+			>
+				<Avatar
+					alt="Remy Sharp" src={photoURL}
+					sx={{ mr: 1 }}
+				/>
+			</Tooltip>
+
+			<Box sx={{
+				flexDirection: "column",
+				display: { xs: "none", xl: "flex" }
+			}}>
+				<Typography style={{ whiteSpace: "nowrap" }} variant="caption">
+					{userInfo.name}
+				</Typography>
+				<Typography style={{ whiteSpace: "nowrap" }}>
+					{userInfo.role}
+				</Typography>
+			</Box>
+
+
+		</TimelineContent>
+	)
+}
+TimeAuthor.propTypes = {
+	photoURL: PropTypes.string,
+	userInfo: PropTypes.object
+}
+
+const TimelineItemStyled = styled(TimelineItem)({
+	"&::before": {
+		padding: 0
+	},
+})
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+// eslint-disable-next-line react/display-name
 const HistoryTimeline = () => {
-	const [ref, isSticky] = useSticky({ offsetTop: 100, scrollY: 20 })
-
 	return (
-		<Box
-			ref={ref}
-			sx={{
-				mt: 15,
-				position: isSticky ? "sticky" : "static",
-				top: isSticky ? "100px" : "initial"
-			}}
-		>
+		<Timeline>
 
-			<Timeline>
+			<TimelineItemStyled>
+				<TimeBlock date="2021-09-26" time="09:15 AM" />
+				<TimeConnector />
+				<TimeAuthor
+					photoURL="/default-avatar/9.png"
+					userInfo={{
+						name: "Camille V.",
+						role: "Techical Supporter"
+					}} />
+			</TimelineItemStyled>
 
-				<TimelineItem>
-					<TimelineOppositeContent>
-						<Box
-							onClick={() => { }}
-							sx={{
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "center",
-								top: "-0.8rem",
-								position: "relative",
-								cursor: "pointer",
-								"& > p": {
-									whiteSpace: "nowrap"
-								},
-								"& > :hover": {
-									color: "primary.main"
-								}
-							}}
-						>
-							<Typography color="textSecondary">
-								28-06-21<br />
-								09:30 AM
-							</Typography>
-						</Box>
-					</TimelineOppositeContent>
-					<TimelineSeparator>
-						<TimelineDot />
-						<TimelineConnector />
-					</TimelineSeparator>
-					<TimelineContent>
-						<Box
-							sx={{
-								top: "-0.8rem",
-								position: "relative"
-							}}
-						>
-							<UserInfo />
-						</Box>
-					</TimelineContent>
-				</TimelineItem>
+			<TimelineItemStyled>
+				<TimeBlock date="2021-09-26" time="09:15 AM" />
+				<TimeConnector />
+				<TimeAuthor userInfo={{
+					name: "Camille V.",
+					role: "Techical Supporter"
+				}} />
+			</TimelineItemStyled>
 
-				<TimelineItem>
-					<TimelineOppositeContent>
-						<Box
-							sx={{
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "center",
-								top: "-0.8rem",
-								position: "relative",
-								cursor: "pointer",
-								"& > p": {
-									whiteSpace: "nowrap"
-								},
-								"& > :hover": {
-									color: "primary.main"
-								}
-							}}
-						>
-							<Typography color="textSecondary">
-								28-06-21<br />
-								09:30 AM
-							</Typography>
-						</Box>
-					</TimelineOppositeContent>
-					<TimelineSeparator>
-						<TimelineDot />
-						<TimelineConnector />
-					</TimelineSeparator>
-					<TimelineContent>
-						<Box
-							sx={{
-								top: "-0.8rem",
-								position: "relative"
-							}}
-						>
-							<UserInfo />
-						</Box>
-					</TimelineContent>
-				</TimelineItem>
+			<TimelineItemStyled>
+				<TimeBlock date="2021-09-26" time="09:15 AM" />
+				<TimeConnector />
+				<TimeAuthor userInfo={{
+					name: "Camille V.",
+					role: "Techical Supporter"
+				}} />
+			</TimelineItemStyled>
 
-				<TimelineItem>
-					<TimelineOppositeContent>
-						<Box
-							sx={{
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "center",
-								top: "-0.8rem",
-								position: "relative",
-								cursor: "pointer",
-								"& > p": {
-									whiteSpace: "nowrap"
-								},
-								"& > :hover": {
-									color: "primary.main"
-								}
-							}}
-						>
-							<Typography color="textSecondary">
-								28-06-21<br />
-								09:30 AM
-							</Typography>
-						</Box>
-					</TimelineOppositeContent>
-					<TimelineSeparator>
-						<TimelineDot />
-						<TimelineConnector />
-					</TimelineSeparator>
-					<TimelineContent>
-						<Box
-							sx={{
-								top: "-0.8rem",
-								position: "relative"
-							}}
-						>
-							<UserInfo />
-						</Box>
-					</TimelineContent>
-				</TimelineItem>
-
-			</Timeline>
-
-
-		</Box>
+		</Timeline>
 	)
 }
 
