@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select } from "@mui/material"
+import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector, useDispatch } from "react-redux"
@@ -53,31 +53,24 @@ import {
 const DepartmentBlock = ({ departments, selectedDepartment, defaultDepartment }) => {
 	const dispatch = useDispatch()
 	return (
-		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
-			<InputLabel shrink id="department">Department</InputLabel>
-			<Select
-				labelId="department"
-				id="department"
-				value={selectedDepartment ? selectedDepartment : defaultDepartment}
-				onChange={(e) => {
-					dispatch(setSelectedDepartment(e.target.value))
-				}}
-				displayEmpty
-				MenuProps={{
-					anchorOrigin: {
-						vertical: "bottom",
-						horizontal: "left"
-					},
-				}}
-			>
-				{
-					departments?.map(
+		<>
+			<FormControl sx={{ formControl: { m: 1 } }} fullWidth>
+				<InputLabel shrink id="department">Department</InputLabel>
+				<Select
+					labelId="department"
+					label="Department"
+					id="department"
+					value={selectedDepartment ? selectedDepartment : defaultDepartment}
+					onChange={(e) => {
+						dispatch(setSelectedDepartment(e.target.value))
+					}}
+				>
+					{departments?.map(
 						department => <MenuItem key={department} value={department}>{department}</MenuItem>
-					)
-				}
-			</Select>
-			<FormHelperText>Department</FormHelperText>
-		</FormControl>
+					)}
+				</Select>
+			</FormControl>
+		</>
 	)
 }
 DepartmentBlock.propTypes = {
@@ -93,24 +86,17 @@ const PriorityBlock = ({ priorities, selectedPriority, defaultPriority }) => {
 			<InputLabel shrink id="priority">Priority</InputLabel>
 			<Select
 				labelId="priority"
+				label="Priority"
 				id="priority"
 				value={selectedPriority ? selectedPriority : defaultPriority}
 				onChange={(e) => {
 					dispatch(setSelectedPriority(e.target.value))
-				}}
-				displayEmpty
-				MenuProps={{
-					anchorOrigin: {
-						vertical: "bottom",
-						horizontal: "left"
-					},
 				}}
 			>
 				{
 					priorities?.map(priority => <MenuItem key={priority} value={priority}>{priority}</MenuItem>)
 				}
 			</Select>
-			<FormHelperText>Priority</FormHelperText>
 		</FormControl>
 	)
 }
@@ -127,17 +113,11 @@ const CategoryBlock = ({ categories, currentCategory }) => {
 			<InputLabel shrink id="category">Category</InputLabel>
 			<Select
 				labelId="category"
+				label="Category"
 				id="category"
 				value={currentCategory}
 				onChange={(e) => {
 					dispatch(setSelectedCategory(e.target.value))
-				}}
-				displayEmpty
-				MenuProps={{
-					anchorOrigin: {
-						vertical: "bottom",
-						horizontal: "left"
-					},
 				}}
 			>
 				{
@@ -146,7 +126,6 @@ const CategoryBlock = ({ categories, currentCategory }) => {
 					)
 				}
 			</Select>
-			<FormHelperText>Category</FormHelperText>
 		</FormControl>
 	)
 }
@@ -163,17 +142,11 @@ const SubCategoryBlock = ({ categories, currentCategory, currentSubCategory }) =
 			<InputLabel shrink id="category">Sub-Category</InputLabel>
 			<Select
 				labelId="sub-category"
+				label="Sub-Category"
 				id="sub-category"
 				value={currentSubCategory}
 				onChange={(e) => {
 					dispatch(setSelectedSubCategory(e.target.value))
-				}}
-				displayEmpty
-				MenuProps={{
-					anchorOrigin: {
-						vertical: "bottom",
-						horizontal: "left"
-					},
 				}}
 			>
 				{
@@ -182,7 +155,6 @@ const SubCategoryBlock = ({ categories, currentCategory, currentSubCategory }) =
 					)
 				}
 			</Select>
-			<FormHelperText>Sub-Category</FormHelperText>
 		</FormControl>
 	)
 }

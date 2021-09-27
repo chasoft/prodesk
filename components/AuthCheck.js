@@ -28,12 +28,12 @@ import DefaultErrorPage from "next/error"
 import { CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
+import { batch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth, getRedirect } from "./../redux/selectors"
 import { REDIRECT_URL, USERGROUP } from "../helpers/constants"
-import { clearRedirect, setRedirect } from "../redux/slices/redirect"
+import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "../redux/slices/redirect"
 import { regAdminURL } from "../helpers/regex"
 
 //ASSETS
@@ -66,13 +66,31 @@ const LoadingIndicator = () => {
 export function ReduxRedirect(props) {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { redirectURL } = useSelector(getRedirect)
+	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
+	const { isAuthenticated } = useSelector(getAuth)
 
-	if (redirectURL === "") return props.children
-	else {
+	if (redirectURL === "") {
+		return props.children
+	}
+
+	if (redirectURL === REDIRECT_URL.LOGIN) {
+		dispatch(clearRedirect())
+		router.push(REDIRECT_URL.LOGIN)
+		return null
+	}
+
+	if (redirectAfterLoginURL === "") {
 		dispatch(clearRedirect())
 		router.push(redirectURL.split("@note:")[0])
+		return null
 	}
+
+	batch(() => {
+		dispatch(clearRedirect())
+		if (isAuthenticated) dispatch(clearRedirectAfterLoginURL())
+	})
+	router.push(redirectAfterLoginURL)
+	return null
 }
 
 /**
@@ -89,11 +107,15 @@ export default function AuthCheck(props) {
 		// 1. finished get loggin data and
 		// 2. user not loggin
 		// that means that... user truly not Login!
-		if (isAuthenticated !== true && loading === false)
-			dispatch(setRedirect(REDIRECT_URL.LOGIN))
+		if (isAuthenticated !== true && loading === false) {
+			batch(() => {
+				dispatch(setRedirectAfterLoginURL(router.pathname))
+				dispatch(setRedirect(REDIRECT_URL.LOGIN))
+			})
+		}
 	}, [isAuthenticated, loading])
 
-	if (loading) return < LoadingIndicator />
+	if (loading) return <LoadingIndicator />
 
 	//A logged-in user but try to access `/admin`
 	if (currentUser.group === USERGROUP.USER

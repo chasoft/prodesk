@@ -22,12 +22,14 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+//THIRD-PARTY
+import { batch as reduxBatch } from "react-redux"
+
 //PROJECT IMPORT
 import { loginSuccess, logoutSuccess } from "../redux/slices/auth"
-import { setRedirect } from "../redux/slices/redirect"
+import { clearRedirect, setRedirect } from "../redux/slices/redirect"
 import { REDIRECT_URL, USERGROUP } from "./constants"
 import { auth, db, getUserDocByUid, getUsernameDocByUsername, googleAuthProvider } from "./firebase"
-import { batch as reduxBatch } from "react-redux"
 
 /*****************************************************************
  * LIBRARY                                                       *
@@ -42,10 +44,24 @@ export const signInWithGoogle = async ({ enqueueSnackbar }) => {
 	}
 }
 
+const Redirect = (usernameDoc, dispatch, redirectAfterLoginURL) => {
+	if (redirectAfterLoginURL === "") {
+		//Check usergroup and redirect after logged in
+		if (usernameDoc.group === USERGROUP.USER)
+			// router.push(REDIRECT_URL.CLIENT)
+			dispatch(setRedirect(REDIRECT_URL.CLIENT))
+		else
+			// router.push(REDIRECT_URL.ADMIN)
+			dispatch(setRedirect(REDIRECT_URL.ADMIN))
+	}
+
+	dispatch(clearRedirect(redirectAfterLoginURL))
+}
+
 /**
  * TODO: there are repeated code! would be optimized (DRY) in the next release
  */
-export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, dispatch }) => {
+export const signInWithEmail = async ({ username, password }, { enqueueSnackbar, dispatch, redirectAfterLoginURL }) => {
 	enqueueSnackbar("Connecting with Authentication Server...", { variant: "info" })
 	try {
 		if (username.includes("@")) {
@@ -66,13 +82,7 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 				...userProperties
 			}))
 
-			//Check usergroup and redirect after logged in
-			if (usernameDoc.group === USERGROUP.USER)
-				// router.push(REDIRECT_URL.CLIENT)
-				dispatch(setRedirect(REDIRECT_URL.CLIENT))
-			else
-				// router.push(REDIRECT_URL.ADMIN)
-				dispatch(setRedirect(REDIRECT_URL.ADMIN))
+			Redirect(usernameDoc, dispatch, redirectAfterLoginURL)
 
 		} else {
 			const usernameDoc = await getUsernameDocByUsername(username)
@@ -92,13 +102,7 @@ export const signInWithEmail = async ({ username, password }, { enqueueSnackbar,
 					...userProperties
 				}))
 
-				//Check usergroup and redirect
-				if (usernameDoc.group === USERGROUP.USER)
-					// router.push(REDIRECT_URL.CLIENT)
-					dispatch(setRedirect(REDIRECT_URL.CLIENT))
-				else
-					// router.push(REDIRECT_URL.ADMIN)
-					dispatch(setRedirect(REDIRECT_URL.ADMIN))
+				Redirect(usernameDoc, dispatch, redirectAfterLoginURL)
 
 			} else {
 				throw new Error("Invalid username or not existed!")

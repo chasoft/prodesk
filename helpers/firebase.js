@@ -512,21 +512,21 @@ export const createNewTicketReply = async ({ currentUser, ticketId, replyContent
  * @param {*} file - file which you get from onChangeEvent: `Array.from(e.target.files)[0]`
  * @note rich-markdown-editor provide this `file` directly!
  */
-export const imageUploader = async (file) => {
-	const username = localStorage.getItem("username")
-	let imgURL = "http://localhost:3000/img/img-error.png"
+// export const imageUploader = async (file) => {
+// 	const username = localStorage.getItem("username")
+// 	let imgURL = "http://localhost:3000/img/img-error.png"
 
-	if (!username) return imgURL
+// 	if (!username) return imgURL
 
-	const filename = file.name.split(".")[0]
-	const uniqueId = nanoid(5)
-	const extension = file.type.split("/")[1]
+// 	const filename = file.name.split(".")[0]
+// 	const uniqueId = nanoid(5)
+// 	const extension = file.type.split("/")[1]
 
-	const ref = storage.ref(`uploads/${username}/${filename}-${uniqueId}.${extension}`)
-	const task = ref.put(file)
+// 	const ref = storage.ref(`uploads/${username}/${filename}-${uniqueId}.${extension}`)
+// 	const task = ref.put(file)
 
-	// Get downloadURL AFTER task resolves (Note: this is not a native Promise)
-	task
-		.then(() => ref.getDownloadURL())
-		.then((url) => { return url })
-}
+// 	// Get downloadURL AFTER task resolves (Note: this is not a native Promise)
+// 	task
+// 		.then(() => ref.getDownloadURL())
+// 		.then((url) => { return url })
+// }

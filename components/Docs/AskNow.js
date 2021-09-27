@@ -28,8 +28,10 @@ import React from "react"
 import { Box, Button, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
+import { setRedirect } from "../../redux/slices/redirect"
 
 //ASSETS
 import ForumIcon from "@mui/icons-material/Forum"
@@ -44,6 +46,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  *****************************************************************/
 
 const AskNow = () => {
+	const dispatch = useDispatch()
 	return (
 		<Box sx={{ my: { xs: 2, md: 4 } }}>
 			<Paper elevation={2}
@@ -77,6 +80,7 @@ const AskNow = () => {
 						color="primary"
 						endIcon={<ArrowForwardIcon />}
 						sx={{ whiteSpace: "nowrap" }}
+						onClick={() => dispatch(setRedirect("/client/tickets/new-ticket"))}
 					>
 						Ask now
 					</Button>

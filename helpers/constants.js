@@ -1,3 +1,5 @@
+export const redirectAfterLogin = "redirectAfterLogin"
+
 export const LINK_TYPE = {
 	/*
 		Set the link based on ID

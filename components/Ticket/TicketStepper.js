@@ -1,24 +1,52 @@
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import React, { useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import {
-	Box,
-	Button,
-	Paper,
-	Step,
-	StepContent,
-	StepLabel,
-	Stepper,
-	Typography,
-} from "@mui/material"
+
+// MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-import { getNewTicket } from "../../redux/selectors"
-import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
+import { Box, Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
+
+//THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
+import { batch } from "react-redux"
+
+//PROJECT IMPORT
 import NewTicketStep1 from "./step1"
 import NewTicketStep2 from "./step2"
 import NewTicketStep3 from "./step3"
-import { batch } from "react-redux"
+import { getNewTicket } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
+import { getPlainTextFromMarkDown } from "./../../helpers/utils"
+import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
+
+//ASSETS
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 const getStepContent = (step, callback) => {
 	switch (step) {
@@ -28,6 +56,10 @@ const getStepContent = (step, callback) => {
 		default: return "Completed"
 	}
 }
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 export default function TicketStepper() {
 	const dispatch = useDispatch()
@@ -63,12 +95,11 @@ export default function TicketStepper() {
 		dispatch(setRedirect(`/client/tickets/${tid}`))
 	}
 
-
 	const getInputtedData = (index) => {
 		switch (index) {
 			case 0: return `Your question: ${subject}`
 			case 1: return `Department: ${selectedDepartment} | Priority: ${selectedPriority} | Category: ${selectedCategory.cat} ${selectedCategory.subCat ? " / " + selectedCategory.subCat : ""}`
-			case 2: return `📝 ${message}`
+			case 2: return `📝 ${getPlainTextFromMarkDown(message)}`
 			default: return ""
 		}
 	}
@@ -100,7 +131,7 @@ export default function TicketStepper() {
 				},
 				defaultPriority: "Normal",
 				defaultDepartment: "Sales",
-				//message: "<p></p>"
+				message: ""
 			}))
 			dispatch(resetNewTicket())
 		})
@@ -127,7 +158,9 @@ export default function TicketStepper() {
 									justifyContent: "space-between"
 								}}
 							>
-								<div>
+								<Box sx={{
+									...(currentStep === steps.length - 1 ? { my: 2 } : {})
+								}}>
 									<Button onClick={handleBack} sx={{
 										mt: 1, mr: 1,
 										pl: 2, pr: 2,
@@ -146,40 +179,42 @@ export default function TicketStepper() {
 									>
 										{currentStep === steps.length - 1 ? "Submit" : "Continue"}
 									</Button>
-								</div>
+								</Box>
 							</Box>
 						</StepContent>
 					</Step>
 				))}
 			</Stepper >
 
-			{currentStep === steps.length && (
-				<Paper square elevation={0} sx={{ padding: theme.spacing(3), }}>
-					<Typography>All steps completed - you&apos;re finished</Typography>
-					<Button
-						onClick={() => handleViewTicket(newTicket.tid)}
-						fullWidth={isSmallScreen ? true : false}
-						variant="outlined"
-						sx={{
-							mt: 1, mr: 1,
-							pl: 2, pr: 2,
-						}}
-					>
-						View your ticket
-					</Button>
-					<Button
-						onClick={() => dispatch(setRedirect("/client/tickets"))}
-						fullWidth={isSmallScreen ? true : false}
-						variant="contained" color="primary"
-						sx={{
-							mt: 1, mr: 1,
-							pl: 2, pr: 2,
-						}}
-					>
-						Go to Dashboard
-					</Button>
-				</Paper>
-			)}
+			{
+				currentStep === steps.length && (
+					<Paper square elevation={0} sx={{ padding: 3 }}>
+						<Typography sx={{ mb: 1 }}>Your ticket has just been submitted. Our dedicated staffs would check and feedback soon.</Typography>
+						<Button
+							onClick={() => handleViewTicket(newTicket.tid)}
+							fullWidth={isSmallScreen ? true : false}
+							variant="outlined"
+							sx={{
+								mt: 1, mr: 1,
+								pl: 2, pr: 2,
+							}}
+						>
+							View your ticket
+						</Button>
+						<Button
+							onClick={() => dispatch(setRedirect("/client"))}
+							fullWidth={isSmallScreen ? true : false}
+							variant="contained" color="primary"
+							sx={{
+								mt: 1, mr: 1,
+								pl: 2, pr: 2,
+							}}
+						>
+							Go to Dashboard
+						</Button>
+					</Paper>
+				)
+			}
 
 		</div >
 	)

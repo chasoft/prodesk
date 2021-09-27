@@ -21,7 +21,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
-	redirectURL: ""
+	redirectURL: "",
+	redirectAfterLoginURL: ""
 }
 
 const redirectSlice = createSlice({
@@ -32,15 +33,23 @@ const redirectSlice = createSlice({
 			state.redirectURL = payload
 		},
 
+		setRedirectAfterLoginURL: (state, { payload }) => {
+			state.redirectAfterLoginURL = payload
+		},
+
 		clearRedirect: (state) => {
 			state.redirectURL = ""
+		},
+
+		clearRedirectAfterLoginURL: (state) => {
+			state.redirectAfterLoginURL = ""
 		}
 	},
 })
 
 export const {
-	setRedirect,
-	clearRedirect
+	setRedirect, clearRedirect,
+	setRedirectAfterLoginURL, clearRedirectAfterLoginURL
 } = redirectSlice.actions
 
 export default redirectSlice.reducer

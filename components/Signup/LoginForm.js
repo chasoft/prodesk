@@ -38,7 +38,7 @@ import {
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { ForgotPasswordLink, SignUpLink } from "../common"
@@ -47,6 +47,7 @@ import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/Reg
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { getRedirect } from "../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -68,6 +69,7 @@ const validationSchema = yup.object({
 const LoginForm = () => {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
+	const { redirectAfterLoginURL } = useSelector(getRedirect)
 
 	const formik = useFormik({
 		initialValues: {
@@ -79,7 +81,7 @@ const LoginForm = () => {
 			signInWithEmail({
 				username: values.username,
 				password: values.password
-			}, { enqueueSnackbar, dispatch })
+			}, { enqueueSnackbar, dispatch, redirectAfterLoginURL })
 		},
 	})
 

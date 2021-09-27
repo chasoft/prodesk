@@ -1,61 +1,65 @@
-import React, { useState } from "react"
-import { TabPanel, Tab, Tabs, Typography } from "@mui/material"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React, { useCallback } from "react"
+
+// MATERIAL-UI
+
+//THIRD-PARTY
 import { useSelector, useDispatch } from "react-redux"
+
+//PROJECT IMPORT
+import TextEditor from "./../common/TextEditor"
 import { getNewTicket } from "./../../redux/selectors"
 import { setMessage } from "./../../redux/slices/newTicket"
-import TicketUploader from "../Gallery/TicketUploader"
 
-import TextEditor from "./../common/TextEditor"
+//ASSETS
 
-function a11yProps(index) {
-	return {
-		id: `wrapped-tab-${index}`,
-		"aria-controls": `wrapped-tabpanel-${index}`,
-	}
-}
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 const NewTicketStep3 = () => {
 	const dispatch = useDispatch()
 	const { newTicket } = useSelector(getNewTicket)
 	const { message } = newTicket
 
-	const [value, setValue] = useState("one")
-
-	const handleChange = (event, newValue) => {
-		setValue(newValue)
-	}
-
-	//https://stackoverflow.com/questions/57899608/how-to-make-my-custom-tab-component-work-with-passing-index-to-children-and-hidi
+	const getEditorData = useCallback((data) => {
+		dispatch(setMessage(data))
+	}, [])
 
 	return (
 		<div>
-			<Tabs value={value} onChange={handleChange} aria-label="wrapped label tabs example">
-				<Tab
-					value="one"
-					label="New Arrivals in the Longest Text of Nonfiction"
-					wrapped
-					{...a11yProps("one")}
-				/>
-				<Tab value="two" label="Item Two" {...a11yProps("two")} />
-				<Tab value="three" label="Item Three" {...a11yProps("three")} />
-			</Tabs>
-
-			<TabPanel value={value} index="one">
-				<TextEditor
-					defaultValue={message}
-					pullEditorData={(data) => { dispatch(setMessage(data)) }}
-				/>
-				<Typography variant="caption">Please describe your issue in detail.</Typography>
-			</TabPanel>
-
-			<TabPanel value={value} index="two">
-				<TicketUploader />
-			</TabPanel>
-
-			<TabPanel value={value} index="three">
-				Secret Sharing!!!
-			</TabPanel>
-
+			<TextEditor
+				defaultValue={message}
+				pullEditorData={getEditorData}
+				placeholder="Please describe your issue in detail."
+			/>
 		</div>
 	)
 }

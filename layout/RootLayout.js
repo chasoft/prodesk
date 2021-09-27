@@ -64,7 +64,7 @@ function RootLayout({ children }) {
 
 				//Make a copy of username to localStorage
 				//TODO: secure this information later
-				localStorage.setItem("username", userProperties.username)
+				// localStorage.setItem("username", userProperties.username)
 
 				//Whether a social user, redirect if not yet created in db
 				if (user.providerData[0].providerId !== "password") {
@@ -95,7 +95,7 @@ function RootLayout({ children }) {
 				}
 			} else {
 				//Clear loggedin data
-				localStorage.removeItem("username")
+				// localStorage.removeItem("username")
 				dispatch(logoutSuccess())
 			}
 		})

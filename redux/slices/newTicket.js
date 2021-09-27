@@ -119,7 +119,7 @@ const newTicketSlice = createSlice({
 				isReadyNextStep: false,
 				tid: nanoid(10),
 				subject: "",
-				message: "<p></p>",
+				message: "",
 				selectedCategory: {
 					cat: "",
 					subCat: ""

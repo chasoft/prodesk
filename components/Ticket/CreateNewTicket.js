@@ -81,7 +81,8 @@ function CreateNewTicket() {
 						</Box>
 
 						<Box sx={{
-							px: { xs: 2, md: 4 }
+							px: { xs: 2, md: 4 },
+							pb: 2
 						}}>
 							<TicketStepper />
 						</Box>
@@ -94,7 +95,7 @@ function CreateNewTicket() {
 				sx={{
 					display: { xs: "none", md: "flex" },
 					flexDirection: "column",
-					ml: 3, mt: "124px",
+					ml: 3, mt: 10,
 					px: 3,
 					backgroundColor: "#FFF",
 					borderRadius: "0.5rem",

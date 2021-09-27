@@ -75,7 +75,7 @@ const LinearProgressWithLabel = (props) => (
 	=> Music => turn to HTML5 player for .mp3, .wav...v.v.
  */
 
-const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDestination }) => {
+const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDestination = "uploads", ...others }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [uploading, setUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
@@ -132,9 +132,10 @@ const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDes
 				ref={editorInstance}
 				readOnly={readOnly}
 				defaultValue={defaultValue}
-				onChange={(data) => { pullEditorData(data) }}
+				onChange={(funcGetData) => { pullEditorData(funcGetData()) }}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
+				{...others}
 			/>
 			{uploading && <LinearProgressWithLabel value={progress} />}
 		</>
@@ -153,6 +154,7 @@ TextEditor.propTypes = {
 		STORAGE_DESTINATION.DOCUMENTATION,
 		STORAGE_DESTINATION.SETTINGS
 	]),
+	others: PropTypes.object,
 }
 
 export default TextEditor

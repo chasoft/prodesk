@@ -5,6 +5,12 @@ import { Button } from "@mui/material"
 import { getLayout } from "./../../layout/BlankLayout"
 
 import ColorPicker from "./../../components/common/ColorPicker"
+import { getPlainTextFromMarkDown } from "../../helpers/utils"
+
+const testss = () => {
+	const a = '# yest please\n\n- [ ] item 1…2\n\n\\\n'
+	return getPlainTextFromMarkDown(a)
+}
 
 export default function testtest() {
 	const [color, setColor] = useState("")
@@ -15,6 +21,9 @@ export default function testtest() {
 			<ColorPicker getSelectedColor={(c) => setColor(c)} />
 
 			you selected {color}
+
+			{testss()}
+			{console.log(testss())}
 
 		</div>
 	)
