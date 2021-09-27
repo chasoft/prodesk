@@ -129,5 +129,14 @@ export const theme = createTheme({
 	},
 	shape: {
 		// borderRadius: 1
+	},
+	zIndex: {
+		mobileStepper: 150,
+		speedDial: 155,
+		appBar: 160,
+		drawer: 170,
+		modal: 180,
+		snackbar: 190,
+		tooltip: 200,
 	}
 })

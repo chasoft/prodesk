@@ -22,25 +22,83 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Paper, Typography } from "@mui/material"
+import { Avatar, Box, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import FooterNotice from "./FooterNotice"
-import ThreadMessageHeader from "./ThreadMessageHeader"
+import ReplyDialog from "./Replies/ReplyDialog"
 import ThreadMessagePayload from "./ThreadMessagePayload"
-import ThreadMessageDetails from "./ThreadMessageDetails"
-import ReplyNotice from "./Replies/ReplyNotice"
 
 //ASSETS
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import ReplyIcon from "@mui/icons-material/Reply"
+import CloseIcon from "@mui/icons-material/Close"
 
-/*****************************************************************	
+/*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const MenuItemStyled = ({ ItemIcon, children, ...otherProps }) => {
+	return (
+		<MenuItem {...otherProps}>
+			{<ItemIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
+			<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+				{children}
+			</Typography>
+		</MenuItem>
+	)
+}
+MenuItemStyled.propTypes = {
+	ItemIcon: PropTypes.object,
+	children: PropTypes.node
+}
+
+const PostPopupMenu = () => {
+	const [anchorEl, setAnchorEl] = useState(null)
+	const open = Boolean(anchorEl)
+
+	const handleClick = (event) => { setAnchorEl(event.currentTarget) }
+	const handleClose = () => { setAnchorEl(null) }
+
+	return (
+		<div>
+
+			<IconButton onClick={handleClick} size="large">
+				<MoreVertIcon />
+			</IconButton>
+
+			<Menu
+				anchorEl={anchorEl} open={open} onClose={handleClose}
+				anchorOrigin={{ vertical: "top", horizontal: "right", }}
+				transformOrigin={{ vertical: "top", horizontal: "right", }}
+			>
+
+				<ReplyDialog>
+					<MenuItemStyled ItemIcon={ReplyIcon}>
+						Reply
+					</MenuItemStyled>
+				</ReplyDialog>
+
+				<MenuItemStyled
+					ItemIcon={CloseIcon}
+					onClick={() => {
+						console.log("Ticket \"Closed\"")
+						handleClose()
+					}}
+				>
+					Close
+				</MenuItemStyled>
+
+			</Menu>
+
+		</div>
+	)
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -48,31 +106,40 @@ import ReplyNotice from "./Replies/ReplyNotice"
 
 function PostContent() {
 	return (
-		<Paper component="main"
-			sx={{
-				borderRadius: "0.5rem",
-				mt: 2
-			}}
-		>
+		<Paper component="main" sx={{
+			borderRadius: "0.5rem",
+			mt: 2
+		}}>
 
 			<Box sx={{
 				display: "flex",
 				alignItems: "center",
+				justifyContent: "space-between",
 				top: "28px",
-				px: { xs: 3, md: 6 },
+				pl: { xs: 3, md: 6 },
 				pt: { xs: 4, md: 4 },
+				pr: { xs: 2, md: 3 }
 			}}>
-				<Avatar
-					alt="Remy Sharp" src="/img/demo-avatar.jpg"
-					sx={{
-						bgcolor: "#FFF",
-						width: 64, height: 64,
-						mr: 2
-					}}
-				/>
-				<Typography variant="h2">
-					Heading of the post Heading of the post Heading of the
-				</Typography>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+				}}>
+					<Avatar
+						alt="Remy Sharp" src="/img/demo-avatar.jpg"
+						sx={{
+							bgcolor: "#FFF",
+							width: 64, height: 64,
+							mr: 2
+						}}
+					/>
+					<Typography variant="h2">
+						Heading of the post Heading of the post Heading of the
+					</Typography>
+				</Box>
+
+
+				<PostPopupMenu />
+
 			</Box>
 
 			<ThreadMessagePayload />

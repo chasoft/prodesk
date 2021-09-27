@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import React from "react"
-import { useRouter } from "next/router"
+// import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Container } from "@mui/material"
@@ -48,7 +48,7 @@ import updateUiSettings from "../../../helpers/updateUiSettings"
  *****************************************************************/
 
 function SingleTicket() {
-	const router = useRouter()
+	// const router = useRouter()
 	// const { tid } = router.query
 
 	updateUiSettings({

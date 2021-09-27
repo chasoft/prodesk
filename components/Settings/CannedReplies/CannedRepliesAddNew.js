@@ -29,7 +29,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } fro
 
 //PROJECT IMPORT
 import TextEditor from "../../common/TextEditor"
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
 

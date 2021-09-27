@@ -119,7 +119,7 @@ export const signOut = ({ enqueueSnackbar, dispatch }) => {
 	auth.signOut()
 	reduxBatch(() => {
 		dispatch(logoutSuccess())
-		dispatch(setRedirect(REDIRECT_URL.LOGIN))
+		dispatch(setRedirect(""))
 	})
 	enqueueSnackbar("Signed out successfully!", { variant: "success" })
 }

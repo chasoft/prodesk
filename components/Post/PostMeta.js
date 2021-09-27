@@ -22,13 +22,15 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Chip, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
 import UserInfo from "./../../components/common/UserInfo"
@@ -42,35 +44,55 @@ import UserInfo from "./../../components/common/UserInfo"
  *****************************************************************/
 
 const PostMetaItem = ({ format, title, content }) => {
+	const middleLine = useRef(null)
+	const [middleWidth, setMiddleWidth] = useState(100)
+	dayjs.extend(relativeTime)
+
+	useEffect(() => { setMiddleWidth(middleLine?.current.offsetWidth) }, [])
+
 	return (
 		<Box
 			sx={{
 				display: "flex", justifyContent: "space-between",
+				alignItems: "center",
 				m: 0, p: 1,
 				borderRadius: "0.5rem"
-
 			}}
 		>
-			<Box sx={{ display: "flex", alignItems: "center" }}>
+			<Box sx={{ display: "flex", alignItems: "center", whiteSpace: "nowrap" }}>
 				{title}
 			</Box>
 
-			{(format === MetaContentFormat.TEXT_NORMAL) &&
-				<Typography sx={{ textAlign: "right" }}>
-					{content}
-				</Typography>}
+			<Box ref={middleLine} sx={{ flexGrow: 1, overflow: "hidden", whiteSpace: "nowrap" }}>
+				. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+			</Box>
 
-			{(format === MetaContentFormat.TEXT_EMPHASIS) &&
-				<Typography sx={{ textAlign: "right" }}>
+			{(format === MetaContentFormat.TEXT_NORMAL) &&
+				<Typography sx={{ textAlign: "right", whiteSpace: "nowrap" }}>
 					{content}
 				</Typography>}
 
 			{(format === MetaContentFormat.CHIP) &&
+				<Chip
+					size="small"
+					label={content}
+
+				/>}
+
+			{(format === MetaContentFormat.DATE) &&
 				<Typography sx={{ textAlign: "right" }}>
-					{content}
+					<span style={{
+						whiteSpace: "nowrap", fontStyle: "italic",
+						display: middleWidth < 10 ? "none" : "initial"
+					}}>
+						({dayjs(content).fromNow()}) &nbsp;
+					</span>
+					<span style={{ whiteSpace: "nowrap" }}>
+						{content}
+					</span>
 				</Typography>}
 
-		</Box>
+		</Box >
 	)
 }
 PostMetaItem.propTypes = {
@@ -80,32 +102,33 @@ PostMetaItem.propTypes = {
 }
 
 const META_CODE = {
-	DEPARTMENT: "department",
-	STATUS: "status",
-	CREATOR: "creator",
-	PRIORITY: "priority",
-	UPDATED_AT: "updatedAt",
-	CREATED_AT: "createdAt",
-	CATEGORY: "category",
-	LABEL: "label"
+	CREATOR: { CODE: "creator", POSITION: 0 },
+	STATUS: { CODE: "status", POSITION: 1 },
+	PRIORITY: { CODE: "priority", POSITION: 2 },
+	UPDATED_AT: { CODE: "updatedAt", POSITION: 3 },
+	CREATED_AT: { CODE: "createdAt", POSITION: 4 },
+	DEPARTMENT: { CODE: "department", POSITION: 5 },
+	CATEGORY: { CODE: "category", POSITION: 6 },
+	LABEL: { CODE: "label", POSITION: 7 }
 }
 
 const MetaContentFormat = {
 	TEXT_NORMAL: "text",
 	TEXT_EMPHASIS: "text-emphasis",
-	CHIP: "chip"
+	CHIP: "chip",
+	DATE: "date"
 }
 
-const MetaProperties = [
-	{ code: META_CODE.DEPARTMENT, name: "Department", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.STATUS, name: "Status", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.CREATOR, name: "Creator", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.PRIORITY, name: "Priority", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.UPDATED_AT, name: "Updated at", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.CREATED_AT, name: "Created at", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.CATEGORY, name: "Category", type: MetaContentFormat.TEXT_NORMAL },
-	{ code: META_CODE.LABEL, name: "Label", type: MetaContentFormat.TEXT_NORMAL },
-]
+const MetaProperties = {
+	[META_CODE.DEPARTMENT.CODE]: { name: "Department", type: MetaContentFormat.TEXT_NORMAL },
+	[META_CODE.STATUS.CODE]: { name: "Status", type: MetaContentFormat.CHIP },
+	[META_CODE.CREATOR.CODE]: { name: "Creator", type: MetaContentFormat.TEXT_NORMAL },
+	[META_CODE.PRIORITY.CODE]: { name: "Priority", type: MetaContentFormat.CHIP },
+	[META_CODE.UPDATED_AT.CODE]: { name: "Updated at", type: MetaContentFormat.DATE },
+	[META_CODE.CREATED_AT.CODE]: { name: "Created at", type: MetaContentFormat.DATE },
+	[META_CODE.CATEGORY.CODE]: { name: "Category", type: MetaContentFormat.TEXT_NORMAL },
+	[META_CODE.LABEL.CODE]: { name: "Label", type: MetaContentFormat.CHIP },
+}
 
 const DUMMY_META = {
 	department: "Sales",
@@ -136,77 +159,77 @@ const PostMeta = () => {
 			}}
 		>
 
-			{MetaProperties.map((item) => {
+			{Object.entries(MetaProperties).map((item, idx) => {
 
-				if (META_CODE.DEPARTMENT in DUMMY_META) {
+				if ((META_CODE.DEPARTMENT.CODE in DUMMY_META) && idx === META_CODE.DEPARTMENT.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.DEPARTMENT]}
+						key={META_CODE.DEPARTMENT.CODE}
+						title={MetaProperties[META_CODE.DEPARTMENT.CODE].name}
+						format={MetaProperties[META_CODE.DEPARTMENT.CODE].type}
+						content={DUMMY_META[META_CODE.DEPARTMENT.CODE]}
 					/>
 				}
 
-				if (META_CODE.STATUS in DUMMY_META) {
+				if ((META_CODE.STATUS.CODE in DUMMY_META) && idx === META_CODE.STATUS.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.STATUS]}
+						key={META_CODE.STATUS.CODE}
+						title={MetaProperties[META_CODE.STATUS.CODE].name}
+						format={MetaProperties[META_CODE.STATUS.CODE].type}
+						content={DUMMY_META[META_CODE.STATUS.CODE]}
 					/>
 				}
 
-				if (META_CODE.CREATOR in DUMMY_META) {
+				if ((META_CODE.CREATOR.CODE in DUMMY_META) && idx === META_CODE.CREATOR.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.CREATOR]}
+						key={META_CODE.CREATOR.CODE}
+						title={MetaProperties[META_CODE.CREATOR.CODE].name}
+						format={MetaProperties[META_CODE.CREATOR.CODE].type}
+						content={DUMMY_META[META_CODE.CREATOR.CODE]}
 					/>
 				}
 
-				if (META_CODE.PRIORITY in DUMMY_META) {
+				if ((META_CODE.PRIORITY.CODE in DUMMY_META) && idx === META_CODE.PRIORITY.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.PRIORITY]}
+						key={META_CODE.PRIORITY.CODE}
+						title={MetaProperties[META_CODE.PRIORITY.CODE].name}
+						format={MetaProperties[META_CODE.PRIORITY.CODE].type}
+						content={DUMMY_META[META_CODE.PRIORITY.CODE]}
 					/>
 				}
 
-				if (META_CODE.UPDATED_AT in DUMMY_META) {
+				if ((META_CODE.UPDATED_AT.CODE in DUMMY_META) && idx === META_CODE.UPDATED_AT.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.UPDATED_AT]}
+						key={META_CODE.UPDATED_AT.CODE}
+						title={MetaProperties[META_CODE.UPDATED_AT.CODE].name}
+						format={MetaProperties[META_CODE.UPDATED_AT.CODE].type}
+						content={DUMMY_META[META_CODE.UPDATED_AT.CODE]}
 					/>
 				}
 
-				if (META_CODE.CREATED_AT in DUMMY_META) {
+				if ((META_CODE.CREATED_AT.CODE in DUMMY_META) && idx === META_CODE.CREATED_AT.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.CREATED_AT]}
+						key={META_CODE.CREATED_AT.CODE}
+						title={MetaProperties[META_CODE.CREATED_AT.CODE].name}
+						format={MetaProperties[META_CODE.CREATED_AT.CODE].type}
+						content={DUMMY_META[META_CODE.CREATED_AT.CODE]}
 					/>
 				}
 
-				if (META_CODE.CATEGORY in DUMMY_META) {
+				if ((META_CODE.CATEGORY.CODE in DUMMY_META) && idx === META_CODE.CATEGORY.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.CATEGORY]}
+						key={META_CODE.CATEGORY.CODE}
+						title={MetaProperties[META_CODE.CATEGORY.CODE].name}
+						format={MetaProperties[META_CODE.CATEGORY.CODE].type}
+						content={DUMMY_META[META_CODE.CATEGORY.CODE]}
 					/>
 				}
 
-				if (META_CODE.LABEL in DUMMY_META) {
+				if ((META_CODE.LABEL.CODE in DUMMY_META) && idx === META_CODE.LABEL.POSITION) {
 					return <PostMetaItem
-						key={item.code}
-						title={item.name}
-						format={item.type}
-						content={DUMMY_META[META_CODE.LABEL]}
+						key={META_CODE.LABEL.CODE}
+						title={MetaProperties[META_CODE.LABEL.CODE].name}
+						format={MetaProperties[META_CODE.LABEL.CODE].type}
+						content={DUMMY_META[META_CODE.LABEL.CODE]}
 					/>
 				}
 

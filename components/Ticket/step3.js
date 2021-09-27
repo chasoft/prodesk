@@ -25,6 +25,7 @@
 import React, { useCallback } from "react"
 
 // MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector, useDispatch } from "react-redux"
@@ -54,13 +55,17 @@ const NewTicketStep3 = () => {
 	}, [])
 
 	return (
-		<div>
+		<Box sx={{
+			pl: 4, py: 1, my: 0,
+			border: "1px solid #FAFAFA",
+			minWidth: 120
+		}}>
 			<TextEditor
 				defaultValue={message}
 				pullEditorData={getEditorData}
-				placeholder="Please describe your issue in detail."
+				placeholder="Please describe your issue in details as much as possible."
 			/>
-		</div>
+		</Box>
 	)
 }
 
