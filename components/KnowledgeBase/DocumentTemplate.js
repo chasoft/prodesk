@@ -23,108 +23,107 @@
  *****************************************************************/
 
 import React from "react"
-import updateUiSettings from "../../../helpers/updateUiSettings"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import TicketStepper from "./../../../components/Ticket/TicketStepper"
+
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/ClientLayout"
+
 
 //ASSETS
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const DOC_TEMPLATES = [
+	{
+		icon: MenuBookOutlinedIcon,
+		name: "Guide",
+		description: "Provide step by step instructions.",
+		content: "conettdfsdfdsf",
+	},
+	{
+		icon: HelpOutlineOutlinedIcon,
+		name: "FAQ",
+		description: "Answer frequently asked questions.",
+		content: "Answer frequently asked questions.",
+	},
+	{
+		icon: AssignmentOutlinedIcon,
+		name: "Changelog",
+		description: "List product releases and changes",
+		content: "List product releases and changes"
+	},
+]
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function NewTicket() {
-
-	updateUiSettings({
-		title: "Open New Ticket",
-		background: {
-			backgroundImage: "",
-		}
-	})
-
+const DocumentTemplate = ({ setTextEditorData }) => {
 	return (
-		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Box sx={{ mt: 5 }}>
+			<Typography sx={{
+				textTransform: "uppercase",
+				color: "grey.500",
+				fontWeight: "bold",
+				mb: 3
+			}}>
+				OR GET STARTED WITH A TEMPLATE
+			</Typography>
 
-			<Box sx={{ display: "flex" }}>
-
-				<Box sx={{ flexGrow: 1 }}>
-					<Box sx={{
-						p: 4, pb: 1,
-						pl: { xs: 2, md: 4 },
-						color: "#FFF"
-					}}>
-						<Typography variant="h1">
-							Open New Ticket
-						</Typography>
-					</Box>
-
-					<div style={{
-						backgroundColor: "white",
-						borderTopLeftRadius: "0.5rem",
-						borderTopRightRadius: "0.5rem"
-					}}>
-
-						<Box sx={{
-							border: { xs: 0, md: "1px solid" },
-							borderColor: { md: "divider" },
-							borderRadius: { xs: 0, md: "0.5rem" },
-						}}>
-
-							<Box sx={{
-								px: { xs: 2, md: 4 },
-								pt: { xs: 3, md: 4 },
-								pb: { xs: 2, md: 4 }
-							}}>
-								<Typography variant="body2">
-									Post your question and get answer from our dedicated staffs
-								</Typography>
-							</Box>
+			<Grid container spacing={4}>
+				{DOC_TEMPLATES.map((template) => (
+					<Grid item sx={12} sm={6} key={template.name}>
+						<Paper
+							elevation={4}
+							onClick={() => { setTextEditorData(template.content); console.log("Clicked") }}
+							sx={{
+								p: 3,
+								border: "1px solid transparent",
+								cursor: "pointer",
+								"&:hover": {
+									border: "1px solid",
+									borderColor: "primary.main"
+								}
+							}}
+						>
 
 							<Box sx={{
-								px: { xs: 2, md: 4 },
-								pb: 2
+								display: "flex",
+								alignItems: "center",
+								mb: 1,
+								"&>svg": {
+									mr: 1
+								}
 							}}>
-								<TicketStepper />
+								{<template.icon fontSize="small" />}
+								<Typography>{template.name}</Typography>
 							</Box>
-						</Box>
 
-					</div>
-				</Box>
+							<Typography sx={{
+								color: "grey.500",
+								fontSize: "0.75rem"
+							}}>
+								{template.description}
+							</Typography>
 
-				<Box
-					sx={{
-						display: { xs: "none", md: "flex" },
-						flexDirection: "column",
-						ml: 3, mt: 10,
-						px: 3,
-						backgroundColor: "#FFF",
-						borderRadius: "0.5rem",
-						width: "250px",
-						position: "sticky",
-						top: "80px"
-					}}
-				>
-					Widget Goes here!
-				</Box>
+						</Paper>
+					</Grid>
+				))}
+			</Grid>
 
-			</Box>
-
-		</Container>
+		</Box>
 	)
 }
+DocumentTemplate.propTypes = { setTextEditorData: PropTypes.func }
 
-NewTicket.getLayout = getLayout
-
-export default NewTicket
+export default DocumentTemplate

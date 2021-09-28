@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Box, Typography } from "@mui/material"
@@ -43,38 +43,12 @@ import { SvgItemIcon } from "../common/SvgIcons"
  *****************************************************************/
 
 function ListArticles() {
-	const [fixed, setFixed] = useState(false)
-	const listRef = useRef(null)
-
-	const fixedPosition = () => {
-		setFixed(
-			((listRef.current.clientHeight + 110) < window.innerHeight)
-				? (window.scrollY > 50) ? true : false
-				: false
-		)
-	}
-
-	/* Activate resize listener */
-	useEffect(() => {
-		fixedPosition()
-		window.addEventListener("resize", fixedPosition)
-		return () => window.removeEventListener("resize", fixedPosition)
-	}, [])
-
-	/* Activate resize listener */
-	useEffect(() => {
-		window.addEventListener("scroll", fixedPosition)
-		return () => window.removeEventListener("scroll", fixedPosition)
-	}, [])
-
 	return (
-		<Box ref={listRef}
-			sx={{
-				margin: "3rem 0 0",
-				position: fixed ? "sticky" : "static",
-				top: fixed ? "110px" : "initial"
-			}}
-		>
+		<Box sx={{
+			margin: "3rem 0 0",
+			position: "sticky",
+			top: "110px"
+		}}>
 			<Box component="nav"
 				sx={{
 					display: "flex",
@@ -83,7 +57,7 @@ function ListArticles() {
 				}}
 			>
 
-				<Typography variant="h2">Google services &amp; your child {JSON.stringify(fixed)}</Typography>
+				<Typography variant="h2">Google services &amp; your child</Typography>
 				<Box component="ul"
 					sx={{
 						display: "flex",

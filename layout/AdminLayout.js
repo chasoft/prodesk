@@ -25,9 +25,12 @@
 import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
+import { useTheme } from "@mui/material/styles"
+import useMediaQuery from "@mui/material/useMediaQuery"
 
 //THIRD-PARTY
 
@@ -117,6 +120,9 @@ const ADMIN_MENUS = [
 function AdminLayout({ children }) {
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
+	const router = useRouter()
+	const theme = useTheme()
+	const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"))
 
 	const sideBarExpanding = () => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
@@ -127,6 +133,11 @@ function AdminLayout({ children }) {
 		window.addEventListener("resize", sideBarExpanding)
 		return () => window.removeEventListener("resize", sideBarExpanding)
 	}, [])
+
+	useEffect(() => {
+		if (router.pathname === "/admin/knowledge-base" && isSmallScreen)
+			setIsSideBarExpanded(false)
+	}, [router])
 
 	return (
 		<ReduxRedirect>

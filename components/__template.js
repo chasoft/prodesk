@@ -25,7 +25,8 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -35,25 +36,19 @@ import makeStyles from "@mui/styles/makeStyles"
 
 //ASSETS
 
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const Template = ({ children }) => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>{children}</div>
+		<Box>
+			{children}
+		</Box>
 	)
 }
 Template.propTypes = { children: PropTypes.node }

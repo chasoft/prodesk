@@ -43,6 +43,26 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
  * CONTENT                                                       *
  *****************************************************************/
 
+export function LearnMoreAdvancedTextEditor({ text, linkText }) {
+	const innerText = text ?? "If you are not familiar with our advanced text editor, learn more"
+	const innerLinkText = linkText ?? "here"
+	return (
+		<Typography variant="caption" sx={{
+			"&>a": {
+				color: "primary.main"
+			}
+		}}>
+			{innerText}
+			<Link href="/docs/text-editor" passHref>
+				<a target="_blank" rel="noopener noreferrer" style={{ marginLeft: "5px" }}>
+					{innerLinkText}
+				</a>
+			</Link>
+		</Typography>
+	)
+}
+LearnMoreAdvancedTextEditor.propTypes = { text: PropTypes.string, linkText: PropTypes.string }
+
 export function Copyright({ title = null, url = null }) {
 	return (
 		<Typography color="textSecondary" align="center">

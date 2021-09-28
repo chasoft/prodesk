@@ -61,7 +61,6 @@ const LoadingIndicator = () => {
  * 		 URL = `"/a-valid/nice-url@note:this is a note only"`
  * 		 URL.split("@note:") => ["/a-valid/nice-url", "this is a note only"]
  * 		 redirect item[0]
- * 
  */
 export function ReduxRedirect(props) {
 	const router = useRouter()
@@ -73,9 +72,13 @@ export function ReduxRedirect(props) {
 		return props.children
 	}
 
-	if (redirectURL === REDIRECT_URL.LOGIN) {
+	if (redirectURL === REDIRECT_URL.LOGIN ||
+		redirectURL === REDIRECT_URL.SURVEY ||
+		redirectURL === REDIRECT_URL.CREATE_PROFILE ||
+		redirectURL === REDIRECT_URL.SOCIAL_CREATE_ACCOUNT ||
+		redirectURL === REDIRECT_URL.CREATE_COMPLETED) {
 		dispatch(clearRedirect())
-		router.push(REDIRECT_URL.LOGIN)
+		router.push(redirectURL)
 		return null
 	}
 

@@ -25,13 +25,16 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
 import updateUiSettings from "../../../helpers/updateUiSettings"
+import TocSideBar from "../../../components/KnowledgeBase/TocSideBar"
+import DocumentEditor from "../../../components/KnowledgeBase/DocumentEditor"
+import DocumentTocSideBar from "../../../components/KnowledgeBase/DocumentTocSideBar"
 
 //ASSETS
 
@@ -39,6 +42,15 @@ import updateUiSettings from "../../../helpers/updateUiSettings"
  * INIT                                                          *
  *****************************************************************/
 
+const DUMMY_List = [
+	{
+
+	}
+]
+
+const DUMMY_Content = {
+
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -48,13 +60,27 @@ function KnowledgeBase() {
 
 	updateUiSettings({
 		background: {
-			backgroundImage: ""
+			backgroundImage: "",
+			backgroundColor: "transparent"
 		}
 	})
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Knowledge Base Home</Typography>
+		<Container
+			maxWidth="xl"
+			sx={{
+				display: "flex",
+				minHeight: "calc(100vh - 150px)",
+				mt: 4,
+			}}
+		>
+
+			<TocSideBar />
+
+			<DocumentEditor />
+
+			<DocumentTocSideBar />
+
 		</Container>
 	)
 }

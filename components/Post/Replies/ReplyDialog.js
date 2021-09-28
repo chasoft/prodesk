@@ -22,19 +22,19 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import Link from "next/link"
 import PropTypes from "prop-types"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import TextEditor from "../../common/TextEditor"
+import LearnMoreAdvancedTextEditor from "../../common"
 
 //ASSETS
 
@@ -139,9 +139,7 @@ const ReplyDialog = ({ children }) => {
 						borderTopColor: "divider"
 					}}
 				>
-					<Typography variant="caption">
-						If you are not familiar with our advanced text editor, please <Link href="/docs/text-editor" target="_blank" rel="noopener noreferrer">click here</Link>.
-					</Typography>
+					<LearnMoreAdvancedTextEditor />
 				</Box>
 
 			</Dialog>

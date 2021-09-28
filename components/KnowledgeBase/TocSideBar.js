@@ -23,14 +23,16 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
+
 //PROJECT IMPORT
-import TicketStepper from "./TicketStepper"
+
 
 //ASSETS
 
@@ -38,77 +40,114 @@ import TicketStepper from "./TicketStepper"
  * INIT                                                          *
  *****************************************************************/
 
+const TocSideBarKBCategory = ({ children }) => (
+	<Box sx={{
+		padding: 2,
+		color: (theme) => theme.palette.grey[600],
+	}}>
+		<Typography variant="caption">
+			{children}
+		</Typography>
+	</Box>
+)
+TocSideBarKBCategory.propTypes = { children: PropTypes.node }
+
+const TocSideBarKBSubCategory = ({ selected, icon, onClick, children }) => {
+	return (
+		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+			<Box
+				onClick={onClick}
+				sx={{
+					padding: (theme) => theme.spacing(1, 3, 1),
+					display: "flex",
+					alignItems: "center",
+					"&:hover": {
+						backgroundColor: selected ? "#e8f0fe" : "action.hover",
+						cursor: "pointer",
+					},
+					bgcolor: selected ? "#e8f0fe" : "",
+					color: selected ? "#1967d2" : ""
+				}}
+			>
+				{icon}
+				<Typography variant="button" sx={{ ml: 2 }}>
+					{children}
+				</Typography>
+			</Box>
+		</ButtonBase>
+	)
+}
+TocSideBarKBSubCategory.propTypes = {
+	selected: PropTypes.bool,
+	icon: PropTypes.node,
+	onClick: PropTypes.func,
+	children: PropTypes.node
+}
+
+const TocSideBarKBArticle = ({ selected, icon, onClick, children }) => {
+	return (
+		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+			<Box
+				onClick={onClick}
+				sx={{
+					padding: (theme) => theme.spacing(1, 3, 1),
+					display: "flex",
+					alignItems: "center",
+					"&:hover": {
+						backgroundColor: selected ? "#e8f0fe" : "action.hover",
+						cursor: "pointer",
+					},
+					bgcolor: selected ? "#e8f0fe" : "",
+					color: selected ? "#1967d2" : ""
+				}}
+			>
+				{icon}
+				<Typography variant="button" sx={{ ml: 2 }}>
+					{children}
+				</Typography>
+			</Box>
+		</ButtonBase>
+	)
+}
+TocSideBarKBArticle.propTypes = {
+	selected: PropTypes.bool,
+	icon: PropTypes.node,
+	onClick: PropTypes.func,
+	children: PropTypes.node
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function CreateNewTicket() {
+const TocSideBar = ({ dataSource }) => {
 	return (
-		<Box sx={{ display: "flex" }}>
+		<Box sx={{
+			display: { xs: "none", md: "flex" },
+			minWidth: "300px",
+			backgroundColor: "#FAFAFA",
+			borderTopLeftRadius: "0.5rem",
+			borderBottomLeftRadius: "0.5rem",
+			padding: (theme) => theme.spacing(1, 0, 1),
+			// display: { xs: "none", sm: "initial" },
+			borderTopRightRadius: { xs: "0.5rem", md: 0 },
+			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
+		}}>
 
-			<Box sx={{ flexGrow: 1 }}>
-				<Box sx={{
-					p: 4, pb: 1,
-					pl: { xs: 2, md: 4 },
-					color: "#FFF"
-				}}>
-					<Typography variant="h1">
-						Open New Ticket
-					</Typography>
-				</Box>
+			hello
+			{/* {dataSource.map((item) => (
 
-				<div style={{
-					backgroundColor: "white",
-					borderTopLeftRadius: "0.5rem",
-					borderTopRightRadius: "0.5rem"
-				}}>
+				TocSideBarKBCategory
 
-					<Box sx={{
-						border: { xs: 0, md: "1px solid" },
-						borderColor: { md: "divider" },
-						borderRadius: { xs: 0, md: "0.5rem" },
-					}}>
+				))} */}
 
-						<Box sx={{
-							px: { xs: 2, md: 4 },
-							pt: { xs: 3, md: 4 },
-							pb: { xs: 2, md: 4 }
-						}}>
-							<Typography variant="body2">
-								Post your question and get answer from our dedicated staffs
-							</Typography>
-						</Box>
 
-						<Box sx={{
-							px: { xs: 2, md: 4 },
-							pb: 2
-						}}>
-							<TicketStepper />
-						</Box>
-					</Box>
 
-				</div>
-			</Box>
 
-			<Box
-				sx={{
-					display: { xs: "none", md: "flex" },
-					flexDirection: "column",
-					ml: 3, mt: 10,
-					px: 3,
-					backgroundColor: "#FFF",
-					borderRadius: "0.5rem",
-					width: "250px",
-					position: "sticky",
-					top: "80px"
-				}}
-			>
-				Widget Goes here!
-			</Box>
 
 		</Box>
 	)
 }
+TocSideBar.propTypes = { dataSource: PropTypes.array }
 
-export default CreateNewTicket
+export default TocSideBar

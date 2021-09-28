@@ -41,6 +41,7 @@ import { getNewTicket } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
 import { getPlainTextFromMarkDown } from "./../../helpers/utils"
 import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
+import { LearnMoreAdvancedTextEditor } from "../common"
 
 //ASSETS
 
@@ -150,20 +151,18 @@ export default function TicketStepper() {
 						> {label}</StepLabel>
 						<StepContent style={{ paddingTop: "1rem" }}>
 							<div>{getStepContent(index, handleNext)}</div>
-							<Box
-								sx={{
-									mt: 1,
-									mb: 0,
-									display: "flex",
-									justifyContent: "space-between"
-								}}
-							>
-								<Box sx={{
-									...(currentStep === steps.length - 1 ? { my: 2 } : {})
-								}}>
+							<Box sx={{
+								mt: 1,
+								mb: 0,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-between",
+								...(currentStep === steps.length - 1 ? { my: 2 } : {})
+							}}>
+
+								<div>
 									<Button onClick={handleBack} sx={{
-										mt: 1, mr: 1,
-										pl: 2, pr: 2,
+										mr: 1, pl: 2, pr: 2,
 										display: (currentStep === 0) ? "none" : "initial"
 									}}>
 										Back
@@ -172,14 +171,19 @@ export default function TicketStepper() {
 										disabled={!isReadyNextStep}
 										variant="outlined" color="primary"
 										onClick={handleNext}
-										sx={{
-											mt: 1, mr: 1,
-											pl: 2, pr: 2,
-										}}
+										sx={{ pl: 2, pr: 2 }}
 									>
 										{currentStep === steps.length - 1 ? "Submit" : "Continue"}
 									</Button>
-								</Box>
+								</div>
+
+								{(currentStep === steps.length - 1) &&
+									<LearnMoreAdvancedTextEditor
+										text="Learn more about"
+										linkText="advanced text editor"
+									/>
+								}
+
 							</Box>
 						</StepContent>
 					</Step>

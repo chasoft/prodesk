@@ -22,17 +22,18 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import updateUiSettings from "../../../helpers/updateUiSettings"
+import React, { useCallback, useState } from "react"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+import { Box, InputBase } from "@mui/material"
+import TextEditor from "../common/TextEditor"
+import DocumentTemplate from "./DocumentTemplate"
 
 //THIRD-PARTY
-import TicketStepper from "./../../../components/Ticket/TicketStepper"
+
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/ClientLayout"
+
 
 //ASSETS
 
@@ -40,91 +41,59 @@ import { getLayout } from "../../../layout/ClientLayout"
  * INIT                                                          *
  *****************************************************************/
 
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function NewTicket() {
+const DocumentEditor = () => {
+	const [textEditorData, setTextEditorData] = useState("")
 
-	updateUiSettings({
-		title: "Open New Ticket",
-		background: {
-			backgroundImage: "",
-		}
-	})
+	const handleGetEditorData = useCallback((data) => {
+		setTextEditorData(data)
+	}, [])
 
 	return (
-		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Box sx={{
+			display: "flex",
+			flexDirection: "column",
+			flexGrow: 1,
+			px: 5
+		}}>
+			<InputBase
+				id="doc-title" placeholder="Page title" variant="outlined"
+				sx={{
+					fontSize: { xs: "1.5rem", md: "1.75rem" },
+					lineHeight: "2rem", fontWeight: "bold",
+				}}
+			/>
 
-			<Box sx={{ display: "flex" }}>
+			<InputBase
+				id="doc-title" placeholder="Page description (optional)" variant="outlined"
+				sx={{
+					fontSize: "1rem", fontWeight: "bold",
+					lineHeight: "2rem"
+				}}
+			/>
 
-				<Box sx={{ flexGrow: 1 }}>
-					<Box sx={{
-						p: 4, pb: 1,
-						pl: { xs: 2, md: 4 },
-						color: "#FFF"
-					}}>
-						<Typography variant="h1">
-							Open New Ticket
-						</Typography>
-					</Box>
+			<Box sx={{
+				my: 2,
+				borderTop: "2px solid",
+				borderColor: "divider"
+			}} />
 
-					<div style={{
-						backgroundColor: "white",
-						borderTopLeftRadius: "0.5rem",
-						borderTopRightRadius: "0.5rem"
-					}}>
 
-						<Box sx={{
-							border: { xs: 0, md: "1px solid" },
-							borderColor: { md: "divider" },
-							borderRadius: { xs: 0, md: "0.5rem" },
-						}}>
+			<TextEditor
+				placeholder="Enter your content here..."
+				pullEditorData={handleGetEditorData}
+			/>
 
-							<Box sx={{
-								px: { xs: 2, md: 4 },
-								pt: { xs: 3, md: 4 },
-								pb: { xs: 2, md: 4 }
-							}}>
-								<Typography variant="body2">
-									Post your question and get answer from our dedicated staffs
-								</Typography>
-							</Box>
+			{(textEditorData === "" ||
+				textEditorData.trim() === "\\") &&
+				<DocumentTemplate setTextEditorData={setDefautEditorData} />}
 
-							<Box sx={{
-								px: { xs: 2, md: 4 },
-								pb: 2
-							}}>
-								<TicketStepper />
-							</Box>
-						</Box>
-
-					</div>
-				</Box>
-
-				<Box
-					sx={{
-						display: { xs: "none", md: "flex" },
-						flexDirection: "column",
-						ml: 3, mt: 10,
-						px: 3,
-						backgroundColor: "#FFF",
-						borderRadius: "0.5rem",
-						width: "250px",
-						position: "sticky",
-						top: "80px"
-					}}
-				>
-					Widget Goes here!
-				</Box>
-
-			</Box>
-
-		</Container>
+		</Box>
 	)
 }
+// DocumentEditor.propTypes = { children: PropTypes.node }
 
-NewTicket.getLayout = getLayout
-
-export default NewTicket
+export default DocumentEditor
