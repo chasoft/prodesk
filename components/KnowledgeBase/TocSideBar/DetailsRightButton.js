@@ -18,9 +18,48 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
-export const getRedirect = (state) => state.redirectState
-export const getTextEditor = (state) => state.textEditorState
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+
+//ASSETS
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+const DetailsRightButton = ({ handleOpen }) => (
+	<MoreHorizIcon
+		id="detailsRightButton" size="small"
+		fontSize="small"
+		sx={{
+			fill: (theme) => theme.palette.grey[500],
+			my: 0.5, mr: 1,
+			cursor: "pointer"
+		}}
+		onClick={(e) => {
+			e.stopPropagation()
+			handleOpen()
+			console.log("details clicked")
+		}}
+	/>
+)
+DetailsRightButton.propTypes = {
+	handleOpen: PropTypes.func
+}
+
+export default DetailsRightButton

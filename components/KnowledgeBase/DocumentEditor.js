@@ -22,12 +22,15 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, InputBase } from "@mui/material"
 import TextEditor from "../common/TextEditor"
 import DocumentTemplate from "./DocumentTemplate"
+import { getTextEditor } from "../../redux/selectors"
+import { useDispatch, useSelector } from "react-redux"
+import { setEditorDataHeadings } from "../../redux/slices/textEditor"
 
 //THIRD-PARTY
 
@@ -49,21 +52,25 @@ import DocumentTemplate from "./DocumentTemplate"
 const DocumentEditor = () => {
 	const editorRef = useRef(null)
 	const [defaultEditorData, setDefaultEditorData] = useState("")
-	const [textEditorData, setTextEditorData] = useState("")
 
-	const handleGetEditorData = useCallback((data) => {
-		setTextEditorData(data)
-		console.log(data)
-	}, [])
+	const dispatch = useDispatch()
+	const { editorData } = useSelector(getTextEditor)
 
 	const handleSetDefaultEditorData = useCallback((data) => {
 		setDefaultEditorData(data)
+		editorRef.current.focusAtEnd()
 	}, [])
+
+	useEffect(() => {
+		const h = editorRef.current.getHeadings()
+		dispatch(setEditorDataHeadings(h))
+	}, [editorData])
 
 	return (
 		<Box sx={{
 			display: "flex",
 			flexDirection: "column",
+			backgroundColor: "#FFF",
 			flexGrow: 1,
 			px: 5, py: 4
 		}}>
@@ -95,11 +102,10 @@ const DocumentEditor = () => {
 				ref={editorRef}
 				value={defaultEditorData}
 				placeholder="Enter your content here..."
-				pullEditorData={handleGetEditorData}
 			/>
 
-			{(textEditorData === "" ||
-				textEditorData.trim() === "\\") &&
+			{(editorData === "" ||
+				editorData.trim() === "\\") &&
 				<DocumentTemplate setDefaultEditorData={handleSetDefaultEditorData} />}
 
 		</Box>

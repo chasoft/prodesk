@@ -80,9 +80,9 @@ const CLIENT_MENU = [
  *****************************************************************/
 
 function ClientLayout({ children }) {
-	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const dispatch = useDispatch()
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
+	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 
 	const handleSetScrolled = () => { dispatch(setScrolled(window.scrollY > 50)) }
 

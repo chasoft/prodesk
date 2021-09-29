@@ -22,10 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
@@ -35,13 +35,14 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Header from "../components/BackEnd/Header"
-import SideBar from "../components/BackEnd/SideBar"
-import Footer from "../components/common/Footer"
-import { getUiSettings } from "../redux/selectors"
-import { MENU_ITEM_TYPE } from "../helpers/constants"
-import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
+import Footer from "../components/common/Footer"
+import Header from "../components/BackEnd/Header"
+import { getUiSettings } from "../redux/selectors"
+import SideBar from "../components/BackEnd/SideBar"
+import { MENU_ITEM_TYPE } from "../helpers/constants"
+import { setScrolled } from "../redux/slices/uiSettings"
+import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
 
 //ASSETS
 
@@ -120,9 +121,13 @@ const ADMIN_MENUS = [
 function AdminLayout({ children }) {
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
-	const router = useRouter()
+
 	const theme = useTheme()
+	const router = useRouter()
+	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"))
+
+	const handleSetScrolled = () => { dispatch(setScrolled(window.scrollY > 50)) }
 
 	const sideBarExpanding = () => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
@@ -132,6 +137,11 @@ function AdminLayout({ children }) {
 		sideBarExpanding()
 		window.addEventListener("resize", sideBarExpanding)
 		return () => window.removeEventListener("resize", sideBarExpanding)
+	}, [])
+
+	useEffect(() => {
+		window.addEventListener("scroll", handleSetScrolled)
+		return () => window.removeEventListener("scroll", handleSetScrolled)
 	}, [])
 
 	useEffect(() => {
@@ -159,7 +169,7 @@ function AdminLayout({ children }) {
 							flexDirection: "column",
 							flexGrow: 1,
 							width: "100%",
-							overflowX: "hidden"
+							// overflowX: "hidden"
 						}}
 					>
 						<Header isSideBarExpanded={isSideBarExpanded} />

@@ -18,9 +18,72 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
-export const getRedirect = (state) => state.redirectState
-export const getTextEditor = (state) => state.textEditorState
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Box, ButtonBase, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import DetailsRightButton from "./DetailsRightButton"
+
+//ASSETS
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+const TocSideBarItemBase = ({ active, onClick, handleOpen, sx, children }) => {
+	return (
+		<ButtonBase
+			onClick={() => { onClick() }}
+			sx={{
+				display: "block", width: "100%", textAlign: "left",
+			}}
+		>
+			<Box
+				sx={{
+					ml: -2,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					backgroundColor: active ? "#FFF" : "transparent",
+					borderTop: "1px solid transparent",
+					borderBottom: "1px solid transparent",
+					borderColor: active ? "divider" : "transparent",
+					":hover": {
+						backgroundColor: "action.hover"
+					},
+					"& > #detailsRightButton": { visibility: "hidden", },
+					":hover>#detailsRightButton": { visibility: "visible" },
+					...sx
+				}}
+			>
+				<Typography sx={{ ml: 2 }}>
+					{children}
+				</Typography>
+
+				<DetailsRightButton handleOpen={handleOpen} />
+			</Box>
+		</ButtonBase>
+	)
+}
+TocSideBarItemBase.propTypes = {
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
+	sx: PropTypes.object,
+	children: PropTypes.node
+}
+
+export default TocSideBarItemBase

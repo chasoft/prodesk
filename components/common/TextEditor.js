@@ -31,11 +31,12 @@ import { Box, LinearProgress, Typography } from "@mui/material"
 //THIRD-PARTY
 import { nanoid } from "nanoid"
 import { useSnackbar } from "notistack"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import Editor from "rich-markdown-editor"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
+import { setEditorData } from "../../redux/slices/textEditor"
+import { getAuth, getTextEditor } from "../../redux/selectors"
 import { STATE_CHANGED, storage } from "./../../helpers/firebase"
 
 //ASSETS
@@ -77,11 +78,14 @@ const LinearProgressWithLabel = (props) => (
 
 // eslint-disable-next-line react/display-name
 const TextEditor = React.forwardRef((props, ref) => {
-	const { defaultValue, readOnly = false, pullEditorData, storageDestination = "uploads", ...otherProps } = props
+	const { defaultValue = "", readOnly = false, storageDestination = "uploads", ...otherProps } = props
 
 	const { currentUser } = useSelector(getAuth)
+	const { scrollTo } = useSelector(getTextEditor)
 	const [uploading, setUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
+
+	const dispatch = useDispatch()
 
 	// const editorInstance = useRef()
 	const { enqueueSnackbar } = useSnackbar()
@@ -133,9 +137,12 @@ const TextEditor = React.forwardRef((props, ref) => {
 		<>
 			<Editor
 				ref={ref}
+				scrollTo={scrollTo}
 				readOnly={readOnly}
 				defaultValue={defaultValue}
-				onChange={(funcGetData) => { pullEditorData(funcGetData()) }}
+				onChange={(funcGetData) => {
+					dispatch(setEditorData(funcGetData()))
+				}}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
 				{...otherProps}

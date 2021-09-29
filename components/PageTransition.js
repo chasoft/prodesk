@@ -33,7 +33,7 @@ const PageTransition = ({ children, location }) => {
 								...getTransitionStyles[status],
 								display: "flex",
 								flexDirection: "column",
-								height: "100%",
+								height: "100%"
 							}}
 						>
 							{children}

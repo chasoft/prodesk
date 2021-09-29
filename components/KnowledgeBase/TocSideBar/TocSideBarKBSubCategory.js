@@ -26,16 +26,14 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, ClickAwayListener, IconButton, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-
+import TocSideBarItemBase from "./TocSideBarItemBase"
 
 //ASSETS
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,40 +43,33 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDetails = ({ open, handleClose, dataSource }) => {
+const TocSideBarKBSubCategory = ({ title, active, onClick, handleOpen, children }) => {
 	return (
-		<Popper
+		<>
+			<TocSideBarItemBase
+				selected={active}
+				onClick={onClick}
+				handleOpen={handleOpen}
+			>
+				{title}
+			</TocSideBarItemBase>
 
-		
-		<ClickAwayListener onClickAway={() => {
-			console.log("ClickAway activated")
-			handleClose()
-		}}>
 			<Box sx={{
-				position: "absolute",
-				left: "301px",
-				height: "100%",
-				mb: 2,
-				flexDirection: { flexDirection: "column" },
-				minWidth: "385px",
-				pl: 4,
-				borderRight: "1px solid transparent",
+				borderLeft: "1px solid transparent",
 				borderColor: "divider",
-				backgroundColor: "#FFF",
-				zIndex: 170,
-				display: open ? "flex" : "none"
+				pl: 2
 			}}>
-
-				<Box sx={{ p: 5 }}>hello</Box>
-
+				{children}
 			</Box>
-		</ClickAwayListener>
+		</>
 	)
 }
-TocSideBarDetails.propTypes = {
-	open: PropTypes.bool,
-	handleClose: PropTypes.func,
-	dataSource: PropTypes.array
+TocSideBarKBSubCategory.propTypes = {
+	title: PropTypes.string,
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
 }
 
-export default TocSideBarDetails
+export default TocSideBarKBSubCategory

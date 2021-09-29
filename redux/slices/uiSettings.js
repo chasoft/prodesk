@@ -66,6 +66,10 @@ export const initialState = {
 	*/
 	activeSettingTab: "",
 	activeSettingPanel: "",
+
+	/*
+		used in pages/admin/knowledge-base
+	*/
 }
 
 const uiSettingsSlice = createSlice({
@@ -106,6 +110,7 @@ const uiSettingsSlice = createSlice({
 			state.selectedPriority = PRIORITY.ALL
 			state.ticketSearchTerm = ""
 		},
+		/* */
 		setActiveSettingTab: (state, { payload }) => {
 			state.activeSettingTab = payload
 		},

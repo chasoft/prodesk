@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -35,7 +35,6 @@ import updateUiSettings from "../../../helpers/updateUiSettings"
 import TocSideBar from "../../../components/KnowledgeBase/TocSideBar"
 import DocumentEditor from "../../../components/KnowledgeBase/DocumentEditor"
 import DocumentTocSideBar from "../../../components/KnowledgeBase/DocumentTocSideBar"
-import TocSideBarDetails from "../../../components/KnowledgeBase/TocSideBarDetails"
 
 //ASSETS
 
@@ -60,6 +59,7 @@ const DUMMY_Content = {
 function KnowledgeBase() {
 
 	updateUiSettings({
+		title: "Knowlege Base Management",
 		background: {
 			backgroundImage: "",
 			backgroundColor: "transparent"
@@ -71,9 +71,10 @@ function KnowledgeBase() {
 			maxWidth="xl"
 			sx={{
 				display: "flex",
-				minHeight: "calc(100vh - 150px)",
-				borderBottom: "1px solid transparent",
-				borderColor: "divider"
+				flexGrow: 1,
+				// minHeight: "calc(100vh - 150px)",
+				// borderBottom: "1px solid transparent",
+				// borderColor: "divider"
 			}}
 			disableGutters
 		>

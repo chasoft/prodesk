@@ -23,6 +23,7 @@
  *****************************************************************/
 
 import React from "react"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Box, Container } from "@mui/material"
@@ -35,6 +36,10 @@ import { Copyright } from "."
 *****************************************************************/
 
 export default function Footer() {
+	const router = useRouter()
+
+	if (router.pathname === "/admin/knowledge-base") return null
+
 	return (
 		<Box
 			component="footer"

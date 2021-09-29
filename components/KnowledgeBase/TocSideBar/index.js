@@ -22,27 +22,112 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { combineReducers } from "redux"
+import React, { useCallback, useRef, useState } from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Box } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
-import authReducer from "./auth"
-import pageMetaReducer from "./pageMeta"
-import newTicketReducer from "./newTicket"
-import uiSettingsReducer from "./uiSettings"
-import redirectReducer from "./redirect"
-import textEditorReducer from "./textEditor"
+import ActionMenuGroup from "./ActionMenuGroup"
+import TocSideBarDetails from "./TocSideBarDetails"
+import TocSideBarKBArticle from "./TocSideBarKBArticle"
+import TocSideBarKBCategory from "./TocSideBarKBCategory"
+import TocSideBarKBSubCategory from "./TocSideBarKBSubCategory"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const rootReducer = combineReducers({
-	authState: authReducer,
-	pageMetaState: pageMetaReducer,
-	newTicketState: newTicketReducer,
-	uiSettingsState: uiSettingsReducer,
-	redirectState: redirectReducer,
-	textEditorState: textEditorReducer
-})
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
-export default rootReducer
+const TocSideBar = ({ dataSource }) => {
+	const [showTocSideBarDetails, setShowTocSideBarDetails] = useState(false)
+	const sideBarRef = useRef(null)
+
+	const handleCloseDetails = useCallback(() => {
+		setShowTocSideBarDetails(false)
+		console.log("tried to be False")
+	}, [])
+
+	const handleOpenDetails = useCallback(() => {
+		setShowTocSideBarDetails(true)
+		console.log("tried to be True")
+	}, [])
+
+	return (
+		<>
+			<Box
+				ref={sideBarRef}
+				onClick={() => handleCloseDetails()}
+				sx={{
+					display: { xs: "none", md: "flex" },
+					flexDirection: { flexDirection: "column" },
+					minWidth: "300px",
+					pl: 4,
+					borderRight: "1px solid transparent",
+					borderColor: "divider",
+					backgroundColor: "#FAFAFA",
+					// backgroundColor: "white",
+				}}
+			>
+				<div style={{ position: "sticky", top: "80px" }}>
+
+					<TocSideBarKBCategory
+						title="Category"
+						handleOpen={handleOpenDetails}
+					>
+
+						<TocSideBarKBSubCategory
+							title="SubCategory"
+							onClick={() => { }}
+							handleOpen={handleOpenDetails}
+						>
+							<TocSideBarKBArticle
+								onClick={() => { }}
+								active={false}
+								handleOpen={handleOpenDetails}
+							>
+								Just an article
+							</TocSideBarKBArticle>
+							<TocSideBarKBArticle
+								onClick={() => { }}
+								active={true}
+								handleOpen={handleOpenDetails}
+							>
+								Just an article
+							</TocSideBarKBArticle>
+							<TocSideBarKBArticle
+								onClick={() => { }}
+								handleOpen={handleOpenDetails}
+							>
+								Just an article
+							</TocSideBarKBArticle>
+						</TocSideBarKBSubCategory>
+
+					</TocSideBarKBCategory>
+
+					<ActionMenuGroup />
+
+				</div>
+
+			</Box>
+
+			<TocSideBarDetails
+				open={showTocSideBarDetails}
+				handleClose={handleCloseDetails}
+				dataSource={[]}
+			/>
+
+		</>
+	)
+}
+TocSideBar.propTypes = { dataSource: PropTypes.array }
+
+export default TocSideBar

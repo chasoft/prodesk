@@ -18,9 +18,43 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
-export const getRedirect = (state) => state.redirectState
-export const getTextEditor = (state) => state.textEditorState
+import { createSlice } from "@reduxjs/toolkit"
+
+export const initialState = {
+	/* Editor */
+	editorData: "",
+	editorDataHeadings: [],
+	scrollTo: "",
+	/*  */
+	pageTitle: "",
+	pageDescription: "",
+	pageSlug: "",
+	pageId: null,
+	pageCategory: null,
+	pageTags: [],
+	pageStatus: "draft"
+}
+
+const textEditorSlice = createSlice({
+	name: "textEditor",
+	initialState,
+	reducers: {
+		setEditorData: (state, { payload }) => {
+			state.editorData = payload
+		},
+		setEditorDataHeadings: (state, { payload }) => {
+			state.editorDataHeadings = payload
+		},
+		setScrollTo: (state, { payload }) => {
+			state.scrollTo = payload
+		},
+	},
+})
+
+export const {
+	setEditorData,
+	setEditorDataHeadings,
+	setScrollTo
+} = textEditorSlice.actions
+
+export default textEditorSlice.reducer

@@ -18,9 +18,47 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-export const getAuth = (state) => state.authState
-export const getPageMeta = (state) => state.pageMetaState
-export const getNewTicket = (state) => state.newTicketState
-export const getUiSettings = (state) => state.uiSettingsState
-export const getRedirect = (state) => state.redirectState
-export const getTextEditor = (state) => state.textEditorState
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+
+//THIRD-PARTY
+import TocSideBarItemBase from "./TocSideBarItemBase"
+
+//PROJECT IMPORT
+
+
+//ASSETS
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+const TocSideBarKBArticle = ({ active, onClick, handleOpen, children }) => {
+	return (
+		<TocSideBarItemBase
+			active={active}
+			onClick={onClick}
+			handleOpen={handleOpen}
+		>
+			{children}
+		</TocSideBarItemBase>
+	)
+}
+TocSideBarKBArticle.propTypes = {
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
+}
+
+export default TocSideBarKBArticle
