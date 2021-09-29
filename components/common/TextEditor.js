@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useState, useRef, useCallback } from "react"
+import React, { useState, useCallback } from "react"
 
 // MATERIAL-UI
 import { Box, LinearProgress, Typography } from "@mui/material"
@@ -75,12 +75,15 @@ const LinearProgressWithLabel = (props) => (
 	=> Music => turn to HTML5 player for .mp3, .wav...v.v.
  */
 
-const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDestination = "uploads", ...others }) => {
+// eslint-disable-next-line react/display-name
+const TextEditor = React.forwardRef((props, ref) => {
+	const { defaultValue, readOnly = false, pullEditorData, storageDestination = "uploads", ...otherProps } = props
+
 	const { currentUser } = useSelector(getAuth)
 	const [uploading, setUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
 
-	const editorInstance = useRef()
+	// const editorInstance = useRef()
 	const { enqueueSnackbar } = useSnackbar()
 
 	const uploaderPromise = useCallback(
@@ -129,18 +132,18 @@ const TextEditor = ({ defaultValue, readOnly = false, pullEditorData, storageDes
 	return (
 		<>
 			<Editor
-				ref={editorInstance}
+				ref={ref}
 				readOnly={readOnly}
 				defaultValue={defaultValue}
 				onChange={(funcGetData) => { pullEditorData(funcGetData()) }}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
-				{...others}
+				{...otherProps}
 			/>
 			{uploading && <LinearProgressWithLabel value={progress} />}
 		</>
 	)
-}
+})
 
 TextEditor.propTypes = {
 	defaultValue: PropTypes.any,

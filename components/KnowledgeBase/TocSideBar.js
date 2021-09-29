@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useCallback, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Typography } from "@mui/material"
+import { Box, ButtonBase, IconButton, Popper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -35,84 +35,145 @@ import { Box, ButtonBase, Typography } from "@mui/material"
 
 
 //ASSETS
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+import TocSideBarDetails from "./TocSideBarDetails"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const TocSideBarKBCategory = ({ children }) => (
+const DetailsRightButton = ({ handleOpen }) => (
+	<MoreHorizIcon
+		id="detailsRightButton" size="small"
+		fontSize="small"
+		sx={{
+			fill: (theme) => theme.palette.grey[500],
+			my: 0.5, mr: 1
+		}}
+		onClick={() => {
+			handleOpen()
+			console.log({ a: handleOpen })
+			console.log("details clicked")
+		}}
+	/>
+)
+DetailsRightButton.propTypes = {
+	handleOpen: PropTypes.func
+}
+
+const TocSideBarKBCategory = ({ title, handleOpen, children }) => (
 	<Box sx={{
-		padding: 2,
-		color: (theme) => theme.palette.grey[600],
+		display: "flex",
+		flexDirection: "column",
+		py: 4,
 	}}>
-		<Typography variant="caption">
-			{children}
-		</Typography>
+		<Box sx={{
+			display: "flex",
+			justifyContent: "space-between",
+			"& > #detailsRightButton": { visibility: "hidden", },
+			":hover>#detailsRightButton": { visibility: "visible" }
+		}}>
+			<Typography sx={{
+				px: 2, py: 1,
+				ml: -2, mr: 0,
+				textTransform: "uppercase",
+				color: "grey.500",
+				fontWeight: "bold",
+			}}>
+				{title}
+			</Typography>
+			<DetailsRightButton handleOpen={handleOpen} />
+		</Box>
+
+		{children}
 	</Box>
 )
-TocSideBarKBCategory.propTypes = { children: PropTypes.node }
-
-const TocSideBarKBSubCategory = ({ selected, icon, onClick, children }) => {
-	return (
-		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-			<Box
-				onClick={onClick}
-				sx={{
-					padding: (theme) => theme.spacing(1, 3, 1),
-					display: "flex",
-					alignItems: "center",
-					"&:hover": {
-						backgroundColor: selected ? "#e8f0fe" : "action.hover",
-						cursor: "pointer",
-					},
-					bgcolor: selected ? "#e8f0fe" : "",
-					color: selected ? "#1967d2" : ""
-				}}
-			>
-				{icon}
-				<Typography variant="button" sx={{ ml: 2 }}>
-					{children}
-				</Typography>
-			</Box>
-		</ButtonBase>
-	)
-}
-TocSideBarKBSubCategory.propTypes = {
-	selected: PropTypes.bool,
-	icon: PropTypes.node,
-	onClick: PropTypes.func,
+TocSideBarKBCategory.propTypes = {
+	title: PropTypes.string,
+	handleOpen: PropTypes.func,
 	children: PropTypes.node
 }
 
-const TocSideBarKBArticle = ({ selected, icon, onClick, children }) => {
+//#e8f0fe
+const TocSideBarKBSubCategory = ({ title, selected, onClick, handleOpen, children }) => {
 	return (
-		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+		<>
+			<ButtonBase
+				onClick={() => { }}
+				sx={{ display: "block", width: "100%", textAlign: "left" }}
+			>
+				<Box
+					sx={{
+						ml: -2,
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						":hover": {
+							backgroundColor: "action.hover"
+						},
+						"& > #detailsRightButton": { visibility: "hidden", },
+						":hover>#detailsRightButton": { visibility: "visible" }
+					}}
+				>
+					<Typography sx={{ ml: 2 }}>
+						{title}
+					</Typography>
+
+					<DetailsRightButton handleOpen={handleOpen} />
+				</Box>
+			</ButtonBase>
+			<Box sx={{
+				borderLeft: "1px solid transparent",
+				borderColor: "divider"
+			}}>
+				{children}
+			</Box>
+		</>
+	)
+}
+TocSideBarKBSubCategory.propTypes = {
+	title: PropTypes.string,
+	selected: PropTypes.bool,
+	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
+}
+
+const TocSideBarKBArticle = ({ selected, onClick, handleOpen, children }) => {
+	return (
+		<ButtonBase
+			onClick={() => { }}
+			sx={{ display: "block", width: "100%", textAlign: "left" }}
+		>
 			<Box
-				onClick={onClick}
 				sx={{
-					padding: (theme) => theme.spacing(1, 3, 1),
 					display: "flex",
 					alignItems: "center",
+					justifyContent: "space-between",
+					fontWeight: 500,
 					"&:hover": {
 						backgroundColor: selected ? "#e8f0fe" : "action.hover",
 						cursor: "pointer",
 					},
-					bgcolor: selected ? "#e8f0fe" : "",
-					color: selected ? "#1967d2" : ""
+					"& > #detailsRightButton": { visibility: "hidden", },
+					":hover>#detailsRightButton": { visibility: "visible" }
 				}}
 			>
-				{icon}
-				<Typography variant="button" sx={{ ml: 2 }}>
+
+				<Typography sx={{ ml: 2 }}>
 					{children}
 				</Typography>
+
+				<DetailsRightButton handleOpen={handleOpen} />
+
 			</Box>
 		</ButtonBase>
 	)
 }
 TocSideBarKBArticle.propTypes = {
 	selected: PropTypes.bool,
-	icon: PropTypes.node,
 	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
 	children: PropTypes.node
 }
 
@@ -121,31 +182,61 @@ TocSideBarKBArticle.propTypes = {
  *****************************************************************/
 
 const TocSideBar = ({ dataSource }) => {
+	const [showTocSideBarDetails, setShowTocSideBarDetails] = useState(false)
+
+	const handleCloseDetails = useCallback(() => {
+		setShowTocSideBarDetails(false)
+		console.log("tried to be False")
+	}, [])
+
+	const handleOpenDetails = useCallback(() => {
+		setShowTocSideBarDetails(true)
+		console.log("tried to be True")
+	}, [])
+
 	return (
-		<Box sx={{
-			display: { xs: "none", md: "flex" },
-			minWidth: "300px",
-			backgroundColor: "#FAFAFA",
-			borderTopLeftRadius: "0.5rem",
-			borderBottomLeftRadius: "0.5rem",
-			padding: (theme) => theme.spacing(1, 0, 1),
-			// display: { xs: "none", sm: "initial" },
-			borderTopRightRadius: { xs: "0.5rem", md: 0 },
-			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
-		}}>
-
-			hello
-			{/* {dataSource.map((item) => (
-
-				TocSideBarKBCategory
-
-				))} */}
+		<>
+			<Box sx={{
+				display: { xs: "none", md: "flex" },
+				flexDirection: { flexDirection: "column" },
+				minWidth: "300px",
+				pl: 4,
+				borderRight: "1px solid transparent",
+				borderColor: "divider",
+				backgroundColor: "action.hover"
+			}}>
 
 
+				<TocSideBarKBCategory title="Category" handleOpen={handleOpenDetails}>
+
+					<TocSideBarKBSubCategory title="SubCategory" handleOpen={handleOpenDetails}>
+						<TocSideBarKBArticle handleOpen={handleOpenDetails}>Just an article</TocSideBarKBArticle>
+						<TocSideBarKBArticle handleOpen={handleOpenDetails}>Just an article</TocSideBarKBArticle>
+						<TocSideBarKBArticle handleOpen={handleOpenDetails}>Just an article</TocSideBarKBArticle>
+					</TocSideBarKBSubCategory>
+
+				</TocSideBarKBCategory>
+				{JSON.stringify(showTocSideBarDetails)}
 
 
+			</Box>
 
-		</Box>
+			<Popper
+				id="userInfo-popup"
+				anchorEl={anchorRef.current}
+				open={open}
+				placement="bottom-end"
+				transition
+				disablePortal
+				role={undefined}
+			>
+				<TocSideBarDetails
+					open={showTocSideBarDetails}
+					handleClose={handleCloseDetails}
+					dataSource={[]}
+				/>
+			</Popper>
+		</>
 	)
 }
 TocSideBar.propTypes = { dataSource: PropTypes.array }

@@ -23,70 +23,62 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+import { Box, ButtonBase, ClickAwayListener, IconButton, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
+
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import updateUiSettings from "../../../helpers/updateUiSettings"
-import TocSideBar from "../../../components/KnowledgeBase/TocSideBar"
-import DocumentEditor from "../../../components/KnowledgeBase/DocumentEditor"
-import DocumentTocSideBar from "../../../components/KnowledgeBase/DocumentTocSideBar"
-import TocSideBarDetails from "../../../components/KnowledgeBase/TocSideBarDetails"
+
 
 //ASSETS
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DUMMY_List = [
-	{
-
-	}
-]
-
-const DUMMY_Content = {
-
-}
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function KnowledgeBase() {
-
-	updateUiSettings({
-		background: {
-			backgroundImage: "",
-			backgroundColor: "transparent"
-		}
-	})
-
+const TocSideBarDetails = ({ open, handleClose, dataSource }) => {
 	return (
-		<Container
-			maxWidth="xl"
-			sx={{
-				display: "flex",
-				minHeight: "calc(100vh - 150px)",
-				borderBottom: "1px solid transparent",
-				borderColor: "divider"
-			}}
-			disableGutters
-		>
+		<Popper
 
-			<TocSideBar />
+		
+		<ClickAwayListener onClickAway={() => {
+			console.log("ClickAway activated")
+			handleClose()
+		}}>
+			<Box sx={{
+				position: "absolute",
+				left: "301px",
+				height: "100%",
+				mb: 2,
+				flexDirection: { flexDirection: "column" },
+				minWidth: "385px",
+				pl: 4,
+				borderRight: "1px solid transparent",
+				borderColor: "divider",
+				backgroundColor: "#FFF",
+				zIndex: 170,
+				display: open ? "flex" : "none"
+			}}>
 
-			<DocumentEditor />
+				<Box sx={{ p: 5 }}>hello</Box>
 
-			<DocumentTocSideBar />
-
-		</Container>
+			</Box>
+		</ClickAwayListener>
 	)
 }
+TocSideBarDetails.propTypes = {
+	open: PropTypes.bool,
+	handleClose: PropTypes.func,
+	dataSource: PropTypes.array
+}
 
-KnowledgeBase.getLayout = getLayout
-export default KnowledgeBase
+export default TocSideBarDetails

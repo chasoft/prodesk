@@ -65,7 +65,7 @@ export const initialState = {
 		& active Panel
 	*/
 	activeSettingTab: "",
-	activeSettingPanel: ""
+	activeSettingPanel: "",
 }
 
 const uiSettingsSlice = createSlice({
@@ -120,7 +120,7 @@ export const {
 	setBackgroundForLoggedinPage,
 	setScrolled,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
-	setActiveSettingTab, setActiveSettingPanel
+	setActiveSettingTab, setActiveSettingPanel,
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

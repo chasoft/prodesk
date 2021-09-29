@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, InputBase } from "@mui/material"
@@ -41,15 +41,23 @@ import DocumentTemplate from "./DocumentTemplate"
  * INIT                                                          *
  *****************************************************************/
 
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const DocumentEditor = () => {
+	const editorRef = useRef(null)
+	const [defaultEditorData, setDefaultEditorData] = useState("")
 	const [textEditorData, setTextEditorData] = useState("")
 
 	const handleGetEditorData = useCallback((data) => {
 		setTextEditorData(data)
+		console.log(data)
+	}, [])
+
+	const handleSetDefaultEditorData = useCallback((data) => {
+		setDefaultEditorData(data)
 	}, [])
 
 	return (
@@ -57,14 +65,16 @@ const DocumentEditor = () => {
 			display: "flex",
 			flexDirection: "column",
 			flexGrow: 1,
-			px: 5
+			px: 5, py: 4
 		}}>
 			<InputBase
 				id="doc-title" placeholder="Page title" variant="outlined"
 				sx={{
 					fontSize: { xs: "1.5rem", md: "1.75rem" },
 					lineHeight: "2rem", fontWeight: "bold",
+					color: "grey.800"
 				}}
+				autoFocus={true}
 			/>
 
 			<InputBase
@@ -77,19 +87,20 @@ const DocumentEditor = () => {
 
 			<Box sx={{
 				my: 2,
-				borderTop: "2px solid",
+				borderTop: "1px solid transparent",
 				borderColor: "divider"
 			}} />
 
-
 			<TextEditor
+				ref={editorRef}
+				value={defaultEditorData}
 				placeholder="Enter your content here..."
 				pullEditorData={handleGetEditorData}
 			/>
 
 			{(textEditorData === "" ||
 				textEditorData.trim() === "\\") &&
-				<DocumentTemplate setTextEditorData={setDefautEditorData} />}
+				<DocumentTemplate setDefaultEditorData={handleSetDefaultEditorData} />}
 
 		</Box>
 	)

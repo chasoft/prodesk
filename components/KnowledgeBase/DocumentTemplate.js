@@ -48,19 +48,19 @@ const DOC_TEMPLATES = [
 		icon: MenuBookOutlinedIcon,
 		name: "Guide",
 		description: "Provide step by step instructions.",
-		content: "conettdfsdfdsf",
+		content: "guide template here",
 	},
 	{
 		icon: HelpOutlineOutlinedIcon,
 		name: "FAQ",
 		description: "Answer frequently asked questions.",
-		content: "Answer frequently asked questions.",
+		content: "FAQ template here",
 	},
 	{
 		icon: AssignmentOutlinedIcon,
 		name: "Changelog",
 		description: "List product releases and changes",
-		content: "List product releases and changes"
+		content: "Changelog template here"
 	},
 ]
 
@@ -68,9 +68,9 @@ const DOC_TEMPLATES = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentTemplate = ({ setTextEditorData }) => {
+const DocumentTemplate = ({ setDefaultEditorData }) => {
 	return (
-		<Box sx={{ mt: 5 }}>
+		<Box sx={{ mt: 6 }}>
 			<Typography sx={{
 				textTransform: "uppercase",
 				color: "grey.500",
@@ -81,18 +81,22 @@ const DocumentTemplate = ({ setTextEditorData }) => {
 			</Typography>
 
 			<Grid container spacing={4}>
-				{DOC_TEMPLATES.map((template) => (
-					<Grid item sx={12} sm={6} key={template.name}>
+				{DOC_TEMPLATES.map((template, idx) => (
+					<Grid item xs={12} sm={6} key={idx}>
 						<Paper
-							elevation={4}
-							onClick={() => { setTextEditorData(template.content); console.log("Clicked") }}
+							elevation={0}
+							onClick={() => { setDefaultEditorData(template.content) }}
 							sx={{
 								p: 3,
 								border: "1px solid transparent",
+								borderColor: "divider",
 								cursor: "pointer",
 								"&:hover": {
 									border: "1px solid",
-									borderColor: "primary.main"
+									borderColor: "primary.main",
+									"& > p": {
+										color: "grey.900"
+									}
 								}
 							}}
 						>
@@ -124,6 +128,8 @@ const DocumentTemplate = ({ setTextEditorData }) => {
 		</Box>
 	)
 }
-DocumentTemplate.propTypes = { setTextEditorData: PropTypes.func }
+DocumentTemplate.propTypes = {
+	setDefaultEditorData: PropTypes.func,
+}
 
 export default DocumentTemplate
