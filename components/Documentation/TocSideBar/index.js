@@ -22,11 +22,12 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 // import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { Box, Button } from "@mui/material"
+import { useDispatch } from "react-redux"
 
 //THIRD-PARTY
 
@@ -36,6 +37,7 @@ import TocSideBarDetails from "./TocSideBarDetails"
 import TocSideBarDCArticle from "./TocSideBarDCArticle"
 import TocSideBarDCCategory from "./TocSideBarDCCategory"
 import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
+import { setSideBarLeft } from "./../../../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -50,6 +52,7 @@ import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
 const TocSideBar = () => {
 	const [showTocSideBarDetails, setShowTocSideBarDetails] = useState(false)
 	const sideBarRef = useRef(null)
+	const dispatch = useDispatch()
 
 	const handleCloseDetails = useCallback(() => {
 		setShowTocSideBarDetails(false)
@@ -57,9 +60,27 @@ const TocSideBar = () => {
 	}, [])
 
 	const handleOpenDetails = useCallback(() => {
-		setShowTocSideBarDetails(true)
-		console.log("tried to be True")
+		setShowTocSideBarDetails(p => !p)
 	}, [])
+
+	const updateSideBarLeft = useCallback(() => {
+		dispatch(setSideBarLeft(sideBarRef?.current?.offsetLeft ?? 0))
+	}, [dispatch])
+
+	useEffect(() => {
+		updateSideBarLeft()
+	}, [updateSideBarLeft])
+
+	useEffect(() => {
+		window.addEventListener("resize", updateSideBarLeft)
+		return () => window.removeEventListener("resize", updateSideBarLeft)
+	}, [updateSideBarLeft])
+
+	// useEffect(() => {
+	// 	window.addEventListener("scroll", handleSetScrolled)
+	// 	return () => window.removeEventListener("scroll", handleSetScrolled)
+	// }, [])
+
 
 	return (
 		<>

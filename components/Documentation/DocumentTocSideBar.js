@@ -108,7 +108,7 @@ const RightMenuItem = ({ sx, Icon, children }) => {
 }
 RightMenuItem.propTypes = {
 	sx: PropTypes.object,
-	Icon: PropTypes.object,
+	Icon: PropTypes.any,
 	children: PropTypes.node
 }
 

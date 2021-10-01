@@ -83,8 +83,10 @@ const DocumentEditor = () => {
 				}}
 			/>
 
+			{/* {Max 200 characters} */}
 			<InputBase
 				id="doc-title" placeholder="Page description (optional)" variant="outlined"
+				multiline={true}
 				sx={{
 					fontSize: "1rem", fontWeight: "bold",
 					lineHeight: "2rem"

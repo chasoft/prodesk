@@ -71,10 +71,7 @@ function Documentation() {
 			maxWidth="xl"
 			sx={{
 				display: "flex",
-				flexGrow: 1,
-				// minHeight: "calc(100vh - 150px)",
-				// borderBottom: "1px solid transparent",
-				// borderColor: "divider"
+				flexGrow: 1
 			}}
 			disableGutters
 		>

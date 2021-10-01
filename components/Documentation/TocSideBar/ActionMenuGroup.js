@@ -30,14 +30,13 @@ import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
-
+import AddNewPopupMenu from "./AddNewPopupMenu"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
-import AddNewPopupMenu from "./AddNewPopupMenu"
+import { DOCS_ADD } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -107,6 +106,17 @@ const ActionMenuGroup = () => {
 				borderColor: "divider"
 			}}
 		>
+			<AddNewPopupMenu placement="right" actions={[
+				DOCS_ADD.CATEGORY,
+				DOCS_ADD.SUB_CATEGORY,
+				DOCS_ADD.ARTICLE,
+				DOCS_ADD.EXTERNAL,
+			]}>
+				<ActionMenuItem ItemIcon={AddIcon}>
+					New
+				</ActionMenuItem>
+			</AddNewPopupMenu>
+
 			<ActionMenuItem ItemIcon={FolderOutlinedIcon}>
 				File
 			</ActionMenuItem>

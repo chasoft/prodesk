@@ -70,6 +70,9 @@ export const initialState = {
 	/*
 		used in pages/admin/documentation
 	*/
+
+	//keep ref of SideBar here
+	sideBarLeft: 0
 }
 
 const uiSettingsSlice = createSlice({
@@ -117,6 +120,11 @@ const uiSettingsSlice = createSlice({
 		setActiveSettingPanel: (state, { payload }) => {
 			state.activeSettingPanel = payload
 		},
+
+		/* */
+		setSideBarLeft: (state, { payload }) => {
+			state.sideBarLeft = payload
+		},
 	}
 })
 
@@ -126,6 +134,7 @@ export const {
 	setScrolled,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
 	setActiveSettingTab, setActiveSettingPanel,
+	setSideBarLeft
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

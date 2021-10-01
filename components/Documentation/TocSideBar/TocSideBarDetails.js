@@ -26,13 +26,14 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Backdrop, Box } from "@mui/material"
+import { Box, Button } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 
 //PROJECT IMPORT
-
+import { getUiSettings } from "./../../../redux/selectors"
 
 //ASSETS
 
@@ -44,39 +45,34 @@ import { Backdrop, Box } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDetails = ({ open, handleClose, dataSource }) => {
+const TocSideBarDetails = ({ open, handleClose }) => {
+	const { sideBarLeft } = useSelector(getUiSettings)
 	return (
-		<>
-			<Backdrop
-				sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-				open={open}
-				onClick={handleClose}
-			>
-				<Box sx={{
+		<Box sx={{
+			position: "fixed",
+			zIndex: 150,
+			display: open ? "flex" : "none",
+			flexDirection: { flexDirection: "column" },
+			alignItems: "stretch",
+			left: `${sideBarLeft + 556}px`,
+			minWidth: "385px",
+			height: "100%",
+			pl: 4,
+			backgroundColor: "#FFF",
+			borderRight: "1px solid",
+			borderColor: "divider",
+		}}>
+			<Box sx={{ mt: 3 }}>
 
-					display: open ? "flex" : "none",
-					flexDirection: { flexDirection: "column" },
-					left: "299px",
-					minWidth: "385px",
-					height: "100%",
-					pl: 4,
-					backgroundColor: "#FFF",
-					zIndex: 1,
-				}}>
-					<div style={{ position: "sticky", top: "80px" }}>
+				<Button variant="outlined" color="primary" sx={{ p: 5 }}>Hello world</Button>
 
-						hello
-
-					</div>
-				</Box>
-			</Backdrop>
-		</>
+			</Box>
+		</Box>
 	)
 }
 TocSideBarDetails.propTypes = {
 	open: PropTypes.bool,
 	handleClose: PropTypes.func,
-	dataSource: PropTypes.array
 }
 
 export default TocSideBarDetails
