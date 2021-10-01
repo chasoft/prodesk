@@ -18,33 +18,40 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
+import { createSlice } from "@reduxjs/toolkit"
 
-import { combineReducers } from "redux"
+export const initialState = {
+	/* 	List all documents, used for
+		1. Documentation Center
+		2. Listing Documentation at frontpage!
+	*/
 
-//PROJECT IMPORT
-import authReducer from "./auth"
-import pageMetaReducer from "./pageMeta"
-import newTicketReducer from "./newTicket"
-import uiSettingsReducer from "./uiSettings"
-import redirectReducer from "./redirect"
-import textEditorReducer from "./textEditor"
-import docsCenterReducer from "./docsCenter"
+	/* this array is sorted/grouped by lodash.groupBy
+		[
+			{Category: "": }
+		]
+	*/
+	docsList: [],
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
+	activeDocId: null,
+}
 
-const rootReducer = combineReducers({
-	authState: authReducer,
-	pageMetaState: pageMetaReducer,
-	newTicketState: newTicketReducer,
-	uiSettingsState: uiSettingsReducer,
-	redirectState: redirectReducer,
-	textEditorState: textEditorReducer,
-	docsCenterState: docsCenterReducer
+const docsCenterSlice = createSlice({
+	name: "docsCenter",
+	initialState,
+	reducers: {
+		setDocsList: (state, { payload }) => {
+			state.docsList = payload
+		},
+		setActiveDocId: (state, { payload }) => {
+			state.activeDocId = payload
+		},
+	},
 })
 
-export default rootReducer
+export const {
+	setDocsList,
+	setActiveDocId,
+} = docsCenterSlice.actions
+
+export default docsCenterSlice.reducer

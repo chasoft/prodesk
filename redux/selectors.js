@@ -24,3 +24,4 @@ export const getNewTicket = (state) => state.newTicketState
 export const getUiSettings = (state) => state.uiSettingsState
 export const getRedirect = (state) => state.redirectState
 export const getTextEditor = (state) => state.textEditorState
+export const getDocsCenter = (state) => state.docsCenterState

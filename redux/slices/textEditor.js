@@ -21,22 +21,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
-	/* List all documents */
-	docList: [],
-	activeDocId: null,
-
-	/* Editor */
-
 	editorData: "",
 	editorDataHeadings: [],
-	/*  */
-	pageTitle: "",
-	pageDescription: "",
-	pageSlug: "",
-	pageId: null,
-	pageCategory: null,
-	pageTags: [],
-	pageStatus: "draft"
 }
 
 const textEditorSlice = createSlice({

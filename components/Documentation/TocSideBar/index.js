@@ -27,7 +27,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, Button } from "@mui/material"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
 
@@ -38,6 +38,7 @@ import TocSideBarDCArticle from "./TocSideBarDCArticle"
 import TocSideBarDCCategory from "./TocSideBarDCCategory"
 import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
 import { setSideBarLeft } from "./../../../redux/slices/uiSettings"
+import { getDocsCenter } from "../../../redux/selectors"
 
 //ASSETS
 
@@ -54,9 +55,10 @@ const TocSideBar = () => {
 	const sideBarRef = useRef(null)
 	const dispatch = useDispatch()
 
+	const { docsList } = useSelector(getDocsCenter)
+
 	const handleCloseDetails = useCallback(() => {
 		setShowTocSideBarDetails(false)
-		console.log("tried to be False")
 	}, [])
 
 	const handleOpenDetails = useCallback(() => {
@@ -76,12 +78,6 @@ const TocSideBar = () => {
 		return () => window.removeEventListener("resize", updateSideBarLeft)
 	}, [updateSideBarLeft])
 
-	// useEffect(() => {
-	// 	window.addEventListener("scroll", handleSetScrolled)
-	// 	return () => window.removeEventListener("scroll", handleSetScrolled)
-	// }, [])
-
-
 	return (
 		<>
 			<Box
@@ -95,12 +91,22 @@ const TocSideBar = () => {
 					borderRight: "1px solid transparent",
 					borderColor: "divider",
 					backgroundColor: "#FAFAFA",
-					// backgroundColor: "white",
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 
-					<TocSideBarDCCategory
+					{(docsList.length === 0) && <Box>
+
+
+					</Box>}
+
+					{(docsList.length > 0) && <Box>
+
+
+					</Box>}
+
+
+					{/* <TocSideBarDCCategory
 						title="Category"
 						handleOpen={handleOpenDetails}
 					>
@@ -132,7 +138,7 @@ const TocSideBar = () => {
 							</TocSideBarDCArticle>
 						</TocSideBarDCSubCategory>
 
-					</TocSideBarDCCategory>
+					</TocSideBarDCCategory> */}
 
 					<ActionMenuGroup />
 

@@ -29,15 +29,15 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getTextEditor } from "./../../redux/selectors"
 
 //ASSETS
-import { useSelector } from "react-redux"
-import PostAddIcon from "@mui/icons-material/PostAdd"
-import { getTextEditor } from "./../../redux/selectors"
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import { ExportPdfIcon } from "./../common/SvgIcons"
+import PostAddIcon from "@mui/icons-material/PostAdd"
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
 
 
@@ -81,7 +81,7 @@ TocItem.propTypes = {
 	children: PropTypes.node
 }
 
-const RightMenuItem = ({ sx, Icon, children }) => {
+export const RightMenuItem = ({ sx, Icon, children }) => {
 	return (
 		<Box sx={{
 			display: "flex",
