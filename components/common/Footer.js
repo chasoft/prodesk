@@ -38,7 +38,7 @@ import { Copyright } from "."
 export default function Footer() {
 	const router = useRouter()
 
-	if (router.pathname === "/admin/knowledge-base") return null
+	if (router.pathname === "/admin/documentation") return null
 
 	return (
 		<Box

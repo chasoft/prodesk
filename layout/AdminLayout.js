@@ -74,18 +74,16 @@ const ADMIN_MENUS = [
 		]
 	},
 	{
-		id: "menu_knowledgebase",
+		id: "menu_documentation",
 		type: MENU_ITEM_TYPE.GROUP,
 		expanded: false,
 		icon: "0",
-		title: "Knowledge Base",
-		description: "Managing your knowledge base",
+		title: "Documentation",
+		description: "Managing your documentation",
 		items: [
-			{ id: "submenu_alldocs", icon: "1", text: "All documents", url: "/admin/knowledge-base" },
-			{ id: "submenu_adddoc", icon: "1", text: "Add new document", url: "/admin/knowledge-base/add-new" },
-			{ id: "submenu_categories", icon: "2", text: "Categories", url: "/admin/knowledge-base/categories" },
-			{ id: "submenu_tags", icon: "2", text: "Tags", url: "/admin/knowledge-base/tags" },
-			{ id: "submenu_faqs", icon: "2", text: "Frequently Asked Questions", url: "/admin/faqs" },
+			{ id: "submenu_alldocs", icon: "1", text: "All documents", url: "/admin/documentation" },
+			{ id: "submenu_categories", icon: "2", text: "Categories", url: "/admin/documentation/categories" },
+			{ id: "submenu_tags", icon: "2", text: "Tags", url: "/admin/documentation/tags" }
 		]
 	},
 	{
@@ -145,7 +143,7 @@ function AdminLayout({ children }) {
 	}, [])
 
 	useEffect(() => {
-		if (router.pathname === "/admin/knowledge-base" && isSmallScreen)
+		if (router.pathname === "/admin/documentation" && isSmallScreen)
 			setIsSideBarExpanded(false)
 	}, [router])
 

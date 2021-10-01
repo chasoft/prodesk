@@ -27,16 +27,16 @@ export const initialState = {
 
 	/* Editor */
 
-	// editorData: "",
-	// editorDataHeadings: [],
-	// /*  */
-	// pageTitle: "",
-	// pageDescription: "",
-	// pageSlug: "",
-	// pageId: null,
-	// pageCategory: null,
-	// pageTags: [],
-	// pageStatus: "draft"
+	editorData: "",
+	editorDataHeadings: [],
+	/*  */
+	pageTitle: "",
+	pageDescription: "",
+	pageSlug: "",
+	pageId: null,
+	pageCategory: null,
+	pageTags: [],
+	pageStatus: "draft"
 }
 
 const textEditorSlice = createSlice({

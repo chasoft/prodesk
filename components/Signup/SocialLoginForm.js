@@ -44,8 +44,8 @@ import { useSelector } from "react-redux"
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
 import { getAuth } from "./../../redux/selectors"
-import { isUsernameAvailable } from "./../../helpers/firebase"
-import { signUpViaSocialAccount } from "./../../helpers/userAuthentication"
+import { isUsernameAvailable } from "./../../helpers/firebase/user"
+import { signUpViaSocialAccount } from "./../../helpers/firebase/signup"
 import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS

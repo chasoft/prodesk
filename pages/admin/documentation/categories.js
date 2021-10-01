@@ -44,7 +44,7 @@ import updateUiSettings from "./../../../helpers/updateUiSettings"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TagsKB() {
+function CategoriesDC() {
 
 	updateUiSettings({
 		background: {
@@ -54,10 +54,10 @@ function TagsKB() {
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Tag (Knowledge Center)</Typography>
+			<Typography variant="h1">DC Category (Documentation)</Typography>
 		</Container>
 	)
 }
 
-TagsKB.getLayout = getLayout
-export default TagsKB
+CategoriesDC.getLayout = getLayout
+export default CategoriesDC

@@ -42,7 +42,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { ForgotPasswordLink, SignUpLink } from "./../common"
-import { signInWithEmail } from "./../../helpers/userAuthentication"
+import { signInWithEmail } from "./../../helpers/firebase/login"
 import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS

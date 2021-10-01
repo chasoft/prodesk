@@ -25,13 +25,18 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
+import { HTML5Backend } from "react-dnd-html5-backend"
+import { DndProvider } from "react-dnd"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
 import updateUiSettings from "./../../../helpers/updateUiSettings"
+import TocSideBar from "./../../../components/Documentation/TocSideBar"
+import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
+import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
 
 //ASSETS
 
@@ -39,25 +44,54 @@ import updateUiSettings from "./../../../helpers/updateUiSettings"
  * INIT                                                          *
  *****************************************************************/
 
+const DUMMY_List = [
+	{
+
+	}
+]
+
+const DUMMY_Content = {
+
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function AddNewKB() {
+function Documentation() {
 
 	updateUiSettings({
+		title: "Documentation Management",
 		background: {
-			backgroundImage: ""
+			backgroundImage: "",
+			backgroundColor: "transparent"
 		}
 	})
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Add New KB</Typography>
+		<Container
+			maxWidth="xl"
+			sx={{
+				display: "flex",
+				flexGrow: 1,
+				// minHeight: "calc(100vh - 150px)",
+				// borderBottom: "1px solid transparent",
+				// borderColor: "divider"
+			}}
+			disableGutters
+		>
+
+			<DndProvider backend={HTML5Backend}>
+				<TocSideBar />
+			</DndProvider>
+
+			<DocumentEditor />
+
+			<DocumentTocSideBar />
+
 		</Container>
 	)
 }
 
-AddNewKB.getLayout = getLayout
-export default AddNewKB
+Documentation.getLayout = getLayout
+export default Documentation

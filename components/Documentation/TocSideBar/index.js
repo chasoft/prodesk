@@ -33,9 +33,9 @@ import { Box } from "@mui/material"
 //PROJECT IMPORT
 import ActionMenuGroup from "./ActionMenuGroup"
 import TocSideBarDetails from "./TocSideBarDetails"
-import TocSideBarKBArticle from "./TocSideBarKBArticle"
-import TocSideBarKBCategory from "./TocSideBarKBCategory"
-import TocSideBarKBSubCategory from "./TocSideBarKBSubCategory"
+import TocSideBarDCArticle from "./TocSideBarDCArticle"
+import TocSideBarDCCategory from "./TocSideBarDCCategory"
+import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
 
 //ASSETS
 
@@ -79,39 +79,39 @@ const TocSideBar = ({ dataSource }) => {
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 
-					<TocSideBarKBCategory
+					<TocSideBarDCCategory
 						title="Category"
 						handleOpen={handleOpenDetails}
 					>
 
-						<TocSideBarKBSubCategory
+						<TocSideBarDCSubCategory
 							title="SubCategory"
 							onClick={() => { }}
 							handleOpen={handleOpenDetails}
 						>
-							<TocSideBarKBArticle
+							<TocSideBarDCArticle
 								onClick={() => { }}
 								active={false}
 								handleOpen={handleOpenDetails}
 							>
 								Just an article
-							</TocSideBarKBArticle>
-							<TocSideBarKBArticle
+							</TocSideBarDCArticle>
+							<TocSideBarDCArticle
 								onClick={() => { }}
 								active={true}
 								handleOpen={handleOpenDetails}
 							>
 								Just an article
-							</TocSideBarKBArticle>
-							<TocSideBarKBArticle
+							</TocSideBarDCArticle>
+							<TocSideBarDCArticle
 								onClick={() => { }}
 								handleOpen={handleOpenDetails}
 							>
 								Just an article
-							</TocSideBarKBArticle>
-						</TocSideBarKBSubCategory>
+							</TocSideBarDCArticle>
+						</TocSideBarDCSubCategory>
 
-					</TocSideBarKBCategory>
+					</TocSideBarDCCategory>
 
 					<ActionMenuGroup />
 

@@ -26,14 +26,11 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import DetailsRightButton from "./DetailsRightButton"
-import TocSideBarAddNew from "./TocSideBarAddNew"
-import { DOCS_ADD } from "./../../../helpers/constants"
 
 //PROJECT IMPORT
+import TocSideBarItemBase from "./TocSideBarItemBase"
 
 
 //ASSETS
@@ -46,56 +43,24 @@ import { DOCS_ADD } from "./../../../helpers/constants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarKBCategory = ({ title, handleOpen, children }) => (
-	<Box sx={{
-		display: "flex",
-		flexDirection: "column",
-		pb: 4,
-	}}>
-		<Box sx={{
-			display: "flex",
-			justifyContent: "space-between",
-			"&>div": {
-				"&>#popper-trigger": { visibility: "hidden" },
-				"&>#detailsRightButton": { visibility: "hidden" },
-			},
-			":hover>p": { color: "#000" },
-			":hover>div": {
-				"&>#popper-trigger": { visibility: "visible" },
-				"&>#detailsRightButton": { visibility: "visible" },
-			},
-		}}>
-			<Typography sx={{
-				px: 2, py: 1,
-				ml: -2, mr: 0,
-				textTransform: "uppercase",
-				color: "grey.500",
-				fontWeight: "bold",
-			}}>
-				{title}
-			</Typography>
-
-			<Box sx={{
-				display: "flex",
-				alignItems: "center",
-			}}>
-				<TocSideBarAddNew actions={[
-					DOCS_ADD.CATEGORY,
-					DOCS_ADD.SUB_CATEGORY,
-					DOCS_ADD.ARTICLE,
-					DOCS_ADD.EXTERNAL,
-				]} />
-				<DetailsRightButton handleOpen={handleOpen} />
-			</Box>
-		</Box>
-
-		{children}
-	</Box>
-)
-TocSideBarKBCategory.propTypes = {
-	title: PropTypes.string,
+const TocSideBarDCArticle = ({ active, onClick, handleOpen, children }) => {
+	return (
+		<>
+			<TocSideBarItemBase
+				active={active}
+				onClick={onClick}
+				handleOpen={handleOpen}
+			>
+				{children}
+			</TocSideBarItemBase>
+		</>
+	)
+}
+TocSideBarDCArticle.propTypes = {
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
 	handleOpen: PropTypes.func,
 	children: PropTypes.node
 }
 
-export default TocSideBarKBCategory
+export default TocSideBarDCArticle

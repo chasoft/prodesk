@@ -18,12 +18,11 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-
 //FIREBASE SDK
-import firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/firestore"
-import "firebase/storage"
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
+import { getFirestore } from "firebase/firestore"
+import { getStorage } from "firebase/storage"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -38,23 +37,21 @@ const firebaseConfig = {
 	appId: "1:183315432788:web:44dc8c573f1bca61fc34c1",
 }
 
-//FIX BUG FOR NEXTJS DEVELOPMENT
-if (!firebase.apps.length) {
-	firebase.initializeApp(firebaseConfig)
-	//const analytics = getAnalytics(app)
-}
+const firebaseApp = initializeApp(firebaseConfig)
 
-//EXPORT FOR SHORTER USAGE
-export const auth = firebase.auth()
-export const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
-export const db = firebase.firestore()
+//EXPORT FOR QUICK REFERENCING
+export const auth = getAuth(firebaseApp)
+export const db = getFirestore(firebaseApp)
+
 //use this to get consistent datetime for users in different timezones
-export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp
-export const fromMillis = firebase.firestore.Timestamp.fromMillis
-export const increment = firebase.firestore.FieldValue.increment
-export const storage = firebase.storage()
+// export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp => import { serverTimestamp } from "firebase/firestore"
+// export const increment = firebase.firestore.FieldValue.increment => import { increment } from "firebase/firestore"
+// export const fromMillis = firebase.firestore.Timestamp.fromMillis ???!!! >
+// => fromMillis is method của Timestamp  =>> import { Timestamp} from "firebase/firestore"
+
+export const storage = getStorage(firebaseApp)
 //used to track uploading status to firestorage
-export const STATE_CHANGED = firebase.storage.TaskEvent.STATE_CHANGED
+export const STATE_CHANGED = "state_changed"
 
 //HELPER FUNCTIONS
 

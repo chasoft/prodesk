@@ -1,7 +1,39 @@
 
-import firebase from "firebase/app"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from "firebase/auth"
+import { collection, doc, getDoc, getDocs, query, where, limit, setDoc, writeBatch } from "firebase/firestore"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { auth, db } from "."
 
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 /**
  * get admin's document from `adminUsers/${uid}`
@@ -9,13 +41,17 @@ import { auth, db } from "."
  * @returns Object
  */
 export const getAdminDocByUid = async (uid) => {
-	const query = await db.doc(`adminUsers/${uid}`).get()
-	if (query.exists) {
-		const res = query.data()
-		return res
-	} else {
-		return ({})
+	let adminDoc = {}
+	try {
+		const docSnap = await getDoc(doc(db, "adminUsers", uid))
+		if (docSnap.exists())
+			adminDoc = docSnap.data()
+		else
+			throw new Error("adminUserId not existed.")
+	} catch (err) {
+		throw new Error("Something wrong happenned when trying to get adminUser's data.")
 	}
+	return adminDoc
 }
 
 /**
@@ -27,11 +63,11 @@ export const getAdminDocByUid = async (uid) => {
 
 export const reAuthenticateProviderPassword = async ({ uid, email, password, newEmail }, { enqueueSnackbar }) => {
 	try {
-		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
-		await auth.currentUser.reauthenticateWithCredential(credential)
-		await auth.currentUser.updateEmail(newEmail)
+		const credential = EmailAuthProvider.credential(email, password)
+		await reauthenticateWithCredential(auth.currentUser, credential)
+		await updateEmail(auth.currentUser, newEmail)
 		//Update email in database
-		db.doc(`users/${uid}`).set({ email: newEmail }, { merge: true })
+		await setDoc(doc(db, "users", uid), { newEmail }, { merge: true })
 		return true
 	} catch (e) {
 		enqueueSnackbar(e.message, { variant: "error" })
@@ -41,9 +77,9 @@ export const reAuthenticateProviderPassword = async ({ uid, email, password, new
 
 export const changePassword = async ({ email, password, newPassword }, { enqueueSnackbar }) => {
 	try {
-		const credential = firebase.auth.EmailAuthProvider.credential(email, password)
-		await auth.currentUser.reauthenticateWithCredential(credential)
-		await auth.currentUser.updatePassword(newPassword)
+		const credential = EmailAuthProvider.credential(email, password)
+		await reauthenticateWithCredential(auth.currentUser, credential)
+		await updatePassword(auth.currentUser, newPassword)
 		return true
 	} catch (e) {
 		enqueueSnackbar(e.message, { variant: "error" })
@@ -51,17 +87,15 @@ export const changePassword = async ({ email, password, newPassword }, { enqueue
 	}
 }
 
-
 /**
  * Get user's document (`users/${uid}`) by username
  * @param {string} username
  * @returns Object
  */
 export async function getUserDocByUsername(username) {
-	const query = db
-		.collection("users").where("username", "==", username)
-		.limit(1)
-	const userDoc = (await query.get()).docs[0]
+	const q = query(collection(db, "users"), where("username", "==", username), limit(1))
+	const querySnapshot = await getDocs(q)
+	const userDoc = querySnapshot[0].data()
 	return userDoc
 }
 
@@ -71,9 +105,18 @@ export async function getUserDocByUsername(username) {
  * @returns Promise
  */
 export const getUserDocByUid = async (uid) => {
-	const res = await db.doc(`users/${uid}`).get()
-	const data = res.data()
-	return data
+	let userDoc
+	try {
+		const docSnap = await getDoc(doc(db, "users", uid))
+		if (docSnap.exists()) {
+			userDoc = docSnap.data()
+		} else {
+			throw new Error("User not existed!")
+		}
+	} catch (err) {
+		throw new Error("Something wrong happenned when trying to get user's data")
+	}
+	return userDoc
 }
 
 /**
@@ -82,45 +125,47 @@ export const getUserDocByUid = async (uid) => {
  * @returns Object
  */
 export const getUsernameDocByUsername = async (username) => {
-	const query = await db.doc(`usernames/${username}`).get()
-	if (query.exists) {
-		const res = query.data()
-		return res
-	} else {
-		return ({})
+	let usernameDoc = {}
+	try {
+		const docSnap = await getDoc(doc(db, "usernames", username))
+		if (docSnap.exists())
+			usernameDoc = docSnap.data()
+	} catch (err) {
+		throw new Error("Something wrong happenned when trying to get username's data")
 	}
+	return usernameDoc
 }
-
 
 export const isUsernameAvailable = async (username) => {
-	const { exists } = await db.doc(`usernames/${username}`).get()
-	if (exists) {
-		return false
+	let usernameAvailability = false
+	try {
+		const docSnap = await getDoc(doc(db, "usernames", username))
+		if (docSnap.exists())
+			usernameAvailability = true
+	} catch (err) {
+		throw new Error("Something wrong happenned when checking username availability")
 	}
-	return true
+	return usernameAvailability
 }
-
 
 export const userGetDisplayInfo = (uid) => {
 	const userDoc = getUserDocByUid(uid)
+	//in case not yet set userName, then use system default
 	if (!userDoc.username) {
-		//in case not yet set userName, then use system default
 		return ({
 			displayName: userDoc.displayName ? userDoc?.displayName : userDoc.email,
 			photoURL: userDoc.photoURL ? userDoc.photoURL : "/img/default-avatar.png"
 		})
-	} else {
-		const userNameDoc = getUsernameDocByUsername(userDoc.username)
-		return ({
-			displayName: userNameDoc.displayName ? userNameDoc.displayName
-				: userDoc.displayName ? userDoc.displayName : userDoc.email,
-			photoURL: userNameDoc.photoURL ? userNameDoc.photoURL
-				: userDoc.photoURL ? userDoc.photoURL : "/img/default-avatar.png"
-		})
 	}
+
+	const userNameDoc = getUsernameDocByUsername(userDoc.username)
+	return ({
+		displayName: userNameDoc.displayName ? userNameDoc.displayName
+			: userDoc.displayName ? userDoc.displayName : userDoc.email,
+		photoURL: userNameDoc.photoURL ? userNameDoc.photoURL
+			: userDoc.photoURL ? userDoc.photoURL : "/img/default-avatar.png"
+	})
 }
-
-
 
 /**
  * User can set username once, after that, username cannot be changed
@@ -136,14 +181,13 @@ export const userSetUsername = async ({ uid, username }, { enqueueSnackbar }) =>
 		return
 	}
 
-	const batch = db.batch()
+	const batch = writeBatch(db)
 	try {
-		batch.set(db.doc(`users/${uid}`), { username }, { merge: true })
-		batch.set(db.doc(`usernames/${username}`), { uid })
+		batch.set(doc(db, "users", uid), { username }, { merge: true })
+		batch.set(doc(db, "usernames", username), { uid })
 		await batch.commit()
 		enqueueSnackbar("Username created successfully", { variant: "success" })
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e.message)
 		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
 	}
@@ -157,7 +201,7 @@ export const userSetUsername = async ({ uid, username }, { enqueueSnackbar }) =>
  */
 export const userUpdateDisplayName = async ({ username, displayName }, { enqueueSnackbar }) => {
 	try {
-		db.doc(`usernames/${username}`).set({ displayName }, { merge: true })
+		await setDoc(doc(db, "usernames", username), { displayName }, { merge: true })
 		enqueueSnackbar("Display name updated successfully", { variant: "success" })
 	}
 	catch (e) {

@@ -1,14 +1,47 @@
-import { batch as reduxBatch } from "react-redux"
-import { auth, db } from "."
-import { updateAvatarAndLocation } from "./../../redux/slices/auth"
-import { setRedirect } from "./../../redux/slices/redirect"
-import { REDIRECT_URL, USERGROUP } from "./../constants"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
 
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import { doc, writeBatch } from "firebase/firestore"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+
+//THIRD-PARTY
+import { batch as reduxBatch } from "react-redux"
+
+//PROJECT IMPORT
+import { auth, db } from "."
+import { REDIRECT_URL, USERGROUP } from "./../constants"
+import { setRedirect } from "./../../redux/slices/redirect"
+import { updateAvatarAndLocation } from "./../../redux/slices/auth"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 export const signupCreateProfile = async ({ username, avatar, location }, { dispatch, enqueueSnackbar }) => {
-	const batch = db.batch()
+	const batch = writeBatch(db)
 	try {
-		batch.set(db.doc(`usernames/${username}`), {
+		batch.set(doc(db, "usernames", username), {
 			photoURL: avatar,
 			location: location,
 			nextStep: REDIRECT_URL.SURVEY
@@ -24,7 +57,6 @@ export const signupCreateProfile = async ({ username, avatar, location }, { disp
 			}))
 			dispatch(setRedirect(REDIRECT_URL.SURVEY))
 		})
-
 		// router.push(REDIRECT_URL.SURVEY)
 	}
 	catch (e) {
@@ -33,12 +65,10 @@ export const signupCreateProfile = async ({ username, avatar, location }, { disp
 	}
 }
 
-
-
 export const signupInitSurvey = async ({ username, payload }, { enqueueSnackbar, dispatch }) => {
-	const batch = db.batch()
+	const batch = writeBatch(db)
 	try {
-		batch.set(db.doc(`usernames/${username}`), {
+		batch.set(doc(db, "usernames", username), {
 			survey: JSON.stringify(payload),
 			nextStep: REDIRECT_URL.DONE
 		}, { merge: true })
@@ -59,7 +89,6 @@ export const signupInitSurvey = async ({ username, payload }, { enqueueSnackbar,
 	}
 }
 
-
 /**
  * signUpViaSocialAccount
  * @param {*} uid 
@@ -72,12 +101,12 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 	try {
 		enqueueSnackbar("Creating your account with us...", { key: "signUpViaSocialAccount", variant: "info" })
 
-		const batch = db.batch()
-		batch.set(db.doc(`users/${uid}`), {
+		const batch = writeBatch(db)
+		batch.set(doc(db, "users", uid), {
 			email: email,
 			username: username
 		})
-		batch.set(db.doc(`usernames/${username}`), {
+		batch.set(doc(db, "usernames", username), {
 			uid: JSON.stringify([uid]),	//all associated account will be stored here in an Array
 			displayName: name,
 			username: username,
@@ -97,8 +126,6 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 	}
 }
 
-
-
 /**
  * signUpWithEmail
  * @param {*} email 
@@ -109,16 +136,16 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 export const signUpWithEmail = async ({ email, password, name, username }, { enqueueSnackbar, dispatch }) => {
 	try {
 		enqueueSnackbar("Connecting with Authentication Server...", { key: "signUpWithEmail", variant: "info" })
-		const userCredential = await auth.createUserWithEmailAndPassword(email, password)
+		const userCredential = createUserWithEmailAndPassword(auth, email, password)
 
-		const batch = db.batch()
+		const batch = writeBatch(db)
 		enqueueSnackbar("Updating the database...", { key: "signUpWithEmail", variant: "info" })
 
-		batch.set(db.doc(`users/${userCredential.user.uid}`), {
+		batch.set(doc(db, "users", userCredential.user.uid), {
 			email: userCredential.user.email,
 			username: username
 		})
-		batch.set(db.doc(`usernames/${username}`), {
+		batch.set(doc(db, "usernames", username), {
 			uid: JSON.stringify([userCredential.user.uid]),	//all associated account will be stored here in an Array
 			displayName: name,
 			email: userCredential.user.email,

@@ -25,19 +25,20 @@
 //CORE SYSTEM
 import Head from "next/head"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
+import { auth } from "./../helpers/firebase"
+import { regAdminURL } from "./../helpers/regex"
+import { setRedirect } from "./../redux/slices/redirect"
+import { ReduxRedirect } from "./../components/AuthCheck"
 import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
-import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers"
-import { ReduxRedirect } from "./../components/AuthCheck"
-import { setRedirect } from "./../redux/slices/redirect"
-import { regAdminURL } from "./../helpers/regex"
-import { useRouter } from "next/router"
+import { getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase/user"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -101,7 +102,7 @@ function RootLayout({ children }) {
 		})
 		//Close connection with Firebase!
 		return unsubscribe
-	}, [dispatch])
+	}, [dispatch, router.pathname])
 
 	return (
 		<>

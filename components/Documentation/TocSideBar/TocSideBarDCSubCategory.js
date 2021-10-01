@@ -23,20 +23,17 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
-import { HTML5Backend } from "react-dnd-html5-backend"
-import { DndProvider } from "react-dnd"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
-import TocSideBar from "./../../../components/KnowledgeBase/TocSideBar"
-import DocumentEditor from "./../../../components/KnowledgeBase/DocumentEditor"
-import DocumentTocSideBar from "./../../../components/KnowledgeBase/DocumentTocSideBar"
+import TocSideBarItemBase from "./TocSideBarItemBase"
+import TocSideBarAddNew from "./TocSideBarAddNew"
+import { DOCS_ADD } from "../../../helpers/constants"
 
 //ASSETS
 
@@ -44,56 +41,47 @@ import DocumentTocSideBar from "./../../../components/KnowledgeBase/DocumentTocS
  * INIT                                                          *
  *****************************************************************/
 
-const DUMMY_List = [
-	{
-
-	}
-]
-
-const DUMMY_Content = {
-
-}
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function KnowledgeBase() {
-
-
-
-	updateUiSettings({
-		title: "Knowlege Base Management",
-		background: {
-			backgroundImage: "",
-			backgroundColor: "transparent"
-		}
-	})
-
+const TocSideBarDCSubCategory = ({ title, active, onClick, handleOpen, children }) => {
 	return (
-		<Container
-			maxWidth="xl"
-			sx={{
-				display: "flex",
-				flexGrow: 1,
-				// minHeight: "calc(100vh - 150px)",
-				// borderBottom: "1px solid transparent",
-				// borderColor: "divider"
-			}}
-			disableGutters
-		>
+		<>
+			<TocSideBarItemBase
+				selected={active}
+				onClick={onClick}
+				handleOpen={handleOpen}
+				additionalButton={
+					<TocSideBarAddNew actions={[
+						DOCS_ADD.CATEGORY,
+						DOCS_ADD.ARTICLE,
+						DOCS_ADD.EXTERNAL,
+					]}
+					/>
+				}
+			>
+				{title}
+			</TocSideBarItemBase>
 
-			<DndProvider backend={HTML5Backend}>
-				<TocSideBar />
-			</DndProvider>
+			<Box sx={{
+				borderLeft: "1px solid transparent",
+				borderColor: "divider",
+				pl: 2
+			}}>
 
-			<DocumentEditor />
+				{children}
 
-			<DocumentTocSideBar />
-
-		</Container>
+			</Box>
+		</>
 	)
 }
+TocSideBarDCSubCategory.propTypes = {
+	title: PropTypes.string,
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
+}
 
-KnowledgeBase.getLayout = getLayout
-export default KnowledgeBase
+export default TocSideBarDCSubCategory

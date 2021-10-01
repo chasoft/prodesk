@@ -68,7 +68,7 @@ export const initialState = {
 	activeSettingPanel: "",
 
 	/*
-		used in pages/admin/knowledge-base
+		used in pages/admin/documentation
 	*/
 }
 

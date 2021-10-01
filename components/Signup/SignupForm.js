@@ -37,8 +37,8 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
-import { isUsernameAvailable } from "./../../helpers/firebase"
-import { signUpWithEmail } from "./../../helpers/userAuthentication"
+import { isUsernameAvailable } from "./../../helpers/firebase/user"
+import { signUpWithEmail } from "./../../helpers/firebase/signup"
 import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS

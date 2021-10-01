@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { getAuth } from "./../../redux/selectors"
 import { setRedirect } from "./../../redux/slices/redirect"
 import { AuthAdminTrue, AuthUserTrue } from "./../AuthCheck"
-import { signOut } from "./../../helpers/userAuthentication"
+import { signOut } from "./../../helpers/firebase/logout"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"

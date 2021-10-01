@@ -1,18 +1,48 @@
-import { setRedirect } from "./../../redux/slices/redirect"
-import { REDIRECT_URL } from "./../constants"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import { doc, getDoc, writeBatch } from "firebase/firestore"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
 import { auth, db } from "."
+import { REDIRECT_URL } from "./../constants"
+import { setRedirect } from "./../../redux/slices/redirect"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 export const getInstallStatus = async () => {
-	const query = await db.doc("usernames/superadmin").get()
-	if (query.exists) {
-		const res = query.data()
-		if (res.nextStep === REDIRECT_URL.DONE)
-			return true
-		else
-			return false
-	} else {
-		return false
+	const docSnap = await getDoc(doc(db, "usernames", "superadmin"))
+	if (docSnap.exists) {
+		const res = docSnap.data()
+		return res.nextStep === REDIRECT_URL.DONE
 	}
+	return false
 }
 
 /**
@@ -25,16 +55,16 @@ export const createAdminAccount = async ({ email, password, name }, { enqueueSna
 	const username = "superadmin"
 	try {
 		enqueueSnackbar("Connecting with Authentication Server...", { variant: "info" })
-		const userCredential = await auth.createUserWithEmailAndPassword(email, password)
+		const userCredential = await createUserWithEmailAndPassword(auth, email, password)
 
-		const batch = db.batch()
+		const batch = writeBatch(db)
 		enqueueSnackbar("Updating the database...", { variant: "info" })
 
-		batch.set(db.doc(`users/${userCredential.user.uid}`), {
+		batch.set(doc(db, "users", userCredential.user.uid), {
 			email: userCredential.user.email,
 			username: username
 		})
-		batch.set(db.doc(`usernames/${username}`), {
+		batch.set(doc(db, "usernames", username), {
 			uid: JSON.stringify([userCredential.user.uid]),	//all associated account will be stored here in an Array
 			email: userCredential.user.email,
 			displayName: name,
@@ -54,8 +84,8 @@ export const createAdminAccount = async ({ email, password, name }, { enqueueSna
 
 export const installCompleted = async ({ enqueueSnackbar, dispatch }) => {
 	try {
-		const batch = db.batch()
-		batch.set(db.doc("usernames/superadmin"), {
+		const batch = writeBatch(db)
+		batch.set(doc(db, "usernames", "superadmin"), {
 			nextStep: REDIRECT_URL.DONE
 		}, { merge: true })
 		await batch.commit()

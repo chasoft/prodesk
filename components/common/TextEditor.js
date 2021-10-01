@@ -37,7 +37,7 @@ import Editor from "rich-markdown-editor"
 //PROJECT IMPORT
 import { setEditorData } from "./../../redux/slices/textEditor"
 import { getAuth, getTextEditor } from "./../../redux/selectors"
-import { STATE_CHANGED, storage } from "./../../helpers"
+import { STATE_CHANGED, storage } from "./../../helpers/firebase"
 
 //ASSETS
 
