@@ -24,7 +24,7 @@
 
 import { Container, Typography } from "@mui/material"
 import React from "react"
-import updateUiSettings from "../../helpers/updateUiSettings"
+import updateUiSettings from "./../../helpers/updateUiSettings"
 
 // MATERIAL-UI
 

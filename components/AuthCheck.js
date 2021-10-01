@@ -32,9 +32,9 @@ import { batch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth, getRedirect } from "./../redux/selectors"
-import { REDIRECT_URL, USERGROUP } from "../helpers/constants"
-import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "../redux/slices/redirect"
-import { regAdminURL } from "../helpers/regex"
+import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
+import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "./../redux/slices/redirect"
+import { regAdminURL } from "./../helpers/regex"
 
 //ASSETS
 

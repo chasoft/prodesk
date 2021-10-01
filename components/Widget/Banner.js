@@ -23,9 +23,11 @@
  *****************************************************************/
 
 import React from "react"
-import { Paper } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Box, Paper } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
 
@@ -33,24 +35,17 @@ import makeStyles from "@mui/styles/makeStyles"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const Banner = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
+		<Box sx={{ m: 1 }}>
 			<Paper elevation={2}>
 				This is a banner
 			</Paper>
-		</div>
+		</Box>
 	)
 }
 

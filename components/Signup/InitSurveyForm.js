@@ -33,9 +33,9 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
-import { doInitSurvey } from "../../helpers/firebase"
-import { RegContainer } from "../../layout/RegLayout"
+import { getAuth } from "./../../redux/selectors"
+import { doInitSurvey } from "./../../helpers/firebase"
+import { RegContainer } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

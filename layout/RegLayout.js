@@ -35,9 +35,9 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
 import Footer from "./../components/common/Footer"
-import { getUiSettings } from "../redux/selectors"
-import { ReduxRedirect } from "../components/AuthCheck"
-import { setflexDirection } from "../redux/slices/uiSettings"
+import { getUiSettings } from "./../redux/selectors"
+import { ReduxRedirect } from "./../components/AuthCheck"
+import { setflexDirection } from "./../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *

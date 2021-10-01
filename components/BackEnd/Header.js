@@ -27,7 +27,6 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 //MATERIAL-UI
-import withStyles from "@mui/styles/withStyles"
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
@@ -44,17 +43,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const StyledBadge = withStyles((theme) => ({
-	badge: {
-		right: 1,
-		top: 6,
-		border: `1px solid ${theme.palette.background.paper}`,
-		padding: "0 4px",
-		color: "white",
-		backgroundColor: theme.palette.warning.dark
-	},
-}))(Badge)
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -117,9 +105,9 @@ const Header = () => {
 						onClick={() => setShowNotificationDraw(true)}
 						sx={{ mx: 1 }}
 					>
-						<StyledBadge badgeContent={4} >
+						<Badge badgeContent={4} color="warning">
 							<NotificationsIcon />
-						</StyledBadge>
+						</Badge>
 					</IconButton>
 				</Tooltip>
 

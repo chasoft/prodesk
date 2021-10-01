@@ -26,56 +26,45 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Button, IconButton, Tooltip, Typography } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
+import { Avatar, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-
 
 //PROJECT IMPORT
 import AddMemberList from "./AddMemberList"
 
-
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	action: {
-		display: "flex",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginTop: theme.spacing(2)
-	},
-	icons: {
-		display: "flex",
-		justifyContent: "center",
-		alignContent: "flex-start",
-		alignItems: "center",
-		"& > *": {
-			marginRight: "5px",
-		},
-		"& > *:last-child": {
-			marginRight: 0,
-		}
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const MembersList = ({ dataSource, addMemberCallback }) => {
-	const classes = useStyles()
 	return <>
 		<Typography variant="caption">There are {dataSource.length} members</Typography>
-		<div className={classes.action}>
-			<div className={classes.icons}>
+		<Box sx={{
+			display: "flex",
+			justifyContent: "space-between",
+			alignItems: "center",
+			mt: 2
+		}}>
+			<Box sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignContent: "flex-start",
+				alignItems: "center",
+				"& > *": {
+					marginRight: "5px",
+				},
+				"& > *:last-child": {
+					marginRight: 0,
+				}
+			}}>
 				{
 					dataSource.map((item) => {
 						return (
@@ -100,8 +89,8 @@ const MembersList = ({ dataSource, addMemberCallback }) => {
 						</IconButton>
 					</Tooltip>
 				</AddMemberList>
-			</div>
-		</div>
+			</Box>
+		</Box>
 
 	</>
 }

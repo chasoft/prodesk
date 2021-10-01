@@ -28,8 +28,8 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } fro
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TextEditor from "../../common/TextEditor"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
+import TextEditor from "./../../common/TextEditor"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
 

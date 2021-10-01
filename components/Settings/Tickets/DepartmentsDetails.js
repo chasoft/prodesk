@@ -29,9 +29,9 @@ import PropTypes from "prop-types"
 import { Container, Grid, TextField, Typography } from "@mui/material"
 
 //PROJECT IMPORT
-import MembersList from "../MembersList"
-import SettingsSwitch from "../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
+import MembersList from "./../MembersList"
+import SettingsSwitch from "./../../common/SettingsSwitch"
+import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //THIRD-PARTY
 

@@ -35,9 +35,9 @@ import { useDispatch, useSelector } from "react-redux"
 import Editor from "rich-markdown-editor"
 
 //PROJECT IMPORT
-import { setEditorData } from "../../redux/slices/textEditor"
-import { getAuth, getTextEditor } from "../../redux/selectors"
-import { STATE_CHANGED, storage } from "./../../helpers/firebase"
+import { setEditorData } from "./../../redux/slices/textEditor"
+import { getAuth, getTextEditor } from "./../../redux/selectors"
+import { STATE_CHANGED, storage } from "./../../helpers"
 
 //ASSETS
 
@@ -76,7 +76,6 @@ const LinearProgressWithLabel = (props) => (
 	=> Music => turn to HTML5 player for .mp3, .wav...v.v.
  */
 
-// eslint-disable-next-line react/display-name
 const TextEditor = React.forwardRef((props, ref) => {
 	const { defaultValue = "", readOnly = false, storageDestination = "uploads", ...otherProps } = props
 
@@ -151,6 +150,8 @@ const TextEditor = React.forwardRef((props, ref) => {
 		</>
 	)
 })
+
+TextEditor.displayName = "TextEditor"
 
 TextEditor.propTypes = {
 	defaultValue: PropTypes.any,

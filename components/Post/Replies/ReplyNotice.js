@@ -23,9 +23,11 @@
  *****************************************************************/
 
 import React from "react"
-import { Typography } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Box, Typography } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
 
@@ -33,25 +35,18 @@ import makeStyles from "@mui/styles/makeStyles"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1, 1, 1, 8),
-		[theme.breakpoints.down("md")]: {
-			marginLeft: theme.spacing(0),
-		},
-	}
-}))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ReplyNotice = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>
+		<Box sx={{
+			my: 1, mr: 1,
+			ml: { xs: 0, md: 8 }
+		}}>
 			<Typography variant="caption" color="textSecondary">Last edited 6 hr ago</Typography>
-		</div>
+		</Box>
 	)
 }
 

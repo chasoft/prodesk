@@ -31,7 +31,7 @@ import { Container, Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/AdminLayout"
-import updateUiSettings from "../../helpers/updateUiSettings"
+import updateUiSettings from "./../../helpers/updateUiSettings"
 
 //ASSETS
 

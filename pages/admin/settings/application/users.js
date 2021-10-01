@@ -26,13 +26,12 @@ import React from "react"
 
 // MATERIAL-UI
 import { Typography } from "@mui/material"
-// import { makeStyles } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutSettings"
-import updateUiSettings from "../../../../helpers/updateUiSettings"
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
+import updateUiSettings from "./../../../../helpers/updateUiSettings"
 
 //ASSETS
 

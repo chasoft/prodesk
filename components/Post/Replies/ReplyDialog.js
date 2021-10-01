@@ -33,8 +33,8 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TextEditor from "../../common/TextEditor"
-import LearnMoreAdvancedTextEditor from "../../common"
+import TextEditor from "./../../common/TextEditor"
+import LearnMoreAdvancedTextEditor from "./../../common"
 
 //ASSETS
 

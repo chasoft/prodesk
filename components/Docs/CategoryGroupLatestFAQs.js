@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import React from "react"
-import { PostListItemShorten } from "../Post/PostListItem"
+import { PostListItemShorten } from "./../Post/PostListItem"
 import CategoryGroupItem from "./CategoryGroupItem"
 
 

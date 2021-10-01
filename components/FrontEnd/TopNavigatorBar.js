@@ -30,9 +30,9 @@ import { Paper, Tab, Tabs } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
-import { getUiSettings } from "../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
-import { FRONT_PAGE_TABS_NAME } from "../../layout/EntryLayout"
+import { getUiSettings } from "./../../redux/selectors"
+import { setRedirect } from "./../../redux/slices/redirect"
+import { FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
 
 //PROJECT IMPORT
 

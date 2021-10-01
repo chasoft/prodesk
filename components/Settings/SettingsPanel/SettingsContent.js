@@ -25,35 +25,30 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
+// MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
 
-
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const SettingsContent = ({ children }) => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>{children}</div>
+		<Box sx={{
+			m: 1
+		}}>
+			{children}
+		</Box>
 	)
 }
 SettingsContent.propTypes = { children: PropTypes.node }

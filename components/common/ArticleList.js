@@ -33,7 +33,7 @@ import { Box, ButtonBase, Link, Typography } from "@mui/material"
 //PROJECT IMPORT
 
 //ASSETS
-import { SvgItemIcon } from "./SvgIcons"
+import { DocumentIcon } from "./SvgIcons"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
@@ -87,7 +87,7 @@ const ArticlesList = ({ header, viewAllText, viewAllLink, dataSource }) => {
 				{dataSource.map((item) => (
 					<Link href={item.url} key={item.id}>
 						<li>
-							<SvgItemIcon />
+							<DocumentIcon />
 							<ButtonBase sx={{ textAlign: "left" }}>
 								{item.subject}
 							</ButtonBase>

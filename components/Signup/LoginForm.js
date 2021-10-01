@@ -41,13 +41,13 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { ForgotPasswordLink, SignUpLink } from "../common"
+import { ForgotPasswordLink, SignUpLink } from "./../common"
 import { signInWithEmail } from "./../../helpers/userAuthentication"
 import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import { getRedirect } from "../../redux/selectors"
+import { getRedirect } from "./../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *

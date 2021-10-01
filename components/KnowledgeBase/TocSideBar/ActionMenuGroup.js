@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useRef, useState } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, ClickAwayListener, Grow, Paper, Popper, Typography } from "@mui/material"
+import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -37,16 +37,13 @@ import { Box, ButtonBase, ClickAwayListener, Grow, Paper, Popper, Typography } f
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd"
-import LaunchIcon from "@mui/icons-material/Launch"
+import AddNewPopupMenu from "./AddNewPopupMenu"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-// eslint-disable-next-line react/display-name
-const ActionMenuItem = React.forwardRef((props, ref) => {
-	const { ItemIcon, onClick, children } = props
+const ActionMenuItem = React.forwardRef(({ ItemIcon, onClick = () => { }, children }, ref) => {
 	return (
 		<ButtonBase
 			ref={ref}
@@ -85,135 +82,35 @@ const ActionMenuItem = React.forwardRef((props, ref) => {
 				/>}
 
 			</Box>
-		</ButtonBase>
+		</ButtonBase >
 	)
 })
+
+ActionMenuItem.displayName = "ActionMenuItem"
+
 ActionMenuItem.propTypes = {
 	ItemIcon: PropTypes.object,
 	onClick: PropTypes.func,
 	children: PropTypes.node
 }
 
-const Divider = () => (
-	<Box sx={{
-		borderTop: "1px solid transparent",
-		mt: 1, pt: 1, mx: 3,
-		borderColor: "divider"
-	}} />
-)
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const ActionMenuGroup = () => {
-	const [open, setOpen] = useState(false)
-	const anchorRef = useRef(null)
-
-	const PopupMenuItem = useCallback(({ ItemIcon, title, description }) => {
-		return (
-			<Box sx={{
-				px: 3, py: 1,
-				":hover": {
-					cursor: "pointer",
-					backgroundColor: "action.hover",
-					"&>div>svg": {
-						fill: (theme) => theme.palette.primary.main
-					},
-					"&>div>p": {
-						color: "primary.main"
-					}
-				}
-			}}>
-				<Box sx={{
-					display: "flex",
-					alignItems: "center",
-				}}>
-					<ItemIcon fontSize="small" sx={{ fill: (theme) => theme.palette.grey[500] }} />
-					<Typography sx={{
-						ml: 1,
-						fontWeight: 500,
-					}}>{title}</Typography>
-				</Box>
-				<Typography sx={{
-					color: "grey.500",
-					fontWeight: 500,
-					fontSize: "0.8rem"
-				}}>
-					{description}
-				</Typography>
-			</Box>
-		)
-
-	}, [])
-
 	return (
-		<>
-			<Box
-				sx={{
-					mt: 3,
-					borderTop: "1px solid transparent",
-					borderColor: "divider"
-				}}
-			>
-				<ActionMenuItem ref={anchorRef} ItemIcon={AddIcon} onClick={() => setOpen(true)}>
-					New
-				</ActionMenuItem>
-				<ActionMenuItem ItemIcon={FolderOutlinedIcon} onClick={() => { }}>
-					File
-				</ActionMenuItem>
-			</Box>
-
-			<Popper
-				id="popup-addmore"
-				anchorEl={anchorRef.current}
-				open={open}
-				placement="right"
-				transition
-			>
-				{({ TransitionProps }) => (
-					<ClickAwayListener onClickAway={() => { setOpen(false) }}>
-						<Grow in={open} {...TransitionProps}>
-							<Paper elevation={4} sx={{ py: 2 }}>
-
-								<PopupMenuItem
-									ItemIcon={AddIcon}
-									title="New article"
-									description="Create a new plain text page"
-									onClick={() => {
-
-									}}
-								/>
-
-								<Divider />
-
-								<PopupMenuItem
-									ItemIcon={PlaylistAddIcon}
-									title="New category"
-									description="Group pages around key topics"
-									onClick={() => {
-
-									}}
-								/>
-
-								<Divider />
-
-								<PopupMenuItem
-									ItemIcon={LaunchIcon}
-									title="New external link"
-									description="Link to external websites"
-									onClick={() => {
-
-									}}
-								/>
-
-							</Paper>
-						</Grow>
-					</ClickAwayListener>
-				)}
-			</Popper>
-
-		</>
+		<Box
+			sx={{
+				mt: 3,
+				borderTop: "1px solid transparent",
+				borderColor: "divider"
+			}}
+		>
+			<ActionMenuItem ItemIcon={FolderOutlinedIcon}>
+				File
+			</ActionMenuItem>
+		</Box>
 	)
 }
 

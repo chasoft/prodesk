@@ -20,11 +20,10 @@
 
 import React from "react"
 import ListTroubleshoot from "./../components/Category/ListTroubleshoot"
-import { getLayout } from "./../layout/EntryLayout"
+import { getLayout, FRONT_PAGE_TABS_NAME } from "./../layout/EntryLayout"
 import AskNowFrame from "./../components/Docs/AskNowFrame"
 import { Container, Grid } from "@mui/material"
 import updateUiSettings from "./../helpers/updateUiSettings"
-import { FRONT_PAGE_TABS_NAME } from "./../layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *

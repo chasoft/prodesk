@@ -31,9 +31,9 @@ import { Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/ClientLayout"
-import Post from "../../../components/Post"
-import updateUiSettings from "../../../helpers/updateUiSettings"
+import { getLayout } from "./../../../layout/ClientLayout"
+import Post from "./../../../components/Post"
+import updateUiSettings from "./../../../helpers/updateUiSettings"
 
 //ASSETS
 

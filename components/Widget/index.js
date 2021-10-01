@@ -23,7 +23,11 @@
  *****************************************************************/
 
 import React from "react"
-import makeStyles from "@mui/styles/makeStyles"
+
+// MATERIAL-UI
+import { Box } from "@mui/material"
+
+//THIRD-PARTY
 
 //PROJECT IMPORT
 
@@ -31,20 +35,15 @@ import makeStyles from "@mui/styles/makeStyles"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		margin: theme.spacing(1),
-	}
-}))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const Widget = () => {
-	const classes = useStyles()
 	return (
-		<div className={classes.root}>Template</div>
+		<Box sx={{ margin: 1 }}>
+			Template
+		</Box>
 	)
 }
 

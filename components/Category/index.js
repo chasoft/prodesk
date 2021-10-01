@@ -33,7 +33,7 @@ import { Box, ButtonBase, Grid, Typography } from "@mui/material"
 
 
 //PROJECT IMPORT
-import { LINK_TYPE } from "../../helpers/constants"
+import { LINK_TYPE } from "./../../helpers/constants"
 
 
 //ASSETS

@@ -2,7 +2,7 @@ import React from "react"
 import { Container, Grid } from "@mui/material"
 import ArticleContent from "./ArticleContent"
 import ListArticles from "./ListArticles"
-import ProBreadcrumbs from "../FrontEnd/ProBreadcrumbs"
+import ProBreadcrumbs from "./../FrontEnd/ProBreadcrumbs"
 
 
 function Article() {

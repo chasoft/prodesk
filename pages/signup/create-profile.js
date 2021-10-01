@@ -25,10 +25,10 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { Logo } from "../../components/common"
-import AuthCheck from "../../components/AuthCheck"
-import CreateProfileForm from "../../components/Signup/CreateProfileForm"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
+import { Logo } from "./../../components/common"
+import AuthCheck from "./../../components/AuthCheck"
+import CreateProfileForm from "./../../components/Signup/CreateProfileForm"
+import { getLayout, TopLine, updateFlexDirection } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

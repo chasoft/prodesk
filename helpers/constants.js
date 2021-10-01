@@ -1,3 +1,9 @@
+import AddIcon from "@mui/icons-material/Add"
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd"
+import LaunchIcon from "@mui/icons-material/Launch"
+
+
+
 export const redirectAfterLogin = "redirectAfterLogin"
 
 export const LINK_TYPE = {
@@ -38,6 +44,12 @@ export const REDIRECT_URL = {
 	DONE: "DONE",
 }
 
+export const DOCS_ADD = {
+	ARTICLE: { code: "article", icon: AddIcon, title: "New article", description: "Create a new plain text page" },
+	CATEGORY: { code: "category", icon: PlaylistAddIcon, title: "New category", description: "Group pages around key topics" },
+	SUB_CATEGORY: { code: "sub_category", icon: PlaylistAddIcon, title: "New sub-category", description: "Group pages around key topics" },
+	EXTERNAL: { code: "external", icon: LaunchIcon, title: "New external link", description: "Link to external websites" },
+}
 
 export const ADVANCED_TABLE_COL = {
 	CHECKBOX: "CheckBox",

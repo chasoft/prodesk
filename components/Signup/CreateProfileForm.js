@@ -32,10 +32,10 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
-import { RegContainer } from "../../layout/RegLayout"
-import { createProfileRegStep } from "../../helpers/firebase"
-import { SimpleTogglePanel, DefaultAvatarPanel } from "../common"
+import { getAuth } from "./../../redux/selectors"
+import { RegContainer } from "./../../layout/RegLayout"
+import { createProfileRegStep } from "./../../helpers/firebase"
+import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
 
 /*****************************************************************
  * INIT                                                          *

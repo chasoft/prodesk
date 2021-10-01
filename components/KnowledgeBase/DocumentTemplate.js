@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-
+import { useToggle } from "react-use"
 
 //PROJECT IMPORT
 
@@ -115,6 +115,7 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  *****************************************************************/
 
 const DocumentTemplate = ({ setDefaultEditorData }) => {
+	const [on, toggle] = useToggle(false)
 	return (
 		<Box sx={{ mt: 6 }}>
 			<Typography sx={{
@@ -131,7 +132,10 @@ const DocumentTemplate = ({ setDefaultEditorData }) => {
 					<Grid item xs={12} sm={6} key={idx}>
 						<Paper
 							elevation={0}
-							onClick={() => { setDefaultEditorData(template.content) }}
+							onClick={() => {
+								setDefaultEditorData(template.content + (on ? "  " : ""))
+								toggle(!on)
+							}}
 							sx={{
 								p: 3,
 								border: "1px solid transparent",

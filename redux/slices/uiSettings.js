@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
+import { PRIORITY, TICKET_STATUS } from "./../../helpers/constants"
 
 const defaultBackground = {
 	top: 0,

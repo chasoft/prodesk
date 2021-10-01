@@ -26,7 +26,7 @@ import React from "react"
 
 // MATERIAL-UI
 import { Box, Typography } from "@mui/material"
-import { SvgItemIcon } from "../common/SvgIcons"
+import { DocumentIcon } from "./../common/SvgIcons"
 
 //THIRD-PARTY
 
@@ -81,31 +81,31 @@ function ListArticles() {
 					}}
 				>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Chrome &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Maps &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
 					</li>
 					<li>
-						<SvgItemIcon />
+						<DocumentIcon />
 						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
 					</li>
 				</Box>

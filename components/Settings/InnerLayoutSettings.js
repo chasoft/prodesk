@@ -27,7 +27,6 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Container, Typography } from "@mui/material"
-// import { makeStyles } from "@mui/material"
 
 //THIRD-PARTY
 

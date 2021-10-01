@@ -47,9 +47,9 @@ import { theme } from "./../components/theme"
  * STYLES                                                        *
  *****************************************************************/
 
-import "../styles/globals.css"
-import "../public/css/nprogress.css"
-import PageTransition from "../components/PageTransition"
+import "./../styles/globals.css"
+import "./../public/css/nprogress.css"
+import PageTransition from "./../components/PageTransition"
 
 
 /*****************************************************************

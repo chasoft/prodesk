@@ -37,8 +37,6 @@ import {
 	Typography,
 } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
 //THIRD-PARTY
 
 //PROJECT IMPORT
@@ -46,24 +44,18 @@ import { getLayout } from "./../../../layout/AdminLayout"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import updateUiSettings from "../../../helpers/updateUiSettings"
+import updateUiSettings from "./../../../helpers/updateUiSettings"
 
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		marginTop: "2rem"
-	},
-}))
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Settings() {
-	const classes = useStyles()
 
 	updateUiSettings({
 		background: {
@@ -75,10 +67,10 @@ function Settings() {
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 			<Typography variant="h1">Admin Settings</Typography>
 
-			<Card className={classes.root} variant="outlined">
+			<Card sx={{ marginTop: "2rem" }} variant="outlined">
 				<CardHeader
 					avatar={
-						<Avatar aria-label="recipe" className={classes.avatar}>
+						<Avatar aria-label="recipe">
 							R
 						</Avatar>
 					}
@@ -91,13 +83,13 @@ function Settings() {
 					subheader="September 14, 2016"
 				/>
 				<CardContent>
-					<Typography className={classes.title} color="textSecondary" gutterBottom>
+					<Typography color="textSecondary" gutterBottom>
 						Word of the Day
 					</Typography>
 					<Typography variant="h5" component="h2">
 						beddddddlent
 					</Typography>
-					<Typography className={classes.pos} color="textSecondary">
+					<Typography color="textSecondary">
 						adjective
 					</Typography>
 					<Typography variant="body2" component="p">

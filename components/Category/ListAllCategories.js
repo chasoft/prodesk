@@ -33,8 +33,8 @@ import { Box, ButtonBase, Grid, Typography } from "@mui/material"
 
 
 //PROJECT IMPORT
-import { LINK_TYPE } from "../../helpers/constants"
-import ViewModeSwitcher, { VIEW_LISTING_MODE } from "../common/ViewModeSwitcher"
+import { LINK_TYPE } from "./../../helpers/constants"
+import ViewModeSwitcher, { VIEW_LISTING_MODE } from "./../common/ViewModeSwitcher"
 
 
 //ASSETS

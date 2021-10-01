@@ -29,8 +29,6 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 import { Button, Typography, Grid, TextField } from "@mui/material"
 
-import makeStyles from "@mui/styles/makeStyles"
-
 //THIRD-PARTY
 import * as yup from "yup"
 import { useFormik } from "formik"
@@ -38,31 +36,13 @@ import { useFormik } from "formik"
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
-import { createAdminAccount } from "../../helpers/userAuthentication"
+import { createAdminAccount } from "./../../helpers/firebase/install"
 import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minHeight: "100vh",
-	},
-	content: {
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "center",
-		flexGrow: 1
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
-	},
-}))
 
 const validationSchema = yup.object({
 	name: yup
@@ -87,7 +67,6 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 function CreateSuperAdmin() {
-	const classes = useStyles()
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
 
@@ -122,7 +101,7 @@ function CreateSuperAdmin() {
 			</Typography>
 			<div style={{ padding: "3rem" }}>
 
-				<form className={classes.form} onSubmit={formik.handleSubmit}>
+				<form onSubmit={formik.handleSubmit}>
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6}>
 							<TextField
@@ -136,7 +115,6 @@ function CreateSuperAdmin() {
 								error={formik.touched.name && Boolean(formik.errors.name)}
 								helperText={formik.touched.name && formik.errors.name}
 								variant="outlined"
-								autoFocus
 								required
 							/>
 						</Grid>
@@ -201,7 +179,10 @@ function CreateSuperAdmin() {
 					</Grid>
 
 					<Button
-						type="submit" fullWidth variant="contained" color="primary" className={classes.submit}
+						type="submit" fullWidth variant="contained" color="primary"
+						sx={{
+							mt: 3, mb: 2, mx: 0
+						}}
 						disabled={!(formik.isValid && formik.dirty)}
 					>
 						Create Superadmin Account

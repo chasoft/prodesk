@@ -27,25 +27,13 @@ import React from "react"
 // MATERIAL-UI
 import { Avatar, Box, Typography } from "@mui/material"
 
+//THIRD-PARTY
+
 //PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-// const useStyles = makeStyles((theme) => ({
-// 	MuiTypography: {
-// 		caption: {
-// 			whiteSpace: "nowrap"
-// 		}
-// 	},
-// 	MuiAvatar: {
-// 		root: {
-// 			width: theme.spacing(3),
-// 			height: theme.spacing(3),
-// 		}
-// 	}
-// }))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

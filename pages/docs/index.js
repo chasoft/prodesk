@@ -20,12 +20,11 @@
 
 import React from "react"
 import ListAllCategories from "./../../components/Category/ListAllCategories"
-import { getLayout } from "../../layout/EntryLayout"
-import AskNowFrame from "../../components/Docs/AskNowFrame"
+import AskNowFrame from "./../../components/Docs/AskNowFrame"
 import { Container, Grid } from "@mui/material"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import { FRONT_PAGE_TABS_NAME } from "../../layout/EntryLayout"
-import FeaturedDocs from "../../components/FrontEnd/FeaturedDocs"
+import updateUiSettings from "./../../helpers/updateUiSettings"
+import { getLayout, FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
+import FeaturedDocs from "./../../components/FrontEnd/FeaturedDocs"
 
 /*****************************************************************
  * INIT                                                          *

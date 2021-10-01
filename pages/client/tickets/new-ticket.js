@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import React from "react"
-import updateUiSettings from "../../../helpers/updateUiSettings"
+import updateUiSettings from "./../../../helpers/updateUiSettings"
 
 // MATERIAL-UI
 import { Box, Container, Typography } from "@mui/material"
@@ -32,7 +32,7 @@ import { Box, Container, Typography } from "@mui/material"
 import TicketStepper from "./../../../components/Ticket/TicketStepper"
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/ClientLayout"
+import { getLayout } from "./../../../layout/ClientLayout"
 
 //ASSETS
 

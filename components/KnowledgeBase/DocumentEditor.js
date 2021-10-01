@@ -26,11 +26,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, InputBase } from "@mui/material"
-import TextEditor from "../common/TextEditor"
+import TextEditor from "./../common/TextEditor"
 import DocumentTemplate from "./DocumentTemplate"
-import { getTextEditor } from "../../redux/selectors"
+import { getTextEditor } from "./../../redux/selectors"
 import { useDispatch, useSelector } from "react-redux"
-import { setEditorDataHeadings } from "../../redux/slices/textEditor"
+import { setEditorDataHeadings } from "./../../redux/slices/textEditor"
 
 //THIRD-PARTY
 
@@ -64,7 +64,7 @@ const DocumentEditor = () => {
 	useEffect(() => {
 		const h = editorRef.current.getHeadings()
 		dispatch(setEditorDataHeadings(h))
-	}, [editorData])
+	}, [dispatch, editorData])
 
 	return (
 		<Box sx={{
@@ -81,7 +81,6 @@ const DocumentEditor = () => {
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
 				}}
-				autoFocus={true}
 			/>
 
 			<InputBase

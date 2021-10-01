@@ -35,7 +35,7 @@ import { Box, Typography } from "@mui/material"
 
 //ASSETS
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
-import ViewModeSwitcher, { VIEW_LISTING_MODE } from "../common/ViewModeSwitcher"
+import ViewModeSwitcher, { VIEW_LISTING_MODE } from "./../common/ViewModeSwitcher"
 
 /*****************************************************************
  * INIT                                                          *

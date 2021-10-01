@@ -37,11 +37,11 @@ import { batch } from "react-redux"
 import NewTicketStep1 from "./step1"
 import NewTicketStep2 from "./step2"
 import NewTicketStep3 from "./step3"
-import { getNewTicket } from "../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
+import { getNewTicket } from "./../../redux/selectors"
+import { setRedirect } from "./../../redux/slices/redirect"
 import { getPlainTextFromMarkDown } from "./../../helpers/utils"
-import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "../../redux/slices/newTicket"
-import { LearnMoreAdvancedTextEditor } from "../common"
+import { setInitNewTicketData, setCurrentStep, resetNewTicket } from "./../../redux/slices/newTicket"
+import { LearnMoreAdvancedTextEditor } from "./../common"
 
 //ASSETS
 

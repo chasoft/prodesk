@@ -26,9 +26,9 @@ import React from "react"
 
 //PROJECT IMPORT
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
-import PromotedSearch from "../components/FrontEnd/PromotedSearch"
-import FrontAccordions from "../components/FrontEnd/FrontAccordions"
-import updateUiSettings from "../helpers/updateUiSettings"
+import PromotedSearch from "./../components/FrontEnd/PromotedSearch"
+import FrontAccordions from "./../components/FrontEnd/FrontAccordions"
+import updateUiSettings from "./../helpers/updateUiSettings"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

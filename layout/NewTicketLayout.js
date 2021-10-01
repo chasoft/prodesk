@@ -22,47 +22,28 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import React from "react"
 import Head from "next/head"
 import PropTypes from "prop-types"
-import React from "react"
-import makeStyles from "@mui/styles/makeStyles"
-import { Grid } from "@mui/material"
-//PROJECT IMPORT
 
-import Header from "./Header"
-import Footer from "./Footer"
+// MATERIAL-UI
+import { Box, Grid } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import Header from "./../components/BackEnd/Header"
+import Footer from "./../components/common/Footer"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-// const useStyles = makeStyles((theme) => ({
-// 	grow: {
-// 		flexGrow: 1,
-// 	}
-// }))
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minHeight: "100vh",
-	},
-	mobile: {
-		[theme.breakpoints.down("md")]: {
-			display: "none"
-		},
-	},
-	fixFooter: {
-		marginTop: "auto",
-	}
-}))
 
 function NewTicketLayout({ children }) {
-	const classes = useStyles()
 	return (
 		<>
 			<Head>
@@ -70,19 +51,23 @@ function NewTicketLayout({ children }) {
 				<meta name="description" content="Site Layout Description" />
 			</Head>
 
-			<div className={classes.root} disableGutters={true}>
-				<div className={classes.mobile}>
+			<Box disableGutters={true} sx={{
+				display: "flex",
+				flexDirection: "column",
+				minHeight: "100vh",
+			}}>
+				<Box sx={{ display: { xs: "none", md: "block" } }}>
 					<Header />
-				</div>
+				</Box>
 
 				{children}
 
-				<Grid container className={classes.fixFooter}>
-					<Grid item xs={12} sm={11} md={10} className={classes.red}>
+				<Grid container sx={{ marginTop: "auto" }}>
+					<Grid item xs={12} sm={11} md={10}>
 						<Footer />
 					</Grid>
 				</Grid>
-			</div>
+			</Box>
 		</>
 	)
 }

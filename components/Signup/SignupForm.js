@@ -35,10 +35,10 @@ import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { LoginLink } from "../common"
-import { regRule } from "../../helpers/regex"
-import { isUsernameAvailable } from "../../helpers/firebase"
-import { signUpWithEmail } from "../../helpers/userAuthentication"
+import { LoginLink } from "./../common"
+import { regRule } from "./../../helpers/regex"
+import { isUsernameAvailable } from "./../../helpers/firebase"
+import { signUpWithEmail } from "./../../helpers/userAuthentication"
 import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS

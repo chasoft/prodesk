@@ -43,9 +43,10 @@ import DetailsRightButton from "./DetailsRightButton"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarItemBase = ({ active, onClick, handleOpen, sx, children }) => {
+const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, additionalButton, children, }, ref) => {
 	return (
 		<ButtonBase
+			ref={ref}
 			onClick={() => { onClick() }}
 			sx={{
 				display: "block", width: "100%", textAlign: "left",
@@ -62,10 +63,17 @@ const TocSideBarItemBase = ({ active, onClick, handleOpen, sx, children }) => {
 					borderBottom: "1px solid transparent",
 					borderColor: active ? "divider" : "transparent",
 					":hover": {
-						backgroundColor: "action.hover"
+						backgroundColor: "action.hover",
+						color: "#000"
 					},
-					"& > #detailsRightButton": { visibility: "hidden", },
-					":hover>#detailsRightButton": { visibility: "visible" },
+					"&>div": {
+						"&>#popper-trigger": { visibility: "hidden" },
+						"&>#detailsRightButton": { visibility: "hidden" },
+					},
+					":hover>div": {
+						"&>#popper-trigger": { visibility: "visible" },
+						"&>#detailsRightButton": { visibility: "visible" },
+					},
 					...sx
 				}}
 			>
@@ -73,17 +81,28 @@ const TocSideBarItemBase = ({ active, onClick, handleOpen, sx, children }) => {
 					{children}
 				</Typography>
 
-				<DetailsRightButton handleOpen={handleOpen} />
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+				}}>
+					{additionalButton}
+					<DetailsRightButton handleOpen={handleOpen} />
+				</Box>
 			</Box>
 		</ButtonBase>
 	)
-}
+})
+
+TocSideBarItemBase.displayName = "TocSideBarItemBase"
+
 TocSideBarItemBase.propTypes = {
 	active: PropTypes.bool,
 	onClick: PropTypes.func,
 	handleOpen: PropTypes.func,
 	sx: PropTypes.object,
-	children: PropTypes.node
+	additionalButton: PropTypes.node,
+	children: PropTypes.node,
+	otherProps: PropTypes.any
 }
 
 export default TocSideBarItemBase

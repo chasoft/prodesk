@@ -32,10 +32,10 @@ import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import ClientStats from "../../components/BackEnd/client/ClientStats"
-import RecentActivities from "../../components/BackEnd/client/RecentActivities"
-import LatestTicketFeedback from "../../components/BackEnd/client/LatestTicketFeedback"
+import updateUiSettings from "./../../helpers/updateUiSettings"
+import ClientStats from "./../../components/BackEnd/client/ClientStats"
+import RecentActivities from "./../../components/BackEnd/client/RecentActivities"
+import LatestTicketFeedback from "./../../components/BackEnd/client/LatestTicketFeedback"
 
 //ASSETS
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"

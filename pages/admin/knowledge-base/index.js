@@ -28,13 +28,15 @@ import React from "react"
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
+import { HTML5Backend } from "react-dnd-html5-backend"
+import { DndProvider } from "react-dnd"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
-import updateUiSettings from "../../../helpers/updateUiSettings"
-import TocSideBar from "../../../components/KnowledgeBase/TocSideBar"
-import DocumentEditor from "../../../components/KnowledgeBase/DocumentEditor"
-import DocumentTocSideBar from "../../../components/KnowledgeBase/DocumentTocSideBar"
+import updateUiSettings from "./../../../helpers/updateUiSettings"
+import TocSideBar from "./../../../components/KnowledgeBase/TocSideBar"
+import DocumentEditor from "./../../../components/KnowledgeBase/DocumentEditor"
+import DocumentTocSideBar from "./../../../components/KnowledgeBase/DocumentTocSideBar"
 
 //ASSETS
 
@@ -58,6 +60,8 @@ const DUMMY_Content = {
 
 function KnowledgeBase() {
 
+
+
 	updateUiSettings({
 		title: "Knowlege Base Management",
 		background: {
@@ -79,7 +83,9 @@ function KnowledgeBase() {
 			disableGutters
 		>
 
-			<TocSideBar />
+			<DndProvider backend={HTML5Backend}>
+				<TocSideBar />
+			</DndProvider>
 
 			<DocumentEditor />
 

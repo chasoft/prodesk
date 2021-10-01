@@ -18,10 +18,10 @@ import { useSnackbar } from "notistack"
 import { getRootLayout } from "./../../layout/RootLayout"
 import { imageUploader, STATE_CHANGED, storage } from "./../../helpers/firebase"
 import { useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
+import { getAuth } from "./../../redux/selectors"
 import { nanoid } from "nanoid"
-import Gallery from "../../components/Gallery"
-import AuthCheck from "../../components/AuthCheck"
+import Gallery from "./../../components/Gallery"
+import AuthCheck from "./../../components/AuthCheck"
 
 //ASSETS
 import DescriptionIcon from "@mui/icons-material/Description"

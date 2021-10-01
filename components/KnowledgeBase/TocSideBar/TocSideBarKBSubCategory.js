@@ -32,6 +32,8 @@ import { Box } from "@mui/material"
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
+import TocSideBarAddNew from "./TocSideBarAddNew"
+import { DOCS_ADD } from "./../../../helpers/constants"
 
 //ASSETS
 
@@ -50,6 +52,14 @@ const TocSideBarKBSubCategory = ({ title, active, onClick, handleOpen, children 
 				selected={active}
 				onClick={onClick}
 				handleOpen={handleOpen}
+				additionalButton={
+					<TocSideBarAddNew actions={[
+						DOCS_ADD.CATEGORY,
+						DOCS_ADD.ARTICLE,
+						DOCS_ADD.EXTERNAL,
+					]}
+					/>
+				}
 			>
 				{title}
 			</TocSideBarItemBase>
@@ -59,7 +69,9 @@ const TocSideBarKBSubCategory = ({ title, active, onClick, handleOpen, children 
 				borderColor: "divider",
 				pl: 2
 			}}>
+
 				{children}
+
 			</Box>
 		</>
 	)

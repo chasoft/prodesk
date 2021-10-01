@@ -29,14 +29,14 @@ import { Box, Fab, Paper, Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import AskNow from "../Docs/AskNow"
-import { getUiSettings } from "../../redux/selectors"
-import { PRIORITY, STATUS_FILTER } from "../../helpers/constants"
-import PostListItem, { PostListEmpty } from "../Post/PostListItem"
+import AskNow from "./../Docs/AskNow"
+import { getUiSettings } from "./../../redux/selectors"
+import { PRIORITY, STATUS_FILTER } from "./../../helpers/constants"
+import PostListItem, { PostListEmpty } from "./../Post/PostListItem"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import { resetTicketsFilter } from "../../redux/slices/uiSettings"
+import { resetTicketsFilter } from "./../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *

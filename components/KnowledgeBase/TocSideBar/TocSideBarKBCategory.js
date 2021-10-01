@@ -30,6 +30,8 @@ import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import DetailsRightButton from "./DetailsRightButton"
+import TocSideBarAddNew from "./TocSideBarAddNew"
+import { DOCS_ADD } from "./../../../helpers/constants"
 
 //PROJECT IMPORT
 
@@ -53,8 +55,15 @@ const TocSideBarKBCategory = ({ title, handleOpen, children }) => (
 		<Box sx={{
 			display: "flex",
 			justifyContent: "space-between",
-			"& > #detailsRightButton": { visibility: "hidden", },
-			":hover>#detailsRightButton": { visibility: "visible" }
+			"&>div": {
+				"&>#popper-trigger": { visibility: "hidden" },
+				"&>#detailsRightButton": { visibility: "hidden" },
+			},
+			":hover>p": { color: "#000" },
+			":hover>div": {
+				"&>#popper-trigger": { visibility: "visible" },
+				"&>#detailsRightButton": { visibility: "visible" },
+			},
 		}}>
 			<Typography sx={{
 				px: 2, py: 1,
@@ -65,7 +74,19 @@ const TocSideBarKBCategory = ({ title, handleOpen, children }) => (
 			}}>
 				{title}
 			</Typography>
-			<DetailsRightButton handleOpen={handleOpen} />
+
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+			}}>
+				<TocSideBarAddNew actions={[
+					DOCS_ADD.CATEGORY,
+					DOCS_ADD.SUB_CATEGORY,
+					DOCS_ADD.ARTICLE,
+					DOCS_ADD.EXTERNAL,
+				]} />
+				<DetailsRightButton handleOpen={handleOpen} />
+			</Box>
 		</Box>
 
 		{children}

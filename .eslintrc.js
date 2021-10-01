@@ -8,6 +8,9 @@ module.exports = {
 		"eslint:recommended",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
+		"plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:jsx-a11y/recommended"
 	],
 	"parserOptions": {
 		"ecmaFeatures": {
@@ -17,7 +20,8 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"plugins": [
-		"react"
+		"react",
+		"jsx-a11y"
 	],
 	"rules": {
 		"indent": [

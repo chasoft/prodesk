@@ -23,59 +23,51 @@
  *****************************************************************/
 
 //CORE SYSTEM
-import React, { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 import DefaultErrorPage from "next/error"
+import React, { useEffect, useState } from "react"
 
 // MATERIAL-UI
-import { CircularProgress, Container } from "@mui/material"
-
-import makeStyles from "@mui/styles/makeStyles"
+import { Box, CircularProgress, Container } from "@mui/material"
 
 //PROJECT IMPORT
-import Footer from "../../components/common/Footer"
-import { getInstallStatus } from "../../helpers/firebase"
-import { ReduxRedirect } from "../../components/AuthCheck"
+import Footer from "./../../components/common/Footer"
+import { ReduxRedirect } from "./../../components/AuthCheck"
+import { getInstallStatus } from "./../../helpers/firebase/install"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles({
-	root: {
-		display: "flex",
-		flexDirection: "column",
-		minHeight: "100vh",
-	},
-	content: {
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "center",
-		flexGrow: 1
-	}
-})
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InstallLayout({ children }) {
-	const classes = useStyles()
 	const [isInstalled, setIsInstalled] = useState(null)
 
 	useEffect(async () => {
 		const installStatus = await getInstallStatus()
 		setIsInstalled(installStatus)
-	})
+	}, [])
 
 	if (isInstalled)
 		return <DefaultErrorPage statusCode={404} />
 
 	return (
 		<ReduxRedirect>
-			<div className={classes.root} >
-				<Container maxWidth="sm" className={classes.content}>
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				minHeight: "100vh",
+			}}>
+				<Container maxWidth="sm" sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center",
+					flexGrow: 1
+				}}>
 					{
 						(isInstalled === null) ? <CircularProgress />
 							: children
@@ -84,7 +76,7 @@ function InstallLayout({ children }) {
 
 				<Footer />
 
-			</div>
+			</Box>
 		</ReduxRedirect>
 	)
 }

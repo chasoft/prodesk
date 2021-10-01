@@ -28,8 +28,8 @@ import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
+import { getUiSettings } from "./../../redux/selectors"
+import { setRedirect } from "./../../redux/slices/redirect"
 
 //ASSETS
 

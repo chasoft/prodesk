@@ -22,17 +22,16 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box, Grid } from "@mui/material"
+import { Container, Box } from "@mui/material"
 import React from "react"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/ClientLayout"
-import updateUiSettings from "../../../helpers/updateUiSettings"
-import ListTickets from "../../../components/Ticket/ListTickets"
-import ListTicketsFilter from "../../../components/Ticket/ListTicketsFilter"
-import FeaturedDocs from "../../../components/FrontEnd/FeaturedDocs"
+import { getLayout } from "./../../../layout/ClientLayout"
+import updateUiSettings from "./../../../helpers/updateUiSettings"
+import ListTickets from "./../../../components/Ticket/ListTickets"
+import ListTicketsFilter from "./../../../components/Ticket/ListTicketsFilter"
 
 //ASSETS
 

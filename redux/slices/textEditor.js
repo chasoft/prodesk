@@ -21,18 +21,22 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
+	/* List all documents */
+	docList: [],
+	activeDocId: null,
+
 	/* Editor */
-	editorData: "",
-	editorDataHeadings: [],
-	scrollTo: "",
-	/*  */
-	pageTitle: "",
-	pageDescription: "",
-	pageSlug: "",
-	pageId: null,
-	pageCategory: null,
-	pageTags: [],
-	pageStatus: "draft"
+
+	// editorData: "",
+	// editorDataHeadings: [],
+	// /*  */
+	// pageTitle: "",
+	// pageDescription: "",
+	// pageSlug: "",
+	// pageId: null,
+	// pageCategory: null,
+	// pageTags: [],
+	// pageStatus: "draft"
 }
 
 const textEditorSlice = createSlice({
@@ -45,16 +49,12 @@ const textEditorSlice = createSlice({
 		setEditorDataHeadings: (state, { payload }) => {
 			state.editorDataHeadings = payload
 		},
-		setScrollTo: (state, { payload }) => {
-			state.scrollTo = payload
-		},
 	},
 })
 
 export const {
 	setEditorData,
 	setEditorDataHeadings,
-	setScrollTo
 } = textEditorSlice.actions
 
 export default textEditorSlice.reducer

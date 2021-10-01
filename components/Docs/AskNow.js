@@ -31,7 +31,7 @@ import { Box, Button, Paper, Typography } from "@mui/material"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { setRedirect } from "../../redux/slices/redirect"
+import { setRedirect } from "./../../redux/slices/redirect"
 
 //ASSETS
 import ForumIcon from "@mui/icons-material/Forum"

@@ -31,7 +31,7 @@ import { Box, Container, Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../Settings/SettingsPanel"
+import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
 

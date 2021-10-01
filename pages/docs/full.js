@@ -30,10 +30,10 @@ import { Box, Container, Grid } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Banner from "../../components/widget/Banner"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
-import ListAllCategories from "../../components/Category/ListAllCategories"
+import Banner from "./../../components/widget/Banner"
+import updateUiSettings from "./../../helpers/updateUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
+import ListAllCategories from "./../../components/Category/ListAllCategories"
 
 
 /*****************************************************************

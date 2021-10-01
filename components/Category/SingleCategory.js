@@ -32,7 +32,7 @@ import { Box, ButtonBase, Grid, IconButton, Tooltip, Typography } from "@mui/mat
 
 
 //PROJECT IMPORT
-import { LINK_TYPE } from "../../helpers/constants"
+import { LINK_TYPE } from "./../../helpers/constants"
 
 //ASSETS
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"

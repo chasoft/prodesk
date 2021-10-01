@@ -22,52 +22,59 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { createRef, forwardRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import ScrollSpy from "react-scrollspy-navigation"
 
 //PROJECT IMPORT
 
 //ASSETS
 import { useSelector } from "react-redux"
 import PostAddIcon from "@mui/icons-material/PostAdd"
-import { getTextEditor } from "../../redux/selectors"
+import { getTextEditor } from "./../../redux/selectors"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+import { ExportPdfIcon } from "./../common/SvgIcons"
+import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const TocItem = ({ sx, anchor, active, children }) => {
+const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
 	return (
-		<Box
-			sx={{
-				display: "flex",
-				alignItems: "center",
-				px: 2, py: 0.5,
-				cursor: "pointer",
-				":hover": {
-					color: "primary.main",
-					"&>svg": {
-						fill: (theme) => theme.palette.primary.main
-					}
-				},
-				color: active ? "primary.main" : "grey.500",
-				...sx
-			}}
-		>
-			<a href={`#${anchor}`}>
+		<a ref={ref} href={`#${anchor}`}>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					px: 2, py: 0.5,
+					cursor: "pointer",
+					":hover": {
+						color: "primary.main",
+						"&>svg": {
+							fill: (theme) => theme.palette.primary.main
+						}
+					},
+					color: active ? "primary.main" : "grey.500",
+					...sx
+				}}
+			>
 				<Typography sx={{ fontSize: "0.80rem" }} noWrap>
 					{children}
 				</Typography>
-			</a>
-		</Box>
+			</Box>
+		</a>
 	)
-}
+})
+
+TocItem.displayName = "TocItem"
+
 TocItem.propTypes = {
 	sx: PropTypes.object,
 	anchor: PropTypes.string,
@@ -82,6 +89,12 @@ const RightMenuItem = ({ sx, Icon, children }) => {
 			alignItems: "center",
 			px: 2, py: 1,
 			cursor: "pointer",
+			"&>svg": {
+				width: "1.25rem",
+				height: "1.25rem",
+				marginRight: "8px",
+				fill: "#9e9e9e",
+			},
 			":hover": {
 				backgroundColor: "action.hover",
 				"&>p": { color: "primary.main" },
@@ -89,13 +102,7 @@ const RightMenuItem = ({ sx, Icon, children }) => {
 			},
 			...sx
 		}}>
-			{Icon && <Icon
-				fontSize="small"
-				sx={{
-					mr: 1,
-					fill: (theme) => theme.palette.grey[500]
-				}} />}
-
+			{Icon && <Icon />}
 			<Typography sx={{ fontSize: "0.80rem", fontWeight: "bold", color: "grey.700" }} noWrap>{children}</Typography>
 		</Box>
 	)
@@ -110,98 +117,10 @@ RightMenuItem.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+//@Note: TOC based on https://medium.com/the-coders-guide-to-javascript/smooth-scrolling-anchor-menu-in-reactjs-175030d0bce2
+
 const DocumentTocSideBar = () => {
 	const { editorDataHeadings } = useSelector(getTextEditor)
-	const [menuItems, setMenuItem] = useState({ Top: 0 })
-
-	/*
-	 * Update menuItems whenever editorDataHeadings has changed!
-	 * Keep current pos value!
-	 */
-	const getMenuItems = useMemo(() => {
-		const blankNewObject = editorDataHeadings.reduce((res, item) => {
-			if (item.level < 3) return res = { ...res, [item.id]: null }
-		}, { "Top": 0 })
-
-		for (const key in blankNewObject) {
-			if (key in menuItems) blankNewObject[key] = menuItems[key]
-		}
-		console.log("getMenuItems executed")
-		console.log({ editorDataHeadings: editorDataHeadings })
-		return blankNewObject
-	}, [menuItems])
-
-	useEffect(() => {
-		setMenuItem(getMenuItems)
-		console.log("setMenuItem executed")
-		console.log({ getMenuItems: getMenuItems })
-	}, [getMenuItems])
-
-	/*
-	 * Store the active menuItem in state to force update
-	 * when changed
-	 */
-	const [activeItem, setActiveItem] = useState("Top")
-
-	/*
-	* The MutationObserver allows us to watch for a few different
-	* events, including page resizing when new elements might be
-	* added to the page (potentially changing the location of our
-	* anchor points)
-	* We also listen to the scroll event in order to update based
-	* on our user's scroll depth
-	  */
-	useEffect(() => {
-		const observer = new MutationObserver(getAnchorPoints)
-		observer.observe(document?.getElementById("__next"), {
-			childList: true,
-			subtree: true,
-		})
-		window.addEventListener("scroll", handleScroll)
-	}, [])
-
-	/*
-	* Programmatically determine where to set AnchorPoints for our Menu
-	*/
-	const getAnchorPoints = () => {
-		const curScroll = window.scrollY
-		// const viewPortHeight = Math.max(
-		// 	document.documentElement.clientHeight,
-		// 	window.innerHeight || 0
-		// )
-		for (const key in menuItems) {
-			menuItems[key] = document.getElementById(key).getBoundingClientRect().top - curScroll
-		}
-		// const bottom = document.body.offsetHeight
-		handleScroll()
-	}
-
-	/*
-	 * Determine which section the user is viewing, based on their scroll-depth
-	 * Locating the active section allows us to update our MenuItems to show which
-	 * item is currently active
-	 */
-	const handleScroll = () => {
-		const curPos = window.scrollY
-		let curSection = null
-		/*
-		 * Iterate through our sections object to find which section matches with
-		 * the current scrollDepth of the user.
-		 * NOTE: This code assumes that the sections object is built with an 'ordered'
-		 * list of sections, with the lowest depth (top) section first and greatest
-		 * depth (bottom) section last
-		 * If your items are out-of-order, this code will not function correctly
-		 */
-		for (const section in menuItems) {
-			curSection = curPos > menuItems[section] ? section : curSection
-			if (curSection !== section) {
-				break
-			}
-		}
-		if (curSection !== activeItem) {
-			setActiveItem(curSection)
-		}
-	}
 
 	return (
 		<Box sx={{
@@ -219,7 +138,9 @@ const DocumentTocSideBar = () => {
 				}}>
 
 					<RightMenuItem Icon={PostAddIcon}>New Article</RightMenuItem>
-					<RightMenuItem Icon={MoreHorizIcon}>More...</RightMenuItem>
+					<RightMenuItem Icon={BiImport}>Import</RightMenuItem>
+					<RightMenuItem Icon={ExportPdfIcon} fontSize="small">Export as PDF</RightMenuItem>
+					<RightMenuItem Icon={MoreHorizIcon}>More</RightMenuItem>
 
 				</Box>
 
@@ -238,25 +159,28 @@ const DocumentTocSideBar = () => {
 						Contents
 					</Typography>
 
-					{
-						editorDataHeadings.map((item) => {
-							if (item.level > 2) return null
+					<nav>
+						{/* //TODO! ScrollSpy not working */}
+						<ScrollSpy offsetTop={50}>
+							{editorDataHeadings.map((item) => {
+								if (item.level > 2) return null
+								return (
+									<TocItem
+										ref={createRef()}
+										key={item.id}
+										anchor={item.id}
+										sx={{
+											py: 0.5,
+											ml: (item.level === 2) ? 2 : 0
+										}}
+									>
+										{item.title}
+									</TocItem>
+								)
+							})}
+						</ScrollSpy>
+					</nav>
 
-							return (
-								<TocItem
-									key={item.id}
-									anchor={item.id}
-									active={(item.id === activeItem) ? true : false}
-									sx={{
-										py: 0.5,
-										ml: (item.level === 2) ? 2 : 0
-									}}>
-									{item.title}
-								</TocItem>
-							)
-
-						})
-					}
 				</Box>
 
 			</div>

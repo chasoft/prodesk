@@ -21,7 +21,7 @@
 
 import React from "react"
 import PostListItem, { PostListEmpty } from "./../../Post/PostListItem"
-import ListGroup from "../../common/ListGroup"
+import ListGroup from "./../../common/ListGroup"
 
 /*****************************************************************
  * INIT                                                          *

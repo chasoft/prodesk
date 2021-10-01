@@ -23,18 +23,13 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
-import { Avatar, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography, useMediaQuery } from "@mui/material"
-import { useTheme } from "@mui/styles"
+// MATERIAL-UI
+import { Avatar, Button, Checkbox, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
-// import { getUiSettings } from "../../redux/selectors"
-// import { useSelector, useDispatch } from "react-redux"
-// import { setRedirect } from "../../redux/slices/redirect"
 
 //PROJECT IMPORT
-
 
 //ASSETS
 
@@ -42,16 +37,7 @@ import PerfectScrollbar from "react-perfect-scrollbar"
  * INIT                                                          *
  *****************************************************************/
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "360px",
-		borderTop: `1px solid ${theme.palette.divider}`,
-		borderBottom: `1px solid ${theme.palette.divider}`,
-	},
-}))
-
 const AddMemberList = ({ department, members, children }) => {
-	const classes = useStyles()
 
 	const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -84,7 +70,7 @@ const AddMemberList = ({ department, members, children }) => {
 
 	return (
 		<div>
-			<div onClick={handleClick}>{children}</div>
+			<div onClick={() => handleClick()}>{children}</div>
 
 			<Popover
 				open={open}
@@ -103,7 +89,12 @@ const AddMemberList = ({ department, members, children }) => {
 					<Typography variant="button">Department: {department}</Typography>
 				</div>
 
-				<List dense className={classes.root}>
+				<List dense sx={{
+					width: "360px",
+					borderTop: "1px solid",
+					borderBottom: "1px solid",
+					borderColor: "divider"
+				}}>
 					<PerfectScrollbar
 						component="div"
 						suppressScrollX={true}

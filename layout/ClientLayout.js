@@ -32,13 +32,13 @@ import { Box } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Header from "../components/BackEnd/Header"
-import SideBar from "../components/BackEnd/SideBar"
-import Footer from "../components/common/Footer"
-import { MENU_ITEM_TYPE } from "../helpers/constants"
-import AuthCheck, { ReduxRedirect } from "../components/AuthCheck"
+import Header from "./../components/BackEnd/Header"
+import SideBar from "./../components/BackEnd/SideBar"
+import Footer from "./../components/common/Footer"
+import { MENU_ITEM_TYPE } from "./../helpers/constants"
+import AuthCheck, { ReduxRedirect } from "./../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
-import { setScrolled } from "../redux/slices/uiSettings"
+import { setScrolled } from "./../redux/slices/uiSettings"
 import { getUiSettings } from "./../redux/selectors"
 
 //ASSETS

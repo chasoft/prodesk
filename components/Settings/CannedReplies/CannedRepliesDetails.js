@@ -29,8 +29,8 @@ import PropTypes from "prop-types"
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //PROJECT IMPORT
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
-import TextEditor from "../../common/TextEditor"
+import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import TextEditor from "./../../common/TextEditor"
 
 //THIRD-PARTY
 

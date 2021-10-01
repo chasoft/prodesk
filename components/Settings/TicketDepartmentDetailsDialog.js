@@ -23,31 +23,19 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-import makeStyles from "@mui/styles/makeStyles"
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material"
+// MATERIAL-UI
 import { useTheme } from "@mui/styles"
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
-// import { getUiSettings } from "../../redux/selectors"
-// import { useSelector, useDispatch } from "react-redux"
-// import { setRedirect } from "../../redux/slices/redirect"
 
 //PROJECT IMPORT
-
 
 //ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-// const useStyles = makeStyles({
-// 	root: {
-// 		flexGrow: 1,
-// 		marginTop: "1rem",
-// 		marginBottom: "2rem"
-// 	},
-// })
 
 const TicketDepartmentDetailsDialog = ({ department, children }) => {
 	// const classes = useStyles()
@@ -78,10 +66,10 @@ const TicketDepartmentDetailsDialog = ({ department, children }) => {
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button autoFocus onClick={handleClose} color="primary">
+					<Button onClick={handleClose} color="primary">
 						Disagree
 					</Button>
-					<Button onClick={handleClose} color="primary" autoFocus>
+					<Button onClick={handleClose} color="primary">
 						Agree
 					</Button>
 				</DialogActions>

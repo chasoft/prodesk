@@ -33,9 +33,9 @@ import { Box, Container, Grid } from "@mui/material"
 
 //PROJECT IMPORT
 import Category from "./../../components/Category"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import Banner from "../../components/widget/Banner"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
+import updateUiSettings from "./../../helpers/updateUiSettings"
+import Banner from "./../../components/widget/Banner"
 
 
 /*****************************************************************

@@ -26,8 +26,8 @@ import PropTypes from "prop-types"
 import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import AvatarList from "../../common/AvatarList"
-import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "../../Settings/SettingsPanel"
+import AvatarList from "./../../common/AvatarList"
+import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
 

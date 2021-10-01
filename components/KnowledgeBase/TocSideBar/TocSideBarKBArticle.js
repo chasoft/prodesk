@@ -28,9 +28,9 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 
 //THIRD-PARTY
-import TocSideBarItemBase from "./TocSideBarItemBase"
 
 //PROJECT IMPORT
+import TocSideBarItemBase from "./TocSideBarItemBase"
 
 
 //ASSETS
@@ -45,13 +45,15 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
 
 const TocSideBarKBArticle = ({ active, onClick, handleOpen, children }) => {
 	return (
-		<TocSideBarItemBase
-			active={active}
-			onClick={onClick}
-			handleOpen={handleOpen}
-		>
-			{children}
-		</TocSideBarItemBase>
+		<>
+			<TocSideBarItemBase
+				active={active}
+				onClick={onClick}
+				handleOpen={handleOpen}
+			>
+				{children}
+			</TocSideBarItemBase>
+		</>
 	)
 }
 TocSideBarKBArticle.propTypes = {

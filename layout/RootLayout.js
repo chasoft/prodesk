@@ -33,10 +33,10 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
-import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase"
-import { ReduxRedirect } from "../components/AuthCheck"
+import { auth, getUserDocByUid, getUsernameDocByUsername } from "./../helpers"
+import { ReduxRedirect } from "./../components/AuthCheck"
 import { setRedirect } from "./../redux/slices/redirect"
-import { regAdminURL } from "../helpers/regex"
+import { regAdminURL } from "./../helpers/regex"
 import { useRouter } from "next/router"
 
 /*****************************************************************

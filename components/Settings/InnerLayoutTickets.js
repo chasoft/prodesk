@@ -27,13 +27,11 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Container, Typography } from "@mui/material"
-// import { makeStyles } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
-import updateUiSettings from "./../../helpers/updateUiSettings"
 import TabsSettings from "./TabsSettings"
 
 //ASSETS

@@ -31,11 +31,11 @@ import { Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../../../redux/selectors"
-import updateUiSettings from "../../../../helpers/updateUiSettings"
-import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
+import { getUiSettings } from "./../../../../redux/selectors"
+import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import InfoIcon from "@mui/icons-material/Info"

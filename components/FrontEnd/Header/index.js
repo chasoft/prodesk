@@ -32,9 +32,9 @@ import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { Logo } from "../../common"
-import { AuthFalse, AuthTrue } from "../../AuthCheck"
-import UserIcon from "../../BackEnd/UserIcon"
+import { Logo } from "./../../common"
+import { AuthFalse, AuthTrue } from "./../../AuthCheck"
+import UserIcon from "./../../BackEnd/UserIcon"
 import LeftIcon from "./LeftIcon"
 import SearchBox from "./SearchBox"
 import PortfolioLinks from "./PortfolioLinks"

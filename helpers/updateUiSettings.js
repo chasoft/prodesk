@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { batch, useDispatch } from "react-redux"
 
-import { setBackgroundForLoggedinPage, setActiveSettingTab, setActiveSettingPanel } from "../redux/slices/uiSettings"
+import { setBackgroundForLoggedinPage, setActiveSettingTab, setActiveSettingPanel } from "./../redux/slices/uiSettings"
 import { setTitle, setSubTitle, setPageId } from "./../redux/slices/pageMeta"
 
 export default function updateUiSettings(

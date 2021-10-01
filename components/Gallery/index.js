@@ -1,43 +1,50 @@
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
+
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
 import PropTypes from "prop-types"
-import {
-	Box,
-	Grid,
-	Popover,
-	TextField,
-	Button,
-	Drawer,
-	AppBar,
-	Toolbar,
-	Typography,
-	ImageList,
-	ImageListItem,
-	CircularProgress,
-	Dialog,
-	useMediaQuery,
-	DialogTitle,
-	DialogContent,
-	DialogContentText,
-	DialogActions,
-	IconButton,
-	Tabs,
-	Tab,
-	Paper,
-} from "@mui/material"
+import React, { useState } from "react"
+
+// MATERIAL-UI
+import { Box, Grid, Button, Typography, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogActions, IconButton, Paper } from "@mui/material"
 import makeStyles from "@mui/styles/makeStyles"
-import { useSnackbar } from "notistack"
-import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
-import * as yup from "yup"
-import { useFormik } from "formik"
-import dayjs from "dayjs"
 import { useTheme } from "@mui/material/styles"
 
-import { useDownloadURL } from "react-firebase-hooks/storage"
-import { storage } from "../../helpers/firebase"
-import { getListAll, useGetAllFiles } from "../../helpers/firebase-storage"
+//THIRD-PARTY
+import dayjs from "dayjs"
+import * as yup from "yup"
+import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+
+//PROJECT IMPORT
+import { useGetAllFiles } from "./../../helpers/firebase-storage"
+
+//ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -213,11 +220,14 @@ const itemData = [
 	},
 ]
 
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
 function Gallery({ children }) {
 	const theme = useTheme()
 	const classes = useStyles()
 	const { fileList } = useGetAllFiles()
-	const { enqueueSnackbar } = useSnackbar()
 
 	const [showGallery, setShowGallery] = useState(false)
 	const [tabId, setTabId] = useState(0)

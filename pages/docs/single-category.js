@@ -30,11 +30,11 @@ import { Box, Container, Grid } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Banner from "../../components/widget/Banner"
-import updateUiSettings from "../../helpers/updateUiSettings"
-import SingleCategory from "../../components/Category/SingleCategory"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "../../layout/EntryLayout"
-import ProBreadcrumbs from "../../components/FrontEnd/ProBreadcrumbs"
+import Banner from "./../../components/widget/Banner"
+import updateUiSettings from "./../../helpers/updateUiSettings"
+import SingleCategory from "./../../components/Category/SingleCategory"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
+import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

@@ -31,9 +31,9 @@ import { Container, Typography } from "@mui/material"
 //PROJECT IMPORT
 import CannedRepliesList from "./CannedRepliesList"
 import CannedRepliesDetails from "./CannedRepliesDetails"
-import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "../../Settings/SettingsPanel"
+import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { useSelector } from "react-redux"
-import { getUiSettings } from "../../../redux/selectors"
+import { getUiSettings } from "./../../../redux/selectors"
 
 //THIRD-PARTY
 

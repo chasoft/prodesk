@@ -31,12 +31,12 @@ import { Box, LinearProgress, Typography } from "@mui/material"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { once } from "../../helpers/utils"
-import { Logo } from "../../components/common"
-import AuthCheck from "../../components/AuthCheck"
-import { REDIRECT_URL } from "../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
-import { getLayout, TopLine, updateFlexDirection } from "../../layout/RegLayout"
+import { once } from "./../../helpers/utils"
+import { Logo } from "./../../components/common"
+import AuthCheck from "./../../components/AuthCheck"
+import { REDIRECT_URL } from "./../../helpers/constants"
+import { setRedirect } from "./../../redux/slices/redirect"
+import { getLayout, TopLine, updateFlexDirection } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

@@ -32,8 +32,8 @@ import { Button, Typography } from "@mui/material"
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
-import { REDIRECT_URL } from "../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
+import { REDIRECT_URL } from "./../../helpers/constants"
+import { setRedirect } from "./../../redux/slices/redirect"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************

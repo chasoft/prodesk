@@ -33,8 +33,8 @@ import { LinearProgress, Typography } from "@mui/material"
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
 import { useDispatch } from "react-redux"
-import { once } from "../../helpers/utils"
-import { installCompleted } from "../../helpers/userAuthentication"
+import { once } from "./../../helpers/utils"
+import { installCompleted } from "./../../helpers/firebase/install"
 import { useSnackbar } from "notistack"
 
 /*****************************************************************

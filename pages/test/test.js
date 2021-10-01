@@ -5,15 +5,15 @@ import { Button } from "@mui/material"
 import { getLayout } from "./../../layout/BlankLayout"
 
 import ColorPicker from "./../../components/common/ColorPicker"
-import { getPlainTextFromMarkDown } from "../../helpers/utils"
+import { getPlainTextFromMarkDown } from "./../../helpers/utils"
+import { useDispatch } from "react-redux"
 
-const testss = () => {
-	const a = '# yest please\n\n- [ ] item 1…2\n\n\\\n'
-	return getPlainTextFromMarkDown(a)
-}
+import { ImportIcon, ExportPdfIcon, NewArticleIcon } from "./../../components/common/SvgIcons"
 
 export default function testtest() {
 	const [color, setColor] = useState("")
+
+	const dispatch = useDispatch()
 	return (
 		<div style={{ position: "absolute", top: "100px", left: "200px" }}>
 
@@ -22,8 +22,11 @@ export default function testtest() {
 
 			you selected {color}
 
-			{testss()}
-			{console.log(testss())}
+			<ImportIcon />
+			<ExportPdfIcon />
+			<NewArticleIcon />
+
+
 
 		</div>
 	)

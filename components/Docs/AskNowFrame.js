@@ -23,36 +23,20 @@
  *****************************************************************/
 
 import React from "react"
-import Link from "next/link"
 import { Container } from "@mui/material"
-import makeStyles from "@mui/styles/makeStyles"
 import AskNow from "./AskNow"
-
-//PROJECT IMPORT
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		width: "100%",
-	},
-	[theme.breakpoints.down("md")]: {
-		// paddingTop: theme.spacing(2),
-		// paddingBottom: theme.spacing(2),
-		// marginTop: 0
-	}
-}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const AskNowFrame = () => {
-	const classes = useStyles()
 	return (
-		<Container maxWidth="md" className={classes.root}>
+		<Container maxWidth="md" sx={{ width: "100%" }}>
 			<AskNow />
 		</Container >
 	)

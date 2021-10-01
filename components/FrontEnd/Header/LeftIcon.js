@@ -32,7 +32,7 @@ import { Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } f
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { Logo } from "../../common"
+import { Logo } from "./../../common"
 
 //ASSETS
 import MenuIcon from "@mui/icons-material/Menu"

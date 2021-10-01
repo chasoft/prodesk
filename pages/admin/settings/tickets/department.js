@@ -31,14 +31,14 @@ import { Button, Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../../../redux/selectors"
-import updateUiSettings from "../../../../helpers/updateUiSettings"
-import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
-import DepartmentsAddNew from "../../../../components/Settings/Tickets/DepartmentsAddNew"
-import DepartmentsDetails from "../../../../components/Settings/Tickets/DepartmentsDetails"
-import DepartmentsOverview from "../../../../components/Settings/Tickets/DepartmentsOverview"
-import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
+import { getUiSettings } from "./../../../../redux/selectors"
+import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
+import DepartmentsAddNew from "./../../../../components/Settings/Tickets/DepartmentsAddNew"
+import DepartmentsDetails from "./../../../../components/Settings/Tickets/DepartmentsDetails"
+import DepartmentsOverview from "./../../../../components/Settings/Tickets/DepartmentsOverview"
+import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
