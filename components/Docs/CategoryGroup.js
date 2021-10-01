@@ -67,8 +67,8 @@ const CategoryGroup = () => {
 
 					<Typography variant="h2">Categories</Typography>
 
-					<Link href="/docs/categories">
-						<a>
+					<Link href="/docs/categories" passHref>
+						<a href="/just-a-placeholder">
 							<Typography
 								sx={{
 									color: "primary.main",

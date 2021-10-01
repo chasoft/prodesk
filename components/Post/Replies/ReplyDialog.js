@@ -34,7 +34,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
-import LearnMoreAdvancedTextEditor from "./../../common"
+import { LearnMoreAdvancedTextEditor } from "./../../common"
 
 //ASSETS
 

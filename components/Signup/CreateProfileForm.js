@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
 import { RegContainer } from "./../../layout/RegLayout"
-import { createProfileRegStep } from "./../../helpers/firebase"
+import { signupCreateProfile } from "./../../helpers/firebase/signup"
 import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
 
 /*****************************************************************
@@ -86,7 +86,6 @@ const CreateProfileForm = () => {
 							value={location}
 							onChange={(e) => setLocation(e.target.value)}
 							fullWidth
-							autoFocus
 							required
 						/>
 					</Grid>
@@ -96,7 +95,7 @@ const CreateProfileForm = () => {
 					sx={{ mt: 3, mx: 0, mb: 2 }}
 					onClick={(e) => {
 						e.preventDefault()
-						createProfileRegStep({
+						signupCreateProfile({
 							username: currentUser.username,
 							avatar,
 							location

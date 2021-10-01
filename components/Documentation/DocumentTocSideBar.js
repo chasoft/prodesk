@@ -29,7 +29,6 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import ScrollSpy from "react-scrollspy-navigation"
 
 //PROJECT IMPORT
 
@@ -160,25 +159,22 @@ const DocumentTocSideBar = () => {
 					</Typography>
 
 					<nav>
-						{/* //TODO! ScrollSpy not working */}
-						<ScrollSpy offsetTop={50}>
-							{editorDataHeadings.map((item) => {
-								if (item.level > 2) return null
-								return (
-									<TocItem
-										ref={createRef()}
-										key={item.id}
-										anchor={item.id}
-										sx={{
-											py: 0.5,
-											ml: (item.level === 2) ? 2 : 0
-										}}
-									>
-										{item.title}
-									</TocItem>
-								)
-							})}
-						</ScrollSpy>
+						{editorDataHeadings.map((item) => {
+							if (item.level > 2) return null
+							return (
+								<TocItem
+									ref={createRef()}
+									key={item.id}
+									anchor={item.id}
+									sx={{
+										py: 0.5,
+										ml: (item.level === 2) ? 2 : 0
+									}}
+								>
+									{item.title}
+								</TocItem>
+							)
+						})}
 					</nav>
 
 				</Box>

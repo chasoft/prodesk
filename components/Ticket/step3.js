@@ -52,7 +52,7 @@ const NewTicketStep3 = () => {
 
 	const getEditorData = useCallback((data) => {
 		dispatch(setMessage(data))
-	}, [])
+	}, [dispatch])
 
 	return (
 		<Box sx={{

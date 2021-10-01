@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Container, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material"
+import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 
 //PROJECT IMPORT
 

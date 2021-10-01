@@ -111,7 +111,6 @@ const LoginForm = () => {
 							helperText={formik.touched.username && formik.errors.username}
 							fullWidth
 							required
-							autoFocus
 						/>
 					</Grid>
 					<Grid item xs={12}>

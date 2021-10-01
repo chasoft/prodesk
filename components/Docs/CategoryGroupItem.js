@@ -71,7 +71,7 @@ const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
 					"& > *": { color: "primary.main" },
 				}}
 			>
-				<Link href={viewAllLink}>
+				<Link href={viewAllLink} passHref>
 					<Box component="a"
 						sx={{
 							display: "flex",

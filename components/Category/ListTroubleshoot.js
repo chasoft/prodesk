@@ -72,7 +72,7 @@ const ReadMoreBtn = ({ url }) => {
 				color: "primary.main"
 			}}
 		>
-			<Link href={url}>
+			<Link href={url} passHref>
 				<Box component="a"
 					sx={{
 						display: "flex",

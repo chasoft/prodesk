@@ -26,8 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar } from "@mui/material"
-import { AvatarGroup } from "@mui/material"
+import { Avatar, AvatarGroup } from "@mui/material"
 
 //THIRD-PARTY
 

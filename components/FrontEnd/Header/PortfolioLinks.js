@@ -80,8 +80,8 @@ const PortfolioLinks = ({ moreBtn }) => {
 					{
 						DUMMY_PORTFOLIO_LINK.map((item, idx) => (
 							<Grid item key={idx}>
-								<Link href={item.url}>
-									<a>
+								<Link href={item.url} passHref>
+									<a href="/just-a-placeholder">
 										<ButtonBase>
 											<Box button
 												sx={{
@@ -128,8 +128,8 @@ const PortfolioLinks = ({ moreBtn }) => {
 
 					{moreBtn &&
 						<Box sx={{ display: "flex", justifyContent: "center", m: 2, mt: 3, flexGrow: 1, textAlign: "center" }}>
-							<Link href={moreBtn.url}>
-								<a>
+							<Link href={moreBtn.url} passHref>
+								<a href="/just-a-placeholder">
 									<Button variant="outlined" color="primary" size="small" sx={{ fontWeight: 400 }}>
 										{moreBtn.title}
 									</Button>

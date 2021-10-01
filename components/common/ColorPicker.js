@@ -73,12 +73,10 @@ ListColors.propTypes = {
 export function ColorPickerBase({ position, getSelectedColor, children }) {
 	const [selectedColor, setSelectedColor] = useState("")
 
-	const handleSelectedColor = useCallback(
-		(color) => {
-			setSelectedColor(color)
-			getSelectedColor(color)
-		}
-	)
+	const handleSelectedColor = useCallback((color) => {
+		setSelectedColor(color)
+		getSelectedColor(color)
+	}, [setSelectedColor, getSelectedColor])
 
 	return (
 		<Box sx={{ p: 1 }}>
@@ -121,12 +119,10 @@ ColorPickerBase.propTypes = {
 export default function ColorPicker({ getSelectedColor }) {
 	const [selectedColor, setSelectedColor] = useState("")
 
-	const handleSelectedColor = useCallback(
-		(color) => {
-			setSelectedColor(color)
-			getSelectedColor(color)
-		}, [selectedColor]
-	)
+	const handleSelectedColor = useCallback((color) => {
+		setSelectedColor(color)
+		getSelectedColor(color)
+	}, [setSelectedColor, getSelectedColor])
 
 	return (
 		<ColorPickerBase position="bottom" getSelectedColor={handleSelectedColor}>

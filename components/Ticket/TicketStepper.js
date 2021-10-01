@@ -30,8 +30,7 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import { Box, Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
-import { batch } from "react-redux"
+import { batch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import NewTicketStep1 from "./step1"

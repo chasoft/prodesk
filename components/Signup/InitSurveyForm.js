@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
-import { doInitSurvey } from "./../../helpers/firebase"
+import { signupInitSurvey } from "./../../helpers/firebase/signup"
 import { RegContainer } from "./../../layout/RegLayout"
 
 /*****************************************************************
@@ -65,7 +65,7 @@ const InitSurveyForm = () => {
 		},
 		// validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			doInitSurvey({
+			signupInitSurvey({
 				username: currentUser.username,
 				payload: values
 			}, { enqueueSnackbar, dispatch })

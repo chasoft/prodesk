@@ -34,8 +34,6 @@ import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
 //PROJECT IMPORT
 
 //ASSETS
-import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
-import { deepOrange } from "@mui/material/colors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -65,8 +63,8 @@ PostListEmpty.propTypes = { message: PropTypes.string }
 export const PostListItemShorten = ({ subject, link }) => {
 	return (
 		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
-			<Link href={link}>
-				<a>
+			<Link href={link} passHref>
+				<a href="/just-a-placeholder">
 					<Box
 						sx={{
 							cursor: "pointer",
@@ -97,8 +95,8 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 				borderColor: "divider",
 			}}
 		>
-			<Link href={link}>
-				<a>
+			<Link href={link} passHref>
+				<a href="/just-a-placeholder">
 					<Box
 						sx={{
 							display: "flex", flexDirection: "column",

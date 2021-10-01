@@ -26,14 +26,14 @@ import PropTypes from "prop-types"
 import React, { useCallback, useEffect, useState } from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
 
 //PROJECT IMPORT
+import { useSelector } from "react-redux"
 import CannedRepliesList from "./CannedRepliesList"
 import CannedRepliesDetails from "./CannedRepliesDetails"
-import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useSelector } from "react-redux"
 import { getUiSettings } from "./../../../redux/selectors"
+import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //THIRD-PARTY
 

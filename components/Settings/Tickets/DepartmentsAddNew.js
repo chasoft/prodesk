@@ -23,7 +23,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Container, Grid, TextField } from "@mui/material"
+import { Button, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
@@ -31,7 +31,7 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
 import SettingsSwitch from "./../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
 import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/department"
 
@@ -43,7 +43,7 @@ import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/depart
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsAddNew = ({ dataDepartment, onClick, backBtnClick }) => {
+const DepartmentsAddNew = ({ onClick, backBtnClick }) => {
 	const dispatch = useDispatch()
 	return (
 		<>
@@ -102,7 +102,6 @@ const DepartmentsAddNew = ({ dataDepartment, onClick, backBtnClick }) => {
 }
 
 DepartmentsAddNew.propTypes = {
-	dataDepartment: PropTypes.array,
 	onClick: PropTypes.func,
 	backBtnClick: PropTypes.func,
 }

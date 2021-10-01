@@ -67,8 +67,8 @@ const SideBarContentExpanded = ({ data }) => (
 		{data.map((group) => {
 			if (group.type === MENU_ITEM_TYPE.ITEM)
 				return (
-					<Link key={group.url} href={group.url} >
-						<a>
+					<Link key={group.url} href={group.url} passHref>
+						<a href="/just-a-placeholder">
 							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 								<Box
 									sx={{
@@ -150,8 +150,8 @@ const SideBarContentExpanded = ({ data }) => (
 							{group.items.map((item) => (
 								<ButtonBase key={item.id} sx={{ display: "block", width: "100%", textAlign: "left" }}>
 									<li>
-										<Link href={item.url}>
-											<a>
+										<Link href={item.url} passHref>
+											<a href="/just-a-placeholder">
 												{IconLib[item.icon]}{item.text}
 											</a>
 										</Link>
@@ -228,8 +228,8 @@ const SideBarContentCollapsed = ({ data }) => (
 							<Tooltip key={item.id} title={item.text} placement="right">
 								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 									<li>
-										<Link href={item.url}>
-											<a>
+										<Link href={item.url} passHref>
+											<a href="/just-a-placeholder">
 												{IconLib[item.icon]}
 											</a>
 										</Link>

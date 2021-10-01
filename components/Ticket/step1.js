@@ -69,7 +69,6 @@ const NewTicketStep1 = ({ callback }) => {
 				}}
 				fullWidth
 				InputLabelProps={{ shrink: true }}
-				autoFocus={true}
 			/>
 		</form>
 	)

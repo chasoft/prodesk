@@ -52,7 +52,7 @@ export const VIEW_LISTING_MODE = {
 const ViewModeSwitcher = ({ listingMode, setListingMode }) => {
 
 	const handleListingMode = (event, newListingMode) => {
-		if (newListingMode !== null) {
+		if (newListingMode) {
 			setListingMode(newListingMode)
 		}
 	}

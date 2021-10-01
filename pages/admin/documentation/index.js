@@ -28,8 +28,6 @@ import React from "react"
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
-import { HTML5Backend } from "react-dnd-html5-backend"
-import { DndProvider } from "react-dnd"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
@@ -44,15 +42,15 @@ import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocS
  * INIT                                                          *
  *****************************************************************/
 
-const DUMMY_List = [
-	{
+// const DUMMY_List = [
+// 	{
 
-	}
-]
+// 	}
+// ]
 
-const DUMMY_Content = {
+// const DUMMY_Content = {
 
-}
+// }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -81,9 +79,7 @@ function Documentation() {
 			disableGutters
 		>
 
-			<DndProvider backend={HTML5Backend}>
-				<TocSideBar />
-			</DndProvider>
+			<TocSideBar />
 
 			<DocumentEditor />
 

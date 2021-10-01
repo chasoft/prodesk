@@ -165,8 +165,8 @@ function FrontAccordions() {
 					>
 						<AccordionList>
 							{[1, 2, 3].map((item, idx) => (
-								<Link key={idx} href="/docs">
-									<a>
+								<Link key={idx} href="/docs" passHref>
+									<a href="/just-a-placeholder">
 										<li>
 											<Typography>
 												Profile

@@ -26,15 +26,14 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Grid, Button, Typography, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogActions, IconButton, Paper } from "@mui/material"
 import makeStyles from "@mui/styles/makeStyles"
 import { useTheme } from "@mui/material/styles"
+import { Box, Grid, Button, Typography, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogActions, IconButton, Paper } from "@mui/material"
 
 //THIRD-PARTY
-import dayjs from "dayjs"
-import * as yup from "yup"
-import { useFormik } from "formik"
-import { useSnackbar } from "notistack"
+// import dayjs from "dayjs"
+// import * as yup from "yup"
+// import { useFormik } from "formik"
 
 //PROJECT IMPORT
 import { useGetAllFiles } from "./../../helpers/firebase-storage"
@@ -77,20 +76,20 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-const validationSchema = yup.object({
-	dateFrom: yup
-		.string("FromDate must be ealier than ToDate"),
-	// .when(["dateFrom", "dateTo"], {
-	// 	is: (dateFrom, dateTo) => { return dayjs(dateFrom) < dayjs(dateTo) },
-	// 	then: yup.string()
-	// }),
-	dateTo: yup
-		.string("ToDate must be later than FromDate")
-	// .when(["dateFrom", "dateTo"], {
-	// 	is: (dateFrom, dateTo) => { return dayjs(dateFrom) < dayjs(dateTo) },
-	// 	then: yup.string()
-	// })
-})
+// const validationSchema = yup.object({
+// 	dateFrom: yup
+// 		.string("FromDate must be ealier than ToDate"),
+// 	// .when(["dateFrom", "dateTo"], {
+// 	// 	is: (dateFrom, dateTo) => { return dayjs(dateFrom) < dayjs(dateTo) },
+// 	// 	then: yup.string()
+// 	// }),
+// 	dateTo: yup
+// 		.string("ToDate must be later than FromDate")
+// 	// .when(["dateFrom", "dateTo"], {
+// 	// 	is: (dateFrom, dateTo) => { return dayjs(dateFrom) < dayjs(dateTo) },
+// 	// 	then: yup.string()
+// 	// })
+// })
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props
@@ -114,111 +113,111 @@ TabPanel.propTypes = {
 	value: PropTypes.any.isRequired,
 }
 
-const itemData = [
-	{
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	},
-	{
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	},
-	{
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	}, {
-		img: "/img/default-avatar.png",
-		title: "Image",
-		author: "author",
-	},
-]
+// const itemData = [
+// 	{
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	},
+// 	{
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	},
+// 	{
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	}, {
+// 		img: "/img/default-avatar.png",
+// 		title: "Image",
+// 		author: "author",
+// 	},
+// ]
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -230,11 +229,11 @@ function Gallery({ children }) {
 	const { fileList } = useGetAllFiles()
 
 	const [showGallery, setShowGallery] = useState(false)
-	const [tabId, setTabId] = useState(0)
+	// const [tabId, setTabId] = useState(0)
 	const [selectedImage, setSelectedImage] = useState("")
 
 	const handleClose = () => { setShowGallery(false) }
-	const handleChange = (event, newValue) => { setTabId(newValue) }
+	// const handleChange = (event, newValue) => { setTabId(newValue) }
 
 	const fullScreen = useMediaQuery(theme.breakpoints.down("lg"))
 
@@ -242,23 +241,22 @@ function Gallery({ children }) {
 
 
 
-	const formik = useFormik({
-		initialValues: {
-			dateFrom: dayjs().format("YYYY-MM-DD"),
-			dateTo: dayjs().subtract(1, "month").format("YYYY-MM-DD")
-		},
-		validationSchema: validationSchema,
-		onSubmit: async () => {
-			//dddd
-		},
-	})
+	// const formik = useFormik({
+	// 	initialValues: {
+	// 		dateFrom: dayjs().format("YYYY-MM-DD"),
+	// 		dateTo: dayjs().subtract(1, "month").format("YYYY-MM-DD")
+	// 	},
+	// 	validationSchema: validationSchema,
+	// 	onSubmit: async () => {
+	// 		//dddd
+	// 	},
+	// })
 
 
 
 	return (
 		<>
-			<span onClick={() => setShowGallery(true)}
-			>{children}</span>
+			<span onClick={() => setShowGallery(true)}>{children}</span>
 
 			<Dialog open={showGallery} onClose={handleClose} fullScreen={fullScreen}>
 				<DialogTitle id="responsive-dialog-title" style={{ padding: 0 }}>

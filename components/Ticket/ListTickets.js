@@ -179,7 +179,7 @@ function ListTickets() {
 			setFilteredTickets([])
 		}
 
-	}, [DummyData, ticketSearchTerm, selectedPriority, selectedStatus])
+	}, [ticketSearchTerm, selectedPriority, selectedStatus])
 
 	return (
 		<Box

@@ -33,9 +33,6 @@ import { Box, ButtonBase, ClickAwayListener, Grow, Paper, Popper, Typography } f
 //PROJECT IMPORT
 
 //ASSETS
-import AddIcon from "@mui/icons-material/Add"
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd"
-import LaunchIcon from "@mui/icons-material/Launch"
 
 /*****************************************************************
  * INIT                                                          *

@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, ButtonBase, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -65,11 +65,11 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 					}}
 				>
 					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-					<Link href={homeUrl}><a style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
+					<Link href={homeUrl} passHref><a href="/just-a-placeholder" style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
 					<div style={{ display: "flex", alignItems: "center" }}>
-						<Link href={settingsUrl}>
-							<a>
+						<Link href={settingsUrl} passHref>
+							<a href="/just-a-placeholder">
 								<Box
 									color="secondary"
 									aria-label="Settings"
@@ -87,26 +87,28 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 
 	return (
 		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-			<Link href={homeUrl}>
-				<Tooltip title="Dashboard" placement="right">
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "center",
-							textAlign: "center",
-							color: "#669df6",
-							padding: (theme) => theme.spacing(1, 0, 1, 0),
-							"&:hover": {
-								cursor: "pointer",
-								backgroundColor: "#ffffff14",
-							},
-							borderTop: "1px solid #2A4257",
-						}}
-					>
-						<HomeIcon style={{ height: "20px", width: "20px" }} />
-					</Box>
-				</Tooltip>
-			</Link>
+			<Tooltip title="Dashboard" placement="right">
+				<Link href={homeUrl} passHref>
+					<a href="/just-a-placeholder">
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "center",
+								textAlign: "center",
+								color: "#669df6",
+								padding: (theme) => theme.spacing(1, 0, 1, 0),
+								"&:hover": {
+									cursor: "pointer",
+									backgroundColor: "#ffffff14",
+								},
+								borderTop: "1px solid #2A4257",
+							}}
+						>
+							<HomeIcon style={{ height: "20px", width: "20px" }} />
+						</Box>
+					</a>
+				</Link>
+			</Tooltip>
 		</ButtonBase>
 	)
 }

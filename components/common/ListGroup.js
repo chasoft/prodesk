@@ -69,8 +69,9 @@ const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
 								textDecoration: "underline"
 							}
 						}}
+						passHref
 					>
-						<a>
+						<a href="/just-a-placeholder">
 							<Typography variant="button">{viewAllText}</Typography>
 						</a>
 					</Link>}

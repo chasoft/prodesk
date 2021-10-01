@@ -116,7 +116,7 @@ export default function AuthCheck(props) {
 				dispatch(setRedirect(REDIRECT_URL.LOGIN))
 			})
 		}
-	}, [isAuthenticated, loading])
+	}, [dispatch, isAuthenticated, loading, router.pathname])
 
 	if (loading) return <LoadingIndicator />
 
@@ -240,6 +240,10 @@ export function AuthSuperAdminCheck(props) {
 	if (loading) return <LoadingIndicator />
 	return currentUser.isSuperAdmin ? props.children : props.fallback || <p>SingleLoginForm</p>
 }
+AuthSuperAdminCheck.propTypes = {
+	children: PropTypes.node,
+	fallback: PropTypes.node
+}
 
 /**
  * Display `children` when SuperAdmin LOGGED IN or nothing
@@ -257,6 +261,10 @@ export function AuthAdminCheck(props) {
 
 	if (loading) return <LoadingIndicator />
 	return (currentUser.isAdmin || currentUser.isSuperAdmin) ? props.children : props.fallback || <p>SingleLoginForm</p>
+}
+AuthAdminCheck.propTypes = {
+	children: PropTypes.node,
+	fallback: PropTypes.node
 }
 
 

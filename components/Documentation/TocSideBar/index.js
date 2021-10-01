@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import React, { useCallback, useRef, useState } from "react"
-import PropTypes from "prop-types"
+// import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
@@ -47,7 +47,7 @@ import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBar = ({ dataSource }) => {
+const TocSideBar = () => {
 	const [showTocSideBarDetails, setShowTocSideBarDetails] = useState(false)
 	const sideBarRef = useRef(null)
 
@@ -128,6 +128,6 @@ const TocSideBar = ({ dataSource }) => {
 		</>
 	)
 }
-TocSideBar.propTypes = { dataSource: PropTypes.array }
+// TocSideBar.propTypes = { dataSource: PropTypes.array }
 
 export default TocSideBar

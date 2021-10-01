@@ -1,3 +1,4 @@
+import Link from "next/link"
 import React, { useState } from "react"
 import Box from "@mui/material/Box"
 import { Button } from "@mui/material"
@@ -20,11 +21,18 @@ export default function testtest() {
 
 			<ColorPicker getSelectedColor={(c) => setColor(c)} />
 
-			you selected {color}
+			<Link href="/docs">
+				<div>you selected {color}</div>
+			</Link>
 
 			<ImportIcon />
 			<ExportPdfIcon />
 			<NewArticleIcon />
+			<Link href="/" passHref>
+				<div role="link">Go Home</div>
+			</Link>
+
+
 
 
 

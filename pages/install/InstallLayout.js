@@ -46,9 +46,12 @@ import { getInstallStatus } from "./../../helpers/firebase/install"
 function InstallLayout({ children }) {
 	const [isInstalled, setIsInstalled] = useState(null)
 
-	useEffect(async () => {
-		const installStatus = await getInstallStatus()
-		setIsInstalled(installStatus)
+	useEffect(() => {
+		async function fetchInstallStatus() {
+			const installStatus = await getInstallStatus()
+			setIsInstalled(installStatus)
+		}
+		fetchInstallStatus()
 	}, [])
 
 	if (isInstalled)

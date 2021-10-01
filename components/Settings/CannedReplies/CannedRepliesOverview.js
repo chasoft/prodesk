@@ -26,12 +26,12 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+// import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import { SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
 

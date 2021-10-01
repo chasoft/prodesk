@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Container, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 

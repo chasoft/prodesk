@@ -26,12 +26,12 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Grid, TextField, Typography } from "@mui/material"
+import { Grid, TextField, Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
 import SettingsSwitch from "./../../common/SettingsSwitch"
-import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //THIRD-PARTY
 
@@ -45,7 +45,7 @@ import { SettingsContent, SettingsContentDetails, SettingsContentHeader } from "
 
 //TODO: Auto update data onBlur
 
-const DepartmentsDetails = ({ dataDepartment = [], onClick, backBtnClick }) => {
+const DepartmentsDetails = ({ dataDepartment = [], backBtnClick }) => {
 	if (dataDepartment.length === 0) {
 		return (
 			<>

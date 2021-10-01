@@ -54,7 +54,7 @@ export function LearnMoreAdvancedTextEditor({ text, linkText }) {
 		}}>
 			{innerText}
 			<Link href="/docs/text-editor" passHref>
-				<a target="_blank" rel="noopener noreferrer" style={{ marginLeft: "5px" }}>
+				<a href="/just-a-placeholder" target="_blank" rel="noopener noreferrer" style={{ marginLeft: "5px" }}>
 					{innerLinkText}
 				</a>
 			</Link>
@@ -96,7 +96,9 @@ export const Logo = ({ isSmall = false, theme = "light", height = "30px" }) => {
 				<img
 					src={`/ProDesk-logo-${theme}-square.png`}
 					height={height} width={height}
-					style={{ cursor: "pointer" }} />
+					style={{ cursor: "pointer" }}
+					alt="Logo of ProDesk"
+				/>
 			</Link>
 		)
 	}
@@ -106,7 +108,9 @@ export const Logo = ({ isSmall = false, theme = "light", height = "30px" }) => {
 			<img
 				src={`/ProDesk-logo-${theme}.png`}
 				height={height} width={Math.round(height * 5.25).toString()}
-				style={{ cursor: "pointer" }} />
+				style={{ cursor: "pointer" }}
+				alt="Logo of ProDesk"
+			/>
 		</Link>
 	)
 }

@@ -43,17 +43,6 @@ import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSe
  * INIT                                                          *
  *****************************************************************/
 
-
-const FilterSelect = withStyles((theme) => ({
-	root: {
-		"&&": {
-			paddingLeft: "10px",
-			color: theme.palette.primary.main
-		}
-	}
-}))(Select)
-
-
 const FilterCheckbox0 = withStyles({
 	root: {
 		padding: "0.25rem",
