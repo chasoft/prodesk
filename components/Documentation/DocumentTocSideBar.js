@@ -29,17 +29,18 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getTextEditor } from "./../../redux/selectors"
+import { getTextEditor, getDocsCenter } from "./../../redux/selectors"
 
 //ASSETS
 import { ExportPdfIcon } from "./../common/SvgIcons"
 import PostAddIcon from "@mui/icons-material/PostAdd"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
 import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
-
+import { setShowTocSideBarDetails } from "../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -81,45 +82,107 @@ TocItem.propTypes = {
 	children: PropTypes.node
 }
 
-export const RightMenuItem = ({ sx, Icon, children }) => {
+export const RightMenuItemBase = ({ sx, Icon, onClick, children }) => {
 	return (
-		<Box sx={{
-			display: "flex",
-			alignItems: "center",
-			px: 2, py: 1,
-			cursor: "pointer",
-			"&>svg": {
-				width: "1.25rem",
-				height: "1.25rem",
-				marginRight: "8px",
-				fill: "#9e9e9e",
-			},
-			":hover": {
-				backgroundColor: "action.hover",
-				"&>p": { color: "primary.main" },
-				"&>svg": { fill: (theme) => theme.palette.primary.main }
-			},
-			...sx
-		}}>
+		<Box
+			onClick={() => { onClick() }}
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				px: 2, py: 1,
+				cursor: "pointer",
+				"&>svg": {
+					width: "1.25rem",
+					height: "1.25rem",
+					marginRight: "8px",
+					fill: "#9e9e9e",
+				},
+				":hover": {
+					backgroundColor: "action.hover",
+					"&>p": { color: "primary.main" },
+					"&>svg": { fill: (theme) => theme.palette.primary.main }
+				},
+				...sx
+			}}
+		>
 			{Icon && <Icon />}
 			<Typography sx={{ fontSize: "0.80rem", fontWeight: "bold", color: "grey.700" }} noWrap>{children}</Typography>
 		</Box>
 	)
 }
-RightMenuItem.propTypes = {
+RightMenuItemBase.propTypes = {
 	sx: PropTypes.object,
-	Icon: PropTypes.any,
+	Icon: PropTypes.node,
+	onClick: PropTypes.func,
 	children: PropTypes.node
 }
+
+export const RightMenuItemAddNewDoc = ({ sx }) => {
+	return (
+		<RightMenuItemBase
+			Icon={PostAddIcon} sx={{ ...sx }}
+			onClick={() => { }}
+		>
+			New Article
+		</RightMenuItemBase>
+	)
+}; RightMenuItemAddNewDoc.propTypes = { sx: PropTypes.object }
+
+export const RightMenuItemImport = ({ sx }) => {
+	return (
+		<RightMenuItemBase
+			Icon={BiImport} sx={{ ...sx }}
+			onClick={() => { }}
+		>
+			Import
+		</RightMenuItemBase>
+	)
+}; RightMenuItemImport.propTypes = { sx: PropTypes.object }
+
+export const RightMenuItemExportPDF = ({ sx }) => {
+	return (
+		<RightMenuItemBase
+			Icon={ExportPdfIcon} fontSize="small" sx={{ ...sx }}
+			onClick={() => { }}
+		>
+			Export as PDF
+		</RightMenuItemBase>
+	)
+}; RightMenuItemExportPDF.propTypes = { sx: PropTypes.object }
+
+export const RightMenuItemDelete = ({ title = "Delete", sx }) => {
+	return (
+		<RightMenuItemBase
+			Icon={DeleteOutlinedIcon} sx={{ ...sx }}
+			onClick={() => { }}
+		>
+			{title}
+		</RightMenuItemBase>
+	)
+}; RightMenuItemDelete.propTypes = { title: PropTypes.string, sx: PropTypes.object }
+
+export const RightMenuItemMore = ({ sx }) => {
+	const dispatch = useDispatch()
+	return (
+		<RightMenuItemBase
+			Icon={MoreHorizIcon} sx={{ ...sx }}
+			onClick={() => {
+				/* This is to show TocSideBarDetails of current Doc */
+				dispatch(setShowTocSideBarDetails(true))
+			}}
+		>
+			More
+		</RightMenuItemBase>
+	)
+}; RightMenuItemMore.propTypes = { sx: PropTypes.object }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-//@Note: TOC based on https://medium.com/the-coders-guide-to-javascript/smooth-scrolling-anchor-menu-in-reactjs-175030d0bce2
-
 const DocumentTocSideBar = () => {
 	const { editorDataHeadings } = useSelector(getTextEditor)
+	const { activeDocId } = useSelector(getDocsCenter)
 
 	return (
 		<Box sx={{
@@ -129,57 +192,61 @@ const DocumentTocSideBar = () => {
 			width: "224px",
 			backgroundColor: "#FFF",
 		}}>
-			<div style={{ position: "sticky", top: "80px" }}>
 
-				<Box sx={{
-					borderLeft: "1px solid transparent",
-					borderColor: "divider",
-				}}>
+			{(activeDocId !== null) &&
+				<div style={{ position: "sticky", top: "80px" }}>
 
-					<RightMenuItem Icon={PostAddIcon}>New Article</RightMenuItem>
-					<RightMenuItem Icon={BiImport}>Import</RightMenuItem>
-					<RightMenuItem Icon={ExportPdfIcon} fontSize="small">Export as PDF</RightMenuItem>
-					<RightMenuItem Icon={MoreHorizIcon}>More</RightMenuItem>
-
-				</Box>
-
-				<Box sx={{
-					borderLeft: "1px solid transparent",
-					borderColor: "divider",
-					color: "grey.500",
-					mt: 5, mb: 3
-				}}>
-					<Typography sx={{
-						px: 2, pb: 1,
-						textTransform: "uppercase",
-						fontWeight: "bold",
-						fontSize: "0.70rem"
+					<Box sx={{
+						borderLeft: "1px solid transparent",
+						borderColor: "divider",
 					}}>
-						Contents
-					</Typography>
 
-					<nav>
-						{editorDataHeadings.map((item) => {
-							if (item.level > 2) return null
-							return (
-								<TocItem
-									ref={createRef()}
-									key={item.id}
-									anchor={item.id}
-									sx={{
-										py: 0.5,
-										ml: (item.level === 2) ? 2 : 0
-									}}
-								>
-									{item.title}
-								</TocItem>
-							)
-						})}
-					</nav>
+						<RightMenuItemAddNewDoc />
+						<RightMenuItemImport />
+						<RightMenuItemExportPDF />
+						<RightMenuItemMore />
 
-				</Box>
 
-			</div>
+					</Box>
+
+					<Box sx={{
+						borderLeft: "1px solid transparent",
+						borderColor: "divider",
+						color: "grey.500",
+						mt: 5, mb: 3
+					}}>
+						<Typography sx={{
+							px: 2, pb: 1,
+							textTransform: "uppercase",
+							fontWeight: "bold",
+							fontSize: "0.70rem"
+						}}>
+							Contents
+						</Typography>
+
+						<nav>
+							{editorDataHeadings.map((item) => {
+								if (item.level > 2) return null
+								return (
+									<TocItem
+										ref={createRef()}
+										key={item.id}
+										anchor={item.id}
+										sx={{
+											py: 0.5,
+											ml: (item.level === 2) ? 2 : 0
+										}}
+									>
+										{item.title}
+									</TocItem>
+								)
+							})}
+						</nav>
+
+					</Box>
+
+				</div>
+			}
 		</Box>
 	)
 }

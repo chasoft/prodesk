@@ -130,7 +130,7 @@ const GeneralList = (
 				{
 					viewAllLink ?
 						<Link href={viewAllLink} className={classes.viewAll} passHref>
-							<a href="/just-a-placeholder" className={classes.link}>
+							<a href="just-a-placeholder" className={classes.link}>
 								<Typography variant="button">{viewAllText}</Typography>
 							</a>
 						</Link>

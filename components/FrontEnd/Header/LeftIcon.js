@@ -74,7 +74,7 @@ const LeftIcon = () => {
 				>
 					<List>
 						<Link href="/" passHref>
-							<a href="/just-a-placeholder">
+							<a href="just-a-placeholder">
 								<ListItem sx={{ p: 3 }}>
 									<Logo />
 								</ListItem>
@@ -83,7 +83,7 @@ const LeftIcon = () => {
 
 						{DUMMY_DATA_MENU_TOP.map((item) => (
 							<Link key={item} href={item.url} passHref>
-								<a href="/just-a-placeholder">
+								<a href="just-a-placeholder">
 									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
 										<ListItemIcon sx={{ minWidth: 40 }}>
 											<MailIcon />
@@ -95,7 +95,7 @@ const LeftIcon = () => {
 						))}
 
 						<Link href="/" passHref>
-							<a href="/just-a-placeholder">
+							<a href="just-a-placeholder">
 								<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
 									<ListItemText primary="Privacy" />
 								</ListItemStyle>
@@ -108,7 +108,7 @@ const LeftIcon = () => {
 					<List sx={{ mb: 3 }}>
 						{DUMMY_DATA_MENU_BOTTOM.map((item) => (
 							<Link key={item} href={item.url} passHref>
-								<a href="/just-a-placeholder">
+								<a href="just-a-placeholder">
 									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
 										<ListItemIcon sx={{ minWidth: 40 }}>
 											<MailIcon />

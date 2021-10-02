@@ -2,8 +2,6 @@ import AddIcon from "@mui/icons-material/Add"
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd"
 import LaunchIcon from "@mui/icons-material/Launch"
 
-
-
 export const redirectAfterLogin = "redirectAfterLogin"
 
 export const LINK_TYPE = {
@@ -44,12 +42,6 @@ export const REDIRECT_URL = {
 	DONE: "DONE",
 }
 
-export const DOCS_ADD = {
-	ARTICLE: { code: "article", icon: AddIcon, title: "New article", description: "Create a new plain text page" },
-	CATEGORY: { code: "category", icon: PlaylistAddIcon, title: "New category", description: "Group pages around key topics" },
-	SUB_CATEGORY: { code: "sub_category", icon: PlaylistAddIcon, title: "New sub-category", description: "Group pages around key topics" },
-	EXTERNAL: { code: "external", icon: LaunchIcon, title: "New external link", description: "Link to external websites" },
-}
 
 export const ADVANCED_TABLE_COL = {
 	CHECKBOX: "CheckBox",
@@ -127,3 +119,47 @@ export const USERGROUP = {
 // 	["Tools", "/admin/settings/tools"]
 // ]
 
+/****************************************************************
+ * DOCS CENTER
+ ****************************************************************/
+
+//DO NOT CHANGE `value of "code"`
+export const DOCS_ADD = {
+	DOC: { code: "add_document", icon: AddIcon, title: "New document", description: "Create a new plain text page" },
+	CATEGORY: { code: "add_category", icon: PlaylistAddIcon, title: "New category", description: "Group pages around key topics" },
+	SUB_CATEGORY: { code: "add_subCategory", icon: PlaylistAddIcon, title: "New sub-category", description: "Group pages around key topics" },
+	EXTERNAL: { code: "add_externalLink", icon: LaunchIcon, title: "New external link", description: "Link to external websites" },
+}
+
+//DO NOT CHANGE ANY VALUE BELOW
+export const DOC_TYPE = {
+	CATEGORY: "Category",		// non-selectable
+	SUBCATEGORY: "SubCategory",	// non-selectable | if SubCat is empty => write as WWWWWW (6W) to sort this type of subcat to the end of the list of subcats
+	DOC: "Document",			// selectable => only this case, activeDocId != null
+	EXTERNAL: "External Link",	// non-selectable
+}
+
+//DO NOT CHANGE ANY VALUE BELOW
+export const DOC_STATUS = {
+	DRAFT: "Draft",
+	PUBLISHED: "Published",
+}
+
+export const LOCALUPDATE_DOCSLIST_ACTION = {
+	//
+	ADD_NEW_CAT: "Add New Category",
+	DELETE_CAT: "Delete Category",
+	UPDATE_CAT: "Update Category",
+	//
+	ADD_NEW_SUBCAT: "Add New Subcategory",
+	DELETE_SUBCAT: "Delete Subcategory",
+	UPDATE_SUBCAT: "Update Subcategory",
+	//
+	ADD_NEW_DOC: "Add New Document",
+	DELETE_DOC: "Delete Document",
+	UPDATE_DOC: "Update Document",
+	//
+	ADD_NEW_EXTERNAL: "Add New External Link",
+	DELETE_EXTERNAL: "Delete External Link",
+	UPDATE_EXTERNAL: "Update External Link",
+}

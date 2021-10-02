@@ -22,12 +22,127 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import { collection, doc, getDoc, getDocs, query, where, limit, setDoc, writeBatch } from "firebase/firestore"
 
 //THIRD-PARTY
 
-
 //PROJECT IMPORT
+import { auth, db } from "."
 
 /*****************************************************************
- * INIT                                                          *
+ * CATEGORY                                                      *
  *****************************************************************/
+
+export const docsAddCategory = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+export const docsDeleteCategory = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+export const docsUpdateCategory = async (docId, data) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+/*****************************************************************
+ * SUB-CATEGORY                                                  *
+ *****************************************************************/
+
+export const docsAddSubCategory = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+
+export const docsDeleteSubCategory = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+export const docsUpdateSubCategory = async (docId, data) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+/*****************************************************************
+ * EXTERNAL LINK                                                 *
+ *****************************************************************/
+
+
+export const docsAddExternalLink = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+
+export const docsDeleteExternalLink = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+export const docsUpdateExternalLink = async (docId, data) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+
+/*****************************************************************
+ * DOCUMENT                                                      *
+ *****************************************************************/
+
+export const docsAddDoc = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+
+export const docsDeleteDoc = async (docItem) => {
+	try {
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}
+
+export const docsUpdateDoc = async (docId, data) => {
+	try {
+		//!! update at 2 locations
+		// await setDoc(doc(db, "documentation", docItem.docId), { docItem })
+	} catch (err) {
+		throw new Error(err.message)
+	}
+}

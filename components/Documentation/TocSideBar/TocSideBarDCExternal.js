@@ -22,22 +22,17 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect } from "react"
+import React from "react"
+import PropTypes from "prop-types"
+import Link from "next/link"
 
 // MATERIAL-UI
-import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
-import TocSideBar from "./../../../components/Documentation/TocSideBar"
-import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
-import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
-import { getDocsCenter } from "../../../redux/selectors"
-import { useSelector } from "react-redux"
-import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
+import TocSideBarItemBase from "./TocSideBarItemBase"
+
 
 //ASSETS
 
@@ -45,69 +40,24 @@ import DocumentEditorNoActiveDocId from "../../../components/Documentation/Docum
  * INIT                                                          *
  *****************************************************************/
 
-// const DUMMY_List = [
-// 	{
-
-// 	}
-// ]
-
-// const DUMMY_Content = {
-
-// }
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Documentation() {
-	const { activeDocId } = useSelector(getDocsCenter)
-
-	updateUiSettings({
-		title: "Documentation Management",
-		background: {
-			backgroundImage: "",
-			backgroundColor: "transparent"
-		}
-	})
-
-	/*
-		Flow of data as below:
-		1. Load data (docsList) from DB and save to Redux[docsCenter]
-		2. Components' state based on Redux[docsCenter]
-		3. When there is an activeDocId, then load data from Redux[docsCenter] to TextEditor (mirror to Redux[textEditor])
-
-		Note: at this time, there are 2 state of data of activeDoc.
-			N1. data at Redux[docsCenter] (data saved)
-			N2. temporary data at TextEditor (aka Redux[textEditor])
-		When user save or autosave,
-		- then data from (B2) will update to DB, and update directly to N1
-		- at the background refetch DB and compare to N1 (Redux[]) (imitate behavior of ReactQuery lib)
-	*/
-	useEffect(() => {
-		//using lodash groupBy to group data before pushing to Redux!
-		console.log("fetch Documentation here & keep at ReduxStore textEditor")
-	}, [])
-
+const TocSideBarDCExternal = ({ url, handleOpen, children }) => {
 	return (
-		<Container
-			maxWidth="xl"
-			sx={{
-				display: "flex",
-				flexGrow: 1
-			}}
-			disableGutters
+		<TocSideBarItemBase
+			onClick={() => window.open(url, "_blank")}
+			handleOpen={handleOpen}
 		>
-			<TocSideBar />
-
-			{(activeDocId !== null)
-				? <DocumentEditor />
-				: <DocumentEditorNoActiveDocId />}
-
-			<DocumentTocSideBar />
-
-		</Container>
+			{children}
+		</TocSideBarItemBase>
 	)
 }
+TocSideBarDCExternal.propTypes = {
+	url: PropTypes.string,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
+}
 
-Documentation.getLayout = getLayout
-export default Documentation
+export default TocSideBarDCExternal

@@ -45,17 +45,17 @@ import { DOCS_ADD } from "../../../helpers/constants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDCSubCategory = ({ title, active, onClick, handleOpen, children }) => {
+const TocSideBarDCSubCategory = ({ title, active, handleOpen, children }) => {
 	return (
 		<>
 			<TocSideBarItemBase
 				selected={active}
-				onClick={onClick}
+				onClick={handleOpen /* SubCategory, this action is the same as handleOpen */}
 				handleOpen={handleOpen}
 				additionalButton={
 					<TocSideBarAddNew actions={[
 						DOCS_ADD.CATEGORY,
-						DOCS_ADD.ARTICLE,
+						DOCS_ADD.DOC,
 						DOCS_ADD.EXTERNAL,
 					]}
 					/>

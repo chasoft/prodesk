@@ -82,7 +82,7 @@ const TocSideBarDCCategory = ({ title, handleOpen, children }) => (
 				<TocSideBarAddNew actions={[
 					DOCS_ADD.CATEGORY,
 					DOCS_ADD.SUB_CATEGORY,
-					DOCS_ADD.ARTICLE,
+					DOCS_ADD.DOC,
 					DOCS_ADD.EXTERNAL,
 				]} />
 				<DetailsRightButton handleOpen={handleOpen} />

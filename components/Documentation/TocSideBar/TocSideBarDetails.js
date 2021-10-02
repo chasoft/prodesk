@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useCallback, useMemo } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -30,18 +30,16 @@ import { styled } from "@mui/material/styles"
 import { Box, Button, IconButton, Typography, InputBase } from "@mui/material"
 
 //THIRD-PARTY
+import { filter } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { RightMenuItem } from "./../DocumentTocSideBar"
-import { getUiSettings } from "./../../../redux/selectors"
+import { RightMenuItemAddNewDoc, RightMenuItemDelete, RightMenuItemExportPDF, RightMenuItemImport } from "./../DocumentTocSideBar"
+import { getUiSettings, getDocsCenter } from "./../../../redux/selectors"
 
 //ASSETS
-import PostAddIcon from "@mui/icons-material/PostAdd"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
-import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
-import { ExportPdfIcon } from "./../../../components/common/SvgIcons"
-import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
+import { DOC_TYPE } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -60,13 +58,24 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 
 const TocSideBarDetails = ({ open, handleClose }) => {
 	const { sideBarLeft } = useSelector(getUiSettings)
+	const { docsList, activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+
+	//Usage: access properties from `DocItem[0].`
+	const DocItem = useMemo(() => filter(docsList, (i) => i.docId === activeDocIdOfTocSideBarDetails),
+		[activeDocIdOfTocSideBarDetails, docsList])
+
+	const handleSaveDetails = useCallback(() => {
+		//Update doc's properties
+	}, [])
+
+	if (DocItem.length === 0) return null
+
 	return (
 		<>
 			<Box sx={{
 				position: "fixed",
 				zIndex: 150,
-				display: open ? "flex" : "none",
-				// flexDirection: { flexDirection: "column" },
+				display: "flex",
 				flexDirection: "column",
 				alignItems: "stretch",
 				left: `${sideBarLeft + 556}px`,
@@ -75,6 +84,17 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 				backgroundColor: "#FFF",
 				borderRight: "1px solid",
 				borderColor: "divider",
+				...(open ?
+					{
+						opacity: 1,
+						visibility: "visible",
+						transition: "0.5s opacity, 0 0.5s visibility"
+					} : {
+						opacity: 0,
+						visibility: "hidden",
+						transition: "0.5s opacity, 0.5s visibility"
+					}
+				)
 			}}>
 				<Box sx={{
 					display: "flex",
@@ -84,7 +104,7 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 					borderBottom: "1px solid transparent",
 					borderColor: "divider",
 				}}>
-					<TypographyHeader>{"Page"}</TypographyHeader>
+					<TypographyHeader>{DocItem[0].Type}</TypographyHeader>
 					<IconButton onClick={() => { handleClose() }}>
 						<ArrowBackIcon />
 					</IconButton>
@@ -97,10 +117,12 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 				}}>
 					<form onSubmit={(e) => { e.preventDefault() }}>
 
+
 						<TypographyHeader sx={{ mb: 1 }}>
-							{"Title"}
+							Title
 						</TypographyHeader>
 						<InputBase
+							value={DocItem[0].title}
 							id="doc-title" variant="outlined" fullWidth
 							sx={{
 								px: 1, py: 0.5,
@@ -111,10 +133,11 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 						/>
 
 						<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-							{"Slug"}
+							{(DocItem[0].type === DOC_TYPE.EXTERNAL) ? "URL" : "SLUG"}
 						</TypographyHeader>
 						<InputBase
-							id="doc-slug" variant="outlined" fullWidth
+							value={(DocItem[0].type === DOC_TYPE.EXTERNAL) ? DocItem[0].url : DocItem[0].slug}
+							id="doc-slug-or-url" variant="outlined" fullWidth
 							sx={{
 								px: 1, py: 0.5,
 								color: "grey.800",
@@ -131,6 +154,7 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 							borderColor: "divider",
 						}}>
 							<Button
+								onClick={() => { handleClose() }}
 								variant="outlined"
 								color="primary"
 								sx={{ px: 3 }}
@@ -138,6 +162,7 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 								Cancel
 							</Button>
 							<Button
+								onClick={() => { handleSaveDetails() }}
 								type="submit"
 								variant="contained"
 								color="primary"
@@ -152,18 +177,20 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 
 				<Box sx={{ mt: 3 }}>
 
-					<RightMenuItem Icon={PostAddIcon} sx={{ px: 3 }}>
-						New Article
-					</RightMenuItem>
-					<RightMenuItem Icon={BiImport} sx={{ px: 3 }}>
-						Import
-					</RightMenuItem>
-					<RightMenuItem Icon={ExportPdfIcon} fontSize="small" sx={{ px: 3 }}>
-						Export as PDF
-					</RightMenuItem>
-					<RightMenuItem Icon={DeleteOutlinedIcon} sx={{ px: 3 }}>
-						Delete
-					</RightMenuItem>
+					<RightMenuItemAddNewDoc sx={{ px: 3 }} />
+					<RightMenuItemImport sx={{ px: 3 }} />
+
+					{(DocItem[0].type === DOC_TYPE.CATEGORY) &&
+						<RightMenuItemDelete title="Delete this category" sx={{ px: 3 }} />}
+
+					{(DocItem[0].type === DOC_TYPE.SUBCATEGORY) &&
+						<RightMenuItemDelete title="Delete this sub-category" sx={{ px: 3 }} />}
+
+					{(DocItem[0].type === DOC_TYPE.DOC) &&
+						<RightMenuItemExportPDF sx={{ px: 3 }} />}
+
+					{(DocItem[0].type === DOC_TYPE.DOC || DocItem[0].type === DOC_TYPE.EXTERNAL) &&
+						<RightMenuItemDelete sx={{ px: 3 }} />}
 
 				</Box>
 			</Box >

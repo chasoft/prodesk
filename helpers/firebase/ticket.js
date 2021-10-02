@@ -76,8 +76,6 @@ export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { r
 	}
 }
 
-
-
 export const ticketAddReply = async ({ currentUser, ticketId, replyContent }, { enqueueSnackbar }) => {
 	/* validate input */
 	if (replyContent.length < 5) {

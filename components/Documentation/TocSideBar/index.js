@@ -22,23 +22,26 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 // import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button } from "@mui/material"
-import { useDispatch, useSelector } from "react-redux"
+import { Box } from "@mui/material"
+import { batch as ReduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import ActionMenuGroup from "./ActionMenuGroup"
+import TocSideBarActionsGroup from "./TocSideBarActionsGroup"
 import TocSideBarDetails from "./TocSideBarDetails"
 import TocSideBarDCArticle from "./TocSideBarDCArticle"
+import TocSideBarDCExternal from "./TocSideBarDCExternal"
 import TocSideBarDCCategory from "./TocSideBarDCCategory"
 import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
-import { setSideBarLeft } from "./../../../redux/slices/uiSettings"
-import { getDocsCenter } from "../../../redux/selectors"
+import { setShowTocSideBarDetails, setSideBarLeft } from "./../../../redux/slices/uiSettings"
+import { getDocsCenter, getUiSettings } from "../../../redux/selectors"
+import { DOC_TYPE } from "./../../../helpers/constants"
+import { setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
 
 //ASSETS
 
@@ -46,24 +49,52 @@ import { getDocsCenter } from "../../../redux/selectors"
  * INIT                                                          *
  *****************************************************************/
 
+const HiddenBgFixBug = () => <Box sx={{
+	position: "fixed",
+	zIndex: 1,
+	display: "flex",
+	alignItems: "stretch",
+	left: 0,
+	minWidth: "700px",
+	height: "100%",
+	backgroundColor: "#FAFAFA",
+	...(open ?
+		{
+			opacity: 1,
+			visibility: "visible",
+			transition: "0.5s opacity, 0 0.5s visibility"
+		} : {
+			opacity: 0,
+			visibility: "hidden",
+			transition: "0.5s opacity, 0.5s visibility"
+		}
+	)
+}} />
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const TocSideBar = () => {
-	const [showTocSideBarDetails, setShowTocSideBarDetails] = useState(false)
-	const sideBarRef = useRef(null)
 	const dispatch = useDispatch()
+	const sideBarRef = useRef(null)
 
-	const { docsList } = useSelector(getDocsCenter)
+	const { showTocSideBarDetails } = useSelector(getUiSettings)
+	const { activeDocId, docsListArray } = useSelector(getDocsCenter)
 
 	const handleCloseDetails = useCallback(() => {
-		setShowTocSideBarDetails(false)
-	}, [])
+		ReduxBatch(() => {
+			dispatch(setShowTocSideBarDetails(false))
+			dispatch(setActiveDocIdOfTocSideBarDetails(null))
+		})
+	}, [dispatch])
 
-	const handleOpenDetails = useCallback(() => {
-		setShowTocSideBarDetails(p => !p)
-	}, [])
+	const handleOpenDetails = useCallback((docId) => {
+		ReduxBatch(() => {
+			dispatch(setShowTocSideBarDetails(true))
+			dispatch(setActiveDocIdOfTocSideBarDetails(docId))
+		})
+	}, [dispatch])
 
 	const updateSideBarLeft = useCallback(() => {
 		dispatch(setSideBarLeft(sideBarRef?.current?.offsetLeft ?? 0))
@@ -71,9 +102,6 @@ const TocSideBar = () => {
 
 	useEffect(() => {
 		updateSideBarLeft()
-	}, [updateSideBarLeft])
-
-	useEffect(() => {
 		window.addEventListener("resize", updateSideBarLeft)
 		return () => window.removeEventListener("resize", updateSideBarLeft)
 	}, [updateSideBarLeft])
@@ -91,56 +119,101 @@ const TocSideBar = () => {
 					borderRight: "1px solid transparent",
 					borderColor: "divider",
 					backgroundColor: "#FAFAFA",
+					zIndex: 10
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 
-					{(docsList.length === 0) && <Box>
-
-
-					</Box>}
-
-					{(docsList.length > 0) && <Box>
-
-
-					</Box>}
-
-
-					{/* <TocSideBarDCCategory
-						title="Category"
-						handleOpen={handleOpenDetails}
-					>
-
-						<TocSideBarDCSubCategory
-							title="SubCategory"
-							onClick={() => { }}
-							handleOpen={handleOpenDetails}
-						>
-							<TocSideBarDCArticle
-								onClick={() => { }}
-								active={false}
-								handleOpen={handleOpenDetails}
+					{docsListArray.map((cat) => {
+						/* Category Level */
+						return (
+							<TocSideBarDCCategory
+								key={cat[0]}
+								title={cat[0]}
+								handleOpen={() => handleOpenDetails(cat[1]["undefined"][0].docId)}
 							>
-								Just an article
-							</TocSideBarDCArticle>
-							<TocSideBarDCArticle
-								onClick={() => { }}
-								active={true}
-								handleOpen={handleOpenDetails}
-							>
-								Just an article
-							</TocSideBarDCArticle>
-							<TocSideBarDCArticle
-								onClick={() => { }}
-								handleOpen={handleOpenDetails}
-							>
-								Just an article
-							</TocSideBarDCArticle>
-						</TocSideBarDCSubCategory>
+								{Object.entries(cat[1]).map((subcat) => {
+									/* Contents of Category */
 
-					</TocSideBarDCCategory> */}
+									//Draw items at root level of Category
+									if (subcat[0] === "000000") {
 
-					<ActionMenuGroup />
+										subcat[1].map((item) => {
+
+											if (item.type === DOC_TYPE.DOC)
+												return (
+													<TocSideBarDCArticle
+														key={item.docId}
+														onClick={() => {/* TODO: Implement.. loading DOC content */ }}
+														active={item.docId === activeDocId}
+														handleOpen={() => handleOpenDetails(item.docId)}
+													>
+														{item.title}
+													</TocSideBarDCArticle>
+												)
+
+											if (item.type === DOC_TYPE.EXTERNAL)
+												return (
+													<TocSideBarDCExternal
+														key={item.docId}
+														url={item.url}
+														handleOpen={() => handleOpenDetails(item.docId)}
+													>
+														{item.title}
+													</TocSideBarDCExternal>
+												)
+										})
+
+									}
+
+									//Draw SubCategory
+									//item items which hold subCategory is the 1st item, it is subcat[1][0]
+									//then, when do sorting, make sure this requirement
+									return (
+										<>
+											<TocSideBarDCSubCategory
+												key={subcat[1][0].docId}
+												title={subcat[1][0].subcategory}
+												handleOpen={() => handleOpenDetails(subcat[1][0].docId)}
+											>
+												{subcat[1].map((item, idx) => {
+
+													if (idx === 0) return
+
+													//Draw items within SubCategory
+													if (item.type === DOC_TYPE.DOC)
+														return (
+															<TocSideBarDCArticle
+																key={item.docId}
+																onClick={() => {/* TODO: Implement.. loading DOC content */ }}
+																active={item.docId === activeDocId}
+																handleOpen={() => handleOpenDetails(item.docId)}
+															>
+																{item.title}
+															</TocSideBarDCArticle>
+														)
+
+													if (item.type === DOC_TYPE.EXTERNAL)
+														return (
+															<TocSideBarDCExternal
+																key={item.docId}
+																url={item.url}
+																handleOpen={() => handleOpenDetails(item.docId)}
+															>
+																{item.title}
+															</TocSideBarDCExternal>
+														)
+												})}
+
+											</TocSideBarDCSubCategory>
+										</>
+									)
+								})}
+							</TocSideBarDCCategory>
+						)
+					})}
+
+					<TocSideBarActionsGroup />
 
 				</div>
 
@@ -151,6 +224,8 @@ const TocSideBar = () => {
 				handleClose={handleCloseDetails}
 				dataSource={[]}
 			/>
+
+			<HiddenBgFixBug />
 
 		</>
 	)

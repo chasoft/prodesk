@@ -45,15 +45,13 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
 
 const TocSideBarDCArticle = ({ active, onClick, handleOpen, children }) => {
 	return (
-		<>
-			<TocSideBarItemBase
-				active={active}
-				onClick={onClick}
-				handleOpen={handleOpen}
-			>
-				{children}
-			</TocSideBarItemBase>
-		</>
+		<TocSideBarItemBase
+			active={active}
+			onClick={onClick}
+			handleOpen={handleOpen}
+		>
+			{children}
+		</TocSideBarItemBase>
 	)
 }
 TocSideBarDCArticle.propTypes = {

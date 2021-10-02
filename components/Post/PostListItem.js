@@ -64,7 +64,7 @@ export const PostListItemShorten = ({ subject, link }) => {
 	return (
 		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
 			<Link href={link} passHref>
-				<a href="/just-a-placeholder">
+				<a href="just-a-placeholder">
 					<Box
 						sx={{
 							cursor: "pointer",
@@ -96,7 +96,7 @@ function PostListItem({ subject, excerpt, link, metaData, isFirst = false, isLas
 			}}
 		>
 			<Link href={link} passHref>
-				<a href="/just-a-placeholder">
+				<a href="just-a-placeholder">
 					<Box
 						sx={{
 							display: "flex", flexDirection: "column",

@@ -54,7 +54,7 @@ export function LearnMoreAdvancedTextEditor({ text, linkText }) {
 		}}>
 			{innerText}
 			<Link href="/docs/text-editor" passHref>
-				<a href="/just-a-placeholder" target="_blank" rel="noopener noreferrer" style={{ marginLeft: "5px" }}>
+				<a href="just-a-placeholder" target="_blank" rel="noopener noreferrer" style={{ marginLeft: "5px" }}>
 					{innerLinkText}
 				</a>
 			</Link>

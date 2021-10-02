@@ -22,27 +22,30 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
+import { size, filter } from "lodash"
 
 //PROJECT IMPORT
 import AddNewPopupMenu from "./AddNewPopupMenu"
+import { DOCS_ADD } from "../../../helpers/constants"
+import { getDocsCenter } from "../../../redux/selectors"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
-import { DOCS_ADD } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ActionMenuItem = React.forwardRef(({ ItemIcon, onClick = () => { }, children }, ref) => {
+const TocSideBarActionItem = React.forwardRef(({ ItemIcon, onClick, children }, ref) => {
 	return (
 		<ButtonBase
 			ref={ref}
@@ -85,9 +88,9 @@ const ActionMenuItem = React.forwardRef(({ ItemIcon, onClick = () => { }, childr
 	)
 })
 
-ActionMenuItem.displayName = "ActionMenuItem"
+TocSideBarActionItem.displayName = "TocSideBarActionItem"
 
-ActionMenuItem.propTypes = {
+TocSideBarActionItem.propTypes = {
 	ItemIcon: PropTypes.object,
 	onClick: PropTypes.func,
 	children: PropTypes.node
@@ -97,7 +100,9 @@ ActionMenuItem.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ActionMenuGroup = () => {
+const TocSideBarActionsGroup = () => {
+	const { docsList, activeDocId } = useSelector(getDocsCenter)
+
 	return (
 		<Box
 			sx={{
@@ -106,22 +111,33 @@ const ActionMenuGroup = () => {
 				borderColor: "divider"
 			}}
 		>
-			<AddNewPopupMenu placement="right" actions={[
-				DOCS_ADD.CATEGORY,
-				DOCS_ADD.SUB_CATEGORY,
-				DOCS_ADD.ARTICLE,
-				DOCS_ADD.EXTERNAL,
-			]}>
-				<ActionMenuItem ItemIcon={AddIcon}>
+			<AddNewPopupMenu
+				placement="right"
+				actions={
+					(size(docsList) === 0 || activeDocId === null) ?
+						[
+							DOCS_ADD.CATEGORY
+						]
+						:
+						[
+							DOCS_ADD.CATEGORY,
+							DOCS_ADD.SUB_CATEGORY,
+							DOCS_ADD.DOC,
+							DOCS_ADD.EXTERNAL,
+						]
+				}
+				targetDocItem={filter(docsList, (i) => i.docId === activeDocId)}
+			>
+				<TocSideBarActionItem onClick={() => {/* empty for this case */ }} ItemIcon={AddIcon}>
 					New
-				</ActionMenuItem>
+				</TocSideBarActionItem>
 			</AddNewPopupMenu>
 
-			<ActionMenuItem ItemIcon={FolderOutlinedIcon}>
+			<TocSideBarActionItem onClick={() => {/* TODO: Implement Gallery Feature here! */ }} ItemIcon={FolderOutlinedIcon}>
 				File
-			</ActionMenuItem>
+			</TocSideBarActionItem>
 		</Box>
 	)
 }
 
-export default ActionMenuGroup
+export default TocSideBarActionsGroup

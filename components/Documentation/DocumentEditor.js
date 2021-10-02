@@ -72,7 +72,8 @@ const DocumentEditor = () => {
 			flexDirection: "column",
 			backgroundColor: "#FFF",
 			flexGrow: 1,
-			px: 5, py: 4
+			px: 5, py: 4,
+			zIndex: 10
 		}}>
 			<InputBase
 				id="doc-title" placeholder="Page title" variant="outlined"

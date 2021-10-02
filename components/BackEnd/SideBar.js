@@ -68,7 +68,7 @@ const SideBarContentExpanded = ({ data }) => (
 			if (group.type === MENU_ITEM_TYPE.ITEM)
 				return (
 					<Link key={group.url} href={group.url} passHref>
-						<a href="/just-a-placeholder">
+						<a href="just-a-placeholder">
 							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 								<Box
 									sx={{
@@ -141,17 +141,14 @@ const SideBarContentExpanded = ({ data }) => (
 								"& > button > li:hover": {
 									backgroundColor: "#ffffff14",
 									cursor: "pointer",
-								},
-								// "& > button > li:last-of-type": {
-								// 	pb: 0
-								// }
+								}
 							}}
 						>
 							{group.items.map((item) => (
 								<ButtonBase key={item.id} sx={{ display: "block", width: "100%", textAlign: "left" }}>
 									<li>
 										<Link href={item.url} passHref>
-											<a href="/just-a-placeholder">
+											<a href="just-a-placeholder">
 												{IconLib[item.icon]}{item.text}
 											</a>
 										</Link>
@@ -173,7 +170,7 @@ const SideBarContentCollapsed = ({ data }) => (
 		{data.map((group) => {
 			if (group.type === MENU_ITEM_TYPE.ITEM)
 				return (
-					<Link key={group.url} href={group.url} >
+					<Link key={group.url} href={group.url} passHref >
 						<Tooltip title={group.description} placement="right">
 							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 								<Box
@@ -229,7 +226,7 @@ const SideBarContentCollapsed = ({ data }) => (
 								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 									<li>
 										<Link href={item.url} passHref>
-											<a href="/just-a-placeholder">
+											<a href="just-a-placeholder">
 												{IconLib[item.icon]}
 											</a>
 										</Link>
@@ -265,6 +262,7 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 				backgroundRepeat: "no-repeat",
 				backgroundSize: "256px 556px",
 				transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1)",
+				zIndex: 100
 			}}
 		>
 

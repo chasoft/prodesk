@@ -252,7 +252,7 @@ export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) =
 		return (
 			<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
 				<Link href={target ?? ""} passHref>
-					<a href="/just-a-placeholder">
+					<a href="just-a-placeholder">
 						<LearnMore>
 							Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
 						</LearnMore>

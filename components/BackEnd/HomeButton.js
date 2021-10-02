@@ -65,11 +65,11 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 					}}
 				>
 					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-					<Link href={homeUrl} passHref><a href="/just-a-placeholder" style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
+					<Link href={homeUrl} passHref><a href="just-a-placeholder" style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
 					<div style={{ display: "flex", alignItems: "center" }}>
 						<Link href={settingsUrl} passHref>
-							<a href="/just-a-placeholder">
+							<a href="just-a-placeholder">
 								<Box
 									color="secondary"
 									aria-label="Settings"
@@ -89,7 +89,7 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 			<Tooltip title="Dashboard" placement="right">
 				<Link href={homeUrl} passHref>
-					<a href="/just-a-placeholder">
+					<a href="just-a-placeholder">
 						<Box
 							sx={{
 								display: "flex",
