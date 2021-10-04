@@ -27,21 +27,23 @@ import React, { useCallback, useEffect, useRef } from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
-import { batch as ReduxBatch, useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
+import { findKey } from "lodash"
 
 //PROJECT IMPORT
 import TocSideBarActionsGroup from "./TocSideBarActionsGroup"
 import TocSideBarDetails from "./TocSideBarDetails"
-import TocSideBarDCArticle from "./TocSideBarDCArticle"
-import TocSideBarDCExternal from "./TocSideBarDCExternal"
-import TocSideBarDCCategory from "./TocSideBarDCCategory"
-import TocSideBarDCSubCategory from "./TocSideBarDCSubCategory"
+import TocSideBarDoc from "./TocSideBarDoc"
+import TocSideBarExternal from "./TocSideBarExternal"
+import TocSideBarCategory from "./TocSideBarCategory"
+import TocSideBarSubCategory from "./TocSideBarSubCategory"
 import { setShowTocSideBarDetails, setSideBarLeft } from "./../../../redux/slices/uiSettings"
 import { getDocsCenter, getUiSettings } from "../../../redux/selectors"
-import { DOC_TYPE } from "./../../../helpers/constants"
-import { setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
+import { ACTION, DOC_TYPE, RESERVED_KEYWORDS } from "./../../../helpers/constants"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails, setDocsContentList } from "../../../redux/slices/docsCenter"
+import { docsGetContent } from "../../../helpers/firebase/docs"
 
 //ASSETS
 
@@ -80,17 +82,17 @@ const TocSideBar = () => {
 	const sideBarRef = useRef(null)
 
 	const { showTocSideBarDetails } = useSelector(getUiSettings)
-	const { activeDocId, docsListArray } = useSelector(getDocsCenter)
+	const { activeDocId, docsList } = useSelector(getDocsCenter)
 
 	const handleCloseDetails = useCallback(() => {
-		ReduxBatch(() => {
+		reduxBatch(() => {
 			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setActiveDocIdOfTocSideBarDetails(null))
 		})
 	}, [dispatch])
 
 	const handleOpenDetails = useCallback((docId) => {
-		ReduxBatch(() => {
+		reduxBatch(() => {
 			dispatch(setShowTocSideBarDetails(true))
 			dispatch(setActiveDocIdOfTocSideBarDetails(docId))
 		})
@@ -98,6 +100,14 @@ const TocSideBar = () => {
 
 	const updateSideBarLeft = useCallback(() => {
 		dispatch(setSideBarLeft(sideBarRef?.current?.offsetLeft ?? 0))
+	}, [dispatch])
+
+	const loadDocContent = useCallback((docId) => {
+		reduxBatch(() => {
+			dispatch(setDocsContentList(docId, ACTION.GET, docsGetContent(docId)))
+			dispatch(setActiveDocId(docId))
+			dispatch(setActiveDocIdOfTocSideBarDetails(null))
+		})
 	}, [dispatch])
 
 	useEffect(() => {
@@ -124,10 +134,10 @@ const TocSideBar = () => {
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 
-					{docsListArray.map((cat) => {
+					{Object.entries(docsList).map((cat) => {
 						/* Category Level */
 						return (
-							<TocSideBarDCCategory
+							<TocSideBarCategory
 								key={cat[0]}
 								title={cat[0]}
 								handleOpen={() => handleOpenDetails(cat[1]["undefined"][0].docId)}
@@ -136,80 +146,86 @@ const TocSideBar = () => {
 									/* Contents of Category */
 
 									//Draw items at root level of Category
-									if (subcat[0] === "000000") {
+									if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 
 										subcat[1].map((item) => {
 
 											if (item.type === DOC_TYPE.DOC)
 												return (
-													<TocSideBarDCArticle
+													<TocSideBarDoc
 														key={item.docId}
-														onClick={() => {/* TODO: Implement.. loading DOC content */ }}
+														onClick={() => { loadDocContent(item.docId) }}
 														active={item.docId === activeDocId}
 														handleOpen={() => handleOpenDetails(item.docId)}
 													>
 														{item.title}
-													</TocSideBarDCArticle>
+													</TocSideBarDoc>
 												)
 
 											if (item.type === DOC_TYPE.EXTERNAL)
 												return (
-													<TocSideBarDCExternal
+													<TocSideBarExternal
 														key={item.docId}
 														url={item.url}
 														handleOpen={() => handleOpenDetails(item.docId)}
 													>
 														{item.title}
-													</TocSideBarDCExternal>
+													</TocSideBarExternal>
 												)
 										})
 
 									}
+
+									//bypass undefined item which represent/hold category's info
+									if (subcat[0] === RESERVED_KEYWORDS.CAT) return null
+
+									//position of Sub-Category in the list
+									const subCatIndex = findKey(subcat[1], { type: DOC_TYPE.SUBCATEGORY })
 
 									//Draw SubCategory
 									//item items which hold subCategory is the 1st item, it is subcat[1][0]
 									//then, when do sorting, make sure this requirement
 									return (
 										<>
-											<TocSideBarDCSubCategory
-												key={subcat[1][0].docId}
-												title={subcat[1][0].subcategory}
-												handleOpen={() => handleOpenDetails(subcat[1][0].docId)}
+											<TocSideBarSubCategory
+												key={subcat[1][subCatIndex].docId}
+												title={subcat[1][subCatIndex].subcategory}
+												handleOpen={() => handleOpenDetails(subcat[1][subCatIndex].docId)}
 											>
 												{subcat[1].map((item, idx) => {
 
-													if (idx === 0) return
+													if (idx === subCatIndex) return null
 
 													//Draw items within SubCategory
 													if (item.type === DOC_TYPE.DOC)
 														return (
-															<TocSideBarDCArticle
+															<TocSideBarDoc
 																key={item.docId}
-																onClick={() => {/* TODO: Implement.. loading DOC content */ }}
+																onClick={() => { loadDocContent(item.docId) }}
 																active={item.docId === activeDocId}
 																handleOpen={() => handleOpenDetails(item.docId)}
 															>
 																{item.title}
-															</TocSideBarDCArticle>
+															</TocSideBarDoc>
 														)
 
 													if (item.type === DOC_TYPE.EXTERNAL)
 														return (
-															<TocSideBarDCExternal
+															<TocSideBarExternal
 																key={item.docId}
 																url={item.url}
 																handleOpen={() => handleOpenDetails(item.docId)}
 															>
 																{item.title}
-															</TocSideBarDCExternal>
+															</TocSideBarExternal>
 														)
 												})}
 
-											</TocSideBarDCSubCategory>
+											</TocSideBarSubCategory>
 										</>
 									)
 								})}
-							</TocSideBarDCCategory>
+							</TocSideBarCategory>
 						)
 					})}
 

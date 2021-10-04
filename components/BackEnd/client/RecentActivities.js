@@ -21,7 +21,7 @@
 
 import React from "react"
 import { Box, Grid, Typography } from "@mui/material"
-import ArticlesList from "./../../common/ArticleList"
+import DocsList from "../../common/DocsList"
 
 /*****************************************************************
  * INIT                                                          *
@@ -75,7 +75,7 @@ const RecentActivities = () => {
 
 					<Grid item xs={12} sm={6}>
 
-						<ArticlesList
+						<DocsList
 							header="Public tickets"
 							viewAllText="View all public tickets"
 							viewAllLink="/client/public-ticket"
@@ -86,7 +86,7 @@ const RecentActivities = () => {
 
 					<Grid item xs={12} sm={6}>
 
-						<ArticlesList
+						<DocsList
 							header="Popular documents"
 							viewAllText="View all popular documents"
 							viewAllLink="/client/popular-documents"

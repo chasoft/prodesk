@@ -54,7 +54,7 @@ const DocumentEditor = () => {
 	const [defaultEditorData, setDefaultEditorData] = useState("")
 
 	const dispatch = useDispatch()
-	const { editorData } = useSelector(getTextEditor)
+	const { editorData } = useSelector(getTextEditor)	//!! thống nhất nơi lưu trữ ... editorData? docsContentList ? OR?? I am wrong?!!
 
 	const handleSetDefaultEditorData = useCallback((data) => {
 		setDefaultEditorData(data)

@@ -26,15 +26,17 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Link, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import DetailsRightButton from "./DetailsRightButton"
+import TocSideBarAddNew from "./TocSideBarAddNew"
+import { DOCS_ADD } from "../../../helpers/constants"
 
 //PROJECT IMPORT
 
+
 //ASSETS
-import { DocumentIcon } from "./SvgIcons"
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,76 +46,56 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ArticlesList = ({ header, viewAllText, viewAllLink, dataSource }) => {
-	return (
-		<div>
-
-			<Typography noWrap
-				sx={{
-					fontFamily: "\"Google Sans\", Roboto, sans-serif",
-					fontSize: "1rem",
-					fontWeight: 500,
-					lineHeight: "1.25rem"
-				}}
-			>
-				{header}
+const TocSideBarCategory = ({ title, handleOpen, children }) => (
+	<Box sx={{
+		display: "flex",
+		flexDirection: "column",
+		pb: 4,
+	}}>
+		<Box sx={{
+			display: "flex",
+			justifyContent: "space-between",
+			"&>div": {
+				"&>#popper-trigger": { visibility: "hidden" },
+				"&>#detailsRightButton": { visibility: "hidden" },
+			},
+			":hover>p": { color: "#000" },
+			":hover>div": {
+				"&>#popper-trigger": { visibility: "visible" },
+				"&>#detailsRightButton": { visibility: "visible" },
+			},
+		}}>
+			<Typography sx={{
+				px: 2, py: 1,
+				ml: -2, mr: 0,
+				textTransform: "uppercase",
+				color: "grey.500",
+				fontWeight: "bold",
+			}}>
+				{title}
 			</Typography>
 
-			<Box
-				component="ul"
-				sx={{
-					padding: 0,
-					cursor: "pointer",
-					listStyle: "none",
-					color: "primary.main",
-					"& > a": { textDecoration: "none" },
-					"& > a > li": {
-						display: "flex", mx: -1, px: 2, py: 0.5,
-						flexDirection: "row",
-						"&:hover": {
-							backgroundColor: "#E8F0FE"
-						},
-						"& > svg": {
-							marginTop: ".5rem",
-							height: "1.25rem",
-							width: "1.25rem",
-							minWidth: "1.25rem",
-							fill: (theme) => theme.palette.primary.main
-						},
-						"& > button": { padding: ".625rem 0 .625rem .875rem" }
-					}
-				}}
-			>
-				{dataSource.map((item) => (
-					<Link href={item.url} key={item.id}>
-						<li>
-							<DocumentIcon />
-							<ButtonBase sx={{ textAlign: "left" }}>
-								{item.subject}
-							</ButtonBase>
-						</li>
-					</Link>
-				))}
-
-				<Link href={viewAllLink}>
-					<li>
-						<ArrowForwardIcon />
-						<ButtonBase sx={{ fontWeight: "bold" }}>
-							{viewAllText}
-						</ButtonBase>
-					</li>
-				</Link>
-
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+			}}>
+				<TocSideBarAddNew actions={[
+					DOCS_ADD.CATEGORY,
+					DOCS_ADD.SUB_CATEGORY,
+					DOCS_ADD.DOC,
+					DOCS_ADD.EXTERNAL,
+				]} />
+				<DetailsRightButton handleOpen={handleOpen} />
 			</Box>
+		</Box>
 
-		</div>
-	)
-}
-ArticlesList.propTypes = {
-	header: PropTypes.string,
-	viewAllText: PropTypes.string,
-	viewAllLink: PropTypes.string,
-	dataSource: PropTypes.array
+		{children}
+	</Box>
+)
+TocSideBarCategory.propTypes = {
+	title: PropTypes.string,
+	handleOpen: PropTypes.func,
+	children: PropTypes.node
 }
 
-export default ArticlesList
+export default TocSideBarCategory

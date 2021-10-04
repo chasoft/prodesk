@@ -23,17 +23,14 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { Box, Typography } from "@mui/material"
+import { DocumentIcon } from "../common/SvgIcons"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TocSideBarItemBase from "./TocSideBarItemBase"
-import TocSideBarAddNew from "./TocSideBarAddNew"
-import { DOCS_ADD } from "../../../helpers/constants"
 
 //ASSETS
 
@@ -45,43 +42,76 @@ import { DOCS_ADD } from "../../../helpers/constants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDCSubCategory = ({ title, active, handleOpen, children }) => {
+function ListDocs() {
 	return (
-		<>
-			<TocSideBarItemBase
-				selected={active}
-				onClick={handleOpen /* SubCategory, this action is the same as handleOpen */}
-				handleOpen={handleOpen}
-				additionalButton={
-					<TocSideBarAddNew actions={[
-						DOCS_ADD.CATEGORY,
-						DOCS_ADD.DOC,
-						DOCS_ADD.EXTERNAL,
-					]}
-					/>
-				}
+		<Box sx={{
+			margin: "3rem 0 0",
+			position: "sticky",
+			top: "110px"
+		}}>
+			<Box component="nav"
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					marginLeft: { xs: "1.125rem", md: "3.125rem" },
+				}}
 			>
-				{title}
-			</TocSideBarItemBase>
 
-			<Box sx={{
-				borderLeft: "1px solid transparent",
-				borderColor: "divider",
-				pl: 2
-			}}>
-
-				{children}
-
+				<Typography variant="h2">Google services &amp; your child</Typography>
+				<Box component="ul"
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						listStyle: "none",
+						paddingLeft: 0,
+						"& > li": {
+							display: "flex",
+							flexDirection: "row",
+							"& > svg": {
+								marginTop: ".6rem",
+								height: "1.25rem",
+								width: "1.25rem",
+								minWidth: "1.25rem",
+								fill: (theme) => theme.palette.primary.main
+							},
+							"& > :last-child": {
+								padding: ".625rem 0 .625rem .875rem"
+							}
+						}
+					}}
+				>
+					<li>
+						<DocumentIcon />
+						<Typography>Chrome &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Maps &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+					<li>
+						<DocumentIcon />
+						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
+					</li>
+				</Box>
 			</Box>
-		</>
+		</Box>
 	)
 }
-TocSideBarDCSubCategory.propTypes = {
-	title: PropTypes.string,
-	active: PropTypes.bool,
-	onClick: PropTypes.func,
-	handleOpen: PropTypes.func,
-	children: PropTypes.node
-}
 
-export default TocSideBarDCSubCategory
+export default ListDocs

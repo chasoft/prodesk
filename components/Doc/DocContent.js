@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Box, Typography } from "@mui/material"
 import HelpfulSurvey from "./HelpfulSurvey"
 
-function ArticleContent() {
+function DocContent() {
 	return (
 		<Box
 			component="main"
@@ -107,4 +107,4 @@ function ArticleContent() {
 	)
 }
 
-export default ArticleContent
+export default DocContent

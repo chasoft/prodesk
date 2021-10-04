@@ -24,15 +24,16 @@
 
 import React from "react"
 import PropTypes from "prop-types"
-import Link from "next/link"
 
 // MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
-
+import TocSideBarAddNew from "./TocSideBarAddNew"
+import { DOCS_ADD } from "../../../helpers/constants"
 
 //ASSETS
 
@@ -44,20 +45,43 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDCExternal = ({ url, handleOpen, children }) => {
+const TocSideBarSubCategory = ({ title, active, handleOpen, children }) => {
 	return (
-		<TocSideBarItemBase
-			onClick={() => window.open(url, "_blank")}
-			handleOpen={handleOpen}
-		>
-			{children}
-		</TocSideBarItemBase>
+		<>
+			<TocSideBarItemBase
+				selected={active}
+				onClick={handleOpen /* SubCategory, this action is the same as handleOpen */}
+				handleOpen={handleOpen}
+				additionalButton={
+					<TocSideBarAddNew actions={[
+						DOCS_ADD.CATEGORY,
+						DOCS_ADD.DOC,
+						DOCS_ADD.EXTERNAL,
+					]}
+					/>
+				}
+			>
+				{title}
+			</TocSideBarItemBase>
+
+			<Box sx={{
+				borderLeft: "1px solid transparent",
+				borderColor: "divider",
+				pl: 2
+			}}>
+
+				{children}
+
+			</Box>
+		</>
 	)
 }
-TocSideBarDCExternal.propTypes = {
-	url: PropTypes.string,
+TocSideBarSubCategory.propTypes = {
+	title: PropTypes.string,
+	active: PropTypes.bool,
+	onClick: PropTypes.func,
 	handleOpen: PropTypes.func,
 	children: PropTypes.node
 }
 
-export default TocSideBarDCExternal
+export default TocSideBarSubCategory

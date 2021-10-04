@@ -163,3 +163,18 @@ export const LOCALUPDATE_DOCSLIST_ACTION = {
 	DELETE_EXTERNAL: "Delete External Link",
 	UPDATE_EXTERNAL: "Update External Link",
 }
+
+export const RESERVED_KEYWORDS = {
+	CAT: "undefined",
+	CAT_CHILDREN: "000000",
+	SUB_CAT_NAME: ["undefined", "000000"],
+}
+
+//Common actions for general purpose
+export const ACTION = {
+	SET: "Add",
+	GET: "Get",
+	DELETE: "Delete",
+	UPDATE: "Update",
+	CLEAR: "Clear",
+}

@@ -24,6 +24,7 @@
 
 import React from "react"
 import PropTypes from "prop-types"
+import Link from "next/link"
 
 // MATERIAL-UI
 
@@ -43,22 +44,20 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDCArticle = ({ active, onClick, handleOpen, children }) => {
+const TocSideBarExternal = ({ url, handleOpen, children }) => {
 	return (
 		<TocSideBarItemBase
-			active={active}
-			onClick={onClick}
+			onClick={() => window.open(url, "_blank")}
 			handleOpen={handleOpen}
 		>
 			{children}
 		</TocSideBarItemBase>
 	)
 }
-TocSideBarDCArticle.propTypes = {
-	active: PropTypes.bool,
-	onClick: PropTypes.func,
+TocSideBarExternal.propTypes = {
+	url: PropTypes.string,
 	handleOpen: PropTypes.func,
 	children: PropTypes.node
 }
 
-export default TocSideBarDCArticle
+export default TocSideBarExternal

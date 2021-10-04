@@ -3,7 +3,7 @@ import React from "react"
 //PROJECT IMPORT
 
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
-import Article from "./../../components/Article"
+import Doc from "../../components/Doc"
 // import { useRouter } from "next/router"
 import updateUiSettings from "./../../helpers/updateUiSettings"
 // import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
@@ -19,7 +19,7 @@ import updateUiSettings from "./../../helpers/updateUiSettings"
 
 
 
-function AnArticle() {
+function ADoc() {
 	// const router = useRouter()
 	// const { docId } = router.query
 
@@ -29,10 +29,10 @@ function AnArticle() {
 
 	return (
 		<>
-			<Article />
+			<Doc />
 		</>
 	)
 }
 
-AnArticle.getLayout = getLayout
-export default AnArticle
+ADoc.getLayout = getLayout
+export default ADoc

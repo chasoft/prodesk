@@ -133,7 +133,10 @@ const TocSideBarActionsGroup = () => {
 				</TocSideBarActionItem>
 			</AddNewPopupMenu>
 
-			<TocSideBarActionItem onClick={() => {/* TODO: Implement Gallery Feature here! */ }} ItemIcon={FolderOutlinedIcon}>
+			<TocSideBarActionItem
+				ItemIcon={FolderOutlinedIcon}
+				onClick={() => {/* TODO: Implement Gallery Feature here! */ }}
+			>
 				File
 			</TocSideBarActionItem>
 		</Box>

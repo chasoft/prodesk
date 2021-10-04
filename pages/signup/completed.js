@@ -29,9 +29,9 @@ import { Box, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
+import { once } from "lodash"
 
 //PROJECT IMPORT
-import { once } from "./../../helpers/utils"
 import { Logo } from "./../../components/common"
 import AuthCheck from "./../../components/AuthCheck"
 import { REDIRECT_URL } from "./../../helpers/constants"

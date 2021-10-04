@@ -22,13 +22,14 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import { serverTimestamp } from "firebase/firestore"
 
 //THIRD-PARTY
 import { nanoid } from "nanoid"
-import { db, serverTimestamp } from "."
-import { TICKET_STATUS } from "./../constants"
 
 //PROJECT IMPORT
+import { db } from "."
+import { TICKET_STATUS } from "./../constants"
 
 /*****************************************************************
  * INIT                                                          *

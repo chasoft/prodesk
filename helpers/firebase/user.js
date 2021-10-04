@@ -48,7 +48,7 @@ export const getAdminDocByUid = async (uid) => {
 			adminDoc = docSnap.data()
 		else
 			throw new Error("adminUserId not existed.")
-	} catch (err) {
+	} catch (e) {
 		throw new Error("Something wrong happenned when trying to get adminUser's data.")
 	}
 	return adminDoc
@@ -113,7 +113,7 @@ export const getUserDocByUid = async (uid) => {
 		} else {
 			throw new Error("User not existed!")
 		}
-	} catch (err) {
+	} catch (e) {
 		throw new Error("Something wrong happenned when trying to get user's data")
 	}
 	return userDoc
@@ -130,7 +130,7 @@ export const getUsernameDocByUsername = async (username) => {
 		const docSnap = await getDoc(doc(db, "usernames", username))
 		if (docSnap.exists())
 			usernameDoc = docSnap.data()
-	} catch (err) {
+	} catch (e) {
 		throw new Error("Something wrong happenned when trying to get username's data")
 	}
 	return usernameDoc
@@ -142,7 +142,7 @@ export const isUsernameAvailable = async (username) => {
 		const docSnap = await getDoc(doc(db, "usernames", username))
 		if (docSnap.exists())
 			usernameAvailability = true
-	} catch (err) {
+	} catch (e) {
 		throw new Error("Something wrong happenned when checking username availability")
 	}
 	return usernameAvailability

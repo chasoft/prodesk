@@ -19,8 +19,8 @@
  ************************************************************************/
 
 import React from "react"
-import PostListItem from "./../Post/PostListItem"
-import ListGroup from "./../common/ListGroup"
+import PostListItem from "../Post/PostListItem"
+import ListGroup from "../common/ListGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -54,12 +54,12 @@ const DummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const PopularArticles = () => {
+const PopularDocs = () => {
 
 	return (
 		<ListGroup
-			title="Popular Articles"
-			viewAllText="View all popular articles"
+			title="Popular Document"
+			viewAllText="View all popular documents"
 			viewAllLink="/docs/featured"
 		>
 			{
@@ -80,4 +80,4 @@ const PopularArticles = () => {
 	)
 }
 
-export default PopularArticles
+export default PopularDocs

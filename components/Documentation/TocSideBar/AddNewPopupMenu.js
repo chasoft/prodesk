@@ -29,15 +29,13 @@ import PropTypes from "prop-types"
 import { Box, ClickAwayListener, Grow, Paper, Popper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
 import { isArray } from "lodash"
-import { batch as ReduxBatch, useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { DOCS_ADD, DOC_STATUS, DOC_TYPE, LOCALUPDATE_DOCSLIST_ACTION } from "./../../../helpers/constants"
-import { docsAddCategory, docsAddDoc, docsAddExternalLink, docsAddSubCategory } from "../../../helpers/firebase/docs"
-import { setActiveDoc, setActiveDocId, setActiveDocIdOfTocSideBarDetails, updateDocsList } from "../../../redux/slices/docsCenter"
-import { setShowTocSideBarDetails } from "../../../redux/slices/uiSettings"
+import { getAuth } from "../../../redux/selectors"
+import { DOCS_ADD } from "./../../../helpers/constants"
+import { docsAddCategory, docsAddSubCategory, docsAddExternal, docsAddDoc } from "./../../Documentation/DocumentTocSideBar"
 
 //ASSETS
 
@@ -45,196 +43,32 @@ import { setShowTocSideBarDetails } from "../../../redux/slices/uiSettings"
  * INIT                                                          *
  *****************************************************************/
 
-// const ActionMenuItem = React.forwardRef((props, ref) => {
-// 	const { ItemIcon, onClick, children } = props
-// 	return (
-// 		<ButtonBase
-// 			ref={ref}
-// 			onClick={() => { onClick() }}
-// 			sx={{ display: "block", width: "100%", textAlign: "left" }}
-// 		>
-// 			<Box
-// 				sx={{
-// 					display: "flex",
-// 					alignItems: "center",
-// 					justifyContent: "space-between",
-// 					fontWeight: 500,
-// 					"&:hover": {
-// 						backgroundColor: "action.hover",
-// 						cursor: "pointer",
-// 					},
-// 				}}
-// 			>
-
-// 				<Typography sx={{ ml: 2, color: "grey.500", fontWeight: "bold" }}>
-// 					{children}
-// 				</Typography>
-
-// 				{<ItemIcon
-// 					id="detailsRightButton" size="small"
-// 					fontSize="small"
-// 					sx={{
-// 						fill: (theme) => theme.palette.grey[500],
-// 						my: 1, mr: 2,
-// 						cursor: "pointer"
-// 					}}
-// 					onClick={(e) => {
-// 						e.stopPropagation()
-// 						console.log("action clicked")
-// 					}}
-// 				/>}
-
-// 			</Box>
-// 		</ButtonBase>
-// 	)
-// })
-
-// ActionMenuItem.displayName = "ActionMenuItem"
-
-// ActionMenuItem.propTypes = {
-// 	ItemIcon: PropTypes.object,
-// 	onClick: PropTypes.func,
-// 	children: PropTypes.node
-// }
-
 const PopupMenuItem = ({ actionType, targetDocItem }) => {
 	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
 
 	const executeAction = useCallback(async () => {
 
 		//Not require any information
 		if (actionType.code === DOCS_ADD.CATEGORY.code) {
-			//Prepare data
-			const docId = nanoid(7)
-			const docItem = {
-				docId: docId,
-				type: DOC_TYPE.CATEGORY,
-				category: "Untitled Category " + docId,
-				slug: "untitled-category-" + docId,
-				description: "",
-				createdAt: "",
-				createdBy: "",
-				updatedAt: "",
-				updatedBy: "",
-			}
-
-			//Add to DB
-			await docsAddCategory(docItem)
-
-			ReduxBatch(() => {
-				dispatch(updateDocsList({
-					type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_CAT,
-					docItem: docItem
-				}))
-				dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-				dispatch(setShowTocSideBarDetails(true))
-			})
+			docsAddCategory(dispatch, currentUser.username)
 		}
 
 		//Require parent category
 		if (actionType.code === DOCS_ADD.SUB_CATEGORY.code) {
-
-			if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-
-			//Prepare data
-			const docId = nanoid(7)
-			const docItem = {
-				docId: docId,
-				type: DOC_TYPE.SUBCATEGORY,
-				category: targetDocItem.category,
-				subcategory: "Untitled SubCategory " + docId,
-				slug: "untitled-subcategory-" + docId,
-				description: "",
-				createdAt: "",
-				createdBy: "",
-				updatedAt: "",
-				updatedBy: "",
-			}
-
-			//Add to DB
-			await docsAddSubCategory(docItem)
-
-			ReduxBatch(() => {
-				dispatch(updateDocsList({
-					type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_SUBCAT,
-					docItem: docItem
-				}))
-				dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-				dispatch(setShowTocSideBarDetails(true))
-			})
+			docsAddSubCategory(dispatch, currentUser.username, targetDocItem)
 		}
 
 		//Require parent category
 		if (actionType.code === DOCS_ADD.EXTERNAL.code) {
-
-			if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-
-			//Prepare data
-			const docId = nanoid(7)
-			const docItem = {
-				docId: docId,
-				type: DOC_TYPE.EXTERNAL,
-				category: targetDocItem.category,
-				subcategory: targetDocItem.subcategory ?? "000000",
-				url: "",
-				description: "",
-				createdAt: "",
-				createdBy: "",
-				updatedAt: "",
-				updatedBy: "",
-			}
-
-			//Add to DB
-			await docsAddExternalLink(docItem)
-
-			ReduxBatch(() => {
-				dispatch(updateDocsList({
-					type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_EXTERNAL,
-					docItem: docItem
-				}))
-				dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-				dispatch(setShowTocSideBarDetails(true))
-			})
+			docsAddExternal(dispatch, currentUser.username, targetDocItem)
 		}
 
 		if (actionType.code === DOCS_ADD.DOC.code) {
-
-			if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-
-			//Prepare data
-			//Please note that content of DOC would be stored in sub-Collection of its document
-			const docId = nanoid(7)
-			const docItem = {
-				docId: docId,
-				type: DOC_TYPE.DOC,
-				category: targetDocItem.category,
-				subcategory: targetDocItem.subcategory ?? "000000",
-				title: "",
-				description: "",
-				slug: "",
-				tags: [],
-				status: DOC_STATUS.DRAFT,
-				createdAt: "",
-				createdBy: "",
-				updatedAt: "",
-				updatedBy: "",
-			}
-
-			//Add to DB
-			await docsAddDoc(docItem)
-
-			//For document, not show details, but show the TextEditor
-			ReduxBatch(() => {
-				dispatch(updateDocsList({
-					type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_DOC,
-					docItem: docItem
-				}))
-				dispatch(setActiveDocId(docId))
-				dispatch(setActiveDoc(docItem))
-			})
+			docsAddDoc(dispatch, currentUser.username, targetDocItem)
 		}
 
-	}, [dispatch, actionType.code, targetDocItem])
+	}, [dispatch, actionType.code, targetDocItem, currentUser.username])
 
 	return (
 		<Box

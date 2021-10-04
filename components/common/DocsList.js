@@ -23,16 +23,18 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
-import { DocumentIcon } from "./../common/SvgIcons"
+import { Box, ButtonBase, Link, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 
 //ASSETS
+import { DocumentIcon } from "./SvgIcons"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 /*****************************************************************
  * INIT                                                          *
@@ -42,76 +44,76 @@ import { DocumentIcon } from "./../common/SvgIcons"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ListArticles() {
+const DocsList = ({ header, viewAllText, viewAllLink, dataSource }) => {
 	return (
-		<Box sx={{
-			margin: "3rem 0 0",
-			position: "sticky",
-			top: "110px"
-		}}>
-			<Box component="nav"
+		<div>
+
+			<Typography noWrap
 				sx={{
-					display: "flex",
-					flexDirection: "column",
-					marginLeft: { xs: "1.125rem", md: "3.125rem" },
+					fontFamily: "\"Google Sans\", Roboto, sans-serif",
+					fontSize: "1rem",
+					fontWeight: 500,
+					lineHeight: "1.25rem"
 				}}
 			>
+				{header}
+			</Typography>
 
-				<Typography variant="h2">Google services &amp; your child</Typography>
-				<Box component="ul"
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						listStyle: "none",
-						paddingLeft: 0,
-						"& > li": {
-							display: "flex",
-							flexDirection: "row",
-							"& > svg": {
-								marginTop: ".6rem",
-								height: "1.25rem",
-								width: "1.25rem",
-								minWidth: "1.25rem",
-								fill: (theme) => theme.palette.primary.main
-							},
-							"& > :last-child": {
-								padding: ".625rem 0 .625rem .875rem"
-							}
-						}
-					}}
-				>
+			<Box
+				component="ul"
+				sx={{
+					padding: 0,
+					cursor: "pointer",
+					listStyle: "none",
+					color: "primary.main",
+					"& > a": { textDecoration: "none" },
+					"& > a > li": {
+						display: "flex", mx: -1, px: 2, py: 0.5,
+						flexDirection: "row",
+						"&:hover": {
+							backgroundColor: "#E8F0FE"
+						},
+						"& > svg": {
+							marginTop: ".5rem",
+							height: "1.25rem",
+							width: "1.25rem",
+							minWidth: "1.25rem",
+							fill: (theme) => theme.palette.primary.main
+						},
+						"& > button": { padding: ".625rem 0 .625rem .875rem" }
+					}
+				}}
+			>
+				{dataSource.map((item) => (
+					<Link href={item.url} key={item.id}>
+						<li>
+							<DocumentIcon />
+							<ButtonBase sx={{ textAlign: "left" }}>
+								{item.subject}
+							</ButtonBase>
+						</li>
+					</Link>
+				))}
+
+				<Link href={viewAllLink}>
 					<li>
-						<DocumentIcon />
-						<Typography>Chrome &amp; your child&apos;s Google Account</Typography>
+						<ArrowForwardIcon />
+						<ButtonBase sx={{ fontWeight: "bold" }}>
+							{viewAllText}
+						</ButtonBase>
 					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Maps &amp; your child&apos;s Google Account</Typography>
-					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-					</li>
-					<li>
-						<DocumentIcon />
-						<Typography>Google Photos &amp; your child&apos;s Google Account</Typography>
-					</li>
-				</Box>
+				</Link>
+
 			</Box>
-		</Box>
+
+		</div>
 	)
 }
+DocsList.propTypes = {
+	header: PropTypes.string,
+	viewAllText: PropTypes.string,
+	viewAllLink: PropTypes.string,
+	dataSource: PropTypes.array
+}
 
-export default ListArticles
+export default DocsList
