@@ -28,10 +28,11 @@ import React, { useEffect } from "react"
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+import { forEach, groupBy, sortBy } from "lodash"
 
 //PROJECT IMPORT
-import { setDocsListRaw } from "./../../../redux/slices/docsCenter"
+import { setDocsListRaw, setDocsList } from "./../../../redux/slices/docsCenter"
 import { getLayout } from "./../../../layout/AdminLayout"
 import updateUiSettings from "./../../../helpers/updateUiSettings"
 import TocSideBar from "./../../../components/Documentation/TocSideBar"
@@ -39,7 +40,7 @@ import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
 import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
 import { getDocsCenter } from "./../../../redux/selectors"
 import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
-import { getAllDocs } from "../../../helpers/firebase/docs"
+import { useGetAllDocs } from "../../../helpers/firebase/docs"
 
 //ASSETS
 
@@ -62,8 +63,11 @@ import { getAllDocs } from "../../../helpers/firebase/docs"
  *****************************************************************/
 
 function Documentation() {
-	const { activeDocId } = useSelector(getDocsCenter)
+
+	const allDocs = useGetAllDocs()
 	const dispatch = useDispatch()
+
+	const { activeDocId } = useSelector(getDocsCenter)
 
 	updateUiSettings({
 		title: "Documentation Management",
@@ -72,6 +76,31 @@ function Documentation() {
 			backgroundColor: "transparent"
 		}
 	})
+
+	if (allDocs.isLoading) {
+		return <div>Loading...</div>
+	}
+
+	if (!allDocs.isLoading) {
+		//sort the list first
+		const sortedDocs = sortBy(allDocs.data, ["category", "subcategory", "title"])
+
+		//step 1: group by cat
+		const groupByCat = groupBy(sortedDocs, (i) => i.category)
+
+		//step 2: group by SubCat
+		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
+			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
+		})
+
+		//update Redux
+		reduxBatch(() => {
+			dispatch(setDocsListRaw(sortedDocs))
+			dispatch(setDocsList(groupByCatAndSub))
+		})
+	}
+
+	console.log(allDocs.data)
 
 	/*
 		Flow of data as below:
@@ -86,11 +115,6 @@ function Documentation() {
 		- then data from (B2) will update to DB, and update directly to N1
 		- at the background refetch DB and compare to N1 (Redux[]) (imitate behavior of ReactQuery lib)
 	*/
-	useEffect(() => {
-		//using lodash groupBy to group data before pushing to Redux!
-		console.log("fetch Documentation here & keep at ReduxStore textEditor")
-		dispatch(setDocsListRaw(getAllDocs()))
-	}, [dispatch])
 
 	return (
 		<Container

@@ -34,10 +34,14 @@ import {
 } from "firebase/firestore"
 
 //THIRD-PARTY
+import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
+import { useFirestoreQueryData, useFirestoreDocumentData } from "@react-query-firebase/firestore"
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { db } from "."
+import { db, fixDate } from "."
 import { DOC_TYPE } from "./../constants"
+import { setDocsListRaw, setDocsList } from "./../../redux/slices/docsCenter"
 
 /*****************************************************************
  * READ                                                          *
@@ -46,23 +50,26 @@ import { DOC_TYPE } from "./../constants"
 /*
 	fetch all docs from DB and save to Redux
 */
-export const getAllDocs = async () => {
-	let docsListRaw = []
-	try {
-		const querySnapshot = await getDocs(collection(db, "documentation"))
-		docsListRaw = querySnapshot.map((doc) => {
-			// docsListRaw.push(doc.data())
-			const t = doc.data()
-			console.log(doc.id, " => ", t)
-			// docsListRaw.push(t)
-			return t
-		})
-		return docsListRaw
-	} catch (e) {
-		throw new Error("Something wrong happenned when trying to get list of docs")
-	}
-}
+export const useGetAllDocs = () => {
+	// const allDocs = useFirestoreDocumentData(
+	// 	["documentation", "all"],
+	// 	collection(db, "documentation"),
+	// 	{ subscribe: true }
+	// )
 
+	const allDocs = useFirestoreQueryData(
+		["documentation", "all"],
+		query(collection(db, "documentation")),
+		{
+			subscribe: true,
+			select: fixDate
+		}
+	)
+
+	console.log("useGetAllDocs executed")
+
+	return allDocs
+}
 
 //this is for reading document's content
 export const docsGetContent = async (docId) => {

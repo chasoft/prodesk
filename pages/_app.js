@@ -37,6 +37,8 @@ import { SnackbarProvider } from "notistack"
 import { configureStore } from "@reduxjs/toolkit"
 import createEmotionCache from "./../helpers/createEmotionCache"
 import { CacheProvider } from "@emotion/react"
+import { ReactQueryDevtools } from "react-query/devtools"
+import { QueryClient, QueryClientProvider } from "react-query"
 
 
 //PROJECT IMPORT
@@ -59,6 +61,16 @@ import PageTransition from "./../components/PageTransition"
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+			staleTime: 900000,	//15 minutes
+			cacheTime: 1800000, //30 minutes
+			retry: 2
+		}
+	}
+})
 
 const store = configureStore({ reducer: rootReducer })
 
@@ -89,19 +101,22 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
 				<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
 			</Head>
-			<Provider store={store}>
-				<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<SnackbarProvider maxSnack={3}>
-						{getLayout(
-							<PageTransition location={router.pathname}>
-								<CssBaseline />
-								<Component {...pageProps} />
-							</PageTransition>
-						)}
-					</SnackbarProvider>
-				</ThemeProvider>
-			</Provider>
+			<QueryClientProvider client={queryClient}>
+				<Provider store={store}>
+					<ThemeProvider theme={theme}>
+						<CssBaseline />
+						<SnackbarProvider maxSnack={3}>
+							{getLayout(
+								<PageTransition location={router.pathname}>
+									<CssBaseline />
+									<Component {...pageProps} />
+								</PageTransition>
+							)}
+						</SnackbarProvider>
+						<ReactQueryDevtools />
+					</ThemeProvider>
+				</Provider>
+			</QueryClientProvider>
 		</CacheProvider>
 	</>
 }

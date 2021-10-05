@@ -54,15 +54,9 @@ export const storage = getStorage(firebaseApp)
 export const STATE_CHANGED = "state_changed"
 
 //HELPER FUNCTIONS
+export const fixDate = (data) => data.map((record) => ({
+	...record,
+	createdAt: dayjs(record?.createdAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0,
+	updatedAt: dayjs(record?.updatedAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0
+}))
 
-/**
- * transform function for react-firebase-hooks
- * to fix datetime issue with firebase for "Tickets" collection
- */
-export function fixDateTickets(data) {
-	return {
-		...data,
-		createdAt: dayjs(data?.createdAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0,
-		updatedAt: dayjs(data?.updatedAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0
-	}
-}
