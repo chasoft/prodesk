@@ -38,6 +38,21 @@ import { updateAvatarAndLocation } from "./../../redux/slices/auth"
  * INIT                                                          *
  *****************************************************************/
 
+// export const db = firebase.firestore();
+// db.settings({
+// 	cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+// 	ignoreUndefinedProperties: true,
+// });
+// db.enablePersistence({ synchronizeTabs: true });
+
+// export const functions = firebase.functions();
+
+
+// export const googleProvider =
+// 	new firebase.auth.GoogleAuthProvider().setCustomParameters({
+// 		prompt: "select_account",
+// 	});
+
 export const signupCreateProfile = async ({ username, avatar, location }, { dispatch, enqueueSnackbar }) => {
 	const batch = writeBatch(db)
 	try {

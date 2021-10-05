@@ -20,7 +20,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 import { LOCALUPDATE_DOCSLIST_ACTION, DOC_TYPE, ACTION } from "./../../helpers/constants"
-import { findIndex, set } from "lodash"
+import { findIndex } from "lodash"
 
 export const initialState = {
 	/* 	List all documents, used for
@@ -37,12 +37,11 @@ export const initialState = {
 	//for quick access, no need to get all data and count, that would be not efficient
 	isDocsListEmpty: true,
 	//a buffer to keep docsContent
-	// docsContentList = { docId: "...text content", docId: "...."}
+	// { docId: "...text content", docId: "...."}
 	//after fetching, doc content will be keep here, so that
 	//then, components will pull data from this through docId
 	docsContentList: {},
-	/*
-		activeDoc structure
+	/*	activeDoc structure
 		{
 			docId: <NANOID>
 			type: <DOC_TYPE>,

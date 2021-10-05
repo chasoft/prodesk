@@ -150,7 +150,7 @@ const AddNewPopupMenu = ({ targetDocItem, actions, placement, children }) => {
 									<div key={actionType.title}>
 										<PopupMenuItem
 											actionType={actionType}
-											targetDocItem={isArray(targetDocItem) ? targetDocItem[0] : targetDocItem}
+											targetDocItem={targetDocItem}
 										/>
 										{(idx !== actions.length - 1) && <Divider />}
 									</div>

@@ -29,7 +29,6 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { serverTimestamp } from "firebase/firestore"
 import { nanoid } from "nanoid"
 import { filter, uniqueId } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
@@ -63,9 +62,7 @@ export const docsAddCategory = async (dispatch, username) => {
 		category: "Untitled Category " + incNumber,
 		slug: "untitled-category-" + incNumber,
 		description: "",
-		createdAt: serverTimestamp(),
 		createdBy: username,
-		updatedAt: serverTimestamp(),
 		updatedBy: username,
 	}
 
@@ -96,9 +93,7 @@ export const docsAddSubCategory = async (dispatch, username, targetDocItem) => {
 		subcategory: "Untitled SubCategory " + incNumber,
 		slug: "untitled-subcategory-" + incNumber,
 		description: "",
-		createdAt: serverTimestamp(),
 		createdBy: username,
-		updatedAt: serverTimestamp(),
 		updatedBy: username,
 	}
 
@@ -130,9 +125,7 @@ export const docsAddExternal = async (dispatch, username, targetDocItem) => {
 		description: "",
 		tags: [],
 		status: DOC_STATUS.DRAFT,
-		createdAt: serverTimestamp(),
 		createdBy: username,
-		updatedAt: serverTimestamp(),
 		updatedBy: username,
 	}
 	//local update
@@ -164,9 +157,7 @@ export const docsAddDoc = async (dispatch, username, targetDocItem) => {
 		slug: "",
 		tags: [],
 		status: DOC_STATUS.DRAFT,
-		createdAt: serverTimestamp(),
 		createdBy: username,
-		updatedAt: serverTimestamp(),
 		updatedBy: username,
 	}
 

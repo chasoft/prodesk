@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -103,6 +103,12 @@ TocSideBarActionItem.propTypes = {
 const TocSideBarActionsGroup = () => {
 	const { docsList, activeDocId } = useSelector(getDocsCenter)
 
+	const targetDocItem = useMemo(() => {
+		const filteredArray = filter(docsList, (i) => i.docId === activeDocId)
+		if (filteredArray.length === 0) return {}
+		return filteredArray[0]
+	}, [activeDocId, docsList])
+
 	return (
 		<Box
 			sx={{
@@ -126,7 +132,7 @@ const TocSideBarActionsGroup = () => {
 							DOCS_ADD.EXTERNAL,
 						]
 				}
-				targetDocItem={filter(docsList, (i) => i.docId === activeDocId)}
+				targetDocItem={targetDocItem}
 			>
 				<TocSideBarActionItem onClick={() => {/* empty for this case */ }} ItemIcon={AddIcon}>
 					New

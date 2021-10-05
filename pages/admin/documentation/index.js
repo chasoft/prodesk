@@ -28,16 +28,18 @@ import React, { useEffect } from "react"
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { setDocsListRaw } from "./../../../redux/slices/docsCenter"
 import { getLayout } from "./../../../layout/AdminLayout"
 import updateUiSettings from "./../../../helpers/updateUiSettings"
 import TocSideBar from "./../../../components/Documentation/TocSideBar"
 import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
 import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
-import { getDocsCenter } from "../../../redux/selectors"
-import { useSelector } from "react-redux"
+import { getDocsCenter } from "./../../../redux/selectors"
 import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
+import { getAllDocs } from "../../../helpers/firebase/docs"
 
 //ASSETS
 
@@ -61,6 +63,7 @@ import DocumentEditorNoActiveDocId from "../../../components/Documentation/Docum
 
 function Documentation() {
 	const { activeDocId } = useSelector(getDocsCenter)
+	const dispatch = useDispatch()
 
 	updateUiSettings({
 		title: "Documentation Management",
@@ -86,7 +89,8 @@ function Documentation() {
 	useEffect(() => {
 		//using lodash groupBy to group data before pushing to Redux!
 		console.log("fetch Documentation here & keep at ReduxStore textEditor")
-	}, [])
+		dispatch(setDocsListRaw(getAllDocs()))
+	}, [dispatch])
 
 	return (
 		<Container

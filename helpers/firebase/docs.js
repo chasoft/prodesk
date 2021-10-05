@@ -43,6 +43,27 @@ import { DOC_TYPE } from "./../constants"
  * READ                                                          *
  *****************************************************************/
 
+/*
+	fetch all docs from DB and save to Redux
+*/
+export const getAllDocs = async () => {
+	let docsListRaw = []
+	try {
+		const querySnapshot = await getDocs(collection(db, "documentation"))
+		docsListRaw = querySnapshot.map((doc) => {
+			// docsListRaw.push(doc.data())
+			const t = doc.data()
+			console.log(doc.id, " => ", t)
+			// docsListRaw.push(t)
+			return t
+		})
+		return docsListRaw
+	} catch (e) {
+		throw new Error("Something wrong happenned when trying to get list of docs")
+	}
+}
+
+
 //this is for reading document's content
 export const docsGetContent = async (docId) => {
 	let docItemContent = ""
@@ -63,7 +84,14 @@ export const docsGetContent = async (docId) => {
 export const docsAdd = async (docItem) => {
 	const batch = writeBatch(db)
 	try {
-		batch.set(doc(db, "documentation", docItem.docId), { docItem })
+		batch.set(
+			doc(db, "documentation", docItem.docId),
+			{
+				...docItem,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp()
+			}
+		)
 		if (docItem.type === DOC_TYPE.DOC)
 			batch.set(doc(db, "documentation", docItem.docId, "content", "current"), { text: "" })
 		await batch.commit()

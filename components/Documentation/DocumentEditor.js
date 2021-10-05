@@ -51,7 +51,7 @@ import { setEditorDataHeadings } from "./../../redux/slices/textEditor"
 
 const DocumentEditor = () => {
 	const editorRef = useRef(null)
-	const [defaultEditorData, setDefaultEditorData] = useState("")
+	const [defaultEditorData, setDefaultEditorData] = useState("")	//!!
 
 	const dispatch = useDispatch()
 	const { editorData } = useSelector(getTextEditor)	//!! thống nhất nơi lưu trữ ... editorData? docsContentList ? OR?? I am wrong?!!

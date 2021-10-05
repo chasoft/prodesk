@@ -30,7 +30,6 @@ import { styled } from "@mui/material/styles"
 import { Box, Button, IconButton, Typography, InputBase, ToggleButtonGroup, ToggleButton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
-import { serverTimestamp } from "firebase/firestore"
 import { filter } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -204,7 +203,6 @@ const DetailsFormCategory = ({ docItem }) => {
 						slug: slug,
 						description: description,
 						updatedBy: currentUser.username,
-						updatedAt: serverTimestamp()
 					}
 
 					//update Redux
@@ -299,7 +297,6 @@ const DetailsFormDoc = ({ docItem }) => {
 						status: status,
 						// tags: tags,
 						updatedBy: currentUser.username,
-						updatedAt: serverTimestamp()
 					}
 
 					//update Redux
@@ -390,7 +387,6 @@ const DetailsFormExternal = ({ docItem }) => {
 						status: status,
 						// tags: tags,
 						updatedBy: currentUser.username,
-						updatedAt: serverTimestamp()
 					}
 
 					//update Redux

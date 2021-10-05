@@ -9,6 +9,7 @@ import React, { useCallback, useState } from "react"
 import { Button, Grid, Typography, Box, TextField, Container } from "@mui/material"
 
 //THIRD-PARTY
+import { serverTimestamp } from "firebase/firestore"
 import { useDispatch } from "react-redux"
 import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
 
@@ -23,6 +24,7 @@ import { nanoid } from "nanoid"
 import { DOC_TYPE } from "../../helpers/constants"
 import { db } from "../../helpers/firebase"
 import { doc, getDoc } from "@firebase/firestore"
+import { getAllDocs } from "../../helpers/firebase/docs"
 
 /*****************************************************************
  * INIT                                                          *
@@ -444,9 +446,9 @@ export default function TestPage() {
 			}}>Stringify Children First Cat</Button>
 
 			<Button onClick={() => {
-				const xKey = findKey(groupByCatAndSub["Book 1"]["Chapter 3"], { type: "SUB" })
-				console.log("Test Find in array of objects", xKey)
-			}}>Test Find in array of objects</Button>
+				const res = getAllDocs()
+				console.log(res)
+			}}>getAllDocs</Button>
 
 		</Container >
 	)
