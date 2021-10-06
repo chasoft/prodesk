@@ -19,11 +19,18 @@
  ************************************************************************/
 
 import React from "react"
+
+//MATERIAL-UI
+import { Container, Grid } from "@mui/material"
+
+//THIRD-PART
+import { useDispatch } from "react-redux"
+
+//PROJECT IMPORT
 import ListTroubleshoot from "./../components/Category/ListTroubleshoot"
 import { getLayout, FRONT_PAGE_TABS_NAME } from "./../layout/EntryLayout"
 import AskNowFrame from "./../components/Docs/AskNowFrame"
-import { Container, Grid } from "@mui/material"
-import updateUiSettings from "./../helpers/updateUiSettings"
+import useUiSettings from "./../helpers/useUiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -34,8 +41,8 @@ import updateUiSettings from "./../helpers/updateUiSettings"
  *****************************************************************/
 
 function Docs() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.TROUBLESHOOT,
 	})
 

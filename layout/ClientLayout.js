@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import PropTypes from "prop-types"
 
@@ -32,17 +32,16 @@ import { Box } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Header from "./../components/BackEnd/Header"
-import SideBar from "./../components/BackEnd/SideBar"
-import Footer from "./../components/common/Footer"
-import { MENU_ITEM_TYPE } from "./../helpers/constants"
-import AuthCheck, { ReduxRedirect } from "./../components/AuthCheck"
 import { getRootLayout } from "./RootLayout"
-import { setScrolled } from "./../redux/slices/uiSettings"
+import Footer from "./../components/common/Footer"
+import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
+import SideBar from "./../components/BackEnd/SideBar"
+import { MENU_ITEM_TYPE } from "./../helpers/constants"
+import { setScrolled } from "./../redux/slices/uiSettings"
+import AuthCheck, { ReduxRedirect } from "./../components/AuthCheck"
 
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
@@ -84,22 +83,24 @@ function ClientLayout({ children }) {
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 
-	const handleSetScrolled = () => { dispatch(setScrolled(window.scrollY > 50)) }
+	const handleSetScrolled = useCallback(() => {
+		dispatch(setScrolled(window.scrollY > 50))
+	}, [dispatch])
 
-	const sideBarExpanding = () => {
+	const sideBarExpanding = useCallback(() => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
-	}
+	}, [])
 
 	useEffect(() => {
 		sideBarExpanding()
 		window.addEventListener("resize", sideBarExpanding)
 		return () => window.removeEventListener("resize", sideBarExpanding)
-	}, [])
+	}, [sideBarExpanding])
 
 	useEffect(() => {
 		window.addEventListener("scroll", handleSetScrolled)
 		return () => window.removeEventListener("scroll", handleSetScrolled)
-	}, [])
+	}, [handleSetScrolled])
 
 	return (
 		<ReduxRedirect>

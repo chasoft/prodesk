@@ -28,11 +28,11 @@ import React from "react"
 import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-// import { useDispatch } from "react-redux"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 // import { getUiSettings } from "./../../../../redux/selectors"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
 import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "./../../../../components/Settings/SettingsPanel"
 
@@ -86,8 +86,8 @@ export const TAG_PAGES = {
  *****************************************************************/
 
 function TicketSettingsLabel() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.LABEL,
 		background: {
 			height: "132px",

@@ -24,8 +24,7 @@
 
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React, { useCallback, useEffect, useState } from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
@@ -33,6 +32,7 @@ import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 //THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
@@ -125,27 +125,29 @@ function AdminLayout({ children }) {
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"))
 
-	const handleSetScrolled = () => { dispatch(setScrolled(window.scrollY > 50)) }
+	const handleSetScrolled = useCallback(() => {
+		dispatch(setScrolled(window.scrollY > 50))
+	}, [dispatch])
 
-	const sideBarExpanding = () => {
+	const sideBarExpanding = useCallback(() => {
 		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
-	}
+	}, [])
 
 	useEffect(() => {
 		sideBarExpanding()
 		window.addEventListener("resize", sideBarExpanding)
 		return () => window.removeEventListener("resize", sideBarExpanding)
-	}, [])
+	}, [sideBarExpanding])
 
 	useEffect(() => {
 		window.addEventListener("scroll", handleSetScrolled)
 		return () => window.removeEventListener("scroll", handleSetScrolled)
-	}, [])
+	}, [handleSetScrolled])
 
 	useEffect(() => {
 		if (router.pathname === "/admin/documentation" && isSmallScreen)
 			setIsSideBarExpanded(false)
-	}, [router])
+	}, [isSmallScreen, router.pathname])
 
 	return (
 		<ReduxRedirect>

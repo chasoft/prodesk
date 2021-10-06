@@ -43,7 +43,7 @@ import { docsAddCategory, docsAddSubCategory, docsAddExternal, docsAddDoc } from
  * INIT                                                          *
  *****************************************************************/
 
-const PopupMenuItem = ({ actionType, targetDocItem }) => {
+const PopupMenuItem = ({ actionType, targetDocItem, handleClose }) => {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 
@@ -72,7 +72,10 @@ const PopupMenuItem = ({ actionType, targetDocItem }) => {
 
 	return (
 		<Box
-			onClick={() => { executeAction() }}
+			onClick={() => {
+				executeAction()
+				handleClose()
+			}}
 			sx={{
 				px: 3, py: 1,
 				":hover": {
@@ -110,6 +113,7 @@ const PopupMenuItem = ({ actionType, targetDocItem }) => {
 PopupMenuItem.propTypes = {
 	actionType: PropTypes.object,
 	targetDocItem: PropTypes.object,
+	handleClose: PropTypes.func,
 }
 
 export const Divider = () => (
@@ -151,6 +155,7 @@ const AddNewPopupMenu = ({ targetDocItem, actions, placement, children }) => {
 										<PopupMenuItem
 											actionType={actionType}
 											targetDocItem={targetDocItem}
+											handleClose={() => setOpen(false)}
 										/>
 										{(idx !== actions.length - 1) && <Divider />}
 									</div>

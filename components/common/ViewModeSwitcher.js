@@ -79,7 +79,8 @@ const ViewModeSwitcher = ({ listingMode, setListingMode }) => {
 }
 
 ViewModeSwitcher.propTypes = {
-	listingMode: PropTypes.oneOf[VIEW_LISTING_MODE.OUTLINE, VIEW_LISTING_MODE.DETAILS],
+	// listingMode: PropTypes.oneOf[VIEW_LISTING_MODE.OUTLINE, VIEW_LISTING_MODE.DETAILS],
+	listingMode: PropTypes.string,
 	setListingMode: PropTypes.func
 }
 

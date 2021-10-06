@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../../redux/selectors"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
 import DepartmentsAddNew from "./../../../../components/Settings/Tickets/DepartmentsAddNew"
 import DepartmentsDetails from "./../../../../components/Settings/Tickets/DepartmentsDetails"
@@ -126,7 +126,7 @@ function TicketSettingsDepartment() {
 	//Whether a group is selected, then show DepartmetsDetails
 	const aGroupSelected = Object.entries(DEPARTMENT_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
 
-	updateUiSettings({
+	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
 		activePanel: DEPARTMENT_PAGES.OVERVIEW,
 		background: {

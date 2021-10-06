@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useMemo } from "react"
+import React, { useMemo } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -30,7 +30,7 @@ import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector } from "react-redux"
-import { size, filter } from "lodash"
+import { filter } from "lodash"
 
 //PROJECT IMPORT
 import AddNewPopupMenu from "./AddNewPopupMenu"
@@ -40,6 +40,7 @@ import { getDocsCenter } from "../../../redux/selectors"
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
+import { useGetDocsQuery } from "../../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -101,13 +102,15 @@ TocSideBarActionItem.propTypes = {
  *****************************************************************/
 
 const TocSideBarActionsGroup = () => {
-	const { docsList, activeDocId } = useSelector(getDocsCenter)
+	const allDocsRaw = useGetDocsQuery()
+	const { isDocsListEmpty, activeDocId } = useSelector(getDocsCenter)
 
 	const targetDocItem = useMemo(() => {
-		const filteredArray = filter(docsList, (i) => i.docId === activeDocId)
+		if (isDocsListEmpty || !allDocsRaw.data) return {}
+		const filteredArray = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
 		if (filteredArray.length === 0) return {}
 		return filteredArray[0]
-	}, [activeDocId, docsList])
+	}, [allDocsRaw, activeDocId, isDocsListEmpty])
 
 	return (
 		<Box
@@ -120,7 +123,7 @@ const TocSideBarActionsGroup = () => {
 			<AddNewPopupMenu
 				placement="right"
 				actions={
-					(size(docsList) === 0 || activeDocId === null) ?
+					(isDocsListEmpty || activeDocId === null) ?
 						[
 							DOCS_ADD.CATEGORY
 						]

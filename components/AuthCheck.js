@@ -28,7 +28,7 @@ import DefaultErrorPage from "next/error"
 import { CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
-import { batch, useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth, getRedirect } from "./../redux/selectors"
@@ -65,8 +65,8 @@ const LoadingIndicator = () => {
 export function ReduxRedirect(props) {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 	const { isAuthenticated } = useSelector(getAuth)
+	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 
 	if (redirectURL === "") {
 		return props.children
@@ -88,7 +88,7 @@ export function ReduxRedirect(props) {
 		return null
 	}
 
-	batch(() => {
+	reduxBatch(() => {
 		dispatch(clearRedirect())
 		if (isAuthenticated) dispatch(clearRedirectAfterLoginURL())
 	})
@@ -111,7 +111,7 @@ export default function AuthCheck(props) {
 		// 2. user not loggin
 		// that means that... user truly not Login!
 		if (isAuthenticated !== true && loading === false) {
-			batch(() => {
+			reduxBatch(() => {
 				dispatch(setRedirectAfterLoginURL(router.pathname))
 				dispatch(setRedirect(REDIRECT_URL.LOGIN))
 			})

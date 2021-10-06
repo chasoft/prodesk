@@ -22,45 +22,44 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@mui/material"
 import React from "react"
-import useUiSettings from "./../../helpers/useUiSettings"
-
-// MATERIAL-UI
+import {
+	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
+} from "firebase/firestore"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
+import { useGetDocsQuery, useGetDocQuery } from "../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
-
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-function UserAccount() {
-	const dispatch = useDispatch()
-	useUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
+export default function App() {
+	// Using a query hook automatically fetches data and returns query values
+	const allDocs = useGetDocsQuery()
+	const singleDoc = useGetDocQuery("XzCYu74")
+	// Individual hooks are also accessible under the generated endpoints:
+	// const { data, error, isLoading } = pokemonApi.endpoints.getPokemonByName.useQuery('bulbasaur')
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">User Account</Typography>
-		</Container>
+		<div className="App">
+			{allDocs.error ? (
+				<>Oh no, there was an error</>
+			) : allDocs.isLoading ? (
+				<>Loading...</>
+			) : allDocs.data ? (
+				<>
+					{JSON.stringify(allDocs.data, 0, 2)}
+				</>
+			) : null}
+
+			<div style={{ backgroundColor: "red" }}>
+				{singleDoc.data ? <>{JSON.stringify(singleDoc.data, 0, 2)}</> : <p>Empty</p>}
+			</div>
+		</div>
 	)
 }
-
-UserAccount.getLayout = getLayout
-
-export default UserAccount

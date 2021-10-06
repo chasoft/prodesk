@@ -82,7 +82,7 @@ const LeftIcon = () => {
 						</Link>
 
 						{DUMMY_DATA_MENU_TOP.map((item) => (
-							<Link key={item} href={item.url} passHref>
+							<Link key={item.id} href={item.url} passHref>
 								<a href="just-a-placeholder">
 									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
 										<ListItemIcon sx={{ minWidth: 40 }}>

@@ -28,10 +28,11 @@ import React from "react"
 import { Box, Container, Grid } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import Banner from "./../../components/widget/Banner"
-import updateUiSettings from "./../../helpers/updateUiSettings"
+import useUiSettings from "./../../helpers/useUiSettings"
 import SingleCategory from "./../../components/Category/SingleCategory"
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
 import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
@@ -41,8 +42,8 @@ import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
  *****************************************************************/
 
 function ViewSingleCategory() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "single-category",
 	})
 

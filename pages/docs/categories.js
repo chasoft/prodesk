@@ -27,15 +27,14 @@ import React from "react"
 // MATERIAL-UI
 import { Box, Container, Grid } from "@mui/material"
 
-
 //THIRD-PARTY
-
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import Category from "./../../components/Category"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
-import updateUiSettings from "./../../helpers/updateUiSettings"
 import Banner from "./../../components/widget/Banner"
+import useUiSettings from "./../../helpers/useUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
 
 
 /*****************************************************************
@@ -43,8 +42,8 @@ import Banner from "./../../components/widget/Banner"
  *****************************************************************/
 
 function ViewAllCategories() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "single-category",
 	})
 

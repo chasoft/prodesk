@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../../redux/selectors"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
 import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
@@ -56,7 +56,7 @@ function ApplicationSettings() {
 	const dispatch = useDispatch()
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
-	updateUiSettings({
+	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.GENERAL,
 		background: {
 			backgroundImage: "url(\"/bg/meteor.svg\")"

@@ -38,13 +38,14 @@ import {
 } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../helpers/useUiSettings"
 
 
 /*****************************************************************
@@ -56,8 +57,8 @@ import updateUiSettings from "./../../../helpers/updateUiSettings"
  *****************************************************************/
 
 function Settings() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		background: {
 			backgroundImage: ""
 		}

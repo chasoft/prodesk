@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../../redux/selectors"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
 import CannedRepliesAddNew from "./../../../../components/Settings/CannedReplies/CannedRepliesAddNew"
 import CannedRepliesGroup from "./../../../../components/Settings/CannedReplies/CannedRepliesGroup"
@@ -260,7 +260,7 @@ function TicketSettingsCannedReply() {
 	//Whether a group is selected, then show CannedReplyDetails
 	const aGroupSelected = Object.entries(CANNED_REPLY_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
 
-	updateUiSettings({
+	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.CANNED_REPLY,
 		activePanel: CANNED_REPLY_PAGES.OVERVIEW,
 		background: {

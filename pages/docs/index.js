@@ -19,12 +19,19 @@
  ************************************************************************/
 
 import React from "react"
-import ListAllCategories from "./../../components/Category/ListAllCategories"
-import AskNowFrame from "./../../components/Docs/AskNowFrame"
+
+//MATERIAL-UI
 import { Container, Grid } from "@mui/material"
-import updateUiSettings from "./../../helpers/updateUiSettings"
-import { getLayout, FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
+
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
+
+//PROJECT IMPORT
+import AskNowFrame from "./../../components/Docs/AskNowFrame"
+import useUiSettings from "./../../helpers/useUiSettings"
 import FeaturedDocs from "./../../components/FrontEnd/FeaturedDocs"
+import { getLayout, FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
+import ListAllCategories from "./../../components/Category/ListAllCategories"
 
 /*****************************************************************
  * INIT                                                          *
@@ -35,8 +42,8 @@ import FeaturedDocs from "./../../components/FrontEnd/FeaturedDocs"
  *****************************************************************/
 
 function Docs() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS,
 	})
 

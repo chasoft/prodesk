@@ -24,7 +24,6 @@ import { nanoid } from "nanoid"
 import { DOC_TYPE } from "../../helpers/constants"
 import { db } from "../../helpers/firebase"
 import { doc, getDoc } from "@firebase/firestore"
-import { getAllDocs } from "../../helpers/firebase/docs"
 
 /*****************************************************************
  * INIT                                                          *
@@ -438,17 +437,6 @@ export default function TestPage() {
 					</Button>
 				</Grid>
 			</Grid>
-
-
-			<Button onClick={() => {
-				// const StringifyChildrenFirstCat = Object.entries(finalArray[0][1])
-				// console.log("Stringify Children First Cat", StringifyChildrenFirstCat)
-			}}>Stringify Children First Cat</Button>
-
-			<Button onClick={() => {
-				const res = getAllDocs()
-				console.log(res)
-			}}>getAllDocs</Button>
 
 		</Container >
 	)

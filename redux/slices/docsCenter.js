@@ -28,37 +28,11 @@ export const initialState = {
 		2. Listing Documentation at frontpage!
 	*/
 
-	/*
-	*/
-	//Orignal list, this is original query result from Firebase
-	docsListRaw: [],
-	//Grouped list, it is 
-	docsList: {},
+	//sorted by category, sub-category, title
+	//and grouped by category, sub-category
+	docsList: [],
 	//for quick access, no need to get all data and count, that would be not efficient
 	isDocsListEmpty: true,
-	//a buffer to keep docsContent
-	// { docId: "...text content", docId: "...."}
-	//after fetching, doc content will be keep here, so that
-	//then, components will pull data from this through docId
-	docsContentList: {},
-	/*	activeDoc structure
-		{
-			docId: <NANOID>
-			type: <DOC_TYPE>,
-			category: string,
-			subcategory: string,
-			title: string,
-			description: string,
-			slug: string,
-			tags: array<string>,
-			status: <DOC_STATUS>
-			createdAt: datetime,
-			updatedAt: datetime,
-			status: datetime,
-			description: string,
-			description: string,
-		}
-	*/
 	activeDocId: null,
 	//this is to hold a temporary docId for SideBarDetails Panel
 	//it would be clear to be null when TocSideBarDetails hidden
@@ -69,22 +43,8 @@ const docsCenterSlice = createSlice({
 	name: "docsCenter",
 	initialState,
 	reducers: {
-		setDocsListRaw: (state, { payload }) => {
-			state.docsListRaw = payload
-		},
 		setDocsList: (state, { payload }) => {
 			state.docsList = payload
-		},
-		setDocsContentList: (state, { payload }) => {
-			//action<ACTION>
-			const { docId, action, content = "" } = payload
-			if (action === ACTION.GET) {
-				state.docsContentList[docId] = content
-			}
-
-			if (action === ACTION.DELETE) {
-				delete state.docsContentList[docId]
-			}
 		},
 		//update a part of docsList
 		updateDocsList: (state, { payload }) => {
@@ -97,7 +57,7 @@ const docsCenterSlice = createSlice({
 				type === LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_EXTERNAL ||
 				type === LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_DOC) {
 
-				state.docsListRaw = [...state.docsListRaw, docItem]
+				// state.docsListRaw = [...state.docsListRaw, docItem]
 			}
 
 			/****************************** DELETE *******************************/
@@ -108,57 +68,60 @@ const docsCenterSlice = createSlice({
 			if (type === LOCALUPDATE_DOCSLIST_ACTION.DELETE_CAT ||
 				type === LOCALUPDATE_DOCSLIST_ACTION.DELETE_SUBCAT ||
 				type === LOCALUPDATE_DOCSLIST_ACTION.DELETE_EXTERNAL) {
-				delete state.docsListRaw[docItem.docId]
+				// delete state.docsListRaw[docItem.docId]
 			}
 
 			if (type === LOCALUPDATE_DOCSLIST_ACTION.DELETE_DOC) {
-				delete state.docsListRaw[docItem.docId]
-				delete state.docsContentList[docItem.docId]
+				// delete state.docsListRaw[docItem.docId]
+				// delete state.docsContentList[docItem.docId]
 			}
 
 			/****************************** UPDATE *******************************/
 
 			//TODO!: Not yet update field::updatedAt
 			if (type === LOCALUPDATE_DOCSLIST_ACTION.UPDATE_CAT) {
-				affectedItems.forEach((item) => {
-					const idx = findIndex(state.docsListRaw, { docId: item.docId })
-					const locatedRecord = state.docsListRaw[idx]
+				// affectedItems.forEach((item) => {
+				// 	const idx = findIndex(state.docsListRaw, { docId: item.docId })
+				// 	const locatedRecord = state.docsListRaw[idx]
 
-					state.docsListRaw.splice(idx, 1, {
-						...locatedRecord,
-						...(item.type === DOC_TYPE.CATEGORY
-							? docItem
-							: { category: docItem.category })
-					})
-				})
+				// 	state.docsListRaw.splice(idx, 1, {
+				// 		...locatedRecord,
+				// 		...(item.type === DOC_TYPE.CATEGORY
+				// 			? docItem
+				// 			: { category: docItem.category })
+				// 	})
+				// })
 			}
 
 			//TODO!: Not yet update field::updatedAt
 			if (type === LOCALUPDATE_DOCSLIST_ACTION.UPDATE_SUBCAT) {
-				affectedItems.forEach((item) => {
-					const idx = findIndex(state.docsListRaw, { docId: item.docId })
-					const locatedRecord = state.docsListRaw[idx]
+				// affectedItems.forEach((item) => {
+				// 	const idx = findIndex(state.docsListRaw, { docId: item.docId })
+				// 	const locatedRecord = state.docsListRaw[idx]
 
-					state.docsListRaw.splice(idx, 1, {
-						...locatedRecord,
-						...(item.type === DOC_TYPE.SUBCATEGORY
-							? docItem
-							: { subcategory: docItem.subcategory })
-					})
-				})
+				// 	state.docsListRaw.splice(idx, 1, {
+				// 		...locatedRecord,
+				// 		...(item.type === DOC_TYPE.SUBCATEGORY
+				// 			? docItem
+				// 			: { subcategory: docItem.subcategory })
+				// 	})
+				// })
 			}
 
 			//TODO!: Not yet update field::updatedAt
 			if (type === LOCALUPDATE_DOCSLIST_ACTION.UPDATE_EXTERNAL
 				|| type === LOCALUPDATE_DOCSLIST_ACTION.UPDATE_DOC) {
-				const idx = findIndex(state.docsListRaw, { docId: docItem.docId })
-				const locatedRecord = state.docsListRaw[idx]
+				// const idx = findIndex(state.docsListRaw, { docId: docItem.docId })
+				// const locatedRecord = state.docsListRaw[idx]
 
-				state.docsListRaw.splice(idx, 1, {
-					...locatedRecord,
-					...docItem
-				})
+				// state.docsListRaw.splice(idx, 1, {
+				// 	...locatedRecord,
+				// 	...docItem
+				// })
 			}
+		},
+		setIsDocsListEmpty: (state, { payload }) => {
+			state.isDocsListEmpty = payload
 		},
 		setActiveDocId: (state, { payload }) => {
 			state.activeDocId = payload
@@ -171,10 +134,9 @@ const docsCenterSlice = createSlice({
 })
 
 export const {
-	setDocsListRaw,
 	setDocsList,
 	updateDocsList,
-	setDocsContentList,
+	setIsDocsListEmpty,
 	setActiveDocId,
 	setActiveDocIdOfTocSideBarDetails,
 } = docsCenterSlice.actions

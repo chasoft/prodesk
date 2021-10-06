@@ -29,6 +29,7 @@ import PropTypes from "prop-types"
 import { Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
@@ -59,8 +60,8 @@ export const TICKET_SETTINGS_TABS = [
  *****************************************************************/
 
 function InnerLayoutTickets({ children }) {
-
-	// updateUiSettings(TICKET_SETTINGS_NAMES.GENERAL)
+	// const dispatch = useDispatch()
+	// useUiSettings(dispatch,TICKET_SETTINGS_NAMES.GENERAL)
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>

@@ -1,12 +1,12 @@
 import React from "react"
 
-//PROJECT IMPORT
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
 
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
+//PROJECT IMPORT
 import Doc from "../../components/Doc"
-// import { useRouter } from "next/router"
-import updateUiSettings from "./../../helpers/updateUiSettings"
-// import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
+import useUiSettings from "./../../helpers/useUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -22,8 +22,8 @@ import updateUiSettings from "./../../helpers/updateUiSettings"
 function ADoc() {
 	// const router = useRouter()
 	// const { docId } = router.query
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "a single article",
 	})
 

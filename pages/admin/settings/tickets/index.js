@@ -28,10 +28,11 @@ import React from "react"
 import { Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "./../../../../components/Settings/SettingsPanel"
 
 //ASSETS
@@ -46,8 +47,8 @@ import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsCon
  *****************************************************************/
 
 function TicketSettings() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.GENERAL,
 		background: {
 			height: "132px",

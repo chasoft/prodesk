@@ -38,7 +38,7 @@ import { ACTION, DOC_STATUS, DOC_TYPE, LOCALUPDATE_DOCSLIST_ACTION, RESERVED_KEY
 import { getTextEditor, getDocsCenter } from "./../../redux/selectors"
 import { setShowTocSideBarDetails } from "../../redux/slices/uiSettings"
 import { docsAdd, docsDelete } from "./../../helpers/firebase/docs"
-import { setDocsContentList, setActiveDocId, setActiveDocIdOfTocSideBarDetails, updateDocsList } from "./../../redux/slices/docsCenter"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails, updateDocsList } from "./../../redux/slices/docsCenter"
 
 //ASSETS
 import { ExportPdfIcon } from "./../common/SvgIcons"
@@ -59,8 +59,8 @@ export const docsAddCategory = async (dispatch, username) => {
 	const docItem = {
 		docId: docId,
 		type: DOC_TYPE.CATEGORY,
-		category: "Untitled Category " + incNumber,
-		slug: "untitled-category-" + incNumber,
+		category: "Untitled Category " + docId + incNumber,
+		slug: "untitled-category-" + docId + incNumber,
 		description: "",
 		createdBy: username,
 		updatedBy: username,
@@ -90,8 +90,8 @@ export const docsAddSubCategory = async (dispatch, username, targetDocItem) => {
 		docId: docId,
 		type: DOC_TYPE.SUBCATEGORY,
 		category: targetDocItem.category,
-		subcategory: "Untitled SubCategory " + incNumber,
-		slug: "untitled-subcategory-" + incNumber,
+		subcategory: "Untitled SubCategory " + docId + incNumber,
+		slug: "untitled-subcategory-" + docId + incNumber,
 		description: "",
 		createdBy: username,
 		updatedBy: username,

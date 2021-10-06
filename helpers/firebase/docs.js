@@ -35,53 +35,12 @@ import {
 
 //THIRD-PARTY
 import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
-import { useFirestoreQueryData, useFirestoreDocumentData } from "@react-query-firebase/firestore"
 import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { db, fixDate } from "."
 import { DOC_TYPE } from "./../constants"
 import { setDocsListRaw, setDocsList } from "./../../redux/slices/docsCenter"
-
-/*****************************************************************
- * READ                                                          *
- *****************************************************************/
-
-/*
-	fetch all docs from DB and save to Redux
-*/
-export const useGetAllDocs = () => {
-	// const allDocs = useFirestoreDocumentData(
-	// 	["documentation", "all"],
-	// 	collection(db, "documentation"),
-	// 	{ subscribe: true }
-	// )
-
-	const allDocs = useFirestoreQueryData(
-		["documentation", "all"],
-		query(collection(db, "documentation")),
-		{
-			subscribe: true,
-			select: fixDate
-		}
-	)
-
-	console.log("useGetAllDocs executed")
-
-	return allDocs
-}
-
-//this is for reading document's content
-export const docsGetContent = async (docId) => {
-	let docItemContent = ""
-	try {
-		const docSnap = await getDoc(doc(db, "documentation", docId, "content", "current"))
-		if (docSnap.exists()) docItemContent = docSnap.data().text
-	} catch (e) {
-		throw new Error("Something wrong happenned when trying to get doc's content.")
-	}
-	return docItemContent
-}
 
 /*****************************************************************
  * WRITE                                                         *

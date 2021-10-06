@@ -23,12 +23,13 @@
  *****************************************************************/
 
 import React from "react"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../helpers/useUiSettings"
 
 // MATERIAL-UI
 import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 import TicketStepper from "./../../../components/Ticket/TicketStepper"
 
 //PROJECT IMPORT
@@ -46,8 +47,8 @@ import { getLayout } from "./../../../layout/ClientLayout"
  *****************************************************************/
 
 function NewTicket() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		title: "Open New Ticket",
 		background: {
 			backgroundImage: "",

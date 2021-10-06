@@ -24,11 +24,12 @@
 
 import { Container, Typography } from "@mui/material"
 import React from "react"
-import updateUiSettings from "./../../helpers/updateUiSettings"
+import useUiSettings from "./../../helpers/useUiSettings"
 
 // MATERIAL-UI
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
@@ -46,8 +47,8 @@ import { getLayout } from "./../../layout/ClientLayout"
  *****************************************************************/
 
 function EditProfile() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		background: {
 			backgroundImage: ""
 		}

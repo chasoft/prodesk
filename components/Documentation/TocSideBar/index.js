@@ -30,6 +30,7 @@ import { Box } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
+import { nanoid } from "nanoid"
 import { findKey } from "lodash"
 
 //PROJECT IMPORT
@@ -41,9 +42,8 @@ import TocSideBarCategory from "./TocSideBarCategory"
 import TocSideBarSubCategory from "./TocSideBarSubCategory"
 import { setShowTocSideBarDetails, setSideBarLeft } from "./../../../redux/slices/uiSettings"
 import { getDocsCenter, getUiSettings } from "../../../redux/selectors"
-import { ACTION, DOC_TYPE, RESERVED_KEYWORDS } from "./../../../helpers/constants"
-import { setActiveDocId, setActiveDocIdOfTocSideBarDetails, setDocsContentList } from "../../../redux/slices/docsCenter"
-import { docsGetContent } from "../../../helpers/firebase/docs"
+import { DOC_TYPE, RESERVED_KEYWORDS } from "./../../../helpers/constants"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
 
 //ASSETS
 
@@ -104,7 +104,6 @@ const TocSideBar = () => {
 
 	const loadDocContent = useCallback((docId) => {
 		reduxBatch(() => {
-			dispatch(setDocsContentList(docId, ACTION.GET, docsGetContent(docId)))
 			dispatch(setActiveDocId(docId))
 			dispatch(setActiveDocIdOfTocSideBarDetails(null))
 		})
@@ -134,13 +133,14 @@ const TocSideBar = () => {
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 
-					{Object.entries(docsList).map((cat) => {
+					{docsList.map((cat) => {
 						/* Category Level */
 						return (
 							<TocSideBarCategory
-								key={cat[0]}
+								key={cat[1]["undefined"][0].docId}
 								title={cat[0]}
 								handleOpen={() => handleOpenDetails(cat[1]["undefined"][0].docId)}
+								targetDocItem={cat[1]["undefined"][0]}
 							>
 								{Object.entries(cat[1]).map((subcat) => {
 									/* Contents of Category */
@@ -177,7 +177,7 @@ const TocSideBar = () => {
 									}
 
 									//bypass undefined item which represent/hold category's info
-									if (subcat[0] === RESERVED_KEYWORDS.CAT) return null
+									if (subcat[0] === RESERVED_KEYWORDS.CAT) return <div key={nanoid()}></div>
 
 									//position of Sub-Category in the list
 									const subCatIndex = findKey(subcat[1], { type: DOC_TYPE.SUBCATEGORY })
@@ -190,7 +190,11 @@ const TocSideBar = () => {
 											<TocSideBarSubCategory
 												key={subcat[1][subCatIndex].docId}
 												title={subcat[1][subCatIndex].subcategory}
-												handleOpen={() => handleOpenDetails(subcat[1][subCatIndex].docId)}
+												handleOpen={() => {
+													handleOpenDetails(subcat[1][subCatIndex].docId)
+													console.log(subcat[1][subCatIndex].docId)
+												}}
+												targetDocItem={subcat[1][subCatIndex]}
 											>
 												{subcat[1].map((item, idx) => {
 

@@ -22,45 +22,46 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@mui/material"
 import React from "react"
-import useUiSettings from "./../../helpers/useUiSettings"
-
-// MATERIAL-UI
+import {
+	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
+} from "firebase/firestore"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-
-//ASSETS
+import { db, fixDate } from "./../../helpers/firebase"
+import { DOC_TYPE } from "./../../helpers/constants"
+import { setDocsListRaw, setDocsList } from "./docsCenter"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+export const storageApi = createApi({
+	reducerPath: "storageApi",
+	tagTypes: ["uploads"],
+	baseQuery: (args, { signal, dispatch, getState }, extraOptions) => {
+		// if (args === "allDocs") {
+		// 	console.log("aaaaaaaaaaaaaaaaaaaaa")
+		// 	return { data: [{ hello: "ALL__World" }] }
+		// }
 
+		// console.log("only single")
+		return { data: [{ hello: "world" }] }
+	},
+	endpoints: (builder) => ({
+		uploadImage: builder.query({
+			query: () => "allDocs",
+			providesTags: () => [{ type: "Documentation", id: "allDocs" }],
+			// transformResponse: (response) => {
+			// 	response[0].hello = "world0"
+			// }
+		}),
+	}),
+})
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-function UserAccount() {
-	const dispatch = useDispatch()
-	useUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
-
-	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">User Account</Typography>
-		</Container>
-	)
-}
-
-UserAccount.getLayout = getLayout
-
-export default UserAccount
+export const { useGetDocsQuery, useGetDocQuery } = storageApi

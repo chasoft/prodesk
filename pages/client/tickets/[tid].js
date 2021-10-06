@@ -29,11 +29,12 @@ import React from "react"
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
 import Post from "./../../../components/Post"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../helpers/useUiSettings"
 
 //ASSETS
 
@@ -50,8 +51,8 @@ import updateUiSettings from "./../../../helpers/updateUiSettings"
 function SingleTicket() {
 	// const router = useRouter()
 	// const { tid } = router.query
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		background: {
 			backgroundImage: ""
 		}

@@ -29,10 +29,11 @@ import PropTypes from "prop-types"
 import { Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
-import updateUiSettings from "./../../helpers/updateUiSettings"
+import useUiSettings from "./../../helpers/useUiSettings"
 import TabsSettings from "./TabsSettings"
 
 //ASSETS
@@ -62,8 +63,7 @@ export const APPLICATION_SETTINGS_TABS = [
  *****************************************************************/
 
 function InnerLayoutSettings({ children }) {
-
-	updateUiSettings(APPLICATION_SETTINGS_NAMES.GENERAL)
+	useUiSettings({ activeTab: APPLICATION_SETTINGS_NAMES.GENERAL })
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)", marginTop: "1rem" }}>

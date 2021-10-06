@@ -44,9 +44,9 @@ import AddIcon from "@mui/icons-material/Add"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarAddNew = ({ actions }) => {
+const TocSideBarAddNew = ({ targetDocItem, actions }) => {
 	return (
-		<AddNewPopupMenu actions={actions} placement="bottom-start">
+		<AddNewPopupMenu targetDocItem={targetDocItem} actions={actions} placement="bottom-start">
 			<AddIcon
 				id="detailsRightButton" size="small"
 				fontSize="small"
@@ -61,6 +61,7 @@ const TocSideBarAddNew = ({ actions }) => {
 }
 
 TocSideBarAddNew.propTypes = {
+	targetDocItem: PropTypes.object,
 	actions: PropTypes.array,
 }
 

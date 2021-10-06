@@ -24,19 +24,23 @@
 
 import React from "react"
 
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
+
 //PROJECT IMPORT
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
 import PromotedSearch from "./../components/FrontEnd/PromotedSearch"
 import FrontAccordions from "./../components/FrontEnd/FrontAccordions"
-import updateUiSettings from "./../helpers/updateUiSettings"
+import useUiSettings from "./../helpers/useUiSettings"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Home() {
+	const dispatch = useDispatch()
 
-	updateUiSettings({
+	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.HOME,
 	})
 

@@ -32,8 +32,8 @@ import { Box, Grid } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Header from "./../components/BackEnd/Header"
 import Footer from "./../components/common/Footer"
+import Header from "./../components/BackEnd/Header"
 
 /*****************************************************************
  * INIT                                                          *

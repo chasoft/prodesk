@@ -26,10 +26,11 @@ import { Container, Box } from "@mui/material"
 import React from "react"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
-import updateUiSettings from "./../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../helpers/useUiSettings"
 import ListTickets from "./../../../components/Ticket/ListTickets"
 import ListTicketsFilter from "./../../../components/Ticket/ListTicketsFilter"
 
@@ -44,8 +45,8 @@ import ListTicketsFilter from "./../../../components/Ticket/ListTicketsFilter"
  *****************************************************************/
 
 function Tickets() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		title: "All tickets",
 		background: {
 			backgroundImage: ""

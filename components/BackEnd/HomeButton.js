@@ -86,8 +86,8 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 	}
 
 	return (
-		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-			<Tooltip title="Dashboard" placement="right">
+		<Tooltip title="Dashboard" placement="right">
+			<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 				<Link href={homeUrl} passHref>
 					<a href="just-a-placeholder">
 						<Box
@@ -108,8 +108,8 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 						</Box>
 					</a>
 				</Link>
-			</Tooltip>
-		</ButtonBase>
+			</ButtonBase>
+		</Tooltip>
 	)
 }
 

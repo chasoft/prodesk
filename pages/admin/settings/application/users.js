@@ -28,10 +28,11 @@ import React from "react"
 import { Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import updateUiSettings from "./../../../../helpers/updateUiSettings"
+import useUiSettings from "./../../../../helpers/useUiSettings"
 
 //ASSETS
 
@@ -45,8 +46,8 @@ import updateUiSettings from "./../../../../helpers/updateUiSettings"
  *****************************************************************/
 
 function ApplicationSettingsUsers() {
-
-	updateUiSettings({
+	const dispatch = useDispatch()
+	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.USER,
 		background: {
 			backgroundImage: ""

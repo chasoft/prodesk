@@ -32,6 +32,7 @@ import uiSettingsReducer from "./uiSettings"
 import redirectReducer from "./redirect"
 import textEditorReducer from "./textEditor"
 import docsCenterReducer from "./docsCenter"
+import { firestoreApi } from "./firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,7 +45,8 @@ const rootReducer = combineReducers({
 	uiSettingsState: uiSettingsReducer,
 	redirectState: redirectReducer,
 	textEditorState: textEditorReducer,
-	docsCenterState: docsCenterReducer
+	docsCenterState: docsCenterReducer,
+	[firestoreApi.reducerPath]: firestoreApi.reducer,
 })
 
 export default rootReducer

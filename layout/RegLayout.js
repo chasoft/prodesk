@@ -22,9 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import { useEffect } from "react"
 import PropTypes from "prop-types"
+import React, { useEffect } from "react"
 
 // MATERIAL-UI
 import { Avatar, Box, Container, Typography } from "@mui/material"

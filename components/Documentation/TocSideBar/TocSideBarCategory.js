@@ -46,7 +46,7 @@ import { DOCS_ADD } from "../../../helpers/constants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarCategory = ({ title, handleOpen, children }) => (
+const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => (
 	<Box sx={{
 		display: "flex",
 		flexDirection: "column",
@@ -79,12 +79,15 @@ const TocSideBarCategory = ({ title, handleOpen, children }) => (
 				display: "flex",
 				alignItems: "center",
 			}}>
-				<TocSideBarAddNew actions={[
-					DOCS_ADD.CATEGORY,
-					DOCS_ADD.SUB_CATEGORY,
-					DOCS_ADD.DOC,
-					DOCS_ADD.EXTERNAL,
-				]} />
+				<TocSideBarAddNew
+					targetDocItem={targetDocItem}
+					actions={[
+						DOCS_ADD.CATEGORY,
+						DOCS_ADD.SUB_CATEGORY,
+						DOCS_ADD.DOC,
+						DOCS_ADD.EXTERNAL,
+					]}
+				/>
 				<DetailsRightButton handleOpen={handleOpen} />
 			</Box>
 		</Box>
@@ -95,6 +98,7 @@ const TocSideBarCategory = ({ title, handleOpen, children }) => (
 TocSideBarCategory.propTypes = {
 	title: PropTypes.string,
 	handleOpen: PropTypes.func,
+	targetDocItem: PropTypes.object,
 	children: PropTypes.node
 }
 
