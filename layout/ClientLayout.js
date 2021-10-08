@@ -39,7 +39,7 @@ import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
 import { setScrolled } from "./../redux/slices/uiSettings"
-import AuthCheck, { ReduxRedirect } from "./../components/AuthCheck"
+import AuthCheck from "./../components/AuthCheck"
 
 //ASSETS
 
@@ -103,34 +103,33 @@ function ClientLayout({ children }) {
 	}, [handleSetScrolled])
 
 	return (
-		<ReduxRedirect>
-			<AuthCheck>
+		<AuthCheck>
 
-				<Box sx={{ ...backgroundForLoggedinPage }} />
+			<Box sx={{ ...backgroundForLoggedinPage }} />
 
-				<Box style={{ display: "flex", minHeight: "100vh" }}>
+			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
-					<SideBar
-						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
-						homeUrl="/client" settingsUrl=""
-						data={CLIENT_MENU}
-					/>
+				<SideBar
+					isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
+					homeUrl="/client" settingsUrl=""
+					data={CLIENT_MENU}
+				/>
 
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							flexGrow: 1,
-							width: "100%",
-							// overflowX: "hidden"
-						}}
-					>
-						<Header isSideBarExpanded={isSideBarExpanded} />
-						{children}
-						<Footer />
-					</Box>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						flexGrow: 1,
+						width: "100%",
+						// overflowX: "hidden"
+					}}
+				>
+					<Header isSideBarExpanded={isSideBarExpanded} />
+					{children}
+					<Footer />
+				</Box>
 
-					{/* <PerfectScrollbar
+				{/* <PerfectScrollbar
 						component="div"
 						style={{
 							width: "100%",
@@ -150,9 +149,8 @@ function ClientLayout({ children }) {
 							<Footer />
 						</div>
 					</PerfectScrollbar> */}
-				</Box>
-			</AuthCheck>
-		</ReduxRedirect >
+			</Box>
+		</AuthCheck>
 	)
 }
 ClientLayout.propTypes = { children: PropTypes.any }

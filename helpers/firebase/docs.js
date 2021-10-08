@@ -18,170 +18,107 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*
-	Structure of documentation collection
-	/root/collection/{docId}/::....
-	/root/collection/{docId}/content/{current}/::text
-	/root/collection/{docId}/content/{history1...10}/::text
-*/
-
 /*****************************************************************
  * IMPORTING                                                     *
  *****************************************************************/
 
-import {
-	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
-} from "firebase/firestore"
-
 //THIRD-PARTY
-import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
-import { batch as reduxBatch, useDispatch } from "react-redux"
+import { uniqueId } from "lodash"
+import { nanoid } from "nanoid"
 
 //PROJECT IMPORT
-import { db, fixDate } from "."
-import { DOC_TYPE } from "./../constants"
-import { setDocsListRaw, setDocsList } from "./../../redux/slices/docsCenter"
+import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
 
 /*****************************************************************
- * WRITE                                                         *
+ * UTILTIES FUNCTIONS                                            *
  *****************************************************************/
 
-//Just add new records, nothing to take care
-export const docsAdd = async (docItem) => {
-	const batch = writeBatch(db)
-	try {
-		batch.set(
-			doc(db, "documentation", docItem.docId),
-			{
-				...docItem,
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp()
-			}
-		)
-		if (docItem.type === DOC_TYPE.DOC)
-			batch.set(doc(db, "documentation", docItem.docId, "content", "current"), { text: "" })
-		await batch.commit()
-	} catch (e) {
-		throw new Error(e.message)
+/**
+ * Compose a new docItem object template for `new document`
+ * @param {*} targetDocItem 
+ * @param {*} username 
+ * @returns docItem object
+ */
+export const docItemNewDoc = (targetDocItem, username) => {
+	const docId = nanoid(7)
+	const incNumber = uniqueId()
+	return {
+		docId: docId,
+		type: DOC_TYPE.DOC,
+		category: targetDocItem.category,
+		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		title: `Document ${docId} #${incNumber}`,
+		description: "",
+		slug: `document-${docId}-${incNumber}`,
+		tags: [],
+		status: DOC_STATUS.DRAFT,
+		createdBy: username,
+		updatedBy: username,
 	}
 }
 
-//if docItem.type === DOC || EXTERNAL => just update
-//if docItem.type === CAT || SUBCAT => change all mirros
-//eg: change Category name => change all records with new Category name...etc
-//Note: affectedItems is used for updating Category and Sub-category only
-// affectedItems is a array of docId which we need to update data.
-export const docsUpdate = async (docItem, affectedItems = []) => {
-	if (docItem.type === DOC_TYPE.EXTERNAL || docItem.type === DOC_TYPE.DOC) {
-		try {
-			await updateDoc(
-				doc(db, "documentation", docItem.docId),
-				{
-					...docItem,
-					updatedAt: serverTimestamp()
-				}
-			)
-		} catch (e) {
-			throw new Error(e.message)
-		}
-	}
-
-	if (docItem.type === DOC_TYPE.CATEGORY) {
-		const batch = writeBatch(db)
-		try {
-			affectedItems.forEach((affectedItem) => {
-				batch.update(
-					doc(db, "documentation", affectedItem.docId),
-					{
-						updatedAt: serverTimestamp(),
-						...(affectedItem.type === DOC_TYPE.CATEGORY)
-							? { ...docItem, updatedAt: serverTimestamp() }
-							: { category: docItem.category }
-					}
-				)
-			})
-			await batch.commit()
-		} catch (e) {
-			throw new Error(e.message)
-		}
-	}
-
-	if (docItem.type === DOC_TYPE.SUBCATEGORY) {
-		const batch = writeBatch(db)
-		try {
-			affectedItems.forEach((affectedItem) => {
-				batch.update(
-					doc(db, "documentation", affectedItem.docId),
-					{
-						updatedAt: serverTimestamp(),
-						...(affectedItem.type === DOC_TYPE.SUBCATEGORY)
-							? { ...docItem, updatedAt: serverTimestamp() }
-							: { subcategory: docItem.subcategory }
-					}
-				)
-			})
-			await batch.commit()
-		} catch (e) {
-			throw new Error(e.message)
-		}
+/**
+ * Compose a new docItem object template for `new external link`
+ * @param {*} targetDocItem
+ * @param {*} username
+ * @returns docItem object
+ */
+export const docItemNewExternal = (targetDocItem, username) => {
+	const docId = nanoid(7)
+	const incNumber = uniqueId()
+	return {
+		docId: docId,
+		type: DOC_TYPE.EXTERNAL,
+		category: targetDocItem.category,
+		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		url: "",
+		title: `External link ${docId} #${incNumber}`,
+		description: "",
+		tags: [],
+		status: DOC_STATUS.DRAFT,
+		createdBy: username,
+		updatedBy: username,
 	}
 }
 
-//if docItem.type === DOC || EXTERNAL => just delete
-//if docItem.type === CAT || SUBCAT => only allow to delete if they are Empty
-//TODO: @next-version will enhance this behaviour of CAT & SUBCAT
-export const docsDelete = async (docItem) => {
-	if (docItem.type === DOC_TYPE.EXTERNAL || docItem.type === DOC_TYPE.DOC) {
-		try {
-			//must delete sub-collection "content" first,
-			//then, you can delete the docItem, else it would fail
-			await deleteDoc(doc(db, "documentation", docItem.docId))
-		} catch (e) {
-			throw new Error(e.message)
-		}
+/**
+ * Compose a new docItem object template for `new external sub-category`
+ * @param {*} targetDocItem
+ * @param {*} username
+ * @returns docItem object
+ */
+export const docItemNewSubCategory = (targetDocItem, username) => {
+	const docId = nanoid(7)
+	const incNumber = uniqueId()
+	return {
+		docId: docId,
+		type: DOC_TYPE.SUBCATEGORY,
+		category: targetDocItem.category,
+		subcategory: `SubCategory ${docId} #${incNumber}`,
+		slug: `subcategory-${docId}-${incNumber}`,
+		description: "",
+		createdBy: username,
+		updatedBy: username,
 	}
+}
 
-	if (docItem.type === DOC_TYPE.CATEGORY) {
-		try {
-			//query to check if category is empty or not
-			//We need to check directly because deleting is serious,
-			//if anything wrong, this would be unrecoverable.
-			const q = query(
-				collection(db, "documentation"),
-				where("category", "==", docItem.category)
-			)
-			const querySnapshot = await getDocs(q)
-			//Only delete category when it is empty
-			if (querySnapshot.length === 1) {
-				await deleteDoc(doc(db, "documentation", docItem.docId))
-			} else {
-				throw new Error("You can only delete empty category!")
-			}
-		} catch (e) {
-			throw new Error(e.message)
-		}
-	}
-
-	if (docItem.type === DOC_TYPE.SUBCATEGORY) {
-		try {
-			//query to check if sub-category is empty or not
-			//We need to check directly because deleting is serious,
-			//if anything wrong, this would be unrecoverable.
-			const q = query(
-				collection(db, "documentation"),
-				where("category", "==", docItem.category),
-				where("subcategory", "==", docItem.subcategory)
-			)
-			const querySnapshot = await getDocs(q)
-			//Only delete category when it is empty
-			if (querySnapshot.length === 1) {
-				await deleteDoc(doc(db, "documentation", docItem.docId))
-			} else {
-				throw new Error("You can only delete empty sub-category!")
-			}
-		} catch (e) {
-			throw new Error(e.message)
-		}
+/**
+ * Compose a new docItem object template for `new external category`
+ * @param {*} targetDocItem
+ * @param {*} username
+ * @returns docItem object
+ */
+export const docItemNewCategory = (username) => {
+	const docId = nanoid(7)
+	const incNumber = uniqueId()
+	return {
+		docId: docId,
+		type: DOC_TYPE.CATEGORY,
+		category: `Category ${docId} #${incNumber}`,
+		slug: `category-${docId}-${incNumber}`,
+		description: "",
+		createdBy: username,
+		updatedBy: username,
 	}
 }
 

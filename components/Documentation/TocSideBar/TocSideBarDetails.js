@@ -22,28 +22,27 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { styled } from "@mui/material/styles"
-import { Box, Button, IconButton, Typography, InputBase, ToggleButtonGroup, ToggleButton, Tooltip } from "@mui/material"
+import { Box, Button, IconButton, Typography, InputBase, ToggleButtonGroup, ToggleButton, Tooltip, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import { filter } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { DOC_STATUS, DOC_TYPE, LOCALUPDATE_DOCSLIST_ACTION } from "../../../helpers/constants"
+import { DOC_STATUS, DOC_TYPE } from "../../../helpers/constants"
 import { getUiSettings, getDocsCenter, getAuth } from "./../../../redux/selectors"
-import { docsUpdate } from "../../../helpers/firebase/docs"
-import { updateDocsList } from "./../../../redux/slices/docsCenter"
 import { RightMenuItemAddNewDoc, RightMenuItemDelete, RightMenuItemExportPDF, RightMenuItemImport } from "./../DocumentTocSideBar"
 
 //ASSETS
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import PublishOutlinedIcon from "@mui/icons-material/PublishOutlined"
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined"
+import { useGetDocsQuery, useUpdateDocMutation } from "../../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -55,19 +54,17 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 	color: theme.palette.grey[500]
 }))
 
-const InputBaseStyled = (props) => <InputBase
+const InputBaseStyled = (props) => <TextField
 	fullWidth
 	variant="outlined"
 	sx={{
-		px: 1, py: 0.5,
 		color: "grey.800",
-		border: "1px solid transparent",
 		borderColor: "divider",
 	}}
 	{...props}
 />
 
-const PublishStatus = ({ setStatus, ...otherProps }) => {
+const PublishStatus = ({ setStatus, ...otherProps }) => (
 	<ToggleButtonGroup
 		exclusive
 		size="small"
@@ -80,16 +77,16 @@ const PublishStatus = ({ setStatus, ...otherProps }) => {
 	>
 		<ToggleButton value={DOC_STATUS.DRAFT}>
 			<Tooltip title="Draft" placement="top">
-				<DraftsOutlinedIcon sx={{ fontSize: 20, px: 3 }} />
+				<DraftsOutlinedIcon />
 			</Tooltip>
 		</ToggleButton>
 		<ToggleButton value={DOC_STATUS.PUBLISHED}>
 			<Tooltip title="Publish" placement="top">
-				<PublishOutlinedIcon sx={{ fontSize: 20, px: 3 }} />
+				<PublishOutlinedIcon />
 			</Tooltip>
 		</ToggleButton>
 	</ToggleButtonGroup>
-}
+)
 PublishStatus.propTypes = { setStatus: PropTypes.func }
 
 const Tags = () => {
@@ -98,7 +95,7 @@ const Tags = () => {
 	)
 }
 
-const CancelSaveButtons = ({ saveAction }) => (
+const CancelSaveButtons = ({ saveAction, handleClose }) => (
 	<Box sx={{
 		display: "flex",
 		justifyContent: "space-between",
@@ -115,7 +112,10 @@ const CancelSaveButtons = ({ saveAction }) => (
 			Cancel
 		</Button>
 		<Button
-			onClick={() => { saveAction() }}
+			onClick={() => {
+				saveAction()
+				handleClose()
+			}}
 			type="submit"
 			variant="contained"
 			color="primary"
@@ -125,23 +125,35 @@ const CancelSaveButtons = ({ saveAction }) => (
 		</Button>
 	</Box>
 )
-CancelSaveButtons.propTypes = { saveAction: PropTypes.func }
+CancelSaveButtons.propTypes = {
+	saveAction: PropTypes.func,
+	handleClose: PropTypes.func
+}
 
 /**
  * 	Category || Sub-Category, use the same DetailsForm as below
  *  for they are all the same data fields
  */
-const DetailsFormCategory = ({ docItem }) => {
-	const { docsListRaw } = useSelector(getDocsCenter)
+const DetailsFormCategory = ({ docItem, handleClose }) => {
+	const allDocsRaw = useGetDocsQuery(undefined)
+	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
 	const [slug, setSlug] = useState(docItem.slug)
 	const [name, setName] = useState(
-		docItem.type === DOC_TYPE.CATEGORY ? docItem.category : docItem.subcategory
+		docItem.type === DOC_TYPE.CATEGORY
+			? docItem.category
+			: docItem.subcategory
 	)
 	const [description, setDescription] = useState(docItem.description)
 
-	const dispatch = useDispatch()
+	useEffect(() => {
+		setSlug(docItem.slug)
+		setName(docItem.type === DOC_TYPE.CATEGORY
+			? docItem.category
+			: docItem.subcategory)
+		setDescription(docItem.description)
+	}, [docItem.slug, docItem.category, docItem.subcategory, docItem.type, docItem.description])
 
 	return (
 		<form
@@ -150,7 +162,7 @@ const DetailsFormCategory = ({ docItem }) => {
 			}}
 		>
 			<TypographyHeader sx={{ mb: 1 }}>
-				{(docItem.type === DOC_TYPE.CATEGORY) ? "Category" : "Sub-Category"}
+				Title
 			</TypographyHeader>
 			<InputBaseStyled
 				id={(docItem.type === DOC_TYPE.CATEGORY) ? "cat-title" : "subcat-title"}
@@ -176,16 +188,18 @@ const DetailsFormCategory = ({ docItem }) => {
 			<InputBaseStyled
 				id="cat-description" value={description}
 				multiline={true}
+				minRows={3}
 				onChange={
 					(e) => setDescription(e.target.value)
 				}
 			/>
 
 			<CancelSaveButtons
+				handleClose={handleClose}
 				saveAction={() => {
 					//prepare the affectedItems
 					const affectedItems = filter(
-						docsListRaw,
+						allDocsRaw.data,
 						(docItem.type === DOC_TYPE.CATEGORY)
 							? { category: docItem.category }
 							: { category: docItem.category, subcategory: docItem.subcategory }
@@ -205,35 +219,38 @@ const DetailsFormCategory = ({ docItem }) => {
 						updatedBy: currentUser.username,
 					}
 
-					//update Redux
-					dispatch(updateDocsList({
-						type: LOCALUPDATE_DOCSLIST_ACTION.UPDATE_CAT,
-						docItem: newCategoryOrSubCatMeta,
-						affectedItems: affectedItems
-					}))
-
 					//update DB
-					docsUpdate(
-						newCategoryOrSubCatMeta,
+					updateDoc({
+						docItem: newCategoryOrSubCatMeta,
 						affectedItems
-					)
+					})
 				}}
 			/>
 		</form>
 	)
 }
-DetailsFormCategory.propTypes = { docItem: PropTypes.object }
+DetailsFormCategory.propTypes = {
+	docItem: PropTypes.object,
+	handleClose: PropTypes.func
+}
 
-const DetailsFormDoc = ({ docItem }) => {
+const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
+	const [updateDoc] = useUpdateDocMutation()
 
-	const [title, setTitle] = useState(docItem.title)
 	const [slug, setSlug] = useState(docItem.slug)
-	const [description, setDescription] = useState(docItem.description)
 	// const [tags, setTags] = useState(docItem.tags)
+	const [title, setTitle] = useState(docItem.title)
 	const [status, setStatus] = useState(docItem.status)
+	const [description, setDescription] = useState(docItem.description)
 
-	const dispatch = useDispatch()
+	useEffect(() => {
+		setSlug(docItem.slug)
+		// setTags(docItem.tags)
+		setTitle(docItem.title)
+		setStatus(docItem.status)
+		setDescription(docItem.description)
+	}, [docItem.slug, docItem.title, docItem.status, docItem.description])
 
 	return (
 		<form
@@ -242,7 +259,7 @@ const DetailsFormDoc = ({ docItem }) => {
 			}}
 		>
 			<TypographyHeader sx={{ mb: 1 }}>
-				Document
+				Title
 			</TypographyHeader>
 			<InputBaseStyled
 				id="doc-title"
@@ -262,16 +279,17 @@ const DetailsFormDoc = ({ docItem }) => {
 				}
 			/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+			{/* <TypographyHeader sx={{ mt: 3, mb: 1 }}>
 				Description
 			</TypographyHeader>
 			<InputBaseStyled
 				id="doc-description" value={description}
 				multiline={true}
+				minRows={3}
 				onChange={
 					(e) => setDescription(e.target.value)
 				}
-			/>
+			/> */}
 
 			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 				Tags
@@ -286,11 +304,12 @@ const DetailsFormDoc = ({ docItem }) => {
 			</Box>
 
 			<CancelSaveButtons
+				handleClose={handleClose}
 				saveAction={() => {
 					//prepare the data
 					const newDocMeta = {
-						docId: docItem.docId, //must included here
-						type: docItem.type,
+						docId: docItem.docId, 	//must be included
+						type: docItem.type,		//must be included
 						title: title,
 						slug: slug,
 						description: description,
@@ -299,31 +318,38 @@ const DetailsFormDoc = ({ docItem }) => {
 						updatedBy: currentUser.username,
 					}
 
-					//update Redux
-					dispatch(updateDocsList({
-						type: LOCALUPDATE_DOCSLIST_ACTION.UPDATE_DOC,
-						docItem: newDocMeta
-					}))
-
 					//update DB
-					docsUpdate(newDocMeta, [/* no affectedItems! */])
+					updateDoc({
+						docItem: newDocMeta,
+						affectedItems: [/* no affectedItems! */]
+					})
 				}}
 			/>
 		</form>
 	)
 }
-DetailsFormDoc.propTypes = { docItem: PropTypes.object }
+DetailsFormDoc.propTypes = {
+	docItem: PropTypes.object,
+	handleClose: PropTypes.func
+}
 
-const DetailsFormExternal = ({ docItem }) => {
+const DetailsFormExternal = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
+	const [updateDoc] = useUpdateDocMutation()
 
-	const [title, setTitle] = useState(docItem.title)
 	const [url, setUrl] = useState(docItem.url)
-	const [description, setDescription] = useState(docItem.description)
 	// const [tags, setTags] = useState(docItem.tags)
+	const [title, setTitle] = useState(docItem.title)
 	const [status, setStatus] = useState(docItem.status)
+	const [description, setDescription] = useState(docItem.description)
 
-	const dispatch = useDispatch()
+	useEffect(() => {
+		setUrl(docItem.url)
+		// setTags(docItem.tags)
+		setTitle(docItem.title)
+		setStatus(docItem.status)
+		setDescription(docItem.description)
+	}, [docItem.url, docItem.title, docItem.status, docItem.description])
 
 	return (
 		<form
@@ -332,7 +358,7 @@ const DetailsFormExternal = ({ docItem }) => {
 			}}
 		>
 			<TypographyHeader sx={{ mb: 1 }}>
-				External Link
+				Title
 			</TypographyHeader>
 			<InputBaseStyled
 				id="external-title"
@@ -358,6 +384,7 @@ const DetailsFormExternal = ({ docItem }) => {
 			<InputBaseStyled
 				id="external-description" value={description}
 				multiline={true}
+				minRows={3}
 				onChange={
 					(e) => setDescription(e.target.value)
 				}
@@ -376,6 +403,7 @@ const DetailsFormExternal = ({ docItem }) => {
 			</Box>
 
 			<CancelSaveButtons
+				handleClose={handleClose}
 				saveAction={() => {
 					//prepare the data
 					const newExternalMeta = {
@@ -389,37 +417,39 @@ const DetailsFormExternal = ({ docItem }) => {
 						updatedBy: currentUser.username,
 					}
 
-					//update Redux
-					dispatch(updateDocsList({
-						type: LOCALUPDATE_DOCSLIST_ACTION.UPDATE_EXTERNAL,
-						docItem: newExternalMeta
-					}))
-
-					docsUpdate(newExternalMeta, [/* no affectedItems */]
-					)
+					//update DB
+					updateDoc({
+						docItem: newExternalMeta,
+						affectedItems: [/* no affectedItems */]
+					})
 				}}
 			/>
 		</form>
 	)
 }
-DetailsFormExternal.propTypes = { docItem: PropTypes.object }
+DetailsFormExternal.propTypes = {
+	docItem: PropTypes.object,
+	handleClose: PropTypes.func
+}
 
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDetails = ({ open, handleClose }) => {
-	const { sideBarLeft } = useSelector(getUiSettings)
-	const { docsListRaw, activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+const TocSideBarDetails = ({ handleClose }) => {
+	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+	const { isSideBarExpanded, sideBarLeft, showTocSideBarDetails } = useSelector(getUiSettings)
 
-	//Note: docItem = {..} or undefined
-	const docItem = useMemo(() => {
-		const filterRes = filter(docsListRaw, (i) => i.docId === activeDocIdOfTocSideBarDetails)
-		return filterRes[0]
-	}, [activeDocIdOfTocSideBarDetails, docsListRaw])
+	const { docItem } = useGetDocsQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			docItem: data?.find((post) => post.docId === activeDocIdOfTocSideBarDetails),
+		})
+	})
 
 	if (docItem === undefined) return null
+
+	console.log("docItem", docItem)
 
 	return (
 		<>
@@ -429,21 +459,21 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "stretch",
-				left: `${sideBarLeft + 556}px`,
+				left: `${sideBarLeft + (isSideBarExpanded ? 257 : 69)}px`,
 				minWidth: "385px",
 				height: "100%",
 				backgroundColor: "#FFF",
 				borderRight: "1px solid",
 				borderColor: "divider",
-				...(open ?
+				...(showTocSideBarDetails ?
 					{
 						opacity: 1,
 						visibility: "visible",
-						transition: "0.5s opacity, 0 0.5s visibility"
+						transition: "opacity 0.5s, visibility 0 0.5s" //!! invalid property
 					} : {
 						opacity: 0,
 						visibility: "hidden",
-						transition: "0.5s opacity, 0.5s visibility"
+						transition: "opacity 0.5s, visibility 0.5s" //!! invalid property
 					}
 				)
 			}}>
@@ -455,7 +485,7 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 					borderBottom: "1px solid transparent",
 					borderColor: "divider",
 				}}>
-					<TypographyHeader>{docItem.Type}</TypographyHeader>
+					<TypographyHeader>{docItem.type}</TypographyHeader>
 					<IconButton onClick={() => { handleClose() }}>
 						<ArrowBackIcon />
 					</IconButton>
@@ -469,32 +499,32 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 
 					{(docItem.type === DOC_TYPE.CATEGORY
 						|| docItem.type === DOC_TYPE.SUBCATEGORY) &&
-						<DetailsFormCategory docItem={docItem} />}
+						<DetailsFormCategory docItem={docItem} handleClose={handleClose} />}
 
 					{(docItem.type === DOC_TYPE.EXTERNAL) &&
-						<DetailsFormExternal docItem={docItem} />}
+						<DetailsFormExternal docItem={docItem} handleClose={handleClose} />}
 
 					{(docItem.type === DOC_TYPE.DOC) &&
-						<DetailsFormDoc docItem={docItem} />}
+						<DetailsFormDoc docItem={docItem} handleClose={handleClose} />}
 
 				</Box>
 
 				<Box sx={{ mt: 3 }}>
 
-					<RightMenuItemAddNewDoc docItem={docItem} sx={{ px: 3 }} />
-					<RightMenuItemImport docItem={docItem} sx={{ px: 3 }} />
+					<RightMenuItemAddNewDoc targetDocItem={docItem} sx={{ px: 3 }} />
+					<RightMenuItemImport targetDocItem={docItem} sx={{ px: 3 }} />
 
 					{(docItem.type === DOC_TYPE.CATEGORY) &&
-						<RightMenuItemDelete docItem={docItem} title="Delete this category" sx={{ px: 3 }} />}
+						<RightMenuItemDelete targetDocItem={docItem} title="Delete this category" sx={{ px: 3 }} />}
 
 					{(docItem.type === DOC_TYPE.SUBCATEGORY) &&
-						<RightMenuItemDelete docItem={docItem} title="Delete this sub-category" sx={{ px: 3 }} />}
+						<RightMenuItemDelete targetDocItem={docItem} title="Delete this sub-category" sx={{ px: 3 }} />}
 
 					{(docItem.type === DOC_TYPE.DOC) &&
-						<RightMenuItemExportPDF docItem={docItem} sx={{ px: 3 }} />}
+						<RightMenuItemExportPDF targetDocItem={docItem} sx={{ px: 3 }} />}
 
 					{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
-						<RightMenuItemDelete docItem={docItem} sx={{ px: 3 }} />}
+						<RightMenuItemDelete targetDocItem={docItem} sx={{ px: 3 }} />}
 
 				</Box>
 			</Box >
@@ -506,7 +536,7 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 					position: "fixed",
 					zIndex: 149,
 					display: open ? "block" : "none",
-					left: `${sideBarLeft + 556}px`,
+					left: `${sideBarLeft + 300}px`,
 					minWidth: "100%",
 					height: "100%",
 					backgroundColor: "action.disabled",
@@ -516,7 +546,6 @@ const TocSideBarDetails = ({ open, handleClose }) => {
 	)
 }
 TocSideBarDetails.propTypes = {
-	open: PropTypes.bool,
 	handleClose: PropTypes.func,
 }
 

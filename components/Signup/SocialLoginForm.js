@@ -46,7 +46,7 @@ import { regRule } from "./../../helpers/regex"
 import { getAuth } from "./../../redux/selectors"
 import { isUsernameAvailable } from "./../../helpers/firebase/user"
 import { signUpViaSocialAccount } from "./../../helpers/firebase/signup"
-import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
+import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
@@ -81,7 +81,7 @@ const SocialLoginForm = () => {
 	// const router = useRouter()
 	const { currentUser } = useSelector(getAuth)
 
-	updateFlexDirection({ payload: "row" })
+	useFlexDirection({ payload: "row" })
 
 	const formik = useFormik({
 		initialValues: {

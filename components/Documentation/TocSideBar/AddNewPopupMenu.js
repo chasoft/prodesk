@@ -22,58 +22,37 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useRef, useState, useCallback } from "react"
+import React, { useRef, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, ClickAwayListener, Grow, Paper, Popper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { isArray } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "../../../redux/selectors"
 import { DOCS_ADD } from "./../../../helpers/constants"
-import { docsAddCategory, docsAddSubCategory, docsAddExternal, docsAddDoc } from "./../../Documentation/DocumentTocSideBar"
 
 //ASSETS
+// import { ExportPdfIcon } from "./../common/SvgIcons"
+import PostAddIcon from "@mui/icons-material/PostAdd"
+// import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
+// import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
+// import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
+import { useAddDocMutation } from "../../../redux/slices/firestoreApi"
+import { docItemNewCategory, docItemNewDoc, docItemNewExternal, docItemNewSubCategory } from "../../../helpers/firebase/docs"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const PopupMenuItem = ({ actionType, targetDocItem, handleClose }) => {
-	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
-
-	const executeAction = useCallback(async () => {
-
-		//Not require any information
-		if (actionType.code === DOCS_ADD.CATEGORY.code) {
-			docsAddCategory(dispatch, currentUser.username)
-		}
-
-		//Require parent category
-		if (actionType.code === DOCS_ADD.SUB_CATEGORY.code) {
-			docsAddSubCategory(dispatch, currentUser.username, targetDocItem)
-		}
-
-		//Require parent category
-		if (actionType.code === DOCS_ADD.EXTERNAL.code) {
-			docsAddExternal(dispatch, currentUser.username, targetDocItem)
-		}
-
-		if (actionType.code === DOCS_ADD.DOC.code) {
-			docsAddDoc(dispatch, currentUser.username, targetDocItem)
-		}
-
-	}, [dispatch, actionType.code, targetDocItem, currentUser.username])
-
+const PopupMenuItemBase = ({ MenuIcon, title, description, callback, handleClose }) => {
 	return (
 		<Box
 			onClick={() => {
-				executeAction()
+				callback()
 				handleClose()
 			}}
 			sx={{
@@ -94,26 +73,28 @@ const PopupMenuItem = ({ actionType, targetDocItem, handleClose }) => {
 				display: "flex",
 				alignItems: "center",
 			}}>
-				{<actionType.icon fontSize="small" sx={{ fill: (theme) => theme.palette.grey[500] }} />}
+				{<MenuIcon fontSize="small" sx={{ fill: (theme) => theme.palette.grey[500] }} />}
 				<Typography sx={{
 					ml: 1,
 					fontWeight: 500,
-				}}>{actionType.title}</Typography>
+				}}>{title}</Typography>
 			</Box>
 			<Typography sx={{
 				color: "grey.500",
 				fontWeight: 500,
 				fontSize: "0.8rem"
 			}}>
-				{actionType.description}
+				{description}
 			</Typography>
 		</Box>
 	)
 }
-PopupMenuItem.propTypes = {
-	actionType: PropTypes.object,
-	targetDocItem: PropTypes.object,
-	handleClose: PropTypes.func,
+PopupMenuItemBase.propTypes = {
+	MenuIcon: PropTypes.object,
+	title: PropTypes.string,
+	description: PropTypes.string,
+	callback: PropTypes.func,
+	handleClose: PropTypes.func
 }
 
 export const Divider = () => (
@@ -123,6 +104,97 @@ export const Divider = () => (
 		borderColor: "divider"
 	}} />
 )
+
+const PopupMenuItemAddCategory = ({ actionType, handleClose }) => {
+	const { currentUser } = useSelector(getAuth)
+	const [addDoc] = useAddDocMutation()
+	const handleAddCategory = async () => {
+		const docItem = docItemNewCategory(currentUser.username)
+		await addDoc({ docItem: docItem }).unwrap()
+	}
+	return (
+		<PopupMenuItemBase
+			MenuIcon={DOCS_ADD.CATEGORY.icon}
+			title={actionType.title}
+			description={actionType.description}
+			callback={handleAddCategory}
+			handleClose={handleClose}
+		/>
+	)
+}
+PopupMenuItemAddCategory.propTypes = {
+	actionType: PropTypes.object,
+	handleClose: PropTypes.func,
+}
+
+const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose }) => {
+	const { currentUser } = useSelector(getAuth)
+	const [addDoc] = useAddDocMutation()
+	const handleAddSubCategory = async () => {
+		const docItem = docItemNewSubCategory(targetDocItem, currentUser.username)
+		await addDoc({ docItem: docItem }).unwrap()
+	}
+	return (
+		<PopupMenuItemBase
+			MenuIcon={DOCS_ADD.SUB_CATEGORY.icon}
+			title={actionType.title}
+			description={actionType.description}
+			callback={handleAddSubCategory}
+			handleClose={handleClose}
+		/>
+	)
+}
+PopupMenuItemAddSubCategory.propTypes = {
+	actionType: PropTypes.object,
+	targetDocItem: PropTypes.object,
+	handleClose: PropTypes.func,
+}
+
+const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }) => {
+	const { currentUser } = useSelector(getAuth)
+	const [addDoc] = useAddDocMutation()
+	const handleAddExternalLink = async () => {
+		const docItem = docItemNewExternal(targetDocItem, currentUser.username)
+		await addDoc({ docItem: docItem }).unwrap()
+	}
+	return (
+		<PopupMenuItemBase
+			MenuIcon={DOCS_ADD.EXTERNAL.icon}
+			title={actionType.title}
+			description={actionType.description}
+			callback={handleAddExternalLink}
+			handleClose={handleClose}
+		/>
+	)
+}
+PopupMenuItemAddExternalLink.propTypes = {
+	actionType: PropTypes.object,
+	targetDocItem: PropTypes.object,
+	handleClose: PropTypes.func,
+}
+
+const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
+	const { currentUser } = useSelector(getAuth)
+	const [addDoc] = useAddDocMutation()
+	const handleAddDoc = async () => {
+		const docItem = docItemNewDoc(targetDocItem, currentUser.username)
+		await addDoc({ docItem: docItem }).unwrap()
+	}
+	return (
+		<PopupMenuItemBase
+			MenuIcon={DOCS_ADD.DOC.icon}
+			title={actionType.title}
+			description={actionType.description}
+			callback={handleAddDoc}
+			handleClose={handleClose}
+		/>
+	)
+}
+PopupMenuItemAddDoc.propTypes = {
+	actionType: PropTypes.object,
+	targetDocItem: PropTypes.object,
+	handleClose: PropTypes.func,
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -152,11 +224,35 @@ const AddNewPopupMenu = ({ targetDocItem, actions, placement, children }) => {
 
 								{actions.map((actionType, idx) => (
 									<div key={actionType.title}>
-										<PopupMenuItem
-											actionType={actionType}
-											targetDocItem={targetDocItem}
-											handleClose={() => setOpen(false)}
-										/>
+
+										{(actionType.code === DOCS_ADD.CATEGORY.code) &&
+											<PopupMenuItemAddCategory
+												actionType={actionType}
+												handleClose={() => setOpen(false)}
+											/>}
+
+										{(actionType.code === DOCS_ADD.SUB_CATEGORY.code) &&
+											<PopupMenuItemAddSubCategory
+												actionType={actionType}
+												targetDocItem={targetDocItem}
+												handleClose={() => setOpen(false)}
+											/>}
+
+										{(actionType.code === DOCS_ADD.EXTERNAL.code) &&
+											<PopupMenuItemAddExternalLink
+												actionType={actionType}
+												targetDocItem={targetDocItem}
+												handleClose={() => setOpen(false)}
+											/>}
+
+
+										{(actionType.code === DOCS_ADD.DOC.code) &&
+											<PopupMenuItemAddDoc
+												actionType={actionType}
+												targetDocItem={targetDocItem}
+												handleClose={() => setOpen(false)}
+											/>}
+
 										{(idx !== actions.length - 1) && <Divider />}
 									</div>
 								))}

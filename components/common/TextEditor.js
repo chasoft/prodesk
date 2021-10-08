@@ -24,6 +24,7 @@
 
 import PropTypes from "prop-types"
 import React, { useState, useCallback } from "react"
+import { ref as getStorageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 
 // MATERIAL-UI
 import { Box, LinearProgress, Typography } from "@mui/material"
@@ -64,7 +65,8 @@ const LinearProgressWithLabel = (props) => (
 			</Typography>
 		</Box>
 	</Box>
-); LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired }
+)
+LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -79,10 +81,10 @@ const LinearProgressWithLabel = (props) => (
 const TextEditor = React.forwardRef((props, ref) => {
 	const { defaultValue = "", readOnly = false, storageDestination = "uploads", ...otherProps } = props
 
-	const { currentUser } = useSelector(getAuth)
 	const { scrollTo } = useSelector(getTextEditor)
-	const [uploading, setUploading] = useState(false)
+	const { currentUser } = useSelector(getAuth)
 	const [progress, setProgress] = useState(0)
+	const [uploading, setUploading] = useState(false)
 
 	const dispatch = useDispatch()
 
@@ -98,12 +100,13 @@ const TextEditor = React.forwardRef((props, ref) => {
 				const filename = file.name.split(".")[0]
 
 				// Makes reference to the storage bucket location
-				const storageRef = storage.ref(`${storageDestination}/${currentUser.username}/${filename}-${uniqueId}.${extension}`)
+				const storageRef = getStorageRef(storage, `${storageDestination}/${currentUser.username}/${filename}-${uniqueId}.${extension}`)
 				setUploading(true)
 
 				// Starts the upload
-				const uploadTask = storageRef.put(file)
+				const uploadTask = uploadBytesResumable(storageRef, file)
 
+				//!! Can support pause / resume / cancel upload - ref: https://firebase.google.com/docs/storage/web/upload-files
 				uploadTask.on(STATE_CHANGED,
 					(snapshot) => {
 						// Update the uploading progress
@@ -116,7 +119,7 @@ const TextEditor = React.forwardRef((props, ref) => {
 						reject(error)
 					},
 					async () => {
-						const imgURL = await uploadTask.snapshot.ref.getDownloadURL()
+						const imgURL = await getDownloadURL(uploadTask.snapshot.ref)
 						resolve(imgURL)
 					}
 				)

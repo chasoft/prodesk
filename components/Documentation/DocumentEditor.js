@@ -22,21 +22,22 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, InputBase } from "@mui/material"
 import TextEditor from "./../common/TextEditor"
 import DocumentTemplate from "./DocumentTemplate"
-import { getTextEditor } from "./../../redux/selectors"
-import { useDispatch, useSelector } from "react-redux"
-import { setEditorDataHeadings } from "./../../redux/slices/textEditor"
+import { getAuth, getDocsCenter, getTextEditor } from "./../../redux/selectors"
 
 //THIRD-PARTY
-
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+import { random } from "lodash"
+import { usePrevious } from "react-use"
 
 //PROJECT IMPORT
-
+import { setEditorData, setEditorDefaultData, setEditorDataHeadings } from "./../../redux/slices/textEditor"
+import { useGetDocContentQuery, useGetDocsQuery, useUpdateDocContentMutation, useUpdateDocMutation } from "./../../redux/slices/firestoreApi"
 
 //ASSETS
 
@@ -50,21 +51,61 @@ import { setEditorDataHeadings } from "./../../redux/slices/textEditor"
  *****************************************************************/
 
 const DocumentEditor = () => {
-	const editorRef = useRef(null)
-	const [defaultEditorData, setDefaultEditorData] = useState("")	//!!
-
+	/*
+		Prepare all necessary variables 
+	*/
 	const dispatch = useDispatch()
-	const { editorData } = useSelector(getTextEditor)	//!! thống nhất nơi lưu trữ ... editorData? docsContentList ? OR?? I am wrong?!!
+	const editorRef = useRef(null)
+	//
+	const [updateDoc] = useUpdateDocMutation()
+	const [updateDocContent] = useUpdateDocContentMutation()
+	// Current document
+	const { currentUser } = useSelector(getAuth)
+	const { activeDocId } = useSelector(getDocsCenter)
+	// Get all required data from database
+	const { docItem } = useGetDocsQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			docItem: data?.find((post) => post.docId === activeDocId) ?? {},
+		})
+	})
+	const docItemContent = useGetDocContentQuery(activeDocId)
+	//
+	const { editorData, editorDefaultData } = useSelector(getTextEditor)
+	const [title, setTitle] = useState("")
+	const [description, setDescription] = useState("")
 
-	const handleSetDefaultEditorData = useCallback((data) => {
-		setDefaultEditorData(data)
-		editorRef.current.focusAtEnd()
-	}, [])
+	/*
+		Effect, to update status of mounted controls
+	*/
 
 	useEffect(() => {
-		const h = editorRef.current.getHeadings()
-		dispatch(setEditorDataHeadings(h))
+		setTitle(docItem.title)
+		setDescription(docItem.description)
+	}, [docItem.title, docItem.description, activeDocId])
+
+	useEffect(() => {
+		const text = docItemContent?.data + " ".repeat(random(20))
+		reduxBatch(() => {
+			dispatch(setEditorData(text))
+			dispatch(setEditorDefaultData(text))
+		})
+	}, [dispatch, docItemContent?.data])
+
+	useEffect(() => {
+		const headings = editorRef?.current?.getHeadings() ?? []
+		dispatch(setEditorDataHeadings(headings))
 	}, [dispatch, editorData])
+
+	if (docItem === undefined) return null
+
+	//fix bug
+	// if (prevActiveDocId !== activeDocId) {
+	// 	const text = docItemContent?.data + " ".repeat(random(20))
+	// 	reduxBatch(() => {
+	// 		dispatch(setEditorData(text))
+	// 		dispatch(setEditorDefaultData(text))
+	// 	})
+	// }
 
 	return (
 		<Box sx={{
@@ -77,20 +118,52 @@ const DocumentEditor = () => {
 		}}>
 			<InputBase
 				id="doc-title" placeholder="Page title" variant="outlined"
+				value={title}
+				onChange={(e) => setTitle(e.target.value)}
 				sx={{
 					fontSize: { xs: "1.5rem", md: "1.75rem" },
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
+				}}
+				onBlur={() => {
+					if (title !== docItem.title) {
+						const newDocMeta = {
+							docId: docItem.docId,	//must be included
+							type: docItem.type,		//must be included
+							title: title,
+							updatedBy: currentUser.username,
+						}
+						updateDoc({
+							docItem: newDocMeta,
+							affectedItems: [/* no affectedItems! */]
+						})
+					}
 				}}
 			/>
 
 			{/* {Max 200 characters} */}
 			<InputBase
 				id="doc-title" placeholder="Page description (optional)" variant="outlined"
+				value={description}
+				onChange={(e) => setDescription(e.target.value)}
 				multiline={true}
 				sx={{
 					fontSize: "1rem", fontWeight: "bold",
 					lineHeight: "2rem"
+				}}
+				onBlur={() => {
+					if (description !== docItem.description) {
+						const newDocMeta = {
+							docId: docItem.docId,	//must be included
+							type: docItem.type,		//must be included
+							description: description,
+							updatedBy: currentUser.username,
+						}
+						updateDoc({
+							docItem: newDocMeta,
+							affectedItems: [/* no affectedItems! */]
+						})
+					}
 				}}
 			/>
 
@@ -100,19 +173,34 @@ const DocumentEditor = () => {
 				borderColor: "divider"
 			}} />
 
-			<TextEditor
-				ref={editorRef}
-				value={defaultEditorData}
-				placeholder="Enter your content here..."
-			/>
+			{docItemContent.isLoading
+				? <div>Loading...</div>
+				: <TextEditor
+					ref={editorRef}
+					value={editorDefaultData}
+					placeholder="Enter your content here..."
+					onBlur={() => {
+						if (editorData !== docItemContent.data) {
+							// const newDocMeta = {
+							// 	docId: docItem.docId,	//must be included
+							// 	updatedBy: currentUser.username,
+							// }
+							// updateDocContent({
+							// 	docItem: newDocMeta,
+							// 	content: editorData
+							// })
 
-			{(editorData === "" ||
-				editorData.trim() === "\\") &&
-				<DocumentTemplate setDefaultEditorData={handleSetDefaultEditorData} />}
+							console.log("editorData:", editorData)
+							console.log("docItemContent.data:", docItemContent.data)
+						}
+					}}
+				/>}
+
+			{(!editorData.trim() || editorData.trim() === "\\")
+				&& <DocumentTemplate />}
 
 		</Box>
 	)
 }
-// DocumentEditor.propTypes = { children: PropTypes.node }
 
 export default DocumentEditor

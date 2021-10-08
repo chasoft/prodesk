@@ -26,7 +26,6 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import makeStyles from "@mui/styles/makeStyles"
 import { useTheme } from "@mui/material/styles"
 import { Box, Grid, Button, Typography, Dialog, useMediaQuery, DialogTitle, DialogContent, DialogActions, IconButton, Paper } from "@mui/material"
 
@@ -44,37 +43,6 @@ import CloseIcon from "@mui/icons-material/Close"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		padding: theme.spacing(3),
-		width: "500px",
-		[theme.breakpoints.down("md")]: {
-			width: "100%"
-		}
-	},
-	textField: {
-		marginLeft: theme.spacing(1),
-		marginRight: theme.spacing(1),
-		width: "100%"
-	},
-	imageList: {
-
-	},
-	DialogTitle: {
-		display: "flex",
-		alignItems: "center",
-		padding: theme.spacing(1, 1, 0, 2)
-	},
-	DialogContent: {
-		minHeight: "300px",
-		[theme.breakpoints.up("xs")]: {
-			minWidth: "400px"
-		},
-	}
-
-
-}))
 
 // const validationSchema = yup.object({
 // 	dateFrom: yup
@@ -225,7 +193,6 @@ TabPanel.propTypes = {
 
 function Gallery({ children }) {
 	const theme = useTheme()
-	const classes = useStyles()
 	const { fileList } = useGetAllFiles()
 
 	const [showGallery, setShowGallery] = useState(false)
@@ -260,22 +227,28 @@ function Gallery({ children }) {
 
 			<Dialog open={showGallery} onClose={handleClose} fullScreen={fullScreen}>
 				<DialogTitle id="responsive-dialog-title" style={{ padding: 0 }}>
-					<div className={classes.DialogTitle}>
-
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						pt: 1, pr: 1, pb: 0, pl: 2
+					}}>
 
 						<Typography style={{ flexGrow: 1 }} variant="button">Image Gallery</Typography>
 
 						<IconButton
 							size="small" aria-label="close"
-							className={classes.closeButton} onClick={handleClose}
+							onClick={handleClose}
 						>
 							<CloseIcon />
 						</IconButton>
 
-					</div>
+					</Box>
 				</DialogTitle>
 
-				<DialogContent className={classes.DialogContent}>
+				<DialogContent sx={{
+					minHeight: "300px",
+					minWidth: { xs: "initial", md: "400px" }
+				}}>
 					<Box onClick={() => setSelectedImage("")}>
 						<Typography variant="h3">10-Sep-2021</Typography>
 						<Grid container spacing={2}>

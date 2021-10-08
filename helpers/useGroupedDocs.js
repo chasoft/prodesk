@@ -18,46 +18,43 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-//FIREBASE SDK
-import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
-import { getStorage } from "firebase/storage"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import { useRef } from "react"
 
 //THIRD-PARTY
-import dayjs from "dayjs"
+import { usePrevious } from "react-use"
+import { forEach, groupBy, isEqual, sortBy } from "lodash"
 
-//FIREBASE CONFIGURATION
-const firebaseConfig = {
-	apiKey: "AIzaSyAjxlM9UjqtmwAXIQh2EaZx2dvJLXU9SEE",
-	authDomain: "prodesk-83cfe.firebaseapp.com",
-	projectId: "prodesk-83cfe",
-	storageBucket: "prodesk-83cfe.appspot.com",
-	messagingSenderId: "183315432788",
-	appId: "1:183315432788:web:44dc8c573f1bca61fc34c1",
+//PROJECT IMPORT
+import { useGetDocsQuery } from "../redux/slices/firestoreApi"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+export default function useGroupedDocs() {
+	const { data, isLoading } = useGetDocsQuery(undefined)
+	const prevData = usePrevious(data)
+	//we use useRef here because, later we change the value
+	//and, this hook will not be re-render,
+	const groupedDocs = useRef()
+
+	if (isLoading) { return [] }
+
+	if (isEqual(prevData, data) === false) {
+		//step 0: sort the docs list
+		const sortedDocs = sortBy(data, ["category", "subcategory", "title"])
+		//step 1: group by cat
+		const groupByCat = groupBy(sortedDocs, (i) => i.category)
+		//step 2: group by SubCat
+		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
+			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
+		})
+		groupedDocs.current = Object.entries(groupByCatAndSub)
+	}
+
+	return groupedDocs.current
 }
-
-const firebaseApp = initializeApp(firebaseConfig)
-
-//EXPORT FOR QUICK REFERENCING
-export const auth = getAuth(firebaseApp)
-export const db = getFirestore(firebaseApp)
-
-//use this to get consistent datetime for users in different timezones
-// export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp => import { serverTimestamp } from "firebase/firestore"
-// export const increment = firebase.firestore.FieldValue.increment => import { increment } from "firebase/firestore"
-// export const fromMillis = firebase.firestore.Timestamp.fromMillis ???!!! >
-// => fromMillis is method của Timestamp  =>> import { Timestamp} from "firebase/firestore"
-
-export const storage = getStorage(firebaseApp)
-//used to track uploading status to firestorage
-export const STATE_CHANGED = "state_changed"
-
-//HELPER FUNCTIONS
-export const fix_datetime_list = (items) => items.map((item) => fix_datetime_single(item))
-export const fix_datetime_single = (item) => ({
-	...item,
-	createdAt: dayjs(item?.createdAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0,
-	updatedAt: dayjs(item?.updatedAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0
-})
-

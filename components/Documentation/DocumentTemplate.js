@@ -23,16 +23,16 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useToggle } from "react-use"
+import { random } from "lodash"
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-
+import { setEditorData, setEditorDefaultData } from "./../../redux/slices/textEditor"
 
 //ASSETS
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
@@ -114,8 +114,8 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentTemplate = ({ setDefaultEditorData }) => {
-	const [on, toggle] = useToggle(false)
+const DocumentTemplate = () => {
+	const dispatch = useDispatch()
 	return (
 		<Box sx={{ mt: 6 }}>
 			<Typography sx={{
@@ -133,8 +133,11 @@ const DocumentTemplate = ({ setDefaultEditorData }) => {
 						<Paper
 							elevation={0}
 							onClick={() => {
-								setDefaultEditorData(template.content + (on ? "  " : ""))
-								toggle(!on)
+								const text = template.content + " ".repeat(random(20))
+								reduxBatch(() => {
+									dispatch(setEditorDefaultData(text))
+									dispatch(setEditorData(text))
+								})
 							}}
 							sx={{
 								p: 3,
@@ -177,9 +180,6 @@ const DocumentTemplate = ({ setDefaultEditorData }) => {
 
 		</Box>
 	)
-}
-DocumentTemplate.propTypes = {
-	setDefaultEditorData: PropTypes.func,
 }
 
 export default DocumentTemplate

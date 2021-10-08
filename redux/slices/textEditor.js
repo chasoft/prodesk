@@ -22,6 +22,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 export const initialState = {
 	editorData: "",
+	editorDefaultData: "",
 	editorDataHeadings: [],
 }
 
@@ -32,6 +33,9 @@ const textEditorSlice = createSlice({
 		setEditorData: (state, { payload }) => {
 			state.editorData = payload
 		},
+		setEditorDefaultData: (state, { payload }) => {
+			state.editorDefaultData = payload
+		},
 		setEditorDataHeadings: (state, { payload }) => {
 			state.editorDataHeadings = payload
 		},
@@ -40,6 +44,7 @@ const textEditorSlice = createSlice({
 
 export const {
 	setEditorData,
+	setEditorDefaultData,
 	setEditorDataHeadings,
 } = textEditorSlice.actions
 

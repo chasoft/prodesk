@@ -22,23 +22,22 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { createRef, forwardRef } from "react"
+import React, { createRef, forwardRef, useMemo } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
-import { filter, uniqueId } from "lodash"
+import { filter } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { ACTION, DOC_STATUS, DOC_TYPE, LOCALUPDATE_DOCSLIST_ACTION, RESERVED_KEYWORDS } from "./../../helpers/constants"
-import { getTextEditor, getDocsCenter } from "./../../redux/selectors"
+import { DOC_TYPE } from "./../../helpers/constants"
+import { getTextEditor, getDocsCenter, getAuth } from "./../../redux/selectors"
 import { setShowTocSideBarDetails } from "../../redux/slices/uiSettings"
-import { docsAdd, docsDelete } from "./../../helpers/firebase/docs"
-import { setActiveDocId, setActiveDocIdOfTocSideBarDetails, updateDocsList } from "./../../redux/slices/docsCenter"
+import { docItemNewDoc } from "./../../helpers/firebase/docs"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "./../../redux/slices/docsCenter"
 
 //ASSETS
 import { ExportPdfIcon } from "./../common/SvgIcons"
@@ -47,133 +46,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
 import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
 import { useSnackbar } from "notistack"
-
-/*****************************************************************
- * SOME SHARED ACTIONS                                           *
- *****************************************************************/
-
-export const docsAddCategory = async (dispatch, username) => {
-	//Prepare data
-	const docId = nanoid(7)
-	const incNumber = uniqueId()
-	const docItem = {
-		docId: docId,
-		type: DOC_TYPE.CATEGORY,
-		category: "Untitled Category " + docId + incNumber,
-		slug: "untitled-category-" + docId + incNumber,
-		description: "",
-		createdBy: username,
-		updatedBy: username,
-	}
-
-	//Local update
-	reduxBatch(() => {
-		dispatch(updateDocsList({
-			type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_CAT,
-			docItem: docItem
-		}))
-		dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-		dispatch(setShowTocSideBarDetails(true))
-	})
-
-	//Add to DB
-	await docsAdd(docItem)
-}
-
-export const docsAddSubCategory = async (dispatch, username, targetDocItem) => {
-	if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-
-	//Prepare data
-	const docId = nanoid(7)
-	const incNumber = uniqueId()
-	const docItem = {
-		docId: docId,
-		type: DOC_TYPE.SUBCATEGORY,
-		category: targetDocItem.category,
-		subcategory: "Untitled SubCategory " + docId + incNumber,
-		slug: "untitled-subcategory-" + docId + incNumber,
-		description: "",
-		createdBy: username,
-		updatedBy: username,
-	}
-
-	//Local update
-	reduxBatch(() => {
-		dispatch(updateDocsList({
-			type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_SUBCAT,
-			docItem: docItem
-		}))
-		dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-		dispatch(setShowTocSideBarDetails(true))
-	})
-
-	//Add to DB
-	await docsAdd(docItem)
-}
-
-export const docsAddExternal = async (dispatch, username, targetDocItem) => {
-	if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-
-	//Prepare data
-	const docId = nanoid(7)
-	const docItem = {
-		docId: docId,
-		type: DOC_TYPE.EXTERNAL,
-		category: targetDocItem.category,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
-		url: "",
-		description: "",
-		tags: [],
-		status: DOC_STATUS.DRAFT,
-		createdBy: username,
-		updatedBy: username,
-	}
-	//local update
-	reduxBatch(() => {
-		dispatch(updateDocsList({
-			type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_EXTERNAL,
-			docItem: docItem
-		}))
-		dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-		dispatch(setShowTocSideBarDetails(true))
-	})
-
-	//Add to DB
-	await docsAdd(docItem)
-}
-
-export const docsAddDoc = async (dispatch, username, targetDocItem) => {
-	if (!targetDocItem.category) throw new Error("Can not determined parent item!")
-	//Prepare data
-	//Please note that content of DOC would be stored in sub-Collection of its document
-	const docId = nanoid(7)
-	const docItem = {
-		docId: docId,
-		type: DOC_TYPE.DOC,
-		category: targetDocItem.category,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
-		title: "",
-		description: "",
-		slug: "",
-		tags: [],
-		status: DOC_STATUS.DRAFT,
-		createdBy: username,
-		updatedBy: username,
-	}
-
-	//For document, not show details, but show the TextEditor
-	reduxBatch(() => {
-		dispatch(updateDocsList({
-			type: LOCALUPDATE_DOCSLIST_ACTION.ADD_NEW_DOC,
-			docItem: docItem
-		}))
-		dispatch(setActiveDocId(docId))
-		// dispatch(setDocsContentList(docId, ACTION.ADD, ""))	//No need, for it is empty
-	})
-
-	//Add to DB
-	await docsAdd(docItem)
-}
+import { useAddDocMutation, useGetDocsQuery, useDeleteDocMutation } from "../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -238,25 +111,27 @@ export const RightMenuItemBase = ({ sx, Icon, children, ...otherProps }) => {
 			}}
 			{...otherProps}
 		>
-			{Icon && <Icon />}
+			{Icon}
 			<Typography sx={{ fontSize: "0.80rem", fontWeight: "bold", color: "grey.700" }} noWrap>{children}</Typography>
 		</Box>
 	)
 }
 RightMenuItemBase.propTypes = {
 	sx: PropTypes.object,
-	Icon: PropTypes.node,
+	Icon: PropTypes.object,
 	onClick: PropTypes.func,
 	children: PropTypes.node
 }
 
 export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
-	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
+	const [addDoc] = useAddDocMutation()
 	return (
 		<RightMenuItemBase
-			Icon={PostAddIcon} sx={{ ...sx }}
-			onClick={() => {
-				docsAddDoc(dispatch, targetDocItem)
+			Icon={<PostAddIcon />} sx={{ ...sx }}
+			onClick={async () => {
+				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
+				await addDoc({ docItem: docItem }).unwrap()
 			}}
 		>
 			New Document
@@ -268,10 +143,10 @@ RightMenuItemAddNewDoc.propTypes = {
 	sx: PropTypes.object
 }
 
-export const RightMenuItemImport = ({ docItem, sx }) => {
+export const RightMenuItemImport = ({ targetDocItem, sx }) => {
 	return (
 		<RightMenuItemBase
-			Icon={BiImport} sx={{ ...sx }}
+			Icon={<BiImport />} sx={{ ...sx }}
 			onClick={() => {
 				console.log("Import function not yet implemented")
 			}}
@@ -281,14 +156,14 @@ export const RightMenuItemImport = ({ docItem, sx }) => {
 	)
 }
 RightMenuItemImport.propTypes = {
-	docItem: PropTypes.object,
+	targetDocItem: PropTypes.object,
 	sx: PropTypes.object
 }
 
-export const RightMenuItemExportPDF = ({ docItem, sx }) => {
+export const RightMenuItemExportPDF = ({ targetDocItem, sx }) => {
 	return (
 		<RightMenuItemBase
-			Icon={ExportPdfIcon} fontSize="small" sx={{ ...sx }}
+			Icon={<ExportPdfIcon />} fontSize="small" sx={{ ...sx }}
 			onClick={() => {
 				console.log("Export function not yet implemented")
 			}}
@@ -298,20 +173,21 @@ export const RightMenuItemExportPDF = ({ docItem, sx }) => {
 	)
 }
 RightMenuItemExportPDF.propTypes = {
-	docItem: PropTypes.object,
+	targetDocItem: PropTypes.object,
 	sx: PropTypes.object
 }
 
-export const RightMenuItemDelete = ({ title = "Delete", docItem, sx }) => {
-	const { docsListRaw } = useSelector(getDocsCenter)
+export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => {
+	const allDocsRaw = useGetDocsQuery(undefined)
+	const [deleteDoc] = useDeleteDocMutation()
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
 	return (
 		<RightMenuItemBase
-			Icon={DeleteOutlinedIcon} sx={{ ...sx }}
+			Icon={<DeleteOutlinedIcon />} sx={{ ...sx }}
 			onClick={async () => {
-				if (docItem.type === DOC_TYPE.CATEGORY) {
-					const affectedItems = filter(docsListRaw, { category: docItem.category })
+				if (targetDocItem.type === DOC_TYPE.CATEGORY) {
+					const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category })
 					if (affectedItems.length > 1) {
 						enqueueSnackbar("Can not delete selected category! Please delete/move all data out of it first!", { variant: "error" })
 						return
@@ -320,25 +196,19 @@ export const RightMenuItemDelete = ({ title = "Delete", docItem, sx }) => {
 					try {
 						//update Redux first
 						reduxBatch(() => {
-							dispatch(updateDocsList({
-								type: LOCALUPDATE_DOCSLIST_ACTION.DELETE_CAT,
-								docItem: docItem
-							}))
-							//clear environment
-							dispatch(setDocsContentList(docItem.docId, ACTION.DELETE))
 							dispatch(setActiveDocId(null))
 							dispatch(setActiveDocIdOfTocSideBarDetails(null))
 						})
 
 						//update DB
-						await docsDelete(docItem)
+						await deleteDoc({ docItem: targetDocItem })
 					} catch (e) {
 						throw new Error("Something wrong when trying to delete your selected category!")
 					}
 				}
 
-				if (docItem.type === DOC_TYPE.SUBCATEGORY) {
-					const affectedItems = filter(docsListRaw, { category: docItem.category, subcategory: docItem.subcategory })
+				if (targetDocItem.type === DOC_TYPE.SUBCATEGORY) {
+					const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category, subcategory: targetDocItem.subcategory })
 					if (affectedItems.length > 1) {
 						enqueueSnackbar("Can not delete selected sub-category! Please delete/move all data out of it first!", { variant: "error" })
 						return
@@ -347,60 +217,42 @@ export const RightMenuItemDelete = ({ title = "Delete", docItem, sx }) => {
 					try {
 						//update Redux first
 						reduxBatch(() => {
-							dispatch(updateDocsList({
-								type: LOCALUPDATE_DOCSLIST_ACTION.DELETE_SUBCAT,
-								docItem: docItem
-							}))
-							//clear environment
-							dispatch(setDocsContentList(docItem.docId, ACTION.DELETE))
 							dispatch(setActiveDocId(null))
 							dispatch(setActiveDocIdOfTocSideBarDetails(null))
 						})
 
 						//update DB
-						await docsDelete(docItem)
+						await deleteDoc({ docItem: targetDocItem })
 					} catch (e) {
 						throw new Error("Something wrong when trying to delete your selected sub-category!")
 					}
 				}
 
-				if (docItem.type === DOC_TYPE.EXTERNAL) {
+				if (targetDocItem.type === DOC_TYPE.EXTERNAL) {
 					try {
 						//update Redux first
 						reduxBatch(() => {
-							dispatch(updateDocsList({
-								type: LOCALUPDATE_DOCSLIST_ACTION.DELETE_EXTERNAL,
-								docItem: docItem
-							}))
-							//clear environment
-							dispatch(setDocsContentList(docItem.docId, ACTION.DELETE))
 							dispatch(setActiveDocId(null))
 							dispatch(setActiveDocIdOfTocSideBarDetails(null))
 						})
 
 						//update DB
-						await docsDelete(docItem)
+						await deleteDoc({ docItem: targetDocItem })
 					} catch (e) {
 						throw new Error("Something wrong when trying to delete your selected external link!")
 					}
 				}
 
-				if (docItem.type === DOC_TYPE.DOC) {
+				if (targetDocItem.type === DOC_TYPE.DOC) {
 					try {
 						//update Redux first
 						reduxBatch(() => {
-							dispatch(updateDocsList({
-								type: LOCALUPDATE_DOCSLIST_ACTION.DELETE_DOC,
-								docItem: docItem
-							}))
-							//clear environment
-							dispatch(setDocsContentList(docItem.docId, ACTION.DELETE))
 							dispatch(setActiveDocId(null))
 							dispatch(setActiveDocIdOfTocSideBarDetails(null))
 						})
 
 						//update DB
-						await docsDelete(docItem)
+						await deleteDoc({ docItem: targetDocItem })
 					} catch (e) {
 						throw new Error("Something wrong when trying to delete your selected document!")
 					}
@@ -413,7 +265,7 @@ export const RightMenuItemDelete = ({ title = "Delete", docItem, sx }) => {
 }
 RightMenuItemDelete.propTypes = {
 	title: PropTypes.string,
-	docItem: PropTypes.object,
+	targetDocItem: PropTypes.object,
 	sx: PropTypes.object
 }
 
@@ -421,7 +273,7 @@ export const RightMenuItemMore = ({ sx }) => {
 	const dispatch = useDispatch()
 	return (
 		<RightMenuItemBase
-			Icon={MoreHorizIcon} sx={{ ...sx }}
+			Icon={<MoreHorizIcon />} sx={{ ...sx }}
 			onClick={() => {
 				/* This is to show TocSideBarDetails of current Doc */
 				dispatch(setShowTocSideBarDetails(true))
@@ -440,10 +292,20 @@ RightMenuItemMore.propTypes = {
  *****************************************************************/
 
 const DocumentTocSideBar = () => {
+	const { activeDocId } = useSelector(getDocsCenter)
 	const { editorDataHeadings } = useSelector(getTextEditor)
-	const { docsListRaw, activeDocId } = useSelector(getDocsCenter)
 
-	const activeDoc = find(docsListRaw, { "docId": activeDocId })
+	const { activeDoc } = useGetDocsQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			activeDoc: data?.find((post) => post.docId === activeDocId) ?? {},
+		})
+	})
+
+	// const activeDoc = useMemo(() => {
+	// 	const filteredResult = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
+	// 	if (filteredResult.length === 0) return null
+	// 	return filteredResult[0]
+	// }, [activeDocId, allDocsRaw.data])
 
 	return (
 		<Box sx={{
@@ -462,9 +324,9 @@ const DocumentTocSideBar = () => {
 						borderColor: "divider",
 					}}>
 
-						<RightMenuItemAddNewDoc docItem={activeDoc} />
-						<RightMenuItemImport docItem={activeDoc} />
-						<RightMenuItemExportPDF docItem={activeDoc} />
+						<RightMenuItemAddNewDoc targetDocItem={activeDoc} />
+						<RightMenuItemImport targetDocItem={activeDoc} />
+						<RightMenuItemExportPDF targetDocItem={activeDoc} />
 						<RightMenuItemMore />
 
 					</Box>

@@ -30,7 +30,6 @@ import { Box } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
 import { findKey } from "lodash"
 
 //PROJECT IMPORT
@@ -41,9 +40,10 @@ import TocSideBarExternal from "./TocSideBarExternal"
 import TocSideBarCategory from "./TocSideBarCategory"
 import TocSideBarSubCategory from "./TocSideBarSubCategory"
 import { setShowTocSideBarDetails, setSideBarLeft } from "./../../../redux/slices/uiSettings"
-import { getDocsCenter, getUiSettings } from "../../../redux/selectors"
+import { getDocsCenter } from "../../../redux/selectors"
 import { DOC_TYPE, RESERVED_KEYWORDS } from "./../../../helpers/constants"
 import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
+import useGroupedDocs from "../../../helpers/useGroupedDocs"
 
 //ASSETS
 
@@ -80,9 +80,8 @@ const HiddenBgFixBug = () => <Box sx={{
 const TocSideBar = () => {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
-
-	const { showTocSideBarDetails } = useSelector(getUiSettings)
-	const { activeDocId, docsList } = useSelector(getDocsCenter)
+	const docsList = useGroupedDocs()
+	const { activeDocId } = useSelector(getDocsCenter)
 
 	const handleCloseDetails = useCallback(() => {
 		reduxBatch(() => {
@@ -98,10 +97,6 @@ const TocSideBar = () => {
 		})
 	}, [dispatch])
 
-	const updateSideBarLeft = useCallback(() => {
-		dispatch(setSideBarLeft(sideBarRef?.current?.offsetLeft ?? 0))
-	}, [dispatch])
-
 	const loadDocContent = useCallback((docId) => {
 		reduxBatch(() => {
 			dispatch(setActiveDocId(docId))
@@ -110,10 +105,17 @@ const TocSideBar = () => {
 	}, [dispatch])
 
 	useEffect(() => {
+		const updateSideBarLeft = () => {
+			dispatch(setSideBarLeft(
+				(sideBarRef?.current?.offsetLeft ?? 0)
+				+ (sideBarRef?.current?.clientWidth ?? 300)
+			))
+		}
+
 		updateSideBarLeft()
 		window.addEventListener("resize", updateSideBarLeft)
 		return () => window.removeEventListener("resize", updateSideBarLeft)
-	}, [updateSideBarLeft])
+	}, [dispatch, sideBarRef?.current?.clientWidth, sideBarRef?.current?.offsetLeft])
 
 	return (
 		<>
@@ -132,7 +134,6 @@ const TocSideBar = () => {
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
-
 					{docsList.map((cat) => {
 						/* Category Level */
 						return (
@@ -174,59 +175,56 @@ const TocSideBar = () => {
 												)
 										})
 
+										return null
 									}
 
 									//bypass undefined item which represent/hold category's info
-									if (subcat[0] === RESERVED_KEYWORDS.CAT) return <div key={nanoid()}></div>
+									if (subcat[0] === RESERVED_KEYWORDS.CAT) return null
 
 									//position of Sub-Category in the list
 									const subCatIndex = findKey(subcat[1], { type: DOC_TYPE.SUBCATEGORY })
 
 									//Draw SubCategory
-									//item items which hold subCategory is the 1st item, it is subcat[1][0]
-									//then, when do sorting, make sure this requirement
 									return (
-										<>
-											<TocSideBarSubCategory
-												key={subcat[1][subCatIndex].docId}
-												title={subcat[1][subCatIndex].subcategory}
-												handleOpen={() => {
-													handleOpenDetails(subcat[1][subCatIndex].docId)
-													console.log(subcat[1][subCatIndex].docId)
-												}}
-												targetDocItem={subcat[1][subCatIndex]}
-											>
-												{subcat[1].map((item, idx) => {
+										<TocSideBarSubCategory
+											key={subcat[1][subCatIndex].docId}
+											title={subcat[1][subCatIndex].subcategory}
+											handleOpen={() => {
+												handleOpenDetails(subcat[1][subCatIndex].docId)
+												console.log(subcat[1][subCatIndex].docId)
+											}}
+											targetDocItem={subcat[1][subCatIndex]}
+										>
+											{subcat[1].map((item, idx) => {
 
-													if (idx === subCatIndex) return null
+												if (idx === subCatIndex) return null
 
-													//Draw items within SubCategory
-													if (item.type === DOC_TYPE.DOC)
-														return (
-															<TocSideBarDoc
-																key={item.docId}
-																onClick={() => { loadDocContent(item.docId) }}
-																active={item.docId === activeDocId}
-																handleOpen={() => handleOpenDetails(item.docId)}
-															>
-																{item.title}
-															</TocSideBarDoc>
-														)
+												//Draw items within SubCategory
+												if (item.type === DOC_TYPE.DOC)
+													return (
+														<TocSideBarDoc
+															key={item.docId}
+															onClick={() => { loadDocContent(item.docId) }}
+															active={item.docId === activeDocId}
+															handleOpen={() => handleOpenDetails(item.docId)}
+														>
+															{item.title}
+														</TocSideBarDoc>
+													)
 
-													if (item.type === DOC_TYPE.EXTERNAL)
-														return (
-															<TocSideBarExternal
-																key={item.docId}
-																url={item.url}
-																handleOpen={() => handleOpenDetails(item.docId)}
-															>
-																{item.title}
-															</TocSideBarExternal>
-														)
-												})}
+												if (item.type === DOC_TYPE.EXTERNAL)
+													return (
+														<TocSideBarExternal
+															key={item.docId}
+															url={item.url}
+															handleOpen={() => handleOpenDetails(item.docId)}
+														>
+															{item.title}
+														</TocSideBarExternal>
+													)
+											})}
 
-											</TocSideBarSubCategory>
-										</>
+										</TocSideBarSubCategory>
 									)
 								})}
 							</TocSideBarCategory>
@@ -239,11 +237,7 @@ const TocSideBar = () => {
 
 			</Box>
 
-			<TocSideBarDetails
-				open={showTocSideBarDetails}
-				handleClose={handleCloseDetails}
-				dataSource={[]}
-			/>
+			<TocSideBarDetails handleClose={handleCloseDetails} />
 
 			<HiddenBgFixBug />
 

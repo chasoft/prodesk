@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -63,7 +63,9 @@ const TocSideBarSubCategory = ({ title, active, handleOpen, targetDocItem, child
 					/>
 				}
 			>
-				{title}
+				<Typography sx={{ color: "grey.500", fontWeight: "bold" }}>
+					{title}
+				</Typography>
 			</TocSideBarItemBase>
 
 			<Box sx={{

@@ -36,7 +36,7 @@ import { Logo } from "./../../components/common"
 import AuthCheck from "./../../components/AuthCheck"
 import { REDIRECT_URL } from "./../../helpers/constants"
 import { setRedirect } from "./../../redux/slices/redirect"
-import { getLayout, TopLine, updateFlexDirection } from "./../../layout/RegLayout"
+import { getLayout, TopLine, useFlexDirection } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -54,7 +54,7 @@ function SignUpCompleted() {
 
 	const onceDispatch = once(dispatch)
 
-	updateFlexDirection({ payload: "row" })
+	useFlexDirection({ payload: "row" })
 
 	useEffect(() => {
 		progressRef.current = () => {

@@ -31,6 +31,7 @@ const defaultBackground = {
 }
 
 export const initialState = {
+	isSideBarExpanded: false,
 	/*
 		used for RegLayout
 		help to switch the imageSideBar to the right of left of the main content
@@ -79,6 +80,9 @@ const uiSettingsSlice = createSlice({
 	name: "uiSettings",
 	initialState,
 	reducers: {
+		setIsSideBarExpanded: (state, { payload }) => {
+			state.isSideBarExpanded = payload
+		},
 		setflexDirection: (state, { payload }) => {
 			state.flexDirection = payload
 		},
@@ -132,6 +136,7 @@ const uiSettingsSlice = createSlice({
 })
 
 export const {
+	setIsSideBarExpanded,
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrolled,

@@ -22,20 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import {
-	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
-} from "firebase/firestore"
 
 //THIRD-PARTY
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
-import { batch as reduxBatch, useDispatch } from "react-redux"
+import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
-import { db, fixDate } from "./../../helpers/firebase"
-import { DOC_TYPE } from "./../../helpers/constants"
-import { setDocsListRaw, setDocsList } from "./docsCenter"
 
 /*****************************************************************
  * INIT                                                          *

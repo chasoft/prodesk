@@ -24,17 +24,17 @@
 
 import React from "react"
 import PropTypes from "prop-types"
-import Link from "next/link"
 
 // MATERIAL-UI
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
 
-
 //ASSETS
+import LaunchIcon from "@mui/icons-material/Launch"
 
 /*****************************************************************
  * INIT                                                          *
@@ -50,7 +50,19 @@ const TocSideBarExternal = ({ url, handleOpen, children }) => {
 			onClick={() => window.open(url, "_blank")}
 			handleOpen={handleOpen}
 		>
-			{children}
+			<Box sx={{
+				display: "flex",
+				justifyContent: "space-between",
+				alignItems: "center",
+				flexGrow: 2,
+				":hover": {
+					"&>svg": {
+						color: "grey.700"
+					}
+				}
+			}}>
+				<Typography>{children}</Typography> <LaunchIcon fontSize="small" sx={{ color: "grey.500", mx: 1 }} />
+			</Box>
 		</TocSideBarItemBase>
 	)
 }

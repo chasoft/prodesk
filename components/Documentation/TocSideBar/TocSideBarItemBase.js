@@ -77,9 +77,9 @@ const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, 
 					...sx
 				}}
 			>
-				<Typography sx={{ ml: 2 }}>
+				<Box sx={{ ml: 2, flexGrow: 1 }}>
 					{children}
-				</Typography>
+				</Box>
 
 				<Box sx={{
 					display: "flex",

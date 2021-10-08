@@ -78,10 +78,6 @@ const TocSideBarActionItem = React.forwardRef(({ ItemIcon, onClick, children }, 
 						my: 1, mr: 2,
 						cursor: "pointer"
 					}}
-					onClick={(e) => {
-						e.stopPropagation()
-						console.log("action clicked")
-					}}
 				/>}
 
 			</Box>
@@ -102,15 +98,25 @@ TocSideBarActionItem.propTypes = {
  *****************************************************************/
 
 const TocSideBarActionsGroup = () => {
-	const allDocsRaw = useGetDocsQuery()
-	const { isDocsListEmpty, activeDocId } = useSelector(getDocsCenter)
+	const { activeDocId } = useSelector(getDocsCenter)
 
-	const targetDocItem = useMemo(() => {
-		if (isDocsListEmpty || !allDocsRaw.data) return {}
-		const filteredArray = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
-		if (filteredArray.length === 0) return {}
-		return filteredArray[0]
-	}, [allDocsRaw, activeDocId, isDocsListEmpty])
+	const { targetDocItem } = useGetDocsQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			targetDocItem: data?.find((post) => post.docId === activeDocId) ?? {},
+		})
+	})
+
+	// const targetDocItem = useMemo(() => {
+	// 	if (isDocsListEmpty
+	// 		|| !allDocsRaw.data
+	// 		|| activeDocId === null
+	// 	)
+	// 		return {}
+
+	// 	const filteredArray = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
+	// 	if (filteredArray.length === 0) return {}
+	// 	return filteredArray[0]
+	// }, [allDocsRaw, activeDocId, isDocsListEmpty])
 
 	return (
 		<Box
@@ -123,16 +129,13 @@ const TocSideBarActionsGroup = () => {
 			<AddNewPopupMenu
 				placement="right"
 				actions={
-					(isDocsListEmpty || activeDocId === null) ?
-						[
-							DOCS_ADD.CATEGORY
-						]
-						:
-						[
+					(activeDocId === null)
+						? [DOCS_ADD.CATEGORY]
+						: [
 							DOCS_ADD.CATEGORY,
 							DOCS_ADD.SUB_CATEGORY,
 							DOCS_ADD.DOC,
-							DOCS_ADD.EXTERNAL,
+							DOCS_ADD.EXTERNAL
 						]
 				}
 				targetDocItem={targetDocItem}

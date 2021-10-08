@@ -28,7 +28,7 @@ import React from "react"
 import { Logo } from "./../../components/common"
 import AuthCheck from "./../../components/AuthCheck"
 import CreateProfileForm from "./../../components/Signup/CreateProfileForm"
-import { getLayout, TopLine, updateFlexDirection } from "./../../layout/RegLayout"
+import { getLayout, TopLine, useFlexDirection } from "./../../layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *
@@ -39,7 +39,7 @@ import { getLayout, TopLine, updateFlexDirection } from "./../../layout/RegLayou
  *****************************************************************/
 
 function InitProfile() {
-	updateFlexDirection({ payload: "row-reverse" })
+	useFlexDirection({ payload: "row-reverse" })
 	return (
 		<AuthCheck>
 			<TopLine

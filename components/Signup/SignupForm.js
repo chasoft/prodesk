@@ -39,7 +39,7 @@ import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
 import { isUsernameAvailable } from "./../../helpers/firebase/user"
 import { signUpWithEmail } from "./../../helpers/firebase/signup"
-import { RegContainer, RegHeader, updateFlexDirection } from "./../../layout/RegLayout"
+import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 
@@ -81,7 +81,7 @@ const SignupForm = () => {
 	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
 
-	updateFlexDirection({ payload: "row" })
+	useFlexDirection({ payload: "row" })
 
 	const formik = useFormik({
 		initialValues: {

@@ -22,17 +22,15 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Container } from "@mui/material"
 
 //THIRD-PARTY
-import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
-import { forEach, groupBy, sortBy } from "lodash"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { setDocsListRaw, setDocsList } from "./../../../redux/slices/docsCenter"
 import { getLayout } from "./../../../layout/AdminLayout"
 import useUiSettings from "./../../../helpers/useUiSettings"
 import TocSideBar from "./../../../components/Documentation/TocSideBar"
@@ -40,6 +38,7 @@ import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
 import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
 import { getDocsCenter } from "./../../../redux/selectors"
 import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
+import { useGetDocsQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 
@@ -47,22 +46,11 @@ import DocumentEditorNoActiveDocId from "../../../components/Documentation/Docum
  * INIT                                                          *
  *****************************************************************/
 
-// const DUMMY_List = [
-// 	{
-
-// 	}
-// ]
-
-// const DUMMY_Content = {
-
-// }
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Documentation() {
-
 	useUiSettings({
 		title: "Documentation Management",
 		background: {
@@ -72,20 +60,6 @@ function Documentation() {
 	})
 
 	const { activeDocId } = useSelector(getDocsCenter)
-
-	/*
-		Flow of data as below:
-		1. Load data (docsList) from DB and save to Redux[docsCenter]
-		2. Components' state based on Redux[docsCenter]
-		3. When there is an activeDocId, then load data from Redux[docsCenter] to TextEditor (mirror to Redux[textEditor])
-
-		Note: at this time, there are 2 state of data of activeDoc.
-			N1. data at Redux[docsCenter] (data saved)
-			N2. temporary data at TextEditor (aka Redux[textEditor])
-		When user save or autosave,
-		- then data from (B2) will update to DB, and update directly to N1
-		- at the background refetch DB and compare to N1 (Redux[]) (imitate behavior of ReactQuery lib)
-	*/
 
 	return (
 		<Container

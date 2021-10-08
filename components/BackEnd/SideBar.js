@@ -30,6 +30,7 @@ import PropTypes from "prop-types"
 import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector, useDispatch } from "react-redux"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
@@ -37,6 +38,8 @@ import { Logo } from "./../common"
 import HomeButton from "./HomeButton"
 import NavCollapse from "./NavCollapse"
 import { MENU_ITEM_TYPE } from "./../../helpers/constants"
+import { getUiSettings } from "./../../redux/selectors"
+import { setIsSideBarExpanded } from "./../../redux/slices/uiSettings"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"
@@ -247,14 +250,16 @@ SideBarContentCollapsed.propTypes = { data: PropTypes.array }
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] }) => {
+const SideBar = ({ homeUrl, settingsUrl, data = [] }) => {
+	const { isSideBarExpanded } = useSelector(getUiSettings)
+	const dispatch = useDispatch()
 	return (
 		<Box
 			sx={{
 				position: "sticky", top: 0,
 				display: "flex",
 				flexDirection: "column",
-				width: isExpanded ? "256px" : "68px",
+				width: isSideBarExpanded ? "256px" : "68px",
 				height: "100vh",
 				backgroundAttachment: "fixed",
 				backgroundColor: "#051e34",
@@ -270,7 +275,7 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 				sx={{
 					display: "flex",
 					alignItems: "center",
-					...(isExpanded ? {
+					...(isSideBarExpanded ? {
 						height: "59px",
 						padding: (theme) => theme.spacing(1, 1, 0.5, 3)
 					} : {
@@ -280,12 +285,12 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 					})
 				}}
 			>
-				<Logo theme="dark" isSmall={!isExpanded} />
+				<Logo theme="dark" isSmall={!isSideBarExpanded} />
 			</Box>
 
-			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} isExpanded={isExpanded} />
+			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} isExpanded={isSideBarExpanded} />
 
-			{isExpanded
+			{isSideBarExpanded
 				? <SideBarContentExpanded data={data} />
 				: <SideBarContentCollapsed data={data} />}
 
@@ -302,9 +307,9 @@ const SideBar = ({ isExpanded = true, toggle, homeUrl, settingsUrl, data = [] })
 					color="secondary"
 					aria-label="Settings"
 					style={{ padding: "5px" }}
-					onClick={() => toggle(p => !p)}
+					onClick={() => dispatch(setIsSideBarExpanded(!isSideBarExpanded))}
 					size="large">
-					{isExpanded
+					{isSideBarExpanded
 						? <ArrowBackIosIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
 						: <ArrowForwardIosIcon style={{ color: "#fff", height: "20px", width: "20px" }} />}
 				</IconButton>

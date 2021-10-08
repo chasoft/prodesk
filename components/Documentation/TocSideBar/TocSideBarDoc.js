@@ -26,6 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
+import { Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -50,7 +51,7 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, children }) => {
 			onClick={onClick}
 			handleOpen={handleOpen}
 		>
-			{children}
+			<Typography>{children}</Typography>
 		</TocSideBarItemBase>
 	)
 }

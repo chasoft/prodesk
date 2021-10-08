@@ -35,7 +35,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { getRootLayout } from "./RootLayout"
 import Footer from "./../components/common/Footer"
 import { getUiSettings } from "./../redux/selectors"
-import { ReduxRedirect } from "./../components/AuthCheck"
 import { setflexDirection } from "./../redux/slices/uiSettings"
 
 /*****************************************************************
@@ -150,11 +149,11 @@ export const RegHeader = ({ icon, title }) => {
 }
 RegHeader.propTypes = { icon: PropTypes.node, title: PropTypes.string }
 
-export const updateFlexDirection = (props) => {
+export const useFlexDirection = (props) => {
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(setflexDirection(props.payload))
-	}, [])
+	}, [dispatch, props.payload])
 }
 
 /*****************************************************************
@@ -164,27 +163,25 @@ export const updateFlexDirection = (props) => {
 function RegLayout({ children }) {
 	const { flexDirection } = useSelector(getUiSettings)
 	return (
-		<ReduxRedirect>
-			<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
+		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
 
-				<SideImage />
+			<SideImage />
 
-				<Container
-					maxWidth={false}
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						justifyContent: "center",
-						width: { xs: "100%", sm: "60%", xl: "100%" }
-					}}
-				>
-					{children}
-					<Footer />
-				</Container>
+			<Container
+				maxWidth={false}
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					width: { xs: "100%", sm: "60%", xl: "100%" }
+				}}
+			>
+				{children}
+				<Footer />
+			</Container>
 
-			</div>
-		</ReduxRedirect>
+		</div>
 	)
 }
 RegLayout.propTypes = { children: PropTypes.any }

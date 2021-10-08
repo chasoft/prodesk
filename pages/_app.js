@@ -35,7 +35,7 @@ import NProgress from "nprogress"
 import { Provider } from "react-redux"
 import { SnackbarProvider } from "notistack"
 import { configureStore } from "@reduxjs/toolkit"
-import { setupListeners } from "@reduxjs/toolkit/query"
+// import { setupListeners } from "@reduxjs/toolkit/query"
 import createEmotionCache from "./../helpers/createEmotionCache"
 import { CacheProvider } from "@emotion/react"
 
@@ -65,7 +65,7 @@ const store = configureStore({
 	reducer: rootReducer,
 	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(firestoreApi.middleware)
 })
-setupListeners(store.dispatch)
+// setupListeners(store.dispatch)
 
 /* Implement nprogress */
 Router.events.on("routeChangeStart", () => { NProgress.start() })

@@ -24,7 +24,7 @@
 
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect } from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
@@ -41,8 +41,8 @@ import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
-import { setScrolled } from "./../redux/slices/uiSettings"
-import AuthCheck, { ReduxRedirect } from "./../components/AuthCheck"
+import { setIsSideBarExpanded, setScrolled } from "./../redux/slices/uiSettings"
+import AuthCheck from "./../components/AuthCheck"
 
 //ASSETS
 
@@ -117,7 +117,6 @@ const ADMIN_MENUS = [
  *****************************************************************/
 
 function AdminLayout({ children }) {
-	const [isSideBarExpanded, setIsSideBarExpanded] = useState(true)
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 
 	const theme = useTheme()
@@ -130,8 +129,8 @@ function AdminLayout({ children }) {
 	}, [dispatch])
 
 	const sideBarExpanding = useCallback(() => {
-		setIsSideBarExpanded(window.innerWidth <= 960 ? false : true)
-	}, [])
+		dispatch(setIsSideBarExpanded(window.innerWidth <= 960 ? false : true))
+	}, [dispatch])
 
 	useEffect(() => {
 		sideBarExpanding()
@@ -146,40 +145,37 @@ function AdminLayout({ children }) {
 
 	useEffect(() => {
 		if (router.pathname === "/admin/documentation" && isSmallScreen)
-			setIsSideBarExpanded(false)
-	}, [isSmallScreen, router.pathname])
+			dispatch(setIsSideBarExpanded(false))
+	}, [dispatch, isSmallScreen, router.pathname])
 
 	return (
-		<ReduxRedirect>
-			<AuthCheck>
+		<AuthCheck>
 
-				<Box sx={{ ...backgroundForLoggedinPage }} />
+			<Box sx={{ ...backgroundForLoggedinPage }} />
 
-				<Box style={{ display: "flex", minHeight: "100vh" }}>
+			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
-					<SideBar
-						isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
-						homeUrl="/admin" settingsUrl="/admin/settings"
-						data={ADMIN_MENUS}
-					/>
+				<SideBar
+					homeUrl="/admin" settingsUrl="/admin/settings"
+					data={ADMIN_MENUS}
+				/>
 
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							flexGrow: 1,
-							width: "100%",
-							// overflowX: "hidden"
-						}}
-					>
-						<Header isSideBarExpanded={isSideBarExpanded} />
-						{children}
-						<Footer />
-					</Box>
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						flexGrow: 1,
+						width: "100%",
+						// overflowX: "hidden"
+					}}
+				>
+					<Header />
+					{children}
+					<Footer />
 				</Box>
+			</Box>
 
-			</AuthCheck>
-		</ReduxRedirect>
+		</AuthCheck>
 	)
 }
 AdminLayout.propTypes = { children: PropTypes.any }
