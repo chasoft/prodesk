@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { createRef, forwardRef, useMemo } from "react"
+import React, { forwardRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -301,12 +301,6 @@ const DocumentTocSideBar = () => {
 		})
 	})
 
-	// const activeDoc = useMemo(() => {
-	// 	const filteredResult = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
-	// 	if (filteredResult.length === 0) return null
-	// 	return filteredResult[0]
-	// }, [activeDocId, allDocsRaw.data])
-
 	return (
 		<Box sx={{
 			position: "sticky",
@@ -351,7 +345,6 @@ const DocumentTocSideBar = () => {
 								if (item.level > 2) return null
 								return (
 									<TocItem
-										ref={createRef()}
 										key={item.id}
 										anchor={item.id}
 										sx={{

@@ -180,18 +180,17 @@ const DocumentEditor = () => {
 					value={editorDefaultData}
 					placeholder="Enter your content here..."
 					onBlur={() => {
-						if (editorData !== docItemContent.data) {
-							// const newDocMeta = {
-							// 	docId: docItem.docId,	//must be included
-							// 	updatedBy: currentUser.username,
-							// }
-							// updateDocContent({
-							// 	docItem: newDocMeta,
-							// 	content: editorData
-							// })
+						if (editorData.trim() !== docItemContent.data.trim()) {
+							const newDocMeta = {
+								docId: docItem.docId,	//must be included
+								updatedBy: currentUser.username,
+							}
+							updateDocContent({
+								docItem: newDocMeta,
+								content: editorData
+							})
 
-							console.log("editorData:", editorData)
-							console.log("docItemContent.data:", docItemContent.data)
+							console.log("Updated doc's content", editorData)
 						}
 					}}
 				/>}

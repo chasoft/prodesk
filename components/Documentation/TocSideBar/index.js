@@ -134,6 +134,7 @@ const TocSideBar = () => {
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
+					{console.log({ docsList })}
 					{docsList.map((cat) => {
 						/* Category Level */
 						return (
@@ -197,6 +198,7 @@ const TocSideBar = () => {
 										>
 											{subcat[1].map((item, idx) => {
 
+												//bypass position of the sub-category
 												if (idx === subCatIndex) return null
 
 												//Draw items within SubCategory
