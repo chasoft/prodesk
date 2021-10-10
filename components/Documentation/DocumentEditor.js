@@ -69,7 +69,6 @@ const DocumentEditor = () => {
 		})
 	})
 	const docItemContent = useGetDocContentQuery(activeDocId)
-	console.log("docItemContent", docItemContent.data)
 	//
 	const { editorData, editorDefaultData } = useSelector(getTextEditor)
 	const [title, setTitle] = useState("")
@@ -85,12 +84,12 @@ const DocumentEditor = () => {
 	}, [docItem.title, docItem.description, activeDocId])
 
 	useEffect(() => {
-		const text = docItemContent?.data + " ".repeat(random(20))
+		const text = docItemContent?.data?.text + " ".repeat(random(20))
 		reduxBatch(() => {
 			dispatch(setEditorData(text))
 			dispatch(setEditorDefaultData(text))
 		})
-	}, [dispatch, docItemContent?.data])
+	}, [dispatch, docItemContent?.data?.text])
 
 	useEffect(() => {
 		const headings = editorRef?.current?.getHeadings() ?? []
@@ -138,6 +137,7 @@ const DocumentEditor = () => {
 							docItem: newDocMeta,
 							affectedItems: [/* no affectedItems! */]
 						})
+						console.log("onBlur->Title")
 					}
 				}}
 			/>
@@ -187,14 +187,14 @@ const DocumentEditor = () => {
 						 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
 						 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
 						 */
-						if (editorData.trim() !== docItemContent.data.trim()) {
+						if (editorData.trim() !== docItemContent.data.text.trim()) {
 							const newDocMeta = {
 								docId: docItem.docId,	//must be included
 								updatedBy: currentUser.username,
 							}
 							updateDocContent({
 								docItem: newDocMeta,
-								content: editorData
+								content: { text: editorData }
 							})
 
 							console.log("Updated doc's content", editorData)

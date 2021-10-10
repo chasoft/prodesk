@@ -46,9 +46,8 @@ const TAGS_TYPE = {
 	DOCUMENTATION: "Documentation",
 	USERS: "Users",
 	TICKETS: "Tickets",
-	SETTINGS: "Settings",
 	LIST: "LIST",
-	CONTENT: "_content"
+	SETTINGS: "Settings"
 }
 
 const ACTION_TYPE = {
@@ -66,7 +65,11 @@ const ACTION_TYPE = {
 	 * APPLICATION SETTINGS
 	 */
 	GET_APPSETTINGS: "getAppSettings",
-	UPDATE_APPSETTINGS: "updateAppSettings"
+	UPDATE_APPSETTINGS: "updateAppSettings",
+	/**
+	 * TICKETS SETTINGS
+	 */
+	UPDATE_TICKETS_SETTINGS_DEPARTMENT: "updateTicketSettingsDepartment"
 }
 
 export const firestoreApi = createApi({
@@ -107,9 +110,12 @@ export const firestoreApi = createApi({
 				} catch (e) {
 					return {
 						error: {
-							action: ACTION_TYPE.ADD,
-							id: args.body.docItem.docId,
-							message: e.message
+							status: 200,
+							data: {
+								action: ACTION_TYPE.ADD,
+								id: args.body.docItem.docId,
+								message: e.message
+							}
 						}
 					}
 				}
@@ -139,9 +145,12 @@ export const firestoreApi = createApi({
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.UPDATE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.UPDATE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -172,9 +181,12 @@ export const firestoreApi = createApi({
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.UPDATE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.UPDATE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -204,7 +216,16 @@ export const firestoreApi = createApi({
 							}
 						}
 					} catch (e) {
-						throw new Error(e.message)
+						return {
+							error: {
+								status: 200,
+								data: {
+									action: ACTION_TYPE.UPDATE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
+							}
+						}
 					}
 				}
 			}
@@ -220,7 +241,7 @@ export const firestoreApi = createApi({
 				try {
 					batch.update(
 						doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId, "content", "current"),
-						{ text: args.body.content }
+						args.body.content
 					)
 					batch.update(
 						doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId),
@@ -238,9 +259,12 @@ export const firestoreApi = createApi({
 				} catch (e) {
 					return {
 						error: {
-							action: ACTION_TYPE.UPDATE_CONTENT,
-							id: args.body.docItem.docId,
-							message: e.message
+							status: 200,
+							data: {
+								action: ACTION_TYPE.UPDATE_CONTENT,
+								id: args.body.docItem.docId,
+								message: e.message
+							}
 						}
 					}
 				}
@@ -263,9 +287,12 @@ export const firestoreApi = createApi({
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -285,9 +312,12 @@ export const firestoreApi = createApi({
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -317,17 +347,23 @@ export const firestoreApi = createApi({
 						//if the code reach here, means... can not delete selected item
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: "You can only delete empty category!"
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: "You can only delete empty category!"
+								}
 							}
 						}
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -360,17 +396,23 @@ export const firestoreApi = createApi({
 						//if the code reach here, means... can not delete selected item
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: "You can only delete empty sub-category!"
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: "You can only delete empty sub-category!"
+								}
 							}
 						}
 					} catch (e) {
 						return {
 							error: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: e.message
+								status: 200,
+								data: {
+									action: ACTION_TYPE.DELETE,
+									id: args.body.docItem.docId,
+									message: e.message
+								}
 							}
 						}
 					}
@@ -396,8 +438,11 @@ export const firestoreApi = createApi({
 				} catch (e) {
 					return {
 						error: {
-							action: ACTION_TYPE.UPDATE_APPSETTINGS,
-							message: e.message
+							status: 200,
+							data: {
+								action: ACTION_TYPE.UPDATE_APPSETTINGS,
+								message: e.message
+							}
 						}
 					}
 				}
@@ -416,8 +461,11 @@ export const firestoreApi = createApi({
 			} catch (e) {
 				return {
 					error: {
-						action: ACTION_TYPE.GET_DOC,
-						message: e.message
+						status: 200,
+						data: {
+							action: ACTION_TYPE.GET_DOC,
+							message: e.message
+						}
 					}
 				}
 			}
@@ -428,6 +476,7 @@ export const firestoreApi = createApi({
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db, DB_COLLECTION.DOCUMENTATION))
+				console.log("Real query")
 				querySnapshot.forEach((doc) => {
 					all.push(doc.data())
 				})
@@ -436,8 +485,11 @@ export const firestoreApi = createApi({
 			} catch (e) {
 				return {
 					error: {
-						action: ACTION_TYPE.GET_DOCS,
-						message: e.message
+						status: 200,
+						data: {
+							action: ACTION_TYPE.GET_DOCS,
+							message: e.message
+						}
 					}
 				}
 			}
@@ -456,8 +508,11 @@ export const firestoreApi = createApi({
 			} catch (e) {
 				return {
 					error: {
-						action: ACTION_TYPE.GET_DOC,
-						message: e.message
+						status: 200,
+						data: {
+							action: ACTION_TYPE.GET_DOC,
+							message: e.message
+						}
 					}
 				}
 			}
@@ -468,14 +523,17 @@ export const firestoreApi = createApi({
 			let docItemContent = ""
 			try {
 				const docSnap = await getDoc(doc(db, DB_COLLECTION.DOCUMENTATION, argsArray[0], "content", "current"))
-				if (docSnap.exists()) docItemContent = docSnap.data().text
+				if (docSnap.exists()) docItemContent = docSnap.data()//.text
 				console.log({ docItemContent })
 				return { data: docItemContent }
 			} catch (e) {
 				return {
 					error: {
-						action: ACTION_TYPE.GET_CONTENT,
-						message: e.message
+						status: 200,
+						data: {
+							action: ACTION_TYPE.GET_CONTENT,
+							message: e.message
+						}
 					}
 				}
 			}
@@ -488,16 +546,13 @@ export const firestoreApi = createApi({
 		getDocs: builder.query({
 			query: () => ACTION_TYPE.GET_DOCS,
 			providesTags: (result) => {
-				const t = result
-					? [
+				return result ?
+					[
 						...result.map(({ docId }) => ({ type: TAGS_TYPE.DOCUMENTATION, id: docId })),
 						{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }
 					]
-					: [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }]
-
-				console.log(t)
-
-				return t
+					:
+					[{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }]
 			},
 			transformResponse: (response) => fix_datetime_list(response),
 			keepUnusedDataFor: 15 * 60,		//15 minutes
@@ -505,9 +560,8 @@ export const firestoreApi = createApi({
 
 		getDoc: builder.query({
 			query: (docId) => `${docId}/meta`,
-			providesTags: (result, error, id) => {
-				console.log([{ type: TAGS_TYPE.DOCUMENTATION, id }])
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id }]
+			providesTags: (result, error, docId) => {
+				return [{ type: TAGS_TYPE.DOCUMENTATION, id: docId }]
 			},
 			transformResponse: (response) => fix_datetime_single(response),
 			keepUnusedDataFor: 15 * 60,
@@ -515,7 +569,7 @@ export const firestoreApi = createApi({
 
 		getDocContent: builder.query({
 			query: (docId) => `${docId}/content`,
-			providesTags: (result, error, id) => [{ type: TAGS_TYPE.DOCUMENTATION, id: id.concat(TAGS_TYPE.CONTENT) }],
+			providesTags: (result, error, docId) => [{ type: TAGS_TYPE.DOCUMENTATION, id: docId.concat("_content") }],
 			keepUnusedDataFor: 15 * 60,
 		}),
 
@@ -527,9 +581,17 @@ export const firestoreApi = createApi({
 				action: ACTION_TYPE.ADD,
 				body
 			}),
-			invalidatesTags: () => {
-				console.log([{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }])
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }]
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getDocs", undefined,
+						(draft) => { draft.push(body.docItem) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
 			},
 		}),
 
@@ -538,45 +600,54 @@ export const firestoreApi = createApi({
 		 */
 		updateDoc: builder.mutation({
 			query: (body) => ({ action: ACTION_TYPE.UPDATE, body }),
-			invalidatesTags: () => {
-				console.log([{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }])
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }]
+			invalidatesTags: (result, error, body) => {
+				console.log("invalidatesTags", [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }])
+				return [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getDocs", undefined,
+						(draft) => {
+							//TODO! đây chỉ là mới edit bản thân docItem, chưa check và xử lý affectedItems
+							let obj = draft.find(e => e.docId === body.docItem.docId)
+							Object.assign(obj, body.docItem)
+						}
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
 			},
 		}),
 
 		/**
-		 * body -> {docItem: object, content: string}
+		 * body -> {docItem: object, content: { text: string } }
 		 */
 		updateDocContent: builder.mutation({
 			query: (body) => ({ action: ACTION_TYPE.UPDATE_CONTENT, body }),
-			invalidatesTags: (result, error, arg) => [{ type: TAGS_TYPE.DOCUMENTATION, id: arg.docItem.docId.concat(TAGS_TYPE.CONTENT) }],
-			async onQueryStarted({ docItem, content }, { dispatch, queryFulfilled }) {
+			invalidatesTags: (result, error, arg) => [{ type: TAGS_TYPE.DOCUMENTATION, id: arg.docItem.docId.concat("_content") }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getDocContent", docItem.docId, (draft) => {
-						// Object.assign(draft, content)
-						//TODO!: Check this feature... manually update cache!
-						draft = content
-						console.log("update cache")
-						console.log("content", content)
-					})
+					firestoreApi.util.updateQueryData("getDocContent", body.docItem.docId.concat("_content"),
+						(draft) => { Object.assign(draft, body.content) }
+					)
 				)
-				try {
-					await queryFulfilled
-				} catch {
-					console.log("error and undo")
-					patchResult.undo()
-					/**
-					 * Alternatively, on failure you can invalidate the corresponding cache tags
-					 * to trigger a re-fetch:
-					 * dispatch(api.util.invalidateTags(['Post']))
-					 */
-				}
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
 			},
 		}),
 
 		deleteDoc: builder.mutation({
 			query: (body) => ({ action: ACTION_TYPE.DELETE, body }),
 			invalidatesTags: [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getDocs", undefined,
+						(draft) => draft.filter(e => e.docId !== body.docItem.docId)
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
 		}),
 
 		/**************************************************************
@@ -601,14 +672,54 @@ export const firestoreApi = createApi({
 			},
 			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getAppSettings", undefined, (draft) => {
-						Object.assign(draft, newSettings)
-						console.log("update AppSettings Cache")
-					})
+					firestoreApi.util.updateQueryData("getAppSettings", undefined,
+						(draft) => { Object.assign(draft, newSettings) }
+					)
 				)
 				try { await queryFulfilled }
 				catch {
 					console.log("error when updating cache of AppSettings and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		/**
+		 * 
+		 */
+		getTicketSettingsDepartments: builder.query({
+			query: () => "getTicketSettingsDepartments",
+			providesTags: (result) => {
+				const t = result
+					? [
+						...result.map(({ id }) => ({ type: TAGS_TYPE.SETTINGS, id: id })),
+						{ type: TAGS_TYPE.SETTINGS, id: TAGS_TYPE.LIST }
+					]
+					: [{ type: TAGS_TYPE.SETTINGS, id: TAGS_TYPE.LIST }]
+				console.log(t)
+				return t
+			},
+			keepUnusedDataFor: 60 * 60, // 60 minutes
+		}),
+		/**
+		* body -> ({...}) <= object of settings
+		*/
+		updateTicketSettingsDepartment: builder.mutation({
+			query: (body) => ({ action: ACTION_TYPE.UPDATE_TICKETS_SETTINGS_DEPARTMENT, body }),
+			invalidatesTags: (result, error, arg) => {
+				console.log([{ type: TAGS_TYPE.SETTINGS, id: arg.id }])
+				return [{ type: TAGS_TYPE.SETTINGS, id: arg.id }]
+			},
+			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getTicketSettingsDepartments", undefined, (draft) => {
+						Object.assign(draft, newSettings)
+						console.log("update TicketSettingsDepartments Cache")
+					})
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of TicketSettingsDepartments and undo")
 					patchResult.undo()
 				}
 			},
@@ -627,4 +738,6 @@ export const {
 	//
 	useGetAppSettingsQuery,
 	useUpdateAppSettingsMutation,
+	//
+
 } = firestoreApi

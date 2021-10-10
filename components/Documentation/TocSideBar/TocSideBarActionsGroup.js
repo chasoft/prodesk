@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { filter } from "lodash"
 
 //PROJECT IMPORT
@@ -40,7 +40,7 @@ import { getDocsCenter } from "../../../redux/selectors"
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
-import { useGetDocsQuery } from "../../../redux/slices/firestoreApi"
+import { firestoreApi, useGetDocsQuery } from "../../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -100,6 +100,8 @@ TocSideBarActionItem.propTypes = {
 const TocSideBarActionsGroup = () => {
 	const { activeDocId } = useSelector(getDocsCenter)
 
+	const dispatch = useDispatch()
+
 	const { targetDocItem } = useGetDocsQuery(undefined, {
 		selectFromResult: ({ data }) => ({
 			targetDocItem: data?.find((post) => post.docId === activeDocId) ?? {},
@@ -147,7 +149,7 @@ const TocSideBarActionsGroup = () => {
 
 			<TocSideBarActionItem
 				ItemIcon={FolderOutlinedIcon}
-				onClick={() => {/* TODO: Implement Gallery Feature here! */ }}
+				onClick={() => { }}
 			>
 				File
 			</TocSideBarActionItem>

@@ -251,10 +251,10 @@ function TicketSettingsCannedReply() {
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.CANNED_REPLY,
 		activePanel: CANNED_REPLY_PAGES.OVERVIEW,
-		// background: {
-		// 	height: "132px",
-		// 	backgroundImage: ""
-		// }
+		background: {
+			height: "132px",
+			backgroundImage: ""
+		}
 	})
 
 	const dispatch = useDispatch()

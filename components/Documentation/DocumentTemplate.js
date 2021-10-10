@@ -142,7 +142,7 @@ const DocumentTemplate = () => {
 										docId: activeDocId,
 										updatedBy: currentUser.username
 									},
-									content: template.content
+									content: { text: template.content }
 								}).unwrap()
 								console.log(res.data)
 							}}
