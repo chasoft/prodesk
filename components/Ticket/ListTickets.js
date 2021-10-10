@@ -27,6 +27,7 @@ import { Box, Fab, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
+import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
 import AskNow from "./../Docs/AskNow"
@@ -154,7 +155,7 @@ function ListTickets() {
 
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
 
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		//Only execute the filtering when there is NO search term inputted or 
 		//Because, when use type search term, then, search ALL tickets without any restriction
 		if (ticketSearchTerm.length < 3) {

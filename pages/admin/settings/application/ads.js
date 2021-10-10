@@ -46,7 +46,7 @@ import useUiSettings from "./../../../../helpers/useUiSettings"
  *****************************************************************/
 
 function ApplicationSettingsAds() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.ADS,
 		background: {

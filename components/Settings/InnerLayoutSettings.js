@@ -63,7 +63,8 @@ export const APPLICATION_SETTINGS_TABS = [
  *****************************************************************/
 
 function InnerLayoutSettings({ children }) {
-	useUiSettings({ activeTab: APPLICATION_SETTINGS_NAMES.GENERAL })
+
+	// useUiSettings({ activeTab: APPLICATION_SETTINGS_NAMES.GENERAL })
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)", marginTop: "1rem" }}>

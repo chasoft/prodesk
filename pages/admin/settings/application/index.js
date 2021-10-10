@@ -51,10 +51,6 @@ import BusinessIcon from "@mui/icons-material/Business"
  *****************************************************************/
 
 function ApplicationSettings() {
-	const [showContent, setShowContent] = useState(false)
-
-	const dispatch = useDispatch()
-	const { activeSettingPanel } = useSelector(getUiSettings)
 
 	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.GENERAL,
@@ -62,6 +58,12 @@ function ApplicationSettings() {
 			backgroundImage: "url(\"/bg/meteor.svg\")"
 		}
 	})
+
+	const dispatch = useDispatch()
+	const { activeSettingPanel } = useSelector(getUiSettings)
+	const [showContent, setShowContent] = useState(false)
+
+	console.log("ApplicationSettings! Why?")
 
 	return (
 		<>

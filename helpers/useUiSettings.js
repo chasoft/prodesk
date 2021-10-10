@@ -1,4 +1,6 @@
-import { useEffect } from "react"
+
+import { useDeepCompareEffect } from "react-use"
+
 import { batch as reduxBatch, useDispatch } from "react-redux"
 import { setBackgroundForLoggedinPage, setActiveSettingTab, setActiveSettingPanel } from "../redux/slices/uiSettings"
 import { setTitle, setSubTitle, setPageId } from "../redux/slices/pageMeta"
@@ -21,7 +23,7 @@ export default function useUiSettings({
 
 	const dispatch = useDispatch()
 
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		reduxBatch(() => {
 			if (background) {
 				dispatch(setBackgroundForLoggedinPage(background))

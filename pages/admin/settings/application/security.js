@@ -46,7 +46,7 @@ import useUiSettings from "./../../../../helpers/useUiSettings"
  *****************************************************************/
 
 function ApplicationSettingsSecurity() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.SECURITY,
 		background: {
