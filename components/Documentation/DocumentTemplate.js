@@ -29,15 +29,16 @@ import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { random } from "lodash"
-import { batch as reduxBatch, useDispatch } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { setEditorData, setEditorDefaultData } from "./../../redux/slices/textEditor"
 
 //ASSETS
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined"
+import { useUpdateDocContentMutation } from "../../redux/slices/firestoreApi"
+import { getAuth, getDocsCenter } from "../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -115,7 +116,9 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  *****************************************************************/
 
 const DocumentTemplate = () => {
-	const dispatch = useDispatch()
+	const [updateDocContent] = useUpdateDocContentMutation()
+	const { currentUser } = useSelector(getAuth)
+	const { activeDocId } = useSelector(getDocsCenter)
 	return (
 		<Box sx={{ mt: 6 }}>
 			<Typography sx={{
@@ -132,12 +135,16 @@ const DocumentTemplate = () => {
 					<Grid item xs={12} sm={6} key={idx}>
 						<Paper
 							elevation={0}
-							onClick={() => {
-								const text = template.content + " ".repeat(random(20))
-								reduxBatch(() => {
-									dispatch(setEditorDefaultData(text))
-									dispatch(setEditorData(text))
-								})
+							onClick={async () => {
+								console.log("before update:", template.content)
+								const res = await updateDocContent({
+									docItem: {
+										docId: activeDocId,
+										updatedBy: currentUser.username
+									},
+									content: template.content
+								}).unwrap()
+								console.log(res.data)
 							}}
 							sx={{
 								p: 3,

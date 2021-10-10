@@ -95,6 +95,7 @@ const TocSideBar = () => {
 			dispatch(setShowTocSideBarDetails(true))
 			dispatch(setActiveDocIdOfTocSideBarDetails(docId))
 		})
+		console.log("docId", docId)
 	}, [dispatch])
 
 	const loadDocContent = useCallback((docId) => {
@@ -126,7 +127,7 @@ const TocSideBar = () => {
 					display: { xs: "none", md: "flex" },
 					flexDirection: { flexDirection: "column" },
 					minWidth: "300px",
-					pl: 4,
+					pl: 2,
 					borderRight: "1px solid transparent",
 					borderColor: "divider",
 					backgroundColor: "#FAFAFA",
@@ -141,7 +142,10 @@ const TocSideBar = () => {
 							<TocSideBarCategory
 								key={cat[1]["undefined"][0].docId}
 								title={cat[0]}
-								handleOpen={() => handleOpenDetails(cat[1]["undefined"][0].docId)}
+								handleOpen={() => {
+									handleOpenDetails(cat[1]["undefined"][0].docId)
+									// console.log("Category clicked")
+								}}
 								targetDocItem={cat[1]["undefined"][0]}
 							>
 								{Object.entries(cat[1]).map((subcat) => {
@@ -149,9 +153,8 @@ const TocSideBar = () => {
 
 									//Draw items at root level of Category
 									if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
-
-										subcat[1].map((item) => {
-
+										return subcat[1].map((item) => {
+											console.log("item.type", item.type, item.docId)
 											if (item.type === DOC_TYPE.DOC)
 												return (
 													<TocSideBarDoc
@@ -159,6 +162,7 @@ const TocSideBar = () => {
 														onClick={() => { loadDocContent(item.docId) }}
 														active={item.docId === activeDocId}
 														handleOpen={() => handleOpenDetails(item.docId)}
+														targetDocItem={{ docId: item.docId }}
 													>
 														{item.title}
 													</TocSideBarDoc>
@@ -170,13 +174,12 @@ const TocSideBar = () => {
 														key={item.docId}
 														url={item.url}
 														handleOpen={() => handleOpenDetails(item.docId)}
+														targetDocItem={{ docId: item.docId }}
 													>
 														{item.title}
 													</TocSideBarExternal>
 												)
 										})
-
-										return null
 									}
 
 									//bypass undefined item which represent/hold category's info
@@ -192,7 +195,6 @@ const TocSideBar = () => {
 											title={subcat[1][subCatIndex].subcategory}
 											handleOpen={() => {
 												handleOpenDetails(subcat[1][subCatIndex].docId)
-												console.log(subcat[1][subCatIndex].docId)
 											}}
 											targetDocItem={subcat[1][subCatIndex]}
 										>
@@ -209,6 +211,7 @@ const TocSideBar = () => {
 															onClick={() => { loadDocContent(item.docId) }}
 															active={item.docId === activeDocId}
 															handleOpen={() => handleOpenDetails(item.docId)}
+															targetDocItem={{ docId: item.docId }}
 														>
 															{item.title}
 														</TocSideBarDoc>
@@ -220,6 +223,7 @@ const TocSideBar = () => {
 															key={item.docId}
 															url={item.url}
 															handleOpen={() => handleOpenDetails(item.docId)}
+															targetDocItem={{ docId: item.docId }}
 														>
 															{item.title}
 														</TocSideBarExternal>

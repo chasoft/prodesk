@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import {
-	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
+	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
 } from "firebase/firestore"
 
 //THIRD-PARTY
@@ -38,7 +38,8 @@ import { db, fix_datetime_list, fix_datetime_single } from "./../../helpers/fire
  *****************************************************************/
 
 const DB_COLLECTION = {
-	DOCUMENTATION: "documentation"
+	DOCUMENTATION: "documentation",
+	SETTINGS: "settings"
 }
 
 const TAGS_TYPE = {
@@ -51,6 +52,9 @@ const TAGS_TYPE = {
 }
 
 const ACTION_TYPE = {
+	/**
+	 * DOCUMENTATION
+	 */
 	ADD: "addDoc",
 	UPDATE: "updateDoc",
 	UPDATE_CONTENT: "updateDocContent",
@@ -58,6 +62,11 @@ const ACTION_TYPE = {
 	GET_DOCS: "getDocs",
 	GET_DOC: "getDoc",
 	GET_CONTENT: "getDocContent",
+	/**
+	 * APPLICATION SETTINGS
+	 */
+	GET_APPSETTINGS: "getAppSettings",
+	UPDATE_APPSETTINGS: "updateAppSettings"
 }
 
 export const firestoreApi = createApi({
@@ -368,7 +377,50 @@ export const firestoreApi = createApi({
 				}
 			}
 
+			/**
+			 * args = { action: "updateAppSettings", body: {...} }
+			 */
+			if (args.action === ACTION_TYPE.UPDATE_APPSETTINGS) {
+				try {
+					await setDoc(
+						doc(db, DB_COLLECTION.SETTINGS, "settings"),
+						{ ...args.body },
+						{ merge: true }
+					)
+					return {
+						data: {
+							action: ACTION_TYPE.UPDATE_APPSETTINGS,
+							message: "Settings updated successfully"
+						}
+					}
+				} catch (e) {
+					return {
+						error: {
+							action: ACTION_TYPE.UPDATE_APPSETTINGS,
+							message: e.message
+						}
+					}
+				}
+			}
+
 			return { data: ["Ops, it seems you set wrong action key"] }
+		}
+
+		//get all settings
+		if (args === ACTION_TYPE.GET_APPSETTINGS) {
+			let settings = {}
+			try {
+				const docSnap = await getDoc(doc(db, DB_COLLECTION.SETTINGS, "settings"))
+				if (docSnap.exists()) settings = docSnap.data()
+				return { data: settings }
+			} catch (e) {
+				return {
+					error: {
+						action: ACTION_TYPE.GET_DOC,
+						message: e.message
+					}
+				}
+			}
 		}
 
 		//get all documents
@@ -430,6 +482,9 @@ export const firestoreApi = createApi({
 		}
 	},
 	endpoints: (builder) => ({
+		/**************************************************************
+		 * DOCUMENTATION
+		 **************************************************************/
 		getDocs: builder.query({
 			query: () => ACTION_TYPE.GET_DOCS,
 			providesTags: (result) => {
@@ -495,11 +550,68 @@ export const firestoreApi = createApi({
 		updateDocContent: builder.mutation({
 			query: (body) => ({ action: ACTION_TYPE.UPDATE_CONTENT, body }),
 			invalidatesTags: (result, error, arg) => [{ type: TAGS_TYPE.DOCUMENTATION, id: arg.docItem.docId.concat(TAGS_TYPE.CONTENT) }],
+			async onQueryStarted({ docItem, content }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getDocContent", docItem.docId, (draft) => {
+						// Object.assign(draft, content)
+						//TODO!: Check this feature... manually update cache!
+						draft = content
+						console.log("update cache")
+						console.log("content", content)
+					})
+				)
+				try {
+					await queryFulfilled
+				} catch {
+					console.log("error and undo")
+					patchResult.undo()
+					/**
+					 * Alternatively, on failure you can invalidate the corresponding cache tags
+					 * to trigger a re-fetch:
+					 * dispatch(api.util.invalidateTags(['Post']))
+					 */
+				}
+			},
 		}),
 
 		deleteDoc: builder.mutation({
 			query: (body) => ({ action: ACTION_TYPE.DELETE, body }),
 			invalidatesTags: [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }],
+		}),
+
+		/**************************************************************
+		 * APPLICATION SETTINGS
+		 **************************************************************/
+		getAppSettings: builder.query({
+			query: () => "getAppSettings",
+			providesTags: () => {
+				console.log([TAGS_TYPE.SETTINGS])
+				return [TAGS_TYPE.SETTINGS]
+			},
+			keepUnusedDataFor: 60 * 60, // 60 minutes
+		}),
+		/**
+		* body -> ({...}) <= object of settings
+		*/
+		updateAppSettings: builder.mutation({
+			query: (body) => ({ action: ACTION_TYPE.UPDATE_APPSETTINGS, body }),
+			invalidatesTags: () => {
+				console.log([TAGS_TYPE.SETTINGS])
+				return [TAGS_TYPE.SETTINGS]
+			},
+			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData("getAppSettings", undefined, (draft) => {
+						Object.assign(draft, newSettings)
+						console.log("update AppSettings Cache")
+					})
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of AppSettings and undo")
+					patchResult.undo()
+				}
+			},
 		}),
 	}),
 })
@@ -512,4 +624,7 @@ export const {
 	useUpdateDocMutation,
 	useUpdateDocContentMutation,
 	useDeleteDocMutation,
+	//
+	useGetAppSettingsQuery,
+	useUpdateAppSettingsMutation,
 } = firestoreApi

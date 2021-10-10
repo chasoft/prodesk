@@ -22,79 +22,33 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import PropTypes from "prop-types"
-
-// MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { useCallback, useRef } from "react"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TocSideBarItemBase from "./TocSideBarItemBase"
-import TocSideBarAddNew from "./TocSideBarAddNew"
-import { DOCS_ADD } from "../../../helpers/constants"
-import { useSelector } from "react-redux"
-import { getDocsCenter } from "../../../redux/selectors"
-
-//ASSETS
+import { SETTINGS_NAME } from "./constants"
+import { useGetAppSettingsQuery } from "../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+export default function useAppSettings(query) {
+	const { data, isLoading } = useGetAppSettingsQuery(undefined)
 
-const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) => {
-	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
-	return (
-		<>
-			<TocSideBarItemBase
-				onClick={handleOpen}
-				handleOpen={handleOpen}
-				additionalButton={
-					<TocSideBarAddNew
-						targetDocItem={targetDocItem}
-						actions={[
-							DOCS_ADD.DOC,
-							DOCS_ADD.EXTERNAL,
-							DOCS_ADD.SUB_CATEGORY,
-							DOCS_ADD.CATEGORY,
-						]}
-					/>
-				}
-				showDetailsButton={false}
-				sx={{ backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "action.hover" : "initial" }}
-			>
-				<Typography sx={{
-					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "grey.500",
-					fontWeight: "bold",
-					":hover": { color: "primary.main" }
-				}}>
-					{title}
-				</Typography>
-			</TocSideBarItemBase>
+	const defaultSettings = useRef({
+		[SETTINGS_NAME.autoGenerateSlugFromTitle]: true
+	})
 
-			<Box sx={{
-				borderLeft: "1px solid transparent",
-				borderColor: "divider",
-				ml: 2
-			}}>
+	//get a setting or all if no query provided
+	const getAppSettings = useCallback((settingName) => {
+		const warehouse = isLoading
+			? defaultSettings.current
+			: { ...defaultSettings.current, ...data }
 
-				{children}
+		return settingName ? warehouse[settingName] : warehouse
+	}, [data, isLoading])
 
-			</Box>
-		</>
-	)
+	return query ? getAppSettings(query) : getAppSettings
 }
-TocSideBarSubCategory.propTypes = {
-	title: PropTypes.string,
-	onClick: PropTypes.func,
-	handleOpen: PropTypes.func,
-	targetDocItem: PropTypes.object,
-	children: PropTypes.node
-}
-
-export default TocSideBarSubCategory

@@ -126,12 +126,19 @@ RightMenuItemBase.propTypes = {
 export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [addDoc] = useAddDocMutation()
+	const dispatch = useDispatch()
 	return (
 		<RightMenuItemBase
 			Icon={<PostAddIcon />} sx={{ ...sx }}
 			onClick={async () => {
+				//Add new document
 				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-				await addDoc({ docItem: docItem }).unwrap()
+				const res = await addDoc({ docItem: docItem }).unwrap()
+				//Open new created document
+				reduxBatch(() => {
+					dispatch(setActiveDocId(res.id))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				})
 			}}
 		>
 			New Document
@@ -271,12 +278,16 @@ RightMenuItemDelete.propTypes = {
 
 export const RightMenuItemMore = ({ sx }) => {
 	const dispatch = useDispatch()
+	const { activeDocId } = useSelector(getDocsCenter)
 	return (
 		<RightMenuItemBase
 			Icon={<MoreHorizIcon />} sx={{ ...sx }}
 			onClick={() => {
 				/* This is to show TocSideBarDetails of current Doc */
-				dispatch(setShowTocSideBarDetails(true))
+				reduxBatch(() => {
+					dispatch(setShowTocSideBarDetails(true))
+					dispatch(setActiveDocIdOfTocSideBarDetails(activeDocId))
+				})
 			}}
 		>
 			More

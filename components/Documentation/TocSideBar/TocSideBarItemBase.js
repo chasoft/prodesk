@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Typography } from "@mui/material"
+import { Box, ButtonBase } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -43,18 +43,20 @@ import DetailsRightButton from "./DetailsRightButton"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, additionalButton, children, }, ref) => {
+const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, additionalButton, showDetailsButton = true, children }, ref) => {
 	return (
 		<ButtonBase
 			ref={ref}
-			onClick={() => { onClick() }}
+			onClick={(e) => {
+				e.stopPropagation()
+				onClick()
+			}}
 			sx={{
 				display: "block", width: "100%", textAlign: "left",
 			}}
 		>
 			<Box
 				sx={{
-					ml: -2,
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
@@ -62,9 +64,10 @@ const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, 
 					borderTop: "1px solid transparent",
 					borderBottom: "1px solid transparent",
 					borderColor: active ? "divider" : "transparent",
+					color: active ? "primary.main" : "initial",
 					":hover": {
 						backgroundColor: "action.hover",
-						color: "#000"
+						color: "primary.main"
 					},
 					"&>div": {
 						"&>#popper-trigger": { visibility: "hidden" },
@@ -86,7 +89,7 @@ const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, 
 					alignItems: "center",
 				}}>
 					{additionalButton}
-					<DetailsRightButton handleOpen={handleOpen} />
+					{showDetailsButton && <DetailsRightButton handleOpen={handleOpen} />}
 				</Box>
 			</Box>
 		</ButtonBase>
@@ -101,6 +104,7 @@ TocSideBarItemBase.propTypes = {
 	handleOpen: PropTypes.func,
 	sx: PropTypes.object,
 	additionalButton: PropTypes.node,
+	showDetailsButton: PropTypes.bool,
 	children: PropTypes.node,
 	otherProps: PropTypes.any
 }

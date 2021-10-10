@@ -18,18 +18,20 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
+import React, { useCallback, useMemo } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
+import { findIndex } from "lodash"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../redux/selectors"
 import { setRedirect } from "./../../redux/slices/redirect"
+import { useRouter } from "next/router"
 
 //ASSETS
 
@@ -37,22 +39,28 @@ import { setRedirect } from "./../../redux/slices/redirect"
  * INIT                                                          *
  *****************************************************************/
 
-const getTabId = (tabName, dataSet) => {
-	for (let i = 0; i < dataSet.length; i++) {
-		if (dataSet[i].indexOf(tabName) !== -1) return i
-	}
-	return 0
-}
+/*
+	dataset = { tabName: {order, path} }
+*/
 
-const TabsSettings = ({ dataSet }) => {
+const TabsSettings = ({ tabsList }) => {
+	// const dispatch = useDispatch()
+	const router = useRouter()
 	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
-	const dispatch = useDispatch()
-
 	const { activeSettingTab } = useSelector(getUiSettings)
 
-	const handleChange = (event, selectedTabId) => {
-		dispatch(setRedirect(dataSet[selectedTabId][1]))
-	}
+	const handleChange = useCallback((event, selectedTabIndex) => {
+		const path = tabsList.find(i => i.index === selectedTabIndex).path
+		console.log("path", path)
+		// dispatch(setRedirect(path))
+		router.push(path)
+	}, [tabsList, router])
+
+	const activeTabIndex = useMemo(() => {
+		const res = findIndex(tabsList, (i) => i.name === activeSettingTab)
+		console.log("activeTabIndex", res)
+		return res === - 1 ? 0 : res
+	}, [activeSettingTab, tabsList])
 
 	return (
 		<Paper
@@ -63,23 +71,21 @@ const TabsSettings = ({ dataSet }) => {
 			}}
 		>
 			<Tabs
-				value={getTabId(activeSettingTab, dataSet)}
-				onChange={handleChange}
-				indicatorColor="primary"
+				value={activeTabIndex}
 				variant={isScreenBigEnough ? "standard" : "scrollable"}
-				scrollButtons="auto"
-				textColor="primary"
+				onChange={handleChange}
 				centered={isScreenBigEnough}
+				textColor="primary"
+				scrollButtons="auto"
+				indicatorColor="primary"
 			>
 				{
-					dataSet.map((item, idx) => {
-						return <Tab key={idx} label={item[0]} />
-					})
+					tabsList.map((tabItem) => <Tab key={tabItem.name} label={tabItem.name} />)
 				}
 			</Tabs>
 		</Paper>
 	)
 }
-TabsSettings.propTypes = { dataSet: PropTypes.array }
+TabsSettings.propTypes = { tabsList: PropTypes.array }
 
 export default TabsSettings

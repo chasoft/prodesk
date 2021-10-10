@@ -69,6 +69,7 @@ const DocumentEditor = () => {
 		})
 	})
 	const docItemContent = useGetDocContentQuery(activeDocId)
+	console.log("docItemContent", docItemContent.data)
 	//
 	const { editorData, editorDefaultData } = useSelector(getTextEditor)
 	const [title, setTitle] = useState("")
@@ -180,6 +181,12 @@ const DocumentEditor = () => {
 					value={editorDefaultData}
 					placeholder="Enter your content here..."
 					onBlur={() => {
+						/*******************************
+						 * TODO: !! Bug here
+						 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
+						 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
+						 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
+						 */
 						if (editorData.trim() !== docItemContent.data.trim()) {
 							const newDocMeta = {
 								docId: docItem.docId,	//must be included

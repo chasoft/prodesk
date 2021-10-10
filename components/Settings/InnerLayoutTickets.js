@@ -49,10 +49,10 @@ export const TICKET_SETTINGS_NAMES = {
 }
 
 export const TICKET_SETTINGS_TABS = [
-	[TICKET_SETTINGS_NAMES.GENERAL, "/admin/settings/tickets"],
-	[TICKET_SETTINGS_NAMES.DEPARTMENT, "/admin/settings/tickets/department"],
-	[TICKET_SETTINGS_NAMES.LABEL, "/admin/settings/tickets/label"],
-	[TICKET_SETTINGS_NAMES.CANNED_REPLY, "/admin/settings/tickets/canned-reply"],
+	{ index: 0, name: TICKET_SETTINGS_NAMES.GENERAL, path: "/admin/settings/tickets" },
+	{ index: 1, name: TICKET_SETTINGS_NAMES.DEPARTMENT, path: "/admin/settings/tickets/department" },
+	{ index: 2, name: TICKET_SETTINGS_NAMES.LABEL, path: "/admin/settings/tickets/label" },
+	{ index: 3, name: TICKET_SETTINGS_NAMES.CANNED_REPLY, path: "/admin/settings/tickets/canned-reply" },
 ]
 
 /*****************************************************************
@@ -68,7 +68,7 @@ function InnerLayoutTickets({ children }) {
 
 			<Typography variant="h1" style={{ color: "white" }}>Tickets Settings</Typography>
 
-			<TabsSettings dataSet={TICKET_SETTINGS_TABS} />
+			<TabsSettings tabsList={TICKET_SETTINGS_TABS} />
 
 			{children}
 

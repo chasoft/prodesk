@@ -132,10 +132,7 @@ function ListAllCategories() {
 					{DummyData.map(((block, idx) => (
 						<Grid
 							item key={idx} xs={12} sm={6}
-							sx={{
-								mt: 4,
-								"& > h2": { fontSize: "1rem" }
-							}}
+							sx={{ mt: 4 }}
 						>
 							<Typography variant="h2" sx={{ pl: 2 }}>{block.cat}</Typography>
 
@@ -157,7 +154,7 @@ function ListAllCategories() {
 								}}
 							>
 								{block.items.map((link, idx) => (
-									<Link key={idx} href="/">
+									<Link key={idx} href="/" passHref>
 										<li>
 											<ButtonBase sx={{ textAlign: "left" }}>
 												{link.subject}

@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import { Box, ClickAwayListener, Grow, Paper, Popper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "../../../redux/selectors"
@@ -43,17 +43,18 @@ import PostAddIcon from "@mui/icons-material/PostAdd"
 // import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
 import { useAddDocMutation } from "../../../redux/slices/firestoreApi"
 import { docItemNewCategory, docItemNewDoc, docItemNewExternal, docItemNewSubCategory } from "../../../helpers/firebase/docs"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const PopupMenuItemBase = ({ MenuIcon, title, description, callback, handleClose }) => {
+const PopupMenuItemBase = ({ MenuIcon, title, description, callback, handleClose, showSideBarDetails = false }) => {
 	return (
 		<Box
 			onClick={() => {
 				callback()
-				handleClose()
+				if (!showSideBarDetails) handleClose()
 			}}
 			sx={{
 				px: 3, py: 1,
@@ -94,7 +95,8 @@ PopupMenuItemBase.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
 	callback: PropTypes.func,
-	handleClose: PropTypes.func
+	handleClose: PropTypes.func,
+	showSideBarDetails: PropTypes.bool
 }
 
 export const Divider = () => (
@@ -108,9 +110,13 @@ export const Divider = () => (
 const PopupMenuItemAddCategory = ({ actionType, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [addDoc] = useAddDocMutation()
+	const dispatch = useDispatch()
 	const handleAddCategory = async () => {
 		const docItem = docItemNewCategory(currentUser.username)
-		await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem }).unwrap()
+		//Open new created Category
+		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
+		handleClose()
 	}
 	return (
 		<PopupMenuItemBase
@@ -119,6 +125,7 @@ const PopupMenuItemAddCategory = ({ actionType, handleClose }) => {
 			description={actionType.description}
 			callback={handleAddCategory}
 			handleClose={handleClose}
+			showSideBarDetails={true}
 		/>
 	)
 }
@@ -130,9 +137,13 @@ PopupMenuItemAddCategory.propTypes = {
 const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [addDoc] = useAddDocMutation()
+	const dispatch = useDispatch()
 	const handleAddSubCategory = async () => {
 		const docItem = docItemNewSubCategory(targetDocItem, currentUser.username)
-		await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem }).unwrap()
+		//Open new created Sub-Category
+		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
+		handleClose()
 	}
 	return (
 		<PopupMenuItemBase
@@ -141,6 +152,7 @@ const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose })
 			description={actionType.description}
 			callback={handleAddSubCategory}
 			handleClose={handleClose}
+			showSideBarDetails={true}
 		/>
 	)
 }
@@ -153,9 +165,13 @@ PopupMenuItemAddSubCategory.propTypes = {
 const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [addDoc] = useAddDocMutation()
+	const dispatch = useDispatch()
 	const handleAddExternalLink = async () => {
 		const docItem = docItemNewExternal(targetDocItem, currentUser.username)
-		await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem }).unwrap()
+		//Open new created External link
+		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
+		handleClose()
 	}
 	return (
 		<PopupMenuItemBase
@@ -164,6 +180,7 @@ const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }
 			description={actionType.description}
 			callback={handleAddExternalLink}
 			handleClose={handleClose}
+			showSideBarDetails={true}
 		/>
 	)
 }
@@ -176,9 +193,16 @@ PopupMenuItemAddExternalLink.propTypes = {
 const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [addDoc] = useAddDocMutation()
+	const dispatch = useDispatch()
 	const handleAddDoc = async () => {
 		const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-		await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem }).unwrap()
+		//Open new created document
+		reduxBatch(() => {
+			dispatch(setActiveDocId(res.id))
+			dispatch(setActiveDocIdOfTocSideBarDetails(null))
+		})
+		handleClose()
 	}
 	return (
 		<PopupMenuItemBase
@@ -187,6 +211,7 @@ const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
 			description={actionType.description}
 			callback={handleAddDoc}
 			handleClose={handleClose}
+			showSideBarDetails={true}
 		/>
 	)
 }
@@ -206,7 +231,10 @@ const AddNewPopupMenu = ({ targetDocItem, actions, placement, children }) => {
 
 	return (
 		<>
-			<div ref={ref} id="popper-trigger" onClick={() => { setOpen(true) }}>
+			<div ref={ref} id="popper-trigger" onClick={(e) => {
+				e.stopPropagation()
+				setOpen(true)
+			}}>
 				{children}
 			</div>
 			<Popper

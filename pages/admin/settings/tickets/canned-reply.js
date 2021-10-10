@@ -22,12 +22,13 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { some, filter } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -86,7 +87,6 @@ const DUMMY_DEPARTMENTS = [
 		isPublic: false,
 	},
 ]
-
 
 const CANNED_REPLIES = [
 	{
@@ -227,15 +227,10 @@ const CANNED_REPLIES = [
 ]
 
 /* this is for DEMO only, working version will query a list of cannedreply based on provided departmentId */
-const getCannedRepliesByDepartmentId = (id) => {
-	const canReplies = CANNED_REPLIES.filter(item => item.departmentId === id)
-	return canReplies
-}
+const getCannedRepliesByDepartmentId = (id) => filter(CANNED_REPLIES, { departmentId: id })
 
-const getGroupInfoByDepartmentId = (id) => {
-	const index = DUMMY_DEPARTMENTS.map(item => item.id).indexOf(id)
-	return DUMMY_DEPARTMENTS[index]
-}
+const getGroupInfoByDepartmentId = (id) => DUMMY_DEPARTMENTS.find(item => item.id === id)
+
 
 /*****************************************************************
  * INIT                                                          *
@@ -252,22 +247,26 @@ export const CANNED_REPLY_PAGES = {
  *****************************************************************/
 
 function TicketSettingsCannedReply() {
-	const [showContent, setShowContent] = useState(false)
-
-	const dispatch = useDispatch()
-	const { activeSettingPanel } = useSelector(getUiSettings)
-
-	//Whether a group is selected, then show CannedReplyDetails
-	const aGroupSelected = Object.entries(CANNED_REPLY_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
 
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.CANNED_REPLY,
 		activePanel: CANNED_REPLY_PAGES.OVERVIEW,
-		background: {
-			height: "132px",
-			backgroundImage: ""
-		}
+		// background: {
+		// 	height: "132px",
+		// 	backgroundImage: ""
+		// }
 	})
+
+	const dispatch = useDispatch()
+	const { activeSettingPanel } = useSelector(getUiSettings)
+	const [showContent, setShowContent] = useState(false)
+
+	//Whether a group is selected, then show CannedReplyDetails
+	const aGroupSelected = useMemo(() =>
+		some(CANNED_REPLY_PAGES, (i) => i === activeSettingPanel), [activeSettingPanel]
+	)
+
+	console.log("why? TicketSettingsCannedReply")
 
 	return (
 		<>

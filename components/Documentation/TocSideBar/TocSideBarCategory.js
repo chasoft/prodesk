@@ -26,12 +26,15 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import DetailsRightButton from "./DetailsRightButton"
 import TocSideBarAddNew from "./TocSideBarAddNew"
 import { DOCS_ADD } from "../../../helpers/constants"
+import TocSideBarItemBase from "./TocSideBarItemBase"
+import { getDocsCenter } from "../../../redux/selectors"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 
@@ -46,55 +49,48 @@ import { DOCS_ADD } from "../../../helpers/constants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => (
-	<Box sx={{
-		display: "flex",
-		flexDirection: "column",
-		pb: 4,
-	}}>
-		<Box sx={{
-			display: "flex",
-			justifyContent: "space-between",
-			"&>div": {
-				"&>#popper-trigger": { visibility: "hidden" },
-				"&>#detailsRightButton": { visibility: "hidden" },
-			},
-			":hover>p": { color: "#000" },
-			":hover>div": {
-				"&>#popper-trigger": { visibility: "visible" },
-				"&>#detailsRightButton": { visibility: "visible" },
-			},
-		}}>
-			<Typography sx={{
-				px: 2, py: 1,
-				ml: -2, mr: 0,
-				textTransform: "uppercase",
-				color: "grey.500",
-				fontWeight: "bold",
-			}}>
-				{title}
-			</Typography>
+const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
+	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+	return (
+		<div>
+			<TocSideBarItemBase
+				onClick={handleOpen}
+				handleOpen={handleOpen}
+				additionalButton={
+					<TocSideBarAddNew
+						targetDocItem={targetDocItem}
+						actions={[
+							DOCS_ADD.CATEGORY,
+							DOCS_ADD.SUB_CATEGORY,
+							DOCS_ADD.DOC,
+							DOCS_ADD.EXTERNAL,
+						]}
+					/>
+				}
+				showDetailsButton={false}
+				sx={{ backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "action.hover" : "initial" }}
+			>
+				<Typography sx={{
+					px: 2, py: 1,
+					ml: -2, mr: 0,
+					textTransform: "uppercase",
+					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "grey.500",
+					fontWeight: "bold",
+					":hover": { color: "primary.main" },
+				}}>
+					{title}
+				</Typography>
+			</TocSideBarItemBase>
 
 			<Box sx={{
-				display: "flex",
-				alignItems: "center",
+				borderLeft: "1px solid transparent",
+				borderColor: "divider",
 			}}>
-				<TocSideBarAddNew
-					targetDocItem={targetDocItem}
-					actions={[
-						DOCS_ADD.CATEGORY,
-						DOCS_ADD.SUB_CATEGORY,
-						DOCS_ADD.DOC,
-						DOCS_ADD.EXTERNAL,
-					]}
-				/>
-				<DetailsRightButton handleOpen={handleOpen} />
+				{children}
 			</Box>
-		</Box>
-
-		{children}
-	</Box>
-)
+		</div>
+	)
+}
 TocSideBarCategory.propTypes = {
 	title: PropTypes.string,
 	handleOpen: PropTypes.func,

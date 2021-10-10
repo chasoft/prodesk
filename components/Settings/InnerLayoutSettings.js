@@ -51,11 +51,11 @@ export const APPLICATION_SETTINGS_NAMES = {
 }
 
 export const APPLICATION_SETTINGS_TABS = [
-	[APPLICATION_SETTINGS_NAMES.GENERAL, "/admin/settings/application"],
-	[APPLICATION_SETTINGS_NAMES.USER, "/admin/settings/application/users"],
-	[APPLICATION_SETTINGS_NAMES.SECURITY, "/admin/settings/application/security"],
-	[APPLICATION_SETTINGS_NAMES.SMTP, "/admin/settings/application/smtp"],
-	[APPLICATION_SETTINGS_NAMES.ADS, "/admin/settings/application/ads"],
+	{ index: 0, name: APPLICATION_SETTINGS_NAMES.GENERAL, path: "/admin/settings/application" },
+	{ index: 1, name: APPLICATION_SETTINGS_NAMES.USER, path: "/admin/settings/application/users" },
+	{ index: 2, name: APPLICATION_SETTINGS_NAMES.SECURITY, path: "/admin/settings/application/security" },
+	{ index: 3, name: APPLICATION_SETTINGS_NAMES.SMTP, path: "/admin/settings/application/smtp" },
+	{ index: 4, name: APPLICATION_SETTINGS_NAMES.ADS, path: "/admin/settings/application/ads" },
 ]
 
 /*****************************************************************
@@ -70,7 +70,7 @@ function InnerLayoutSettings({ children }) {
 
 			<Typography variant="h1" style={{ color: "white" }}>Application Settings</Typography>
 
-			<TabsSettings dataSet={APPLICATION_SETTINGS_TABS} />
+			<TabsSettings tabsList={APPLICATION_SETTINGS_TABS} />
 
 			{children}
 

@@ -86,7 +86,7 @@ export const TAG_PAGES = {
  *****************************************************************/
 
 function TicketSettingsLabel() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.LABEL,
 		background: {

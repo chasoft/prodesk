@@ -42,7 +42,6 @@ import ListAllCategories from "./../../components/Category/ListAllCategories"
  *****************************************************************/
 
 function Docs() {
-	const dispatch = useDispatch()
 	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS,
 	})

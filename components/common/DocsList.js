@@ -88,7 +88,7 @@ const DocsList = ({ header, viewAllText, viewAllLink, dataSource }) => {
 					<Link href={item.url} key={item.id}>
 						<li>
 							<DocumentIcon />
-							<ButtonBase sx={{ textAlign: "left" }}>
+							<ButtonBase sx={{ textAlign: "left", fontSize: "0.9rem" }}>
 								{item.subject}
 							</ButtonBase>
 						</li>

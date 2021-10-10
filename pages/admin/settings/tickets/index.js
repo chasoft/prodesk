@@ -47,7 +47,7 @@ import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsCon
  *****************************************************************/
 
 function TicketSettings() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.GENERAL,
 		background: {

@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
@@ -99,10 +99,7 @@ const DUMMY_DEPARTMENTS = [
 	},
 ]
 
-const getDepartmentById = (id) => {
-	const index = DUMMY_DEPARTMENTS.map(item => item.id).indexOf(id)
-	return DUMMY_DEPARTMENTS[index]
-}
+const getDepartmentById = (id) => DUMMY_DEPARTMENTS.find(item => item.id === id)
 
 /*****************************************************************
  * INIT                                                          *
@@ -118,22 +115,26 @@ export const DEPARTMENT_PAGES = {
  *****************************************************************/
 
 function TicketSettingsDepartment() {
-	const [showContent, setShowContent] = useState(false)
-
-	const dispatch = useDispatch()
-	const { activeSettingPanel } = useSelector(getUiSettings)
-
-	//Whether a group is selected, then show DepartmetsDetails
-	const aGroupSelected = Object.entries(DEPARTMENT_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
 
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
 		activePanel: DEPARTMENT_PAGES.OVERVIEW,
-		background: {
-			height: "132px",
-			backgroundImage: ""
-		}
+		// background: {
+		// 	height: "132px",
+		// 	backgroundImage: ""
+		// }
 	})
+
+	const dispatch = useDispatch()
+	const [showContent, setShowContent] = useState(false)
+	const { activeSettingPanel } = useSelector(getUiSettings)
+
+	//Whether a group is selected, then show DepartmetsDetails
+	const aGroupSelected = useMemo(() => {
+		return Object.entries(DEPARTMENT_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
+	}, [activeSettingPanel])
+
+	console.log("why? TicketSettingsDepartment")
 
 	return (
 		<>

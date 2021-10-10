@@ -35,6 +35,8 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
 
 //ASSETS
 import LaunchIcon from "@mui/icons-material/Launch"
+import { useSelector } from "react-redux"
+import { getDocsCenter } from "../../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,24 +46,32 @@ import LaunchIcon from "@mui/icons-material/Launch"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarExternal = ({ url, handleOpen, children }) => {
+const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
+	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 	return (
 		<TocSideBarItemBase
 			onClick={() => window.open(url, "_blank")}
 			handleOpen={handleOpen}
+			sx={{
+				backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "action.hover" : "transparent",
+			}}
 		>
 			<Box sx={{
 				display: "flex",
 				justifyContent: "space-between",
 				alignItems: "center",
 				flexGrow: 2,
+				color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "initial",
 				":hover": {
 					"&>svg": {
 						color: "grey.700"
 					}
 				}
 			}}>
-				<Typography>{children}</Typography> <LaunchIcon fontSize="small" sx={{ color: "grey.500", mx: 1 }} />
+				<Typography>{children}</Typography>
+				<LaunchIcon sx={{
+					fontSize: "1.2rem", color: "grey.500", mx: 1
+				}} />
 			</Box>
 		</TocSideBarItemBase>
 	)
@@ -69,6 +79,7 @@ const TocSideBarExternal = ({ url, handleOpen, children }) => {
 TocSideBarExternal.propTypes = {
 	url: PropTypes.string,
 	handleOpen: PropTypes.func,
+	targetDocItem: PropTypes.object,
 	children: PropTypes.node
 }
 

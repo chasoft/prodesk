@@ -178,3 +178,8 @@ export const ACTION = {
 	UPDATE: "Update",
 	CLEAR: "Clear",
 }
+
+
+export const SETTINGS_NAME = {
+	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
+}

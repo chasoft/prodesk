@@ -52,14 +52,14 @@ const CannedRepliesGroup = ({ groupInfo, cannedReplies, backBtnClick }) => {
 	useEffect(() => {
 		setSelectedCannedReply("")
 		console.log("Reset selectedCannedReply")
-	}, [activeSettingPanel])
+	}, [])
 
 	const getCannedReply = useCallback(
 		() => {
 			const index = cannedReplies.map(item => item.id).indexOf(selectedCannedReply)
 			return cannedReplies[index]
 		},
-		[selectedCannedReply]
+		[selectedCannedReply, cannedReplies]
 	)
 
 	if (!groupInfo?.department) {

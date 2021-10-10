@@ -32,7 +32,8 @@ import { Typography } from "@mui/material"
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
-
+import { useSelector } from "react-redux"
+import { getDocsCenter } from "../../../redux/selectors"
 
 //ASSETS
 
@@ -44,12 +45,16 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDoc = ({ active, onClick, handleOpen, children }) => {
+const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children }) => {
+	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 	return (
 		<TocSideBarItemBase
 			active={active}
 			onClick={onClick}
 			handleOpen={handleOpen}
+			sx={{
+				color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId || active) ? "primary.main" : "initial"
+			}}
 		>
 			<Typography>{children}</Typography>
 		</TocSideBarItemBase>
@@ -59,6 +64,7 @@ TocSideBarDoc.propTypes = {
 	active: PropTypes.bool,
 	onClick: PropTypes.func,
 	handleOpen: PropTypes.func,
+	targetDocItem: PropTypes.object,
 	children: PropTypes.node
 }
 

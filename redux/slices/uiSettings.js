@@ -65,7 +65,7 @@ export const initialState = {
 		this keep the name of the Tab!
 		& active Panel
 	*/
-	activeSettingTab: "",
+	activeSettingTab: 0,
 	activeSettingPanel: "",
 
 	/*

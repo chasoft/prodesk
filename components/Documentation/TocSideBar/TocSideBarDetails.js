@@ -22,27 +22,29 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { styled } from "@mui/material/styles"
-import { Box, Button, IconButton, Typography, InputBase, ToggleButtonGroup, ToggleButton, Tooltip, TextField } from "@mui/material"
+import { Box, Button, IconButton, Typography, ToggleButtonGroup, ToggleButton, Tooltip, TextField, FormControlLabel, Switch } from "@mui/material"
 
 //THIRD-PARTY
 import { filter } from "lodash"
 import { useSelector } from "react-redux"
+import slugify from "react-slugify"
 
 //PROJECT IMPORT
-import { DOC_STATUS, DOC_TYPE } from "../../../helpers/constants"
+import useAppSettings from "../../../helpers/useAppSettings"
+import { DOC_STATUS, DOC_TYPE, SETTINGS_NAME } from "../../../helpers/constants"
 import { getUiSettings, getDocsCenter, getAuth } from "./../../../redux/selectors"
 import { RightMenuItemAddNewDoc, RightMenuItemDelete, RightMenuItemExportPDF, RightMenuItemImport } from "./../DocumentTocSideBar"
+import { useGetDocsQuery, useUpdateDocMutation, useUpdateAppSettingsMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import PublishOutlinedIcon from "@mui/icons-material/PublishOutlined"
 import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined"
-import { useGetDocsQuery, useUpdateDocMutation } from "../../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -137,6 +139,10 @@ CancelSaveButtons.propTypes = {
 const DetailsFormCategory = ({ docItem, handleClose }) => {
 	const allDocsRaw = useGetDocsQuery(undefined)
 	const [updateDoc] = useUpdateDocMutation()
+
+	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+	const [updateAppSettings] = useUpdateAppSettingsMutation()
+
 	const { currentUser } = useSelector(getAuth)
 
 	const [slug, setSlug] = useState(docItem.slug)
@@ -167,19 +173,44 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			<InputBaseStyled
 				id={(docItem.type === DOC_TYPE.CATEGORY) ? "cat-title" : "subcat-title"}
 				value={name}
-				onChange={
-					(e) => setName(e.target.value)
-				}
+				onChange={(e) => {
+					setName(e.target.value)
+					if (autoGenerateSlugFromTitle) {
+						setSlug(slugify(e.target.value))
+					}
+				}}
 			/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Slug
-			</TypographyHeader>
+			<Box sx={{
+				display: "flex",
+				justifyContent: "space-between",
+				alignItems: "center",
+				mt: 2
+			}}>
+				<TypographyHeader sx={{ flexGrow: 1 }}>
+					Slug
+				</TypographyHeader>
+				<FormControlLabel label="Auto-generate" labelPlacement="start"
+					control={<Switch
+						checked={autoGenerateSlugFromTitle}
+						onChange={() => {
+							updateAppSettings({
+								[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+							})
+						}}
+					/>}
+				/>
+			</Box>
 			<InputBaseStyled
 				id="cat-slug" value={slug}
-				onChange={
-					(e) => setSlug(e.target.value)
-				}
+				onChange={(e) => setSlug(e.target.value)}
+				disabled={autoGenerateSlugFromTitle}
+				sx={{
+					...(autoGenerateSlugFromTitle && {
+						backgroundColor: "action.hover",
+						borderRadius: "0.25rem"
+					})
+				}}
 			/>
 
 			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
@@ -238,6 +269,9 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [updateDoc] = useUpdateDocMutation()
 
+	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+	const [updateAppSettings] = useUpdateAppSettingsMutation()
+
 	const [slug, setSlug] = useState(docItem.slug)
 	// const [tags, setTags] = useState(docItem.tags)
 	const [title, setTitle] = useState(docItem.title)
@@ -264,32 +298,45 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			<InputBaseStyled
 				id="doc-title"
 				value={title}
-				onChange={
-					(e) => setTitle(e.target.value)
-				}
+				onChange={(e) => {
+					setTitle(e.target.value)
+					if (autoGenerateSlugFromTitle) {
+						setSlug(slugify(e.target.value))
+					}
+				}}
 			/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Slug
-			</TypographyHeader>
+			<Box sx={{
+				display: "flex",
+				justifyContent: "space-between",
+				alignItems: "center",
+				mt: 2
+			}}>
+				<TypographyHeader sx={{ flexGrow: 1 }}>
+					Slug
+				</TypographyHeader>
+				<FormControlLabel label="Auto-generate" labelPlacement="start"
+					control={<Switch
+						checked={autoGenerateSlugFromTitle}
+						onChange={() => {
+							updateAppSettings({
+								[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+							})
+						}}
+					/>}
+				/>
+			</Box>
 			<InputBaseStyled
 				id="doc-slug" value={slug}
-				onChange={
-					(e) => setSlug(e.target.value)
-				}
+				onChange={(e) => setSlug(e.target.value)}
+				disabled={autoGenerateSlugFromTitle}
+				sx={{
+					...(autoGenerateSlugFromTitle && {
+						backgroundColor: "action.hover",
+						borderRadius: "0.25rem"
+					})
+				}}
 			/>
-
-			{/* <TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Description
-			</TypographyHeader>
-			<InputBaseStyled
-				id="doc-description" value={description}
-				multiline={true}
-				minRows={3}
-				onChange={
-					(e) => setDescription(e.target.value)
-				}
-			/> */}
 
 			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 				Tags
