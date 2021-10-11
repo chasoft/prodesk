@@ -22,571 +22,64 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import {
-	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
-} from "firebase/firestore"
-
 //THIRD-PARTY
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
-import { DOC_TYPE } from "./../../helpers/constants"
-import { db, fix_datetime_list, fix_datetime_single } from "./../../helpers/firebase"
+import { fix_datetime_list, fix_datetime_single } from "./../../helpers/firebase"
+import { ACTION, TYPE } from "./firestoreApiConstants"
+import fireStoreBaseQuery from "./firestoreApiBaseQuery"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DB_COLLECTION = {
-	DOCUMENTATION: "documentation",
-	SETTINGS: "settings"
-}
-
-const TAGS_TYPE = {
-	DOCUMENTATION: "Documentation",
-	USERS: "Users",
-	TICKETS: "Tickets",
-	LIST: "LIST",
-	SETTINGS: "Settings"
-}
-
-const ACTION_TYPE = {
-	/**
-	 * DOCUMENTATION
-	 */
-	ADD: "addDoc",
-	UPDATE: "updateDoc",
-	UPDATE_CONTENT: "updateDocContent",
-	DELETE: "deleteDoc",
-	GET_DOCS: "getDocs",
-	GET_DOC: "getDoc",
-	GET_CONTENT: "getDocContent",
-	/**
-	 * APPLICATION SETTINGS
-	 */
-	GET_APPSETTINGS: "getAppSettings",
-	UPDATE_APPSETTINGS: "updateAppSettings",
-	/**
-	 * TICKETS SETTINGS
-	 */
-	UPDATE_TICKETS_SETTINGS_DEPARTMENT: "updateTicketSettingsDepartment"
-}
-
 export const firestoreApi = createApi({
 	reducerPath: "firestoreApi",
 	tagTypes: [
-		TAGS_TYPE.DOCUMENTATION,
-		TAGS_TYPE.USERS,
-		TAGS_TYPE.TICKETS,
-		TAGS_TYPE.SETTINGS,
+		TYPE.DOCS,
+		TYPE.USERS,
+		TYPE.TICKETS,
+		TYPE.SETTINGS,
 	],
-	baseQuery: async (args, { signal, dispatch, getState }, extraOptions) => {
-
-		if (typeof args === "object") {
-			/**
-			 * args = { action: "addDoc", body: {docItem: Object, affectedItems: <[]> }
-			 */
-			if (args.action === ACTION_TYPE.ADD) {
-				const batch = writeBatch(db)
-				try {
-					batch.set(
-						doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId),
-						{
-							...args.body.docItem,
-							createdAt: serverTimestamp(),
-							updatedAt: serverTimestamp()
-						}
-					)
-					if (args.body.docItem.type === DOC_TYPE.DOC)
-						batch.set(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId, "content", "current"), { text: "" })
-					await batch.commit()
-					return {
-						data: {
-							action: ACTION_TYPE.ADD,
-							id: args.body.docItem.docId,
-							message: "added successfully"
-						}
-					}
-				} catch (e) {
-					return {
-						error: {
-							status: 200,
-							data: {
-								action: ACTION_TYPE.ADD,
-								id: args.body.docItem.docId,
-								message: e.message
-							}
-						}
-					}
-				}
-			}
-
-			/**
-			 * args = { action: "updateDoc", body: {docItem: <Object>, affectedItems: <[]> }
-			 */
-			if (args.action === ACTION_TYPE.UPDATE) {
-				if (args.body.docItem.type === DOC_TYPE.EXTERNAL || args.body.docItem.type === DOC_TYPE.DOC) {
-					try {
-						await updateDoc(
-							doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId),
-							{
-								...args.body.docItem,
-								updatedAt: serverTimestamp()
-							}
-						)
-
-						return {
-							data: {
-								action: ACTION_TYPE.UPDATE,
-								id: args.body.docItem.docId,
-								message: "External Or Doc updated successfully"
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.UPDATE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.CATEGORY) {
-					const batch = writeBatch(db)
-					try {
-						args.body.affectedItems.forEach((affectedItem) => {
-							batch.update(
-								doc(db, DB_COLLECTION.DOCUMENTATION, affectedItem.docId),
-								{
-									updatedAt: serverTimestamp(),
-									...(affectedItem.type === DOC_TYPE.CATEGORY)
-										? { ...args.body.docItem, updatedAt: serverTimestamp() }
-										: { category: args.body.docItem.category }
-								}
-							)
-						})
-						await batch.commit()
-						return {
-							data: {
-								action: ACTION_TYPE.UPDATE,
-								id: args.body.docItem.docId,
-								message: "category updated successfully"
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.UPDATE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.SUBCATEGORY) {
-					const batch = writeBatch(db)
-					try {
-
-						args.body.affectedItems.forEach((affectedItem) => {
-							batch.update(
-								doc(db, DB_COLLECTION.DOCUMENTATION, affectedItem.docId),
-								{
-									updatedAt: serverTimestamp(),
-									...(affectedItem.type === DOC_TYPE.SUBCATEGORY)
-										? { ...args.body.docItem, updatedAt: serverTimestamp() }
-										: { subcategory: args.body.docItem.subcategory }
-								}
-							)
-						})
-						await batch.commit()
-						return {
-							data: {
-								action: ACTION_TYPE.UPDATE,
-								id: args.body.docItem.docId,
-								message: "SubCategory updated successfully"
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.UPDATE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-			}
-
-			/**
-			 * args = { action: "updateDocContent", body: {docItem: object, content: string} }
-			 * this action will update at 2 locations: 
-			 * 		1. content
-			 * 		2. updatedBy
-			 */
-			if (args.action === ACTION_TYPE.UPDATE_CONTENT) {
-				const batch = writeBatch(db)
-				try {
-					batch.update(
-						doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId, "content", "current"),
-						args.body.content
-					)
-					batch.update(
-						doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId),
-						{ updatedBy: args.body.docItem.updatedBy }
-					)
-					await batch.commit()
-
-					return {
-						data: {
-							action: ACTION_TYPE.UPDATE_CONTENT,
-							id: args.body.docItem.docId,
-							message: "DocContent updated successfully"
-						}
-					}
-				} catch (e) {
-					return {
-						error: {
-							status: 200,
-							data: {
-								action: ACTION_TYPE.UPDATE_CONTENT,
-								id: args.body.docItem.docId,
-								message: e.message
-							}
-						}
-					}
-				}
-			}
-
-			/**
-			 * args = { action: "deleteDoc", body: { docItem: <Object> } }
-			 */
-			if (args.action === ACTION_TYPE.DELETE) {
-				if (args.body.docItem.type === DOC_TYPE.EXTERNAL) {
-					try {
-						await deleteDoc(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId))
-						return {
-							data: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: "External Link deleted successfully"
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.DOC) {
-					try {
-						await deleteDoc(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId, "content", "current"))
-						await deleteDoc(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId))
-						return {
-							data: {
-								action: ACTION_TYPE.DELETE,
-								id: args.body.docItem.docId,
-								message: "Doc deleted successfully"
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.CATEGORY) {
-					try {
-						//query to check if category is empty or not
-						//We need to check directly because deleting is serious,
-						//if anything wrong, this would be unrecoverable.
-						const q = query(
-							collection(db, DB_COLLECTION.DOCUMENTATION),
-							where("category", "==", args.body.docItem.category)
-						)
-						const querySnapshot = await getDocs(q)
-						//Only delete category when it is empty
-						if (querySnapshot.docs.length === 1) {
-							await deleteDoc(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId))
-							return {
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: "Category deleted successfully"
-								}
-							}
-						}
-						//if the code reach here, means... can not delete selected item
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: "You can only delete empty category!"
-								}
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.SUBCATEGORY) {
-					try {
-						//query to check if sub-category is empty or not
-						//We need to check directly because deleting is serious,
-						//if anything wrong, this would be unrecoverable.
-
-						const q = query(
-							collection(db, DB_COLLECTION.DOCUMENTATION),
-							where("category", "==", args.body.docItem.category),
-							where("subcategory", "==", args.body.docItem.subcategory)
-						)
-						const querySnapshot = await getDocs(q)
-						//Only delete category when it is empty
-
-						if (querySnapshot.docs.length === 1) {
-							await deleteDoc(doc(db, DB_COLLECTION.DOCUMENTATION, args.body.docItem.docId))
-							return {
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: "SubCategory deleted successfully"
-								}
-							}
-						}
-						//if the code reach here, means... can not delete selected item
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: "You can only delete empty sub-category!"
-								}
-							}
-						}
-					} catch (e) {
-						return {
-							error: {
-								status: 200,
-								data: {
-									action: ACTION_TYPE.DELETE,
-									id: args.body.docItem.docId,
-									message: e.message
-								}
-							}
-						}
-					}
-				}
-			}
-
-			/**
-			 * args = { action: "updateAppSettings", body: {...} }
-			 */
-			if (args.action === ACTION_TYPE.UPDATE_APPSETTINGS) {
-				try {
-					await setDoc(
-						doc(db, DB_COLLECTION.SETTINGS, "settings"),
-						{ ...args.body },
-						{ merge: true }
-					)
-					return {
-						data: {
-							action: ACTION_TYPE.UPDATE_APPSETTINGS,
-							message: "Settings updated successfully"
-						}
-					}
-				} catch (e) {
-					return {
-						error: {
-							status: 200,
-							data: {
-								action: ACTION_TYPE.UPDATE_APPSETTINGS,
-								message: e.message
-							}
-						}
-					}
-				}
-			}
-
-			return { data: ["Ops, it seems you set wrong action key"] }
-		}
-
-		//get all settings
-		if (args === ACTION_TYPE.GET_APPSETTINGS) {
-			let settings = {}
-			try {
-				const docSnap = await getDoc(doc(db, DB_COLLECTION.SETTINGS, "settings"))
-				if (docSnap.exists()) settings = docSnap.data()
-				return { data: settings }
-			} catch (e) {
-				return {
-					error: {
-						status: 200,
-						data: {
-							action: ACTION_TYPE.GET_DOC,
-							message: e.message
-						}
-					}
-				}
-			}
-		}
-
-		//get all documents
-		if (args === ACTION_TYPE.GET_DOCS) {
-			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, DB_COLLECTION.DOCUMENTATION))
-				console.log("Real query")
-				querySnapshot.forEach((doc) => {
-					all.push(doc.data())
-				})
-
-				return { data: all }
-			} catch (e) {
-				return {
-					error: {
-						status: 200,
-						data: {
-							action: ACTION_TYPE.GET_DOCS,
-							message: e.message
-						}
-					}
-				}
-			}
-		}
-
-		const argsArray = args.split("/")
-
-		//get document's meta
-		if (argsArray[1] === "meta") {
-			let docItem = {}
-			try {
-				const docSnap = await getDoc(doc(db, DB_COLLECTION.DOCUMENTATION, argsArray[0]))
-				console.log("just get data from Firebase - getDoc")
-				if (docSnap.exists()) docItem = docSnap.data()
-				return { data: docItem }
-			} catch (e) {
-				return {
-					error: {
-						status: 200,
-						data: {
-							action: ACTION_TYPE.GET_DOC,
-							message: e.message
-						}
-					}
-				}
-			}
-		}
-
-		//get content of provided document @ `doc(db, "documentation", args, "content", "current")`
-		if (argsArray[1] === "content") {
-			let docItemContent = ""
-			try {
-				const docSnap = await getDoc(doc(db, DB_COLLECTION.DOCUMENTATION, argsArray[0], "content", "current"))
-				if (docSnap.exists()) docItemContent = docSnap.data()//.text
-				console.log({ docItemContent })
-				return { data: docItemContent }
-			} catch (e) {
-				return {
-					error: {
-						status: 200,
-						data: {
-							action: ACTION_TYPE.GET_CONTENT,
-							message: e.message
-						}
-					}
-				}
-			}
-		}
-	},
+	baseQuery: fireStoreBaseQuery,
+	keepUnusedDataFor: 15 * 60,//15 minutes
 	endpoints: (builder) => ({
-		/**************************************************************
-		 * DOCUMENTATION
-		 **************************************************************/
+
+		/* DOCUMENTATION */
 		getDocs: builder.query({
-			query: () => ACTION_TYPE.GET_DOCS,
+			query: () => ({ action: ACTION.GET_DOCS }),
 			providesTags: (result) => {
 				return result ?
 					[
-						...result.map(({ docId }) => ({ type: TAGS_TYPE.DOCUMENTATION, id: docId })),
-						{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }
+						...result.map(({ docId }) => ({ type: TYPE.DOCS, id: docId })),
+						{ type: TYPE.DOCS, id: "LIST" }
 					]
 					:
-					[{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }]
+					[{ type: TYPE.DOCS, id: "LIST" }]
 			},
-			transformResponse: (response) => fix_datetime_list(response),
-			keepUnusedDataFor: 15 * 60,		//15 minutes
+			transformResponse: (response) => fix_datetime_list(response)
 		}),
 
 		getDoc: builder.query({
-			query: (docId) => `${docId}/meta`,
-			providesTags: (result, error, docId) => {
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id: docId }]
-			},
-			transformResponse: (response) => fix_datetime_single(response),
-			keepUnusedDataFor: 15 * 60,
+			query: (docId) => ({ action: ACTION.GET_DOC, docId: docId }),
+			providesTags: (result, error, docId) => { return [{ type: TYPE.DOCS, id: docId }] },
+			transformResponse: (response) => fix_datetime_single(response)
 		}),
 
 		getDocContent: builder.query({
-			query: (docId) => `${docId}/content`,
-			providesTags: (result, error, docId) => [{ type: TAGS_TYPE.DOCUMENTATION, id: docId.concat("_content") }],
-			keepUnusedDataFor: 15 * 60,
+			query: (docId) => ({ action: ACTION.GET_CONTENT, docId: docId }),
+			providesTags: (result, error, docId) => [{ type: TYPE.DOCS, id: docId.concat("_content") }],
 		}),
 
-		/**
-		 * body -> (docItem, affectedItems<[...]>)
-		 */
 		addDoc: builder.mutation({
-			query: (body) => ({
-				action: ACTION_TYPE.ADD,
-				body
-			}),
+			query: (body) => ({ action: ACTION.ADD_DOC, body }), // body: {docItem, affectedItems<[...]>}
 			invalidatesTags: (result, error, body) => {
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }]
+				return [{ type: TYPE.DOCS, id: body.docItem.docId }]
 			},
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getDocs", undefined,
+					firestoreApi.util.updateQueryData(ACTION.GET_DOCS, undefined,
 						(draft) => { draft.push(body.docItem) }
 					)
 				)
@@ -595,22 +88,24 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/**
-		 * body -> (docItem, affectedItems<[...]>)
-		 */
 		updateDoc: builder.mutation({
-			query: (body) => ({ action: ACTION_TYPE.UPDATE, body }),
+			query: (body) => ({ action: ACTION.UPDATE_DOC, body }), // body: {docItem, affectedItems<[...]>}
 			invalidatesTags: (result, error, body) => {
-				console.log("invalidatesTags", [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }])
-				return [{ type: TAGS_TYPE.DOCUMENTATION, id: body.docItem.docId }]
+				console.log("invalidatesTags", [{ type: TYPE.DOCS, id: body.docItem.docId }])
+				return [{ type: TYPE.DOCS, id: body.docItem.docId }]
 			},
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getDocs", undefined,
+					firestoreApi.util.updateQueryData(ACTION.GET_DOCS, undefined,
 						(draft) => {
-							//TODO! đây chỉ là mới edit bản thân docItem, chưa check và xử lý affectedItems
+							//Update docItem
 							let obj = draft.find(e => e.docId === body.docItem.docId)
 							Object.assign(obj, body.docItem)
+							//Update affectedItems
+							body.affectedItems.forEach((affectedItem) => {
+								let obj = draft.find(e => e.docId === affectedItem.docId)
+								Object.assign(obj, affectedItem)
+							})
 						}
 					)
 				)
@@ -619,15 +114,12 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/**
-		 * body -> {docItem: object, content: { text: string } }
-		 */
 		updateDocContent: builder.mutation({
-			query: (body) => ({ action: ACTION_TYPE.UPDATE_CONTENT, body }),
-			invalidatesTags: (result, error, arg) => [{ type: TAGS_TYPE.DOCUMENTATION, id: arg.docItem.docId.concat("_content") }],
+			query: (body) => ({ action: ACTION.UPDATE_CONTENT, body }), //body: {docItem: object, content: { text: <string> } }
+			invalidatesTags: (result, error, arg) => [{ type: TYPE.DOCS, id: arg.docItem.docId.concat("_content") }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getDocContent", body.docItem.docId.concat("_content"),
+					firestoreApi.util.updateQueryData(ACTION.GET_CONTENT, body.docItem.docId.concat("_content"),
 						(draft) => { Object.assign(draft, body.content) }
 					)
 				)
@@ -637,11 +129,11 @@ export const firestoreApi = createApi({
 		}),
 
 		deleteDoc: builder.mutation({
-			query: (body) => ({ action: ACTION_TYPE.DELETE, body }),
-			invalidatesTags: [{ type: TAGS_TYPE.DOCUMENTATION, id: TAGS_TYPE.LIST }],
+			query: (body) => ({ action: ACTION.DELETE_DOC, body }),
+			invalidatesTags: [{ type: TYPE.DOCS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getDocs", undefined,
+					firestoreApi.util.updateQueryData(ACTION.GET_DOCS, undefined,
 						(draft) => draft.filter(e => e.docId !== body.docItem.docId)
 					)
 				)
@@ -650,29 +142,19 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/**************************************************************
-		 * APPLICATION SETTINGS
-		 **************************************************************/
+		/* APPLICATION SETTINGS */
 		getAppSettings: builder.query({
-			query: () => "getAppSettings",
-			providesTags: () => {
-				console.log([TAGS_TYPE.SETTINGS])
-				return [TAGS_TYPE.SETTINGS]
-			},
-			keepUnusedDataFor: 60 * 60, // 60 minutes
+			query: () => ({ action: ACTION.GET_APPSETTINGS }),
+			providesTags: [TYPE.SETTINGS],
+			keepUnusedDataFor: 60 * 60,
 		}),
-		/**
-		* body -> ({...}) <= object of settings
-		*/
+
 		updateAppSettings: builder.mutation({
-			query: (body) => ({ action: ACTION_TYPE.UPDATE_APPSETTINGS, body }),
-			invalidatesTags: () => {
-				console.log([TAGS_TYPE.SETTINGS])
-				return [TAGS_TYPE.SETTINGS]
-			},
+			query: (body) => ({ action: ACTION.UPDATE_APPSETTINGS, body }),
+			invalidatesTags: [TYPE.SETTINGS],
 			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getAppSettings", undefined,
+					firestoreApi.util.updateQueryData(ACTION.GET_APPSETTINGS, undefined,
 						(draft) => { Object.assign(draft, newSettings) }
 					)
 				)
@@ -684,38 +166,29 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/**
-		 * 
-		 */
-		getTicketSettingsDepartments: builder.query({
-			query: () => "getTicketSettingsDepartments",
+		/* TICKET SETTINGS */
+		getTicketSettingsDepartment: builder.query({
+			query: () => ({ action: ACTION.GET_TICKETS_SETTINGS_DEPARTMENT }),
 			providesTags: (result) => {
-				const t = result
+				return result
 					? [
-						...result.map(({ id }) => ({ type: TAGS_TYPE.SETTINGS, id: id })),
-						{ type: TAGS_TYPE.SETTINGS, id: TAGS_TYPE.LIST }
+						...result.map(({ id }) => ({ type: TYPE.SETTINGS, id: id })),
+						{ type: TYPE.SETTINGS, id: "LIST" }
 					]
-					: [{ type: TAGS_TYPE.SETTINGS, id: TAGS_TYPE.LIST }]
-				console.log(t)
-				return t
+					: [{ type: TYPE.SETTINGS, id: "LIST" }]
 			},
-			keepUnusedDataFor: 60 * 60, // 60 minutes
+			keepUnusedDataFor: 60 * 60,
 		}),
-		/**
-		* body -> ({...}) <= object of settings
-		*/
+
 		updateTicketSettingsDepartment: builder.mutation({
-			query: (body) => ({ action: ACTION_TYPE.UPDATE_TICKETS_SETTINGS_DEPARTMENT, body }),
-			invalidatesTags: (result, error, arg) => {
-				console.log([{ type: TAGS_TYPE.SETTINGS, id: arg.id }])
-				return [{ type: TAGS_TYPE.SETTINGS, id: arg.id }]
-			},
+			query: (body) => ({ action: ACTION.UPDATE_TICKETS_SETTINGS_DEPARTMENT, body }), //body: { ...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.SETTINGS, id: arg.id }]),
 			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData("getTicketSettingsDepartments", undefined, (draft) => {
-						Object.assign(draft, newSettings)
-						console.log("update TicketSettingsDepartments Cache")
-					})
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKETS_SETTINGS_DEPARTMENT, undefined, (draft) => {
+							Object.assign(draft, newSettings)
+						})
 				)
 				try { await queryFulfilled }
 				catch {
@@ -731,6 +204,7 @@ export const {
 	useGetDocQuery,
 	useGetDocsQuery,
 	useGetDocContentQuery,
+	//
 	useAddDocMutation,
 	useUpdateDocMutation,
 	useUpdateDocContentMutation,
@@ -739,5 +213,6 @@ export const {
 	useGetAppSettingsQuery,
 	useUpdateAppSettingsMutation,
 	//
-
+	useGetTicketSettingsDepartmentQuery,
+	useUpdateTicketSettingsDepartmentMutation,
 } = firestoreApi
