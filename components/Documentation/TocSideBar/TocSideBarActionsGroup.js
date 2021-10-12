@@ -100,8 +100,6 @@ TocSideBarActionItem.propTypes = {
 const TocSideBarActionsGroup = () => {
 	const { activeDocId } = useSelector(getDocsCenter)
 
-	const dispatch = useDispatch()
-
 	const { targetDocItem } = useGetDocsQuery(undefined, {
 		selectFromResult: ({ data }) => ({
 			targetDocItem: data?.find((post) => post.docId === activeDocId) ?? {},

@@ -8,6 +8,9 @@ export const TYPE = {
 	USERS: "Users",
 	TICKETS: "Tickets",
 	SETTINGS: "Settings",
+	DEPARTMENTS: "Departments",
+	CANNED_REPLIES: "Canned-replies",
+	LABELS: "Labels"
 }
 
 export const ACTION = {
@@ -24,7 +27,21 @@ export const ACTION = {
 	GET_APPSETTINGS: "getAppSettings",
 	UPDATE_APPSETTINGS: "updateAppSettings",
 
-	/* TICKETS SETTINGS */
-	GET_TICKETS_SETTINGS_DEPARTMENT: "getTicketSettingsDepartment",
-	UPDATE_TICKETS_SETTINGS_DEPARTMENT: "updateTicketSettingsDepartment"
+	/* DEPARTMENTS */
+	GET_DEPARTMENTS: "getDepartments",
+	ADD_DEPARTMENT: "addDepartment",
+	UPDATE_DEPARTMENT: "updateDepartment",
+	DELETE_DEPARTMENT: "deleteDepartment",
+
+	/* CANNED REPLIES */
+	GET_CANNED_REPLIES: "getCannedReplies",
+	ADD_CANNED_REPLY: "addCannedReply",
+	UPDATE_CANNED_REPLY: "updateCannedReply",
+	DELETE_CANNED_REPLY: "deleteCannedReply",
+
+	/* LABELS */
+	GET_LABELS: "getLabels",
+	ADD_LABEL: "addLabel",
+	UPDATE_LABEL: "updateLabel",
+	DELETE_LABEL: "deleteLabel",
 }

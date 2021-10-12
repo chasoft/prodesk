@@ -159,7 +159,6 @@ TextEditor.displayName = "TextEditor"
 TextEditor.propTypes = {
 	defaultValue: PropTypes.any,
 	readOnly: PropTypes.bool,
-	pullEditorData: PropTypes.func,
 	//specify storage destination for image uploading
 	storageDestination: PropTypes.oneOf([
 		STORAGE_DESTINATION.USER,

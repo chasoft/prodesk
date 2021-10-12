@@ -41,6 +41,9 @@ export const firestoreApi = createApi({
 		TYPE.USERS,
 		TYPE.TICKETS,
 		TYPE.SETTINGS,
+		TYPE.DEPARTMENTS,
+		TYPE.CANNED_REPLIES,
+		TYPE.LABELS
 	],
 	baseQuery: fireStoreBaseQuery,
 	keepUnusedDataFor: 15 * 60,//15 minutes
@@ -167,32 +170,210 @@ export const firestoreApi = createApi({
 		}),
 
 		/* TICKET SETTINGS */
-		getTicketSettingsDepartment: builder.query({
-			query: () => ({ action: ACTION.GET_TICKETS_SETTINGS_DEPARTMENT }),
+		getDepartments: builder.query({
+			query: () => ({ action: ACTION.GET_DEPARTMENTS }),
 			providesTags: (result) => {
 				return result
 					? [
-						...result.map(({ id }) => ({ type: TYPE.SETTINGS, id: id })),
-						{ type: TYPE.SETTINGS, id: "LIST" }
+						...result.map(({ did }) => ({ type: TYPE.DEPARTMENTS, id: did })),
+						{ type: TYPE.DEPARTMENTS, id: "LIST" }
 					]
-					: [{ type: TYPE.SETTINGS, id: "LIST" }]
+					: [{ type: TYPE.DEPARTMENTS, id: "LIST" }]
 			},
 			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response),
 		}),
 
-		updateTicketSettingsDepartment: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_TICKETS_SETTINGS_DEPARTMENT, body }), //body: { ...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.SETTINGS, id: arg.id }]),
-			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
+		addDepartment: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_DEPARTMENT, body }), // body: {...}>}
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.DEPARTMENTS, id: body.did }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_DEPARTMENTS, undefined,
+						(draft) => { draft.push(body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateDepartment: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_DEPARTMENT, body }), //body: {departmentItem, affectedCannedReplies}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.DEPARTMENTS, id: arg.departmentItem.did }]),
+			async onQueryStarted({ departmentItem, affectedCannedReplies }, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
-						ACTION.GET_TICKETS_SETTINGS_DEPARTMENT, undefined, (draft) => {
-							Object.assign(draft, newSettings)
+						ACTION.GET_DEPARTMENTS, undefined,
+						(draft) => {
+							let obj = draft.find(e => e.did === departmentItem.did)
+							Object.assign(obj, departmentItem)
+							//Update affectedItems
+							affectedCannedReplies.forEach((affectedItem) => {
+								let obj = draft.find(e => e.did === affectedItem.did)
+								Object.assign(obj, { department: departmentItem.department })
+							})
 						})
 				)
 				try { await queryFulfilled }
 				catch {
-					console.log("error when updating cache of TicketSettingsDepartments and undo")
+					console.log("error when updating cache of department and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		deleteDepartment: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_DEPARTMENT, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.DEPARTMENTS, id: arg.did }]),
+			async onQueryStarted({ did }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_DEPARTMENTS, undefined,
+						(draft) => draft.filter(e => e.did !== did)
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when delete cache of department and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		/* CANNED REPLIES */
+		getCannedReplies: builder.query({
+			query: () => ({ action: ACTION.GET_CANNED_REPLIES }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ crid }) => ({ type: TYPE.CANNED_REPLIES, id: crid })),
+						{ type: TYPE.CANNED_REPLIES, id: "LIST" }
+					]
+					: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response),
+		}),
+
+		addCannedReply: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_CANNED_REPLY, body }),
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.CANNED_REPLIES, id: body.crid }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_CANNED_REPLIES, undefined,
+						(draft) => { draft.push(body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateCannedReply: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_CANNED_REPLY, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CANNED_REPLIES, id: arg.crid }]),
+			async onQueryStarted(cannedReply, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_CANNED_REPLIES, undefined,
+						(draft) => {
+							let obj = draft.find(e => e.crid === cannedReply.crid)
+							Object.assign(obj, cannedReply)
+						})
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of canned-reply and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		deleteCannedReply: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_CANNED_REPLY, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CANNED_REPLIES, id: arg.crid }]),
+			async onQueryStarted({ crid }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_CANNED_REPLIES, undefined,
+						(draft) => draft.filter(e => e.crid !== crid)
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when delete cache of canned-reply and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+
+		/* LABELS */
+		getLabels: builder.query({
+			query: () => ({ action: ACTION.GET_LABELS }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ lid }) => ({ type: TYPE.LABELS, id: lid })),
+						{ type: TYPE.LABELS, id: "LIST" }
+					]
+					: [{ type: TYPE.LABELS, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response),
+		}),
+
+		addLabel: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_LABEL, body }),
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.LABELS, id: body.lid }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_LABELS, undefined,
+						(draft) => { draft.push(body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateLabel: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_LABEL, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.LABELS, id: arg.lid }]),
+			async onQueryStarted(label, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_LABELS, undefined,
+						(draft) => { Object.assign(draft, label) })
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of label and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		deleteLabel: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_LABEL, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.LABELS, id: arg.lid }]),
+			async onQueryStarted({ lid }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_LABELS, undefined,
+						(draft) => draft.filter(e => e.lid !== lid)
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when delete cache of label and undo")
 					patchResult.undo()
 				}
 			},
@@ -213,6 +394,18 @@ export const {
 	useGetAppSettingsQuery,
 	useUpdateAppSettingsMutation,
 	//
-	useGetTicketSettingsDepartmentQuery,
-	useUpdateTicketSettingsDepartmentMutation,
+	useGetDepartmentsQuery,
+	useAddDepartmentMutation,
+	useUpdateDepartmentMutation,
+	useDeleteDepartmentMutation,
+	//
+	useGetCannedRepliesQuery,
+	useAddCannedReplyMutation,
+	useUpdateCannedReplyMutation,
+	useDeleteCannedReplyMutation,
+	//
+	useGetLabelsQuery,
+	useAddLabelMutation,
+	useUpdateLabelMutation,
+	useDeleteLabelMutation,
 } = firestoreApi

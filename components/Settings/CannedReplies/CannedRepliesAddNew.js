@@ -26,9 +26,14 @@ import PropTypes from "prop-types"
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
+import { nanoid } from "nanoid"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
+import { getAuth, getTextEditor } from "../../../redux/selectors"
+import { setActiveSettingPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
+import { useAddCannedReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
@@ -40,7 +45,17 @@ import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader
  *****************************************************************/
 
 const CannedRepliesAddNew = ({ backBtnClick }) => {
-	const [textEditorData, setTextEditorData] = useState("")
+	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
+
+	const [department, setDepartment] = useState("")
+	const [description, setDescription] = useState("")
+	const { editorData } = useSelector(getTextEditor)
+
+	const { currentUser } = useSelector(getAuth)
+	const [addCannedReply] = useAddCannedReplyMutation()
+
+	const dispatch = useDispatch()
+
 	return (
 		<>
 
@@ -53,34 +68,40 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 					display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 }
 				}}
 			>
-				<FormControl variant="standard" fullWidth>
-					<InputLabel id="demo-simple-select-label">Group</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						id="demo-simple-select"
-						value={20}
-						label="Age"
-						onChange={() => { }}
-					>
-						<MenuItem value={10}>Group 1</MenuItem>
-						<MenuItem value={20}>Group 2</MenuItem>
-						<MenuItem value={30}>Group 3</MenuItem>
-						<MenuItem value={40}>Group 4</MenuItem>
-					</Select>
-				</FormControl>
+
+				{isLoadingDepartments
+					? <div>Loading...</div>
+					: <FormControl variant="standard" fullWidth>
+						<InputLabel id="demo-simple-select-label">Department</InputLabel>
+						<Select
+							id="department-select"
+							label="Department"
+							value={department}
+							onChange={(e) => { setDepartment(e.target.value) }}
+						>
+							{
+								departments.map((department) => (
+									<MenuItem key={department.did} value={department.department}>
+										{department.department}
+									</MenuItem>
+								))
+							}
+						</Select>
+					</FormControl>}
 
 				<Box sx={{ py: 2 }}>
 					<TextField
-						id="lableName" label="Canned reply description" variant="standard"
+						id="cannedReply-description"
+						label="Description"
+						variant="standard"
+						value={description}
+						onChange={(e) => { setDescription(e.target.value) }}
 						fullWidth
 					/>
 				</Box>
 
 				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
-					<TextEditor
-						defaultValue=""
-						pullEditorData={setTextEditorData}
-					/>
+					<TextEditor defaultValue="" />
 				</Box>
 
 			</SettingsContentDetails>
@@ -96,10 +117,22 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 				<Button
 					variant="contained" color="primary"
-					onClick={() => {
-						console.log("Add new canned replied:", textEditorData)
-						// Go to the group of new canned 
-						// dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+					onClick={async () => {
+						const crid = nanoid(7)
+						const newCannedReply = {
+							crid,
+							department,
+							description,
+							content: editorData,
+							createdBy: currentUser.username,
+							updatedBy: currentUser.username
+						}
+						await addCannedReply(newCannedReply)
+						// Go to the group of new canned
+						reduxBatch(() => {
+							dispatch(setActiveSettingPanel(department))
+							dispatch(setSelectedCrid(""))
+						})
 					}}
 				>
 					Add

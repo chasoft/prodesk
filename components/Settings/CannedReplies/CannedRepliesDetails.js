@@ -22,17 +22,25 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
-//PROJECT IMPORT
-import { SettingsContent, SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import TextEditor from "./../../common/TextEditor"
-
 //THIRD-PARTY
+import { find } from "lodash"
+import { useDispatch, useSelector } from "react-redux"
+
+//PROJECT IMPORT
+import { getAuth, getTextEditor } from "./../../../redux/selectors"
+import { SettingsContentActionBar, SettingsContentDetails } from "./../../Settings/SettingsPanel"
+import TextEditor from "./../../common/TextEditor"
+import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateCannedReplyMutation } from "../../../redux/slices/firestoreApi"
+import { useDeepCompareEffect } from "react-use"
+import { setEditorData } from "../../../redux/slices/textEditor"
+import { useSnackbar } from "notistack"
+
 
 //PROJECT IMPORT
 
@@ -42,76 +50,104 @@ import TextEditor from "./../../common/TextEditor"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-//TODO: Auto update data onBlur
+const CannedRepliesDetails = ({ crid }) => {
+	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
+	const { data: cannedReplies, isLoading: isLoadingCannedReplies } = useGetCannedRepliesQuery(undefined)
+	const selectedCannedReply = find(cannedReplies, { crid })
 
-const CannedRepliesDetails = ({ data }) => {
-	const [readOnly, setEditorReadOnly] = useState(true)
-	const [textEditorData, setTextEditorData] = useState("")
+	const { currentUser } = useSelector(getAuth)
+	const { editorData } = useSelector(getTextEditor)
+
+	const [content, setContent] = useState("")
+	const [department, setDepartment] = useState("")
+	const [description, setDescription] = useState("")
+
+	const [updateCannedReply] = useUpdateCannedReplyMutation()
+
+	const isModified = (selectedCannedReply.content !== editorData
+		|| selectedCannedReply.department !== department
+		|| selectedCannedReply.description !== description)
+
+	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
+
+	useDeepCompareEffect(() => {
+		dispatch(setEditorData(selectedCannedReply.content))
+		setContent(selectedCannedReply.content)
+		setDepartment(selectedCannedReply.department)
+		setDescription(selectedCannedReply.description)
+	}, [selectedCannedReply])
+
 	return (
 		<>
 			<SettingsContentDetails
 				sx={{ display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 } }}
 			>
 
-				<FormControl variant="standard" fullWidth disabled={readOnly}>
-					<InputLabel id="demo-simple-select-label">Group</InputLabel>
-					<Select
-						labelId="demo-simple-select-label"
-						id="demo-simple-select"
-						value={20}
-						label="Age"
-						onChange={() => { }}
-					>
-						<MenuItem value={10}>Group 1</MenuItem>
-						<MenuItem value={20}>Group 2</MenuItem>
-						<MenuItem value={30}>Group 3</MenuItem>
-						<MenuItem value={40}>Group 4</MenuItem>
-					</Select>
-				</FormControl>
+				{isLoadingDepartments
+					? <div>Loading...</div>
+					: <FormControl variant="standard" fullWidth>
+						<InputLabel id="demo-simple-select-label">Department</InputLabel>
+						<Select
+							id="department-select"
+							label="Department"
+							value={department}
+							onChange={(e) => { setDepartment(e.target.value) }}
+						>
+							{
+								departments.map((department) => (
+									<MenuItem key={department.did} value={department.department}>
+										{department.department}
+									</MenuItem>
+								))
+							}
+						</Select>
+					</FormControl>}
 
-				<Box sx={{ py: 2 }}>
-					<TextField
-						id="lableName" label="Canned reply description" variant="standard"
-						defaultValue={data?.description}
-						fullWidth
-						disabled={readOnly}
-					/>
-				</Box>
+				{isLoadingCannedReplies
+					? <div>Loading...</div>
+					: <>
+						<Box sx={{ py: 2 }}>
+							<TextField
+								id="cannedReply-description"
+								label="Description"
+								variant="standard"
+								value={description}
+								onChange={(e) => { setDescription(e.target.value) }}
+								fullWidth
+							/>
+						</Box>
 
-				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
-					<TextEditor
-						defaultValue={data.content}
-						pullEditorData={setTextEditorData}
-						readOnly={readOnly}
-					/>
-				</Box>
+						<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
+							<TextEditor
+								value={content}
+							/>
+						</Box>
+					</>}
 
 			</SettingsContentDetails>
 
 			<SettingsContentActionBar>
 
-				{(readOnly === true) &&
-					<Button
-						variant="contained" color="secondary"
-						onClick={() => {
-							setEditorReadOnly(false)
-							console.log("Change to Editable mode")
-						}}
-					>
-						Edit
-					</Button>}
-
-				{(readOnly === false) &&
-					<Button
-						variant="contained" color="primary"
-						onClick={() => {
-							console.log("Update changes, here are the data from Editor:")
-							console.log({ textEditorData })
-						}}
-					>
-						Save changes
-					</Button>
-				}
+				<Button
+					variant="contained" color="primary"
+					disabled={!isModified}
+					onClick={async () => {
+						const updatedContent = {
+							crid: selectedCannedReply.crid,
+							department: department,
+							description: description,
+							content: editorData,
+							updatedBy: currentUser.username
+						}
+						// console.log("updatedContent", updatedContent)
+						const res = await updateCannedReply(updatedContent)
+						// console.log(res.data.message)
+						enqueueSnackbar(res?.data.message ?? res.error.data.message, res?.data.message ? "success" : "error")
+					}}
+				>
+					Save changes
+				</Button>
 
 			</SettingsContentActionBar>
 		</>
@@ -119,7 +155,7 @@ const CannedRepliesDetails = ({ data }) => {
 }
 
 CannedRepliesDetails.propTypes = {
-	data: PropTypes.object,
+	crid: PropTypes.string,
 }
 
 export default CannedRepliesDetails

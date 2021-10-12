@@ -35,6 +35,11 @@ import { Alert, Box, ButtonBase, Container, IconButton, Paper, Tooltip, Typograp
 //PROJECT IMPORT
 import LaunchIcon from "@mui/icons-material/Launch"
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
+import DeleteIcon from "@mui/icons-material/Delete"
+import { useDeleteCannedReplyMutation } from "../../../redux/slices/firestoreApi"
+import { useDispatch, useSelector } from "react-redux"
+import { getUiSettings } from "../../../redux/selectors"
+import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -153,6 +158,7 @@ const ContentHeader = ({ children }) => (
 	<Box sx={{
 		display: "flex",
 		alignItems: "center",
+		justifyContent: "space-between",
 		px: 3,
 		py: { xs: 1, sm: 2 },
 		borderTopLeftRadius: 8,
@@ -164,6 +170,10 @@ const ContentHeader = ({ children }) => (
 export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, children }) => {
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
+
+	const { selectedCrid } = useSelector(getUiSettings)
+	const [deleteCannedReply] = useDeleteCannedReplyMutation()
+	const dispatch = useDispatch()
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
@@ -189,6 +199,19 @@ export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () =
 	return (
 		<ContentHeader>
 			<Typography variant="button">{children}</Typography>
+
+
+			{selectedCrid
+				&& <Tooltip title="Delete current canned-reply" placement="left">
+					<IconButton onClick={async () => {
+						dispatch(setSelectedCrid(""))
+						await deleteCannedReply({ crid: selectedCrid })
+					}}>
+						<DeleteIcon fontSize="small" color="warning" />
+					</IconButton>
+				</Tooltip>}
+
+
 		</ContentHeader>
 	)
 }
@@ -279,7 +302,8 @@ export const SettingsContentActionBar = ({ children }) => (
 		justifyContent: "flex-end",
 		px: 3,
 		py: { xs: 1, sm: 2 },
-		backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
+		backgroundColor: "#FAFAFA",
+		// backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
 		"> *:last-child": {
 			ml: 2,
 			minWidth: 100

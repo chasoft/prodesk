@@ -22,82 +22,21 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import PropTypes from "prop-types"
-import React, { useState } from "react"
-
-// MATERIAL-UI
-import { Typography } from "@mui/material"
-
-//PROJECT IMPORT
-import { useDispatch, useSelector } from "react-redux"
-import CannedRepliesList from "./CannedRepliesList"
-import CannedRepliesDetails from "./CannedRepliesDetails"
-import { getUiSettings } from "./../../../redux/selectors"
-import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useGetCannedRepliesQuery } from "../../../redux/slices/firestoreApi"
-import { setSelectedCrid } from "../../../redux/slices/uiSettings"
+import { useEffect } from "react"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-
-//ASSETS
+import { firestoreApi } from "../redux/slices/firestoreApi"
+import { useDispatch } from "react-redux"
 
 /*****************************************************************
- * EXPORT DEFAULT                                                *
+ * INIT                                                          *
  *****************************************************************/
 
-const CannedRepliesGroup = ({ backBtnClick }) => {
+export function usePrefetchImmediately(endpoint, arg, options = {}) {
 	const dispatch = useDispatch()
-	const { selectedCrid, activeSettingPanel } = useSelector(getUiSettings)
-	const { cannedReplies } = useGetCannedRepliesQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			cannedReplies: data?.filter((cannedReply) => cannedReply.department === activeSettingPanel) ?? [],
-		})
-	})
-
-	if (cannedReplies.length === 0) {
-		return (
-			<>
-				<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
-					{activeSettingPanel}
-				</SettingsContentHeader>
-				<SettingsContentDetails>
-					<Typography>
-						There are no canned replies created for this group
-					</Typography>
-				</SettingsContentDetails>
-			</>
-		)
-	}
-
-	return (
-		<>
-			<SettingsContentHeader
-				backBtnOnClick={() => {
-					/* Go to SettingsList OR CannedRepliesGroup */
-					if (selectedCrid === "")
-						backBtnClick(false)
-					else
-						dispatch(setSelectedCrid(""))
-				}}
-			>
-				{activeSettingPanel}
-			</SettingsContentHeader>
-
-			{(selectedCrid === "")
-				&& <CannedRepliesList cannedReplies={cannedReplies} />}
-
-			{(selectedCrid !== "")
-				&& <CannedRepliesDetails crid={selectedCrid} />}
-		</ >
-	)
+	useEffect(() => {
+		dispatch(firestoreApi.util.prefetch(endpoint, arg, options))
+	}, []) //No dependency here, for we want to execute only once
 }
-
-CannedRepliesGroup.propTypes = {
-	groupInfo: PropTypes.object,
-	cannedReplies: PropTypes.array,
-	backBtnClick: PropTypes.func,
-}
-
-export default CannedRepliesGroup

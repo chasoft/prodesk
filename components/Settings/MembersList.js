@@ -46,7 +46,7 @@ import AddIcon from "@mui/icons-material/Add"
 
 const MembersList = ({ dataSource, addMemberCallback }) => {
 	return <>
-		<Typography variant="caption">There are {dataSource.length} members</Typography>
+		<Typography variant="caption">There are {dataSource?.length} members</Typography>
 		<Box sx={{
 			display: "flex",
 			justifyContent: "space-between",
@@ -66,7 +66,7 @@ const MembersList = ({ dataSource, addMemberCallback }) => {
 				}
 			}}>
 				{
-					dataSource.map((item) => {
+					dataSource?.map((item) => {
 						return (
 							<Tooltip key={item.username} title={item.displayName} placement="bottom">
 								<Avatar
@@ -77,6 +77,8 @@ const MembersList = ({ dataSource, addMemberCallback }) => {
 						)
 					})
 				}
+
+				{/* TODO!: Implement add members feature */}
 
 				<AddMemberList
 					department=""

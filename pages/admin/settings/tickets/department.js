@@ -22,18 +22,20 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useMemo } from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { some } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../../redux/selectors"
 import useUiSettings from "./../../../../helpers/useUiSettings"
 import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
+import { useGetDepartmentsQuery } from "../../../../redux/slices/firestoreApi"
 import DepartmentsAddNew from "./../../../../components/Settings/Tickets/DepartmentsAddNew"
 import DepartmentsDetails from "./../../../../components/Settings/Tickets/DepartmentsDetails"
 import DepartmentsOverview from "./../../../../components/Settings/Tickets/DepartmentsOverview"
@@ -49,57 +51,57 @@ import BusinessIcon from "@mui/icons-material/Business"
  * DUMMY DATA                                                    *
  *****************************************************************/
 
-const DUMMY_DEPARTMENTS = [
-	{
-		id: 1,
-		department: "Sales",
-		description: "Sales Department",
-		availableForAll: false,
-		isPublic: false,
-		members: [
-			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
-			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
-			{ username: "phu", displayName: "Phu", photoURL: "/img/default-avatar.png" }
-		]
-	},
-	{
-		id: 2,
-		department: "Accounts",
-		description: "Accounts Department",
-		availableForAll: true,
-		isPublic: true,
-		members: [
-			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
-		]
-	},
-	{
-		id: 3,
-		department: "Complain",
-		description: "Take care our users",
-		availableForAll: false,
-		isPublic: true,
-		members: [
+// const DUMMY_DEPARTMENTS = [
+// 	{
+// 		id: 1,
+// 		department: "Sales",
+// 		description: "Sales Department",
+// 		availableForAll: false,
+// 		isPublic: false,
+// 		members: [
+// 			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
+// 			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/img/default-avatar.png" },
+// 			{ username: "phu", displayName: "Phu", photoURL: "/img/default-avatar.png" }
+// 		]
+// 	},
+// 	{
+// 		id: 2,
+// 		department: "Accounts",
+// 		description: "Accounts Department",
+// 		availableForAll: true,
+// 		isPublic: true,
+// 		members: [
+// 			{ username: "brian", displayName: "Brian", photoURL: "/img/default-avatar.png" },
+// 		]
+// 	},
+// 	{
+// 		id: 3,
+// 		department: "Complain",
+// 		description: "Take care our users",
+// 		availableForAll: false,
+// 		isPublic: true,
+// 		members: [
 
-		]
-	},
-	{
-		id: 4,
-		department: "Technical",
-		description: "Let our core value bright",
-		availableForAll: true,
-		isPublic: false,
-		head: "caoanh",
-		members: [
-			{ username: "brian", displayName: "Brian", photoURL: "/default-avatar/1.png" },
-			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/default-avatar/2.png" },
-			{ username: "phu", displayName: "Phu", photoURL: "/default-avatar/3.png" },
-			{ username: "tai", displayName: "Tai", photoURL: "/default-avatar/4.png" },
-			{ username: "whoami", displayName: "WhoAmI", photoURL: "/default-avatar/5.png" }
-		]
-	},
-]
+// 		]
+// 	},
+// 	{
+// 		id: 4,
+// 		department: "Technical",
+// 		description: "Let our core value bright",
+// 		availableForAll: true,
+// 		isPublic: false,
+// 		head: "caoanh",
+// 		members: [
+// 			{ username: "brian", displayName: "Brian", photoURL: "/default-avatar/1.png" },
+// 			{ username: "caoanh", displayName: "Cao Anh", photoURL: "/default-avatar/2.png" },
+// 			{ username: "phu", displayName: "Phu", photoURL: "/default-avatar/3.png" },
+// 			{ username: "tai", displayName: "Tai", photoURL: "/default-avatar/4.png" },
+// 			{ username: "whoami", displayName: "WhoAmI", photoURL: "/default-avatar/5.png" }
+// 		]
+// 	},
+// ]
 
-const getDepartmentById = (id) => DUMMY_DEPARTMENTS.find(item => item.id === id)
+// const getDepartmentById = (id) => DUMMY_DEPARTMENTS.find(item => item.id === id)
 
 /*****************************************************************
  * INIT                                                          *
@@ -129,12 +131,12 @@ function TicketSettingsDepartment() {
 	const [showContent, setShowContent] = useState(false)
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
-	//Whether a group is selected, then show DepartmetsDetails
-	const aGroupSelected = useMemo(() => {
-		return Object.entries(DEPARTMENT_PAGES).map(item => item[1]).indexOf(activeSettingPanel) === -1
-	}, [activeSettingPanel])
+	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
 
-	console.log("why? TicketSettingsDepartment")
+	const hasSelectedDepartment = isLoading ? false : some(departments, { department: activeSettingPanel })
+
+	console.log("hasSelectedDepartment", hasSelectedDepartment)
+	console.log("activeSettingPanel", activeSettingPanel)
 
 	return (
 		<>
@@ -168,43 +170,38 @@ function TicketSettingsDepartment() {
 
 					<ListTitle>Available departments</ListTitle>
 
-					{DUMMY_DEPARTMENTS.map((item) => (
-						<ListItem
-							key={item.id}
-							selected={activeSettingPanel === item.id}
-							icon={<BusinessIcon fontSize="small" />}
-							onClick={() => {
-								dispatch(setActiveSettingPanel(item.id))
-								setShowContent(true)
-							}}
-						>
-							{item.department}
-						</ListItem>
-					))}
+					{
+						isLoading
+							? <div>Loading</div>
+							: departments.map((item) => (
+								<ListItem
+									key={item.did}
+									selected={activeSettingPanel === item.department}
+									icon={<BusinessIcon fontSize="small" />}
+									onClick={() => {
+										dispatch(setActiveSettingPanel(item.department))
+										setShowContent(true)
+									}}
+								>
+									{item.department}
+								</ListItem>
+							))
+					}
 
 				</SettingsList>
 
 				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
 
-					{(activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
-						&& <DepartmentsOverview
-							dataDepartments={DUMMY_DEPARTMENTS}
-							callback={(id) => dispatch(setActiveSettingPanel(id))}
-							backBtnClick={setShowContent}
-						/>}
+					{isLoading
+						? <div>Loading</div>
+						: (activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
+						&& <DepartmentsOverview backBtnClick={setShowContent} />}
 
 					{(activeSettingPanel === DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)
-						&& <DepartmentsAddNew
-							onClick={() => { console.log("Add new department") }}
-							backBtnClick={setShowContent}
-						/>}
+						&& <DepartmentsAddNew backBtnClick={setShowContent} />}
 
-
-					{aGroupSelected
-						&& <DepartmentsDetails
-							dataDepartment={getDepartmentById(activeSettingPanel)}
-							backBtnClick={setShowContent}
-						/>}
+					{hasSelectedDepartment
+						&& <DepartmentsDetails backBtnClick={setShowContent} />}
 
 				</SettingsContent>
 

@@ -36,15 +36,15 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 
 //ASSETS
 import FlashOnIcon from "@mui/icons-material/FlashOn"
+import { useDispatch } from "react-redux"
+import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-//TODO: Auto update data onBlur
-
-const CannedRepliesList = ({ data, callback }) => {
-	console.log({ data })
+const CannedRepliesList = ({ cannedReplies }) => {
+	const dispatch = useDispatch()
 	return (
 		<List sx={{
 			width: "100%",
@@ -52,27 +52,29 @@ const CannedRepliesList = ({ data, callback }) => {
 			borderBottomLeftRadius: 8,
 			borderBottomRightRadius: 8,
 		}}>
-			{
-				data.map((item) => (
+			{cannedReplies?.map((item) => (
 
-					<ListItemButton key={item.id} onClick={() => callback(item.id)}>
-						<ListItemIcon>
-							<FlashOnIcon sx={{ flexGrow: 1 }} />
-						</ListItemIcon>
-						<ListItemText
-							primary={item.description}
-							secondary="Something to descripte here"
-						/>
-					</ListItemButton>
+				<ListItemButton
+					key={item.crid}
+					onClick={() => dispatch(setSelectedCrid(item.crid))}
+				>
+					<ListItemIcon>
+						<FlashOnIcon sx={{ flexGrow: 1 }} />
+					</ListItemIcon>
+					<ListItemText
+						primary={item.description}
+						secondary="Something to descripte here"
+					/>
+				</ListItemButton>
 
-				))
+			))
 			}
 		</List>
 	)
 }
 
 CannedRepliesList.propTypes = {
-	data: PropTypes.array,
+	cannedReplies: PropTypes.array,
 	callback: PropTypes.func,
 }
 

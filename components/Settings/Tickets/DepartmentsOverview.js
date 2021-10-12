@@ -23,13 +23,17 @@
 import React from "react"
 import PropTypes from "prop-types"
 
+//MATERIAL-UI
 import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import AvatarList from "./../../common/AvatarList"
-import { SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
+import AvatarList from "./../../common/AvatarList"
+import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
+import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
+import { SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
 import PublicIcon from "@mui/icons-material/Public"
@@ -43,8 +47,22 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsOverview = ({ dataDepartments, callback, backBtnClick }) => {
-	if (dataDepartments.length === 0) {
+const DepartmentsOverview = ({ backBtnClick }) => {
+
+	const dispatch = useDispatch()
+	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+
+	if (isLoading) {
+		return (
+			<div style={{ display: "flex", alignItems: "center" }} >
+				<Typography>
+					Loading...
+				</Typography>
+			</div>
+		)
+	}
+
+	if (departments.length === 0) {
 		return (
 			<div style={{ display: "flex", alignItems: "center" }} >
 				<Typography>
@@ -71,10 +89,10 @@ const DepartmentsOverview = ({ dataDepartments, callback, backBtnClick }) => {
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 
-			{dataDepartments.map((item) => (
+			{departments.map((item) => (
 				<Box
-					key={item.id}
-					onClick={() => callback(item.id)}
+					key={item.did}
+					onClick={() => dispatch(setActiveSettingPanel(item.department))}
 					sx={{
 						display: "flex",
 						p: 3,
@@ -143,8 +161,6 @@ const DepartmentsOverview = ({ dataDepartments, callback, backBtnClick }) => {
 }
 
 DepartmentsOverview.propTypes = {
-	dataDepartments: PropTypes.array,
-	callback: PropTypes.func,
 	backBtnClick: PropTypes.func,
 }
 

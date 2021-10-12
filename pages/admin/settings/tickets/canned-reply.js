@@ -22,23 +22,24 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useMemo } from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { some, filter } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
+import { some } from "lodash"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../../redux/selectors"
 import useUiSettings from "./../../../../helpers/useUiSettings"
-import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
-import CannedRepliesAddNew from "./../../../../components/Settings/CannedReplies/CannedRepliesAddNew"
+import { useGetDepartmentsQuery } from "../../../../redux/slices/firestoreApi"
+import { setActiveSettingPanel, setSelectedCrid } from "./../../../../redux/slices/uiSettings"
 import CannedRepliesGroup from "./../../../../components/Settings/CannedReplies/CannedRepliesGroup"
-import CannedRepliesOverview from "./../../../../components/Settings/CannedReplies/CannedRepliesOverview"
+import CannedRepliesAddNew from "./../../../../components/Settings/CannedReplies/CannedRepliesAddNew"
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
+import CannedRepliesOverview from "./../../../../components/Settings/CannedReplies/CannedRepliesOverview"
 import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
 
 //ASSETS
@@ -50,187 +51,115 @@ import InfoIcon from "@mui/icons-material/Info"
  * DUMMY DATA                                                    *
  *****************************************************************/
 
-const DUMMY_DEPARTMENTS = [
-	{
-		id: "General",
-		department: "General",
-		description: "Balconey",
-		availableForAll: false,
-		isPublic: false,
-	},
-	{
-		id: "df31",
-		department: "Sales",
-		description: "Sales Department",
-		availableForAll: false,
-		isPublic: false,
-	},
-	{
-		id: "4564e",
-		department: "Accounts",
-		description: "Accounts Department",
-		availableForAll: true,
-		isPublic: true,
-	},
-	{
-		id: "324ed",
-		department: "Complain",
-		description: "Take care our users",
-		availableForAll: false,
-		isPublic: true,
-	},
-	{
-		id: "3243s",
-		department: "Technical",
-		description: "Let our core value bright",
-		availableForAll: true,
-		isPublic: false,
-	},
-]
+// const CANNED_REPLIES = [
+// 	{
+// 		id: 1,
+// 		departmentId: "df31",
+// 		departmentName: "Sales",
+// 		description: "dfds",
+// 		counter: 5, // number of times which this cannedreply used
+// 		content: "###hello3",
+// 		createdAt: "2021-09-10",
+// 		updatedAt: "2021-09-12",
+// 		createdBy: { username: "brian" },
+// 		updatedBy: { username: "caoanh" },
+// 		history: [
+// 			{
+// 				description: "dfds",
+// 				content: "###hello1",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 			{
+// 				description: "dfds",
+// 				content: "###hello2",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 		]
+// 	},
+// 	{
+// 		id: 2,
+// 		departmentId: "4564e",
+// 		departmentName: "Accounts",
+// 		description: "dfds sds sd sd s",
+// 		counter: 1,
+// 		content: `# how are you today?dfddfdf
 
-const CANNED_REPLIES = [
-	{
-		id: 1,
-		departmentId: "df31",
-		departmentName: "Sales",
-		description: "dfds",
-		counter: 5, // number of times which this cannedreply used
-		content: "###hello3",
-		createdAt: "2021-09-10",
-		updatedAt: "2021-09-12",
-		createdBy: { username: "brian" },
-		updatedBy: { username: "caoanh" },
-		history: [
-			{
-				description: "dfds",
-				content: "###hello1",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-			{
-				description: "dfds",
-				content: "###hello2",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-		]
-	},
-	{
-		id: 2,
-		departmentId: "4564e",
-		departmentName: "Accounts",
-		description: "dfds sds sd sd s",
-		counter: 1,
-		content: `# how are you today?dfddfdf
+// - [ ] this is an item
+// - [ ] next item
+// - [ ] third item
 
-- [ ] this is an item
-- [ ] next item
-- [ ] third item
-
-\
-`,
-		createdAt: "2021-09-10",
-		updatedAt: "2021-09-12",
-		createdBy: { username: "brian" },
-		updatedBy: { username: "caoanh" },
-		history: [
-			{
-				description: "dfds",
-				content: "### World 1",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-			{
-				description: "dfds",
-				content: "### World 2",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-		]
-	},
-	{
-		id: 3,
-		departmentId: "3243s",
-		departmentName: "Technical",
-		description: "dfds sds sd sd s",
-		counter: 1,
-		content: "### World 3",
-		createdAt: "2021-09-10",
-		updatedAt: "2021-09-12",
-		createdBy: { username: "brian" },
-		updatedBy: { username: "demo" },
-		history: [
-			{
-				description: "dfds",
-				content: "### World 1",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-			{
-				description: "dfds",
-				content: "### World 2",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-		]
-	},
-	{
-		id: 4,
-		counter: 1,
-		departmentId: "General",
-		description: "dfds heneral sds sd sd s",
-		content: "### Wor General Group hehe ld 3",
-		createdAt: "2021-09-10",
-		updatedAt: "2021-09-12",
-		createdBy: { username: "brian" },
-		updatedBy: { username: "caoanh" },
-		history: [
-			{
-				description: "dfds",
-				content: "### World 1",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-			{
-				description: "dfds",
-				content: "### World 2",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-		]
-	},
-	{
-		id: 5,
-		counter: 1,
-		departmentId: "General",
-		description: "dfds heneral sds sd sd s",
-		content: "### Wor General Group hehe ld 3",
-		createdAt: "2021-09-10",
-		updatedAt: "2021-09-12",
-		createdBy: { username: "brian" },
-		updatedBy: { username: "caoanh" },
-		history: [
-			{
-				description: "dfds",
-				content: "### World 1",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-			{
-				description: "dfds",
-				content: "### World 2",
-				updatedAt: "2021-09-10",
-				updatedBy: { username: "caoanh" },
-			},
-		]
-	}
-]
-
-/* this is for DEMO only, working version will query a list of cannedreply based on provided departmentId */
-const getCannedRepliesByDepartmentId = (id) => filter(CANNED_REPLIES, { departmentId: id })
-
-const getGroupInfoByDepartmentId = (id) => DUMMY_DEPARTMENTS.find(item => item.id === id)
-
+// \
+// `,
+// 		createdAt: "2021-09-10",
+// 		updatedAt: "2021-09-12",
+// 		createdBy: { username: "brian" },
+// 		updatedBy: { username: "caoanh" },
+// 		history: [
+// 			{
+// 				description: "dfds",
+// 				content: "### World 1",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 			{
+// 				description: "dfds",
+// 				content: "### World 2",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 		]
+// 	},
+// 	{
+// 		id: 3,
+// 		departmentId: "3243s",
+// 		departmentName: "Technical",
+// 		description: "dfds sds sd sd s",
+// 		counter: 1,
+// 		content: "### World 3",
+// 		createdAt: "2021-09-10",
+// 		updatedAt: "2021-09-12",
+// 		createdBy: { username: "brian" },
+// 		updatedBy: { username: "demo" },
+// 		history: [
+// 			{
+// 				description: "dfds",
+// 				content: "### World 1",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 			{
+// 				description: "dfds",
+// 				content: "### World 2",
+// 				updatedAt: "2021-09-10",
+// 				updatedBy: { username: "caoanh" },
+// 			},
+// 		]
+// 	},
+// 	{
+// 		id: 4,
+// 		counter: 1,
+// 		departmentId: "General",
+// 		description: "dfds heneral sds sd sd s",
+// 		content: "### Wor General Group hehe ld 3",
+// 		createdAt: "2021-09-10",
+// 		updatedAt: "2021-09-12",
+// 		createdBy: { username: "brian" },
+// 		updatedBy: { username: "caoanh" },
+// 	},
+// 	{
+// 		id: 5,
+// 		counter: 1,
+// 		departmentId: "General",
+// 		description: "dfds heneral sds sd sd s",
+// 		content: "### Wor General Group hehe ld 3",
+// 		createdAt: "2021-09-10",
+// 		updatedAt: "2021-09-12",
+// 		createdBy: { username: "brian" },
+// 		updatedBy: { username: "caoanh" },
+// 	}
+// ]
 
 /*****************************************************************
  * INIT                                                          *
@@ -257,14 +186,17 @@ function TicketSettingsCannedReply() {
 		}
 	})
 
+	// usePrefetchImmediately("getCannedReplies", undefined)
+
 	const dispatch = useDispatch()
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+	const { activeSettingPanel } = useSelector(getUiSettings)	// used to keep selected Group (aka department)
 	const [showContent, setShowContent] = useState(false)
 
-	//Whether a group is selected, then show CannedReplyDetails
-	const aGroupSelected = useMemo(() =>
-		some(CANNED_REPLY_PAGES, (i) => i === activeSettingPanel), [activeSettingPanel]
-	)
+	const hasSelectedGroup =
+		(isLoading)
+			? false
+			: some(departments, { department: activeSettingPanel })
 
 	console.log("why? TicketSettingsCannedReply")
 
@@ -300,20 +232,25 @@ function TicketSettingsCannedReply() {
 
 					<ListTitle>Available groups</ListTitle>
 
-					{DUMMY_DEPARTMENTS.map((item) => (
-						<ListItem
-							key={item.id}
-							selected={activeSettingPanel === item.id}
-							icon={<QuickreplyIcon fontSize="small" />}
-							onClick={() => {
-								dispatch(setActiveSettingPanel(item.id))
-								setShowContent(true)
-							}}
-						>
-							{item.department}
-							<Typography variant="caption" sx={{ display: "block", mt: -1 }}>{item.description}</Typography>
-						</ListItem>
-					))}
+					{isLoading
+						? <div>Loading...</div>
+						: departments.map((item) => (
+							<ListItem
+								key={item.did}
+								selected={activeSettingPanel === item.department}
+								icon={<QuickreplyIcon fontSize="small" />}
+								onClick={() => {
+									reduxBatch(() => {
+										dispatch(setActiveSettingPanel(item.department))
+										dispatch(setSelectedCrid(""))
+									})
+									setShowContent(true)
+								}}
+							>
+								{item.department}
+								<Typography variant="caption" sx={{ display: "block", mt: -1 }}>{item.description}</Typography>
+							</ListItem>
+						))}
 
 				</SettingsList>
 
@@ -325,12 +262,8 @@ function TicketSettingsCannedReply() {
 					{(activeSettingPanel === CANNED_REPLY_PAGES.ADD_NEW_CANNED_REPLY)
 						&& <CannedRepliesAddNew backBtnClick={setShowContent} />}
 
-					{(activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || aGroupSelected)
-						&& <CannedRepliesGroup
-							groupInfo={getGroupInfoByDepartmentId(activeSettingPanel)}
-							cannedReplies={getCannedRepliesByDepartmentId(activeSettingPanel)}
-							backBtnClick={setShowContent}
-						/>}
+					{(activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || hasSelectedGroup)
+						&& <CannedRepliesGroup backBtnClick={setShowContent} />}
 
 				</SettingsContent>
 

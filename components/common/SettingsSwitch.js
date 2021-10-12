@@ -50,7 +50,7 @@ const SettingsSwitch = ({ title, state, setState, stateDescription, description 
 				control={
 					<Switch
 						checked={state}
-						onChange={() => setState(p => !p)}
+						onChange={() => setState()}
 						name="checkedB"
 						color="primary"
 					/>
