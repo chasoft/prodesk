@@ -35,10 +35,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "./../../../../redux/selectors"
 import useUiSettings from "./../../../../helpers/useUiSettings"
 import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
-import { useGetDepartmentsQuery } from "../../../../redux/slices/firestoreApi"
-import DepartmentsAddNew from "./../../../../components/Settings/Tickets/DepartmentsAddNew"
-import DepartmentsDetails from "./../../../../components/Settings/Tickets/DepartmentsDetails"
-import DepartmentsOverview from "./../../../../components/Settings/Tickets/DepartmentsOverview"
+import CategoriesAddNew from "./../../../../components/Settings/Tickets/CategoriesAddNew"
+import CategoriesDetails from "./../../../../components/Settings/Tickets/CategoriesDetails"
+import CategoriesOverview from "./../../../../components/Settings/Tickets/CategoriesOverview"
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
 import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
 
@@ -46,25 +45,33 @@ import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader
 import AddIcon from "@mui/icons-material/Add"
 import InfoIcon from "@mui/icons-material/Info"
 import BusinessIcon from "@mui/icons-material/Business"
+import useTicketCategories from "../../../../helpers/useTicketCategories"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const DEPARTMENT_PAGES = {
-	OVERVIEW: "Departments overview",
-	ADD_NEW_DEPARTMENT: "Add new ticket department"
+export const CATEGORY_PAGES = {
+	OVERVIEW: "Category overview",
+	ADD_NEW_CATEGORY: "Add new ticket category"
 }
+
+// {
+// 	catId: string
+// 	name: string
+// 	default: boolean
+// 	subcategories: [{ name: string, default: boolean }]
+// }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketSettingsDepartment() {
+function TicketSettingsCategory() {
 
 	useUiSettings({
-		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
-		activePanel: DEPARTMENT_PAGES.OVERVIEW,
+		activeTab: TICKET_SETTINGS_NAMES.CATEGORY,
+		activePanel: CATEGORY_PAGES.OVERVIEW,
 		background: {
 			height: "132px",
 			backgroundImage: ""
@@ -75,21 +82,18 @@ function TicketSettingsDepartment() {
 	const [showContent, setShowContent] = useState(false)
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+	const { data: categories, isLoading } = useTicketCategories()
 
-	const hasSelectedDepartment = isLoading ? false : some(departments, { department: activeSettingPanel })
-
-	console.log("hasSelectedDepartment", hasSelectedDepartment)
-	console.log("activeSettingPanel", activeSettingPanel)
+	const hasSelectedCategory = isLoading ? false : some(categories, { name: activeSettingPanel })
 
 	return (
 		<>
 			<SettingsHeader>
-				<Typography variant="h2" style={{ margin: 0 }}>Departments</Typography>
+				<Typography variant="h2" style={{ margin: 0 }}>Categories</Typography>
 				<Button
 					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
 					onClick={() => {
-						dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT))
+						dispatch(setActiveSettingPanel(CATEGORY_PAGES.ADD_NEW_CATEGORY))
 						setShowContent(true)
 					}}
 				>
@@ -109,31 +113,31 @@ function TicketSettingsDepartment() {
 					}}
 				>
 					<ListItem
-						selected={activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW}
+						selected={activeSettingPanel === CATEGORY_PAGES.OVERVIEW}
 						icon={<InfoIcon fontSize="small" />}
 						onClick={() => {
-							dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+							dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
 							setShowContent(true)
 						}}
 					>
 						Overview
 					</ListItem>
 
-					<ListTitle>{(departments?.length > 0) ? "Available departments" : "No available department"}</ListTitle>
+					<ListTitle>{(categories?.length > 0) ? "Available categories" : "No available category"}</ListTitle>
 
 					{isLoading
 						? <div>Loading</div>
-						: departments.map((item) => (
+						: categories.map((category) => (
 							<ListItem
-								key={item.did}
-								selected={activeSettingPanel === item.department}
+								key={category.catId}
+								selected={activeSettingPanel === category.name}
 								icon={<BusinessIcon fontSize="small" />}
 								onClick={() => {
-									dispatch(setActiveSettingPanel(item.department))
+									dispatch(setActiveSettingPanel(category.name))
 									setShowContent(true)
 								}}
 							>
-								{item.department}
+								{category.name}
 							</ListItem>
 						))}
 
@@ -143,14 +147,14 @@ function TicketSettingsDepartment() {
 
 					{isLoading
 						? <div>Loading</div>
-						: (activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
-						&& <DepartmentsOverview backBtnClick={setShowContent} />}
+						: (activeSettingPanel === CATEGORY_PAGES.OVERVIEW)
+						&& <CategoriesOverview backBtnClick={setShowContent} />}
 
-					{(activeSettingPanel === DEPARTMENT_PAGES.ADD_NEW_DEPARTMENT)
-						&& <DepartmentsAddNew backBtnClick={setShowContent} />}
+					{(activeSettingPanel === CATEGORY_PAGES.ADD_NEW_CATEGORY)
+						&& <CategoriesAddNew backBtnClick={setShowContent} />}
 
-					{hasSelectedDepartment
-						&& <DepartmentsDetails backBtnClick={setShowContent} />}
+					{hasSelectedCategory
+						&& <CategoriesDetails backBtnClick={setShowContent} />}
 
 				</SettingsContent>
 
@@ -159,6 +163,6 @@ function TicketSettingsDepartment() {
 	)
 }
 
-TicketSettingsDepartment.getLayout = getLayout
+TicketSettingsCategory.getLayout = getLayout
 
-export default TicketSettingsDepartment
+export default TicketSettingsCategory

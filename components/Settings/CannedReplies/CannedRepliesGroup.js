@@ -23,25 +23,24 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
+import { IconButton, Tooltip, Typography } from "@mui/material"
+
+//THIRD-PARTY
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { useDispatch, useSelector } from "react-redux"
 import CannedRepliesList from "./CannedRepliesList"
 import CannedRepliesDetails from "./CannedRepliesDetails"
 import { getUiSettings } from "./../../../redux/selectors"
-import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useGetCannedRepliesQuery } from "../../../redux/slices/firestoreApi"
 import { setSelectedCrid } from "../../../redux/slices/uiSettings"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
+import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { useDeleteCannedReplyMutation, useGetCannedRepliesQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
+import DeleteIcon from "@mui/icons-material/Delete"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -55,6 +54,8 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 			cannedReplies: data?.filter((cannedReply) => cannedReply.department === activeSettingPanel) ?? [],
 		})
 	})
+
+	const [deleteCannedReply] = useDeleteCannedReplyMutation()
 
 	if (cannedReplies.length === 0) {
 		return (
@@ -81,6 +82,16 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 					else
 						dispatch(setSelectedCrid(""))
 				}}
+
+				rightButton={selectedCrid
+					&& <Tooltip title="Delete current canned-reply" placement="left">
+						<IconButton onClick={async () => {
+							dispatch(setSelectedCrid(""))
+							await deleteCannedReply({ crid: selectedCrid })
+						}}>
+							<DeleteIcon fontSize="small" color="warning" />
+						</IconButton>
+					</Tooltip>}
 			>
 				{activeSettingPanel}
 			</SettingsContentHeader>

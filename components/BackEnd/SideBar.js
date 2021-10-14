@@ -250,7 +250,7 @@ SideBarContentCollapsed.propTypes = { data: PropTypes.array }
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SideBar = ({ homeUrl, settingsUrl, data = [] }) => {
+const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 	const { isSideBarExpanded } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
 	return (
@@ -288,7 +288,12 @@ const SideBar = ({ homeUrl, settingsUrl, data = [] }) => {
 				<Logo theme="dark" isSmall={!isSideBarExpanded} />
 			</Box>
 
-			<HomeButton homeUrl={homeUrl} settingsUrl={settingsUrl} isExpanded={isSideBarExpanded} />
+			<HomeButton
+				homeUrl={homeUrl}
+				settingsUrl={settingsUrl}
+				settingsTooltip={settingsTooltip}
+				isExpanded={isSideBarExpanded}
+			/>
 
 			{isSideBarExpanded
 				? <SideBarContentExpanded data={data} />
@@ -323,6 +328,7 @@ SideBar.propTypes = {
 	toggle: PropTypes.func,
 	homeUrl: PropTypes.string,
 	settingsUrl: PropTypes.string,
+	settingsTooltip: PropTypes.string,
 	data: PropTypes.array
 }
 

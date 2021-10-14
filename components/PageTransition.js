@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useMemo, useRef } from "react"
 import PropTypes from "prop-types"
 import { TransitionGroup, Transition as ReactTransition } from "react-transition-group"
 
@@ -20,10 +20,25 @@ const getTransitionStyles = {
 	},
 }
 
+const LocationsToFixHeight = [
+	{ url: "/admin/settings", height: "90%" }
+]
+
 const PageTransition = ({ children, location }) => {
 	const nodeRef = useRef(null)
+	const height = useMemo(() => {
+		let res = "100%"
+		LocationsToFixHeight.every((item) => {
+			if (location.startsWith(item.url)) {
+				res = item.height
+				return false //exit loop
+			}
+		})
+		return res
+	}, [location])
+
 	return (
-		<TransitionGroup style={{ position: "relative", width: "100%", height: "100%" }}>
+		<TransitionGroup style={{ position: "relative", width: "100%", height: height }}>
 			<ReactTransition nodeRef={nodeRef} key={location} timeout={{ enter: TIMEOUT, exit: TIMEOUT }}>
 				{
 					(status) => (

@@ -26,11 +26,10 @@ import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
 import { findIndex } from "lodash"
-import { useSelector, useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../redux/selectors"
-import { setRedirect } from "./../../redux/slices/redirect"
 import { useRouter } from "next/router"
 
 //ASSETS
@@ -39,26 +38,18 @@ import { useRouter } from "next/router"
  * INIT                                                          *
  *****************************************************************/
 
-/*
-	dataset = { tabName: {order, path} }
-*/
-
 const TabsSettings = ({ tabsList }) => {
-	// const dispatch = useDispatch()
 	const router = useRouter()
 	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
 	const { activeSettingTab } = useSelector(getUiSettings)
 
 	const handleChange = useCallback((event, selectedTabIndex) => {
 		const path = tabsList.find(i => i.index === selectedTabIndex).path
-		console.log("path", path)
-		// dispatch(setRedirect(path))
 		router.push(path)
 	}, [tabsList, router])
 
 	const activeTabIndex = useMemo(() => {
 		const res = findIndex(tabsList, (i) => i.name === activeSettingTab)
-		console.log("activeTabIndex", res)
 		return res === - 1 ? 0 : res
 	}, [activeSettingTab, tabsList])
 

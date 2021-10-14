@@ -52,7 +52,7 @@ function Docs() {
 
 				<Grid container>
 					<Grid item xs={12} >
-						<FeaturedDocs />
+						{/* <FeaturedDocs /> */}
 						<ListAllCategories />
 					</Grid>
 				</Grid>

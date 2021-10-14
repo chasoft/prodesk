@@ -111,7 +111,9 @@ function ClientLayout({ children }) {
 
 				<SideBar
 					isExpanded={isSideBarExpanded} toggle={setIsSideBarExpanded}
-					homeUrl="/client" settingsUrl=""
+					homeUrl="/client"
+					settingsUrl="/client/edit-profile"
+					settingsTooltip="Account settings"
 					data={CLIENT_MENU}
 				/>
 

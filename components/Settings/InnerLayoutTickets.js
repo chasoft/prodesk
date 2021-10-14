@@ -42,17 +42,17 @@ import TabsSettings from "./TabsSettings"
  *****************************************************************/
 
 export const TICKET_SETTINGS_NAMES = {
-	GENERAL: "General",		//Explained fix Status & Priority
 	DEPARTMENT: "Department",
-	LABEL: "Label",
-	CANNED_REPLY: "Canned Reply",
+	CATEGORY: "Category",
+	CANNED_REPLY: "Canned-reply",
+	OTHERS: "Others",
 }
 
 export const TICKET_SETTINGS_TABS = [
-	{ index: 0, name: TICKET_SETTINGS_NAMES.GENERAL, path: "/admin/settings/tickets" },
-	{ index: 1, name: TICKET_SETTINGS_NAMES.DEPARTMENT, path: "/admin/settings/tickets/department" },
-	{ index: 2, name: TICKET_SETTINGS_NAMES.LABEL, path: "/admin/settings/tickets/label" },
-	{ index: 3, name: TICKET_SETTINGS_NAMES.CANNED_REPLY, path: "/admin/settings/tickets/canned-reply" },
+	{ index: 0, name: TICKET_SETTINGS_NAMES.DEPARTMENT, path: "/admin/settings/tickets/department" },
+	{ index: 1, name: TICKET_SETTINGS_NAMES.CATEGORY, path: "/admin/settings/tickets/category" },
+	{ index: 2, name: TICKET_SETTINGS_NAMES.CANNED_REPLY, path: "/admin/settings/tickets/canned-reply" },
+	{ index: 3, name: TICKET_SETTINGS_NAMES.OTHERS, path: "/admin/settings/tickets/others" },
 ]
 
 /*****************************************************************

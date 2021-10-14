@@ -63,9 +63,9 @@ const TopNavigatorBar = ({ dataSet }) => {
 	}
 
 	return (
-		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab.split("@note:")[0] === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
+		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
 			<Tabs
-				value={getTabId(activeSettingTab.split("@note:")[0], dataSet)}
+				value={getTabId(activeSettingTab, dataSet)}
 				onChange={handleChange}
 				indicatorColor="primary"
 				textColor="primary"

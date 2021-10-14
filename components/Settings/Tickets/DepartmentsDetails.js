@@ -26,22 +26,25 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, Grid, TextField } from "@mui/material"
+import { Button, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSnackbar } from "notistack"
+import { find, filter, some } from "lodash"
+import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
-import { find, filter } from "lodash"
 
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
 import { getUiSettings } from "../../../redux/selectors"
 import SettingsSwitch from "./../../common/SettingsSwitch"
-import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateDepartmentMutation } from "../../../redux/slices/firestoreApi"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useDeepCompareEffect } from "react-use"
 import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { useDeleteDepartmentMutation, useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateDepartmentMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
+import DeleteIcon from "@mui/icons-material/Delete"
+import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -49,6 +52,8 @@ import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
 
 const DepartmentsDetails = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
+	const [deleteDepartment] = useDeleteDepartmentMutation()
+	const { enqueueSnackbar } = useSnackbar()
 	const [updateDepartment] = useUpdateDepartmentMutation()
 	const { data: cannedReplies, isLoading: isLoadingCannedReplies } = useGetCannedRepliesQuery(undefined)
 	//Original
@@ -83,8 +88,26 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 		<>
 			{isLoading ? <div>Loading...</div> :
 				<>
-					<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
-						{department}
+					<SettingsContentHeader
+						backBtnOnClick={() => backBtnClick(false)}
+						rightButton={
+							<Tooltip title="Delete current department" placement="left">
+								<IconButton onClick={async () => {
+									//User must delete all related canned-reply before they can delete department
+									const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
+									if (affectedCannedReplies.length > 0) {
+										enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
+										return
+									}
+									dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+									await deleteDepartment(selectedDepartment)
+								}}>
+									<DeleteIcon fontSize="small" color="warning" />
+								</IconButton>
+							</Tooltip>
+						}
+					>
+						<Typography variant="button">{department}</Typography>
 					</SettingsContentHeader>
 
 					<SettingsContentDetails>
@@ -141,18 +164,22 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 					<SettingsContentActionBar>
 						<Button variant="contained" color="primary" disabled={!isModified} onClick={async () => {
+							//Do not allow departments have the same name
+							const isDuplicatedName = some(departments, { department: department })
+							if (isDuplicatedName) {
+								enqueueSnackbar(`Department with name "${department}" existed."`, { variant: "error" })
+								return
+							}
 							const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-							await updateDepartment({
-								departmentItem: {
-									did: selectedDepartment.did,
-									department,
-									description,
-									availableForAll,
-									isPublic,
-									members
-								},
-								affectedCannedReplies: affectedCannedReplies
-							}).unwrap()
+							const departmentItem = {
+								did: selectedDepartment.did,
+								department,
+								description,
+								availableForAll,
+								isPublic,
+								members
+							}
+							await updateDepartment({ departmentItem, affectedCannedReplies }).unwrap()
 							//
 							dispatch(setActiveSettingPanel(department))
 						}}>Save</Button>

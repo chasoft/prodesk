@@ -24,20 +24,19 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Tooltip, Typography } from "@mui/material"
+import { Box, Chip, Typography, IconButton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import AvatarList from "./../../common/AvatarList"
-import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
+import { useUpdateCategoryMutation } from "./../../../redux/slices/firestoreApi"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
+import useTicketCategories from "../../../helpers/useTicketCategories"
 import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
-import PublicIcon from "@mui/icons-material/Public"
-import FingerprintIcon from "@mui/icons-material/Fingerprint"
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
 
 /*****************************************************************
  * INIT                                                          *
@@ -47,15 +46,26 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsOverview = ({ backBtnClick }) => {
+const CategoriesOverview = ({ backBtnClick }) => {
 
 	const dispatch = useDispatch()
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+	const [updateCategory] = useUpdateCategoryMutation()
+	const { data: categories, isLoading } = useTicketCategories()
+
+	if (isLoading) {
+		return (
+			<div style={{ display: "flex", alignItems: "center" }} >
+				<Typography>
+					Loading...
+				</Typography>
+			</div>
+		)
+	}
 
 	return (
 		<>
 			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
-				Departments overview
+				Category overview
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
@@ -75,20 +85,28 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 						Loading...
 					</Typography>
 				</SettingsContentDetails>
-				: departments.map((item) => (
+				: categories.map((category) => (
 					<Box
-						key={item.did}
-						onClick={() => dispatch(setActiveSettingPanel(item.department))}
+						key={category.catId}
+						onClick={() => dispatch(setActiveSettingPanel(category.name))}
 						sx={{
 							display: "flex",
+							alignItems: "center",
 							p: 3,
+							"&>div>button#set-default-button": {
+								visibility: "hidden"
+							},
 							":hover": {
 								cursor: "pointer",
 								bgcolor: "action.hover",
+								"&>div>button#set-default-button": {
+									visibility: "visible"
+								}
 							},
 							":last-child:hover": {
 								borderBottomRightRadius: "0.5rem",
 							},
+
 						}}
 					>
 						<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -99,45 +117,59 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 								}}
 							>
 								<Typography variant="h3" style={{ margin: 0 }}>
-									{item.department}
+									{category.name}
 								</Typography>
-								{
-									item.availableForAll
-										?
-										<Tooltip title="All members" placement="top">
-											<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
-										</Tooltip>
-										:
-										<Tooltip title="Only selected members" placement="top">
-											<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
-										</Tooltip>
-								}
-								{
-									item.isPublic
-										?
-										<Tooltip title="Available for all users" placement="top">
-											<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
-										</Tooltip>
-										:
-										<Tooltip title="For internal use only" placement="top">
-											<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
-										</Tooltip>
-								}
 							</Box>
-							<Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
-								<Typography variant="caption" sx={{ margin: 0 }}>
-									{item.description}
-									{item.description ? <>&nbsp; | &nbsp; </> : null}
-								</Typography>
-
-								<Typography variant="caption" style={{ margin: 0 }}>
-									{item.members.length} members
-								</Typography>
+							<Box sx={{
+								display: "flex",
+								flexDirection: { xs: "column", md: "row" },
+								"&>#sub": { marginRight: 0.5 },
+								"&>#sub-default": {
+									marginRight: 0.5,
+									backgroundColor: "primary.main",
+									color: "white"
+								}
+							}}>
+								{category.subCategories.map((item) => (
+									<Tooltip
+										key={item.name}
+										placement="top"
+										title={
+											item.default
+												? "Default sub-category"
+												: ""
+										}
+									>
+										<Chip
+											id={item.default ? "sub-default" : "sub"}
+											label={item.name}
+											size="small"
+											variant={item.default ? "" : "outlined"}
+										/>
+									</Tooltip>
+								))}
 							</Box>
 						</Box>
 
-						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<AvatarList dataSource={item.members} />
+						<Box>
+							{category.default
+								? <Typography color="primary.main" sx={{ fontWeight: "bold" }}>Default</Typography>
+								: <IconButton id="set-default-button" onClick={async (e) => {
+									e.stopPropagation()
+									let affectedItems = []
+									categories.forEach(i => {
+										affectedItems.push({
+											catId: i.catId,
+											default: (i.catId === category.catId) ? true : false
+										})
+									})
+									await updateCategory({
+										categoryItem: {},
+										affectedItems: affectedItems
+									})
+								}}>
+									<CheckBoxIcon />
+								</IconButton>}
 						</Box>
 
 					</Box>
@@ -147,8 +179,8 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 	)
 }
 
-DepartmentsOverview.propTypes = {
+CategoriesOverview.propTypes = {
 	backBtnClick: PropTypes.func,
 }
 
-export default DepartmentsOverview
+export default CategoriesOverview

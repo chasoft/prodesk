@@ -24,70 +24,70 @@
 
 import React from "react"
 import Link from "next/link"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, ButtonBase, Grid, Typography } from "@mui/material"
 
-
 //THIRD-PARTY
-
+import { findKey } from "lodash"
 
 //PROJECT IMPORT
-import { LINK_TYPE } from "./../../helpers/constants"
-
+import useGroupedDocs from "../../helpers/useGroupedDocs"
+import { DOC_TYPE, RESERVED_KEYWORDS } from "./../../helpers/constants"
 
 //ASSETS
-
+import LaunchIcon from "@mui/icons-material/Launch"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DummyData = [
-	{
-		cat: "Communication apps",
-		items: [
-			{ subject: "Phone app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Messages app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Contacts app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Duo app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" }
-		]
-	},
-	{
-		cat: "Tool apps",
-		items: [
-			{ subject: "Camera app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Clock app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Calculator  app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Gboard  app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" }
-		]
-	},
-	{
-		cat: "Google app",
-		items: [
-			{ subject: "Get help from your Google Assistant", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Get info before you ask in Discover", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Search the Web with Google", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-		]
-	},
-	{
-		cat: "Other Google apps on your phone",
-		items: [
-			{ subject: "Android Auto app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Family Link app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Gmail app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Docs app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Earth app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-			{ subject: "Google Keep app", linkType: LINK_TYPE.ARTICLE, data: "K_356sIK" },
-		]
-	}
-]
+const UiDocList = ({ sx, children }) => (
+	<Box
+		component="ul"
+		sx={{
+			padding: 0,
+			cursor: "pointer",
+			listStyle: "none",
+			color: "primary.main",
+			"& > li": { display: "flex", px: 2, py: 1 },
+			"& > li:hover": {
+				backgroundColor: "#E8F0FE"
+			},
+			...sx
+		}}
+	>
+		{children}
+	</Box>
+)
+UiDocList.propTypes = { sx: PropTypes.object, children: PropTypes.node }
+
+const UiDocItem = ({ item }) => (
+	<li>
+		<Link href={item.url ?? `/${item.slug}`} passHref>
+			<ButtonBase sx={{ textAlign: "left" }}>
+				{item.title}
+
+				{(item.type === DOC_TYPE.EXTERNAL)
+					? <LaunchIcon sx={{
+						fontSize: "1.2rem", mx: 0.5
+					}} />
+					: null}
+			</ButtonBase>
+		</Link>
+	</li>
+)
+UiDocItem.propTypes = { item: PropTypes.object }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Category() {
+	const { data: docsList, isLoading } = useGroupedDocs()
+	console.log("docsList", docsList)
+
 	return (
 		<Box component="main"
 			sx={{
@@ -99,57 +99,59 @@ function Category() {
 		>
 			<Box sx={{ padding: { xs: 3, md: 8 } }}>
 
-				<Typography variant="h1" sx={{ marginBottom: "1rem", fontSize: { xs: "1.5rem", sm: "1.75rem" } }}>
-					Get help with apps on your phone
-				</Typography>
-
-				<Box>
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-				</Box>
-
-				<Grid container spacing={2}>
-
-					{DummyData.map(((block, idx) => (
-						<Grid
-							item key={idx} xs={12} sm={6}
-							sx={{
-								mt: 4,
-								"& > h2": { fontSize: "1rem" }
-							}}
-						>
-							<Typography variant="h2" sx={{ pl: 2 }}>{block.cat}</Typography>
-
-							{(idx === 2) && <Box sx={{ pl: 2 }}>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-							</Box>}
-
-							<Box
-								component="ul"
-								sx={{
-									padding: 0,
-									cursor: "pointer",
-									listStyle: "none",
-									color: "primary.main",
-									"& > li": { display: "flex", px: 2, py: 1 },
-									"& > li:hover": {
-										backgroundColor: "#E8F0FE"
-									}
-								}}
+				{isLoading
+					? <div>Loading...</div>
+					: docsList.map((cat, idx) => (
+						<Box key={cat[0]} sx={{ mt: idx > 1 ? 3 : 0 }}>
+							<Typography
+								variant="h1"
+								sx={{ marginBottom: "1rem", fontSize: { xs: "1.5rem", sm: "1.75rem" } }}
 							>
-								{block.items.map((link, idx) => (
-									<Link key={idx} href="/">
-										<li>
-											<ButtonBase sx={{ textAlign: "left" }}>
-												{link.subject}
-											</ButtonBase>
-										</li>
-									</Link>
-								))}
+								{cat[0]}
+							</Typography>
+							<Box sx={{ mb: 2 }}>
+								{cat[1]["undefined"][0].description}
 							</Box>
-						</Grid>
-					)))}
+							{Object.entries(cat[1]).map((subcat) => {
+								if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
+									return (
+										<UiDocList key={RESERVED_KEYWORDS.CAT_CHILDREN} sx={{
+											"& > li": { display: "flex", px: 2, py: 1, ml: -2 },
+										}}>
+											{subcat[1].map(item => <UiDocItem key={item.docId} item={item} />)}
+										</UiDocList>
+									)
+								}
 
-				</Grid>
+								if (subcat[0] === RESERVED_KEYWORDS.CAT) return null
+
+								//position of Sub-Category in the list
+								const subCatIndex = findKey(subcat[1], { type: DOC_TYPE.SUBCATEGORY })
+
+								return (
+									<Grid container key={subcat[1][subCatIndex].docId}>
+										<Grid item sm={12} md={6}>
+
+											<Typography variant="h2" sx={{ pl: 2 }}>{subcat[1][subCatIndex].subcategory}</Typography>
+
+											<Box sx={{ pl: 2 }}>
+												{subcat[1][subCatIndex].description}
+											</Box>
+											<UiDocList>
+												{subcat[1].map((item, idx) => {
+													//bypass position of the sub-category
+													if (idx == subCatIndex) return null
+
+													return <UiDocItem key={item.docId} item={item} />
+												})}
+											</UiDocList>
+										</Grid>
+									</Grid>
+								)
+							})}
+
+						</Box>
+					))}
 			</Box>
 		</Box>
 	)

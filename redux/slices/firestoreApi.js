@@ -26,9 +26,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
-import { fix_datetime_list, fix_datetime_single } from "./../../helpers/firebase"
 import { ACTION, TYPE } from "./firestoreApiConstants"
 import fireStoreBaseQuery from "./firestoreApiBaseQuery"
+import { fix_datetime_list, fix_datetime_single } from "./../../helpers/firebase"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,13 +43,17 @@ export const firestoreApi = createApi({
 		TYPE.SETTINGS,
 		TYPE.DEPARTMENTS,
 		TYPE.CANNED_REPLIES,
-		TYPE.LABELS
+		TYPE.LABELS,
+		TYPE.CATEGORIES,
 	],
 	baseQuery: fireStoreBaseQuery,
 	keepUnusedDataFor: 15 * 60,//15 minutes
 	endpoints: (builder) => ({
 
-		/* DOCUMENTATION */
+		/*****************************************************************
+		 * DOCUMENTATION                                                 *
+		 *****************************************************************/
+
 		getDocs: builder.query({
 			query: () => ({ action: ACTION.GET_DOCS }),
 			providesTags: (result) => {
@@ -145,7 +149,10 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/* APPLICATION SETTINGS */
+		/*****************************************************************
+		 * APPLICATION SETTINGS                                          *
+		 *****************************************************************/
+
 		getAppSettings: builder.query({
 			query: () => ({ action: ACTION.GET_APPSETTINGS }),
 			providesTags: [TYPE.SETTINGS],
@@ -169,7 +176,10 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/* TICKET SETTINGS */
+		/*****************************************************************
+		 * DEPARTMENTS                                                   *
+		 *****************************************************************/
+
 		getDepartments: builder.query({
 			query: () => ({ action: ACTION.GET_DEPARTMENTS }),
 			providesTags: (result) => {
@@ -204,23 +214,30 @@ export const firestoreApi = createApi({
 			query: (body) => ({ action: ACTION.UPDATE_DEPARTMENT, body }), //body: {departmentItem, affectedCannedReplies}
 			invalidatesTags: (result, error, arg) => ([{ type: TYPE.DEPARTMENTS, id: arg.departmentItem.did }]),
 			async onQueryStarted({ departmentItem, affectedCannedReplies }, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
+				//Update cache of modified department
+				const patchDepartment = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_DEPARTMENTS, undefined,
 						(draft) => {
 							let obj = draft.find(e => e.did === departmentItem.did)
 							Object.assign(obj, departmentItem)
-							//Update affectedItems
-							affectedCannedReplies.forEach((affectedItem) => {
-								let obj = draft.find(e => e.did === affectedItem.did)
-								Object.assign(obj, { department: departmentItem.department })
-							})
 						})
+				)
+				//Update cache of related canned-replies
+				const patchCannedReplies = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_CANNED_REPLIES, undefined, (draft) => {
+						affectedCannedReplies.forEach((affectedItem) => {
+							let obj = draft.find(e => e.crid === affectedItem.crid)
+							console.log("obj", obj)
+							Object.assign(obj, { department: departmentItem.department })
+						})
+					})
 				)
 				try { await queryFulfilled }
 				catch {
 					console.log("error when updating cache of department and undo")
-					patchResult.undo()
+					patchDepartment.undo()
+					patchCannedReplies.undo()
 				}
 			},
 		}),
@@ -243,7 +260,10 @@ export const firestoreApi = createApi({
 			},
 		}),
 
-		/* CANNED REPLIES */
+		/*****************************************************************
+		 * CANNED REPLIES                                                *
+		 *****************************************************************/
+
 		getCannedReplies: builder.query({
 			query: () => ({ action: ACTION.GET_CANNED_REPLIES }),
 			providesTags: (result) => {
@@ -313,7 +333,10 @@ export const firestoreApi = createApi({
 		}),
 
 
-		/* LABELS */
+		/*****************************************************************
+		 * LABELS                                                        *
+		 *****************************************************************/
+
 		getLabels: builder.query({
 			query: () => ({ action: ACTION.GET_LABELS }),
 			providesTags: (result) => {
@@ -378,6 +401,87 @@ export const firestoreApi = createApi({
 				}
 			},
 		}),
+
+		/*****************************************************************
+		 * CATEGORIES                                                    *
+		 *****************************************************************/
+
+		getCategories: builder.query({
+			query: () => ({ action: ACTION.GET_CATEGORIES }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ catId }) => ({ type: TYPE.CATEGORIES, id: catId })),
+						{ type: TYPE.CATEGORIES, id: "LIST" }
+					]
+					: [{ type: TYPE.CATEGORIES, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		addCategory: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_CATEGORY, body }),
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.CATEGORIES, id: body.catId }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_CATEGORIES, undefined,
+						(draft) => { draft.push(body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateCategory: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_CATEGORY, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CATEGORIES, id: arg.categoryItem.catId }]),
+			async onQueryStarted({ categoryItem, affectedItems }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_CATEGORIES, undefined,
+						(draft) => {
+							if (affectedItems.length === 0) {
+								let obj = draft.find(e => e.catId === categoryItem.catId)
+								Object.assign(obj, categoryItem)
+							}
+							else {
+								affectedItems.forEach((affectedItem) => {
+									let obj = draft.find(e => e.catId === affectedItem.catId)
+									Object.assign(obj, affectedItem)
+								})
+							}
+						})
+				)
+
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of category and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		deleteCategory: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_CATEGORY, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CATEGORIES, id: arg.catId }]),
+			async onQueryStarted({ catId }, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_CATEGORIES, undefined,
+						(draft) => draft.filter(e => e.catId !== catId)
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when delete cache of category and undo")
+					patchResult.undo()
+				}
+			},
+		}),
 	}),
 })
 
@@ -408,4 +512,9 @@ export const {
 	useAddLabelMutation,
 	useUpdateLabelMutation,
 	useDeleteLabelMutation,
+	//
+	useGetCategoriesQuery,
+	useAddCategoryMutation,
+	useUpdateCategoryMutation,
+	useDeleteCategoryMutation,
 } = firestoreApi

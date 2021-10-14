@@ -186,8 +186,6 @@ function TicketSettingsCannedReply() {
 		}
 	})
 
-	// usePrefetchImmediately("getCannedReplies", undefined)
-
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
 	const { activeSettingPanel } = useSelector(getUiSettings)	// used to keep selected Group (aka department)

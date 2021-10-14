@@ -54,7 +54,11 @@ function throwError(statusCode, action, e, data) {
 async function fireStoreBaseQuery(args) {
 
 	switch (args.action) {
-		/* Documents */
+
+		/*****************************************************************
+		 * DOCUMENTATION                                                 *
+		 *****************************************************************/
+
 		case ACTION.GET_DOCS:
 			try {
 				let all = []
@@ -134,10 +138,10 @@ async function fireStoreBaseQuery(args) {
 						batch.update(
 							doc(db, COLLECTION.DOCS, affectedItem.docId),
 							{
-								updatedAt: serverTimestamp(),
 								...(affectedItem.type === DOC_TYPE.CATEGORY)
 									? { ...args.body.docItem, updatedAt: serverTimestamp() }
-									: { category: args.body.docItem.category }
+									: { category: args.body.docItem.category },
+								updatedAt: serverTimestamp()
 							}
 						)
 					})
@@ -157,10 +161,10 @@ async function fireStoreBaseQuery(args) {
 						batch.update(
 							doc(db, COLLECTION.DOCS, affectedItem.docId),
 							{
-								updatedAt: serverTimestamp(),
 								...(affectedItem.type === DOC_TYPE.SUBCATEGORY)
 									? { ...args.body.docItem, updatedAt: serverTimestamp() }
-									: { subcategory: args.body.docItem.subcategory }
+									: { subcategory: args.body.docItem.subcategory },
+								updatedAt: serverTimestamp()
 							}
 						)
 					})
@@ -294,7 +298,9 @@ async function fireStoreBaseQuery(args) {
 			}
 			break
 
-		/* App Settings */
+		/*****************************************************************
+		 * APPLICATION SETTINGS                                          *
+		 *****************************************************************/
 		case ACTION.GET_APPSETTINGS:
 			try {
 				let settings = {}
@@ -321,7 +327,9 @@ async function fireStoreBaseQuery(args) {
 				return throwError(200, ACTION.UPDATE_APPSETTINGS, e, null)
 			}
 
-		/* Departments */
+		/*****************************************************************
+		 * DEPARTMENTS                                                   *
+		 *****************************************************************/
 		case ACTION.GET_DEPARTMENTS:
 			try {
 				let all = []
@@ -355,20 +363,31 @@ async function fireStoreBaseQuery(args) {
 			}
 		case ACTION.UPDATE_DEPARTMENT:
 			try {
-				updateDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.did),
-					{ ...args.body, updatedAt: serverTimestamp() }
+				const batch = writeBatch(db)
+
+				batch.update(
+					doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.departmentItem.did),
+					{ ...args.body.departmentItem, updatedAt: serverTimestamp() }
 				)
+
+				args.body.affectedCannedReplies.forEach((affectedItem) => {
+					batch.update(
+						doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", affectedItem.crid),
+						{ department: args.body.departmentItem.department }
+					)
+				})
+				await batch.commit()
+
 				return {
 					data: {
 						action: ACTION.UPDATE_DEPARTMENT,
-						id: args.body.did,
+						id: args.body.departmentItem.did,
 						message: "Department updated successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.UPDATE_DEPARTMENT, e, {
-					id: args.body.did
+					id: args.body.departmentItem.did
 				})
 			}
 		case ACTION.DELETE_DEPARTMENT:
@@ -387,7 +406,9 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		/* Canned Replies */
+		/*****************************************************************
+		 * CANNED REPLIES                                                *
+		 *****************************************************************/
 		case ACTION.GET_CANNED_REPLIES:
 			try {
 				let all = []
@@ -453,7 +474,9 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		/* Labels */
+		/*****************************************************************
+		 * LABELS                                                        *
+		 *****************************************************************/
 		case ACTION.GET_LABELS:
 			try {
 				let all = []
@@ -518,6 +541,87 @@ async function fireStoreBaseQuery(args) {
 					id: args.body.lid
 				})
 			}
+
+		/*****************************************************************
+		 * CATEGORIES                                                    *
+		 *****************************************************************/
+		case ACTION.GET_CATEGORIES:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db, COLLECTION.SETTINGS, "settings", "categories"))
+				querySnapshot.forEach((category) => { all.push(category.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_CATEGORIES, e, null)
+			}
+		case ACTION.ADD_CATEGORY:
+			try {
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.catId),
+					{
+						...args.body,
+						createdAt: serverTimestamp(),
+						updatedAt: serverTimestamp()
+					}
+				)
+				return {
+					data: {
+						action: ACTION.ADD_CATEGORY,
+						id: args.body.catId,
+						message: "Category added successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.ADD_CATEGORY, e, {
+					id: args.body.catId
+				})
+			}
+		case ACTION.UPDATE_CATEGORY:
+			try {
+				if (args.body.affectedItems.length === 0) {
+					await updateDoc(
+						doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.categoryItem.catId),
+						{ ...args.body.categoryItem, updatedAt: serverTimestamp() }
+					)
+				} else {
+					const batch = writeBatch(db)
+					args.body.affectedItems.forEach((affectedItem) => {
+						batch.update(
+							doc(db, COLLECTION.SETTINGS, "settings", "categories", affectedItem.catId),
+							{ ...affectedItem }
+						)
+					})
+					await batch.commit()
+				}
+
+				return {
+					data: {
+						action: ACTION.UPDATE_CATEGORY,
+						id: args.body.categoryItem.catId,
+						message: "Category updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_CATEGORY, e, {
+					id: args.body.catId
+				})
+			}
+		case ACTION.DELETE_CATEGORY:
+			try {
+				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.catId))
+				return {
+					data: {
+						action: ACTION.DELETE_CATEGORY,
+						id: args.body.catId,
+						message: "Category deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.DELETE_CATEGORY, e, {
+					id: args.body.catId
+				})
+			}
+
 
 		default:
 			return throwError(200, "OUT OF ACTION RANGE", { message: "OUT OF ACTION RANGE" }, null)

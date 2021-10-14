@@ -35,11 +35,6 @@ import { Alert, Box, ButtonBase, Container, IconButton, Paper, Tooltip, Typograp
 //PROJECT IMPORT
 import LaunchIcon from "@mui/icons-material/Launch"
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
-import DeleteIcon from "@mui/icons-material/Delete"
-import { useDeleteCannedReplyMutation } from "../../../redux/slices/firestoreApi"
-import { useDispatch, useSelector } from "react-redux"
-import { getUiSettings } from "../../../redux/selectors"
-import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -60,7 +55,7 @@ export const ListItem = ({ selected, icon, onClick, children }) => {
 	return (
 		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 			<Box
-				onClick={onClick}
+				onClick={onClick ?? (() => { })}
 				sx={{
 					padding: (theme) => theme.spacing(1, 3, 1),
 					display: "flex",
@@ -73,12 +68,12 @@ export const ListItem = ({ selected, icon, onClick, children }) => {
 					color: selected ? "#1967d2" : ""
 				}}
 			>
-				{icon}
+				{icon ?? ""}
 				<Typography variant="button" sx={{ ml: 2 }}>
 					{children}
 				</Typography>
 			</Box>
-		</ButtonBase>
+		</ButtonBase >
 	)
 }
 ListItem.propTypes = {
@@ -167,13 +162,9 @@ const ContentHeader = ({ children }) => (
 	}}> {children} </Box>
 ); ContentHeader.propTypes = { children: PropTypes.node }
 
-export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, children }) => {
+export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, rightButton, children }) => {
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
-
-	const { selectedCrid } = useSelector(getUiSettings)
-	const [deleteCannedReply] = useDeleteCannedReplyMutation()
-	const dispatch = useDispatch()
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
@@ -192,6 +183,7 @@ export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () =
 		return (
 			<ContentHeader>
 				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+				{rightButton}
 			</ContentHeader>
 		)
 	}
@@ -199,25 +191,14 @@ export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () =
 	return (
 		<ContentHeader>
 			<Typography variant="button">{children}</Typography>
-
-
-			{selectedCrid
-				&& <Tooltip title="Delete current canned-reply" placement="left">
-					<IconButton onClick={async () => {
-						dispatch(setSelectedCrid(""))
-						await deleteCannedReply({ crid: selectedCrid })
-					}}>
-						<DeleteIcon fontSize="small" color="warning" />
-					</IconButton>
-				</Tooltip>}
-
-
+			{rightButton}
 		</ContentHeader>
 	)
 }
 SettingsContentHeader.propTypes = {
 	hasBackBtn: PropTypes.bool,
 	backBtnOnClick: PropTypes.func,
+	rightButton: PropTypes.node,
 	children: PropTypes.node
 }
 

@@ -162,11 +162,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 	}, [docItem.slug, docItem.category, docItem.subcategory, docItem.type, docItem.description])
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault()
-			}}
-		>
+		<form onSubmit={(e) => { e.preventDefault() }}>
 			<TypographyHeader sx={{ mb: 1 }}>
 				Title
 			</TypographyHeader>
@@ -249,6 +245,8 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 						description: description,
 						updatedBy: currentUser.username,
 					}
+
+					console.log("newCategoryOrSubCatMeta", newCategoryOrSubCatMeta)
 
 					//update DB
 					updateDoc({

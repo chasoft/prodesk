@@ -10,7 +10,8 @@ export const TYPE = {
 	SETTINGS: "Settings",
 	DEPARTMENTS: "Departments",
 	CANNED_REPLIES: "Canned-replies",
-	LABELS: "Labels"
+	LABELS: "Labels",
+	CATEGORIES: "Categories"
 }
 
 export const ACTION = {
@@ -44,4 +45,10 @@ export const ACTION = {
 	ADD_LABEL: "addLabel",
 	UPDATE_LABEL: "updateLabel",
 	DELETE_LABEL: "deleteLabel",
+
+	/* CATEGORIES */
+	GET_CATEGORIES: "getCategories",
+	ADD_CATEGORY: "addCategory",
+	UPDATE_CATEGORY: "updateCategory",
+	DELETE_CATEGORY: "deleteCategory",
 }

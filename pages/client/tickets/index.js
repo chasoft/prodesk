@@ -26,7 +26,7 @@ import { Container, Box } from "@mui/material"
 import React from "react"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
@@ -45,7 +45,7 @@ import ListTicketsFilter from "./../../../components/Ticket/ListTicketsFilter"
  *****************************************************************/
 
 function Tickets() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		title: "All tickets",
 		background: {

@@ -22,12 +22,12 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { Box, ButtonBase, Tooltip, Typography } from "@mui/material"
+import { Box, IconButton, ButtonBase, Tooltip, Typography, Popper, Grow, Paper, ClickAwayListener, MenuList, MenuItem } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -36,6 +36,9 @@ import { Box, ButtonBase, Tooltip, Typography } from "@mui/material"
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
 import HomeIcon from "@mui/icons-material/Home"
+import ArrowRight from "@mui/icons-material/ArrowRight"
+import { useRouter } from "next/router"
+
 
 /*****************************************************************
  * INIT                                                          *
@@ -45,11 +48,42 @@ import HomeIcon from "@mui/icons-material/Home"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
+const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
+	const router = useRouter()
+	const anchorRef = useRef(null)
+	const [open, setOpen] = useState(false)
+	const prevOpen = useRef(open)
+
+	useEffect(() => {
+		if (prevOpen.current === true && open === false) {
+			anchorRef.current.focus()
+		}
+		prevOpen.current = open
+	}, [open])
+
+	const handleToggle = () => {
+		setOpen((prevOpen) => !prevOpen)
+	}
+
+	const handleClose = (event) => {
+		if (anchorRef.current && anchorRef.current.contains(event.target)) {
+			return
+		}
+		setOpen(false)
+	}
+
+	function handleListKeyDown(event) {
+		if (event.key === "Tab") {
+			event.preventDefault()
+			setOpen(false)
+		} else if (event.key === "Escape") {
+			setOpen(false)
+		}
+	}
 
 	if (isExpanded) {
 		return (
-			<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+			<Box sx={{ display: "block", width: "100%", textAlign: "left" }}>
 				<Box
 					sx={{
 						display: "flex",
@@ -67,21 +101,92 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
 					<Link href={homeUrl} passHref><a href="just-a-placeholder" style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
-					<div style={{ display: "flex", alignItems: "center" }}>
-						<Link href={settingsUrl} passHref>
-							<a href="just-a-placeholder">
-								<Box
-									color="secondary"
-									aria-label="Settings"
-									style={{ padding: "5px" }}
-									size="large">
-									<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
-								</Box>
-							</a>
-						</Link>
-					</div>
+
+					<Tooltip title={settingsTooltip} placement="right">
+						<IconButton
+							ref={anchorRef}
+							id="composition-button"
+							aria-controls={open ? "composition-menu" : undefined}
+							aria-expanded={open ? "true" : undefined}
+							aria-haspopup="true"
+							size="large"
+							sx={{
+								"& svg": {
+									color: "rgba(255,255,255,0.8)",
+									transition: "0.2s",
+									transform: "translateX(0) rotate(0)",
+								},
+								"&:hover, &:focus": {
+									bgcolor: "unset",
+									"& svg:first-of-type": {
+										transform: "translateX(-4px) rotate(-20deg)",
+									},
+									"& svg:last-of-type": {
+										right: 0,
+										opacity: 1,
+									},
+								},
+								"&:after": {
+									content: "\"\"",
+									position: "absolute",
+									height: "80%",
+									display: "block",
+									left: 0,
+									width: "1px",
+									bgcolor: "divider",
+								},
+							}}
+							onClick={() => {
+								if (settingsUrl) {
+									router.push(settingsUrl)
+								} else {
+									handleToggle()
+								}
+							}}
+						>
+							<SettingsIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
+							<ArrowRight sx={{ position: "absolute", right: 4, opacity: 0 }} />
+						</IconButton>
+					</Tooltip>
+					<Popper
+						open={open}
+						anchorEl={anchorRef.current}
+						role={undefined}
+						placement="right-start"
+						transition
+						disablePortal
+					>
+						{({ TransitionProps, placement }) => (
+							<Grow
+								{...TransitionProps}
+								style={{
+									transformOrigin:
+										placement === "bottom-start" ? "left top" : "left top",
+								}}
+							>
+								<Paper>
+									<ClickAwayListener onClickAway={handleClose}>
+										<MenuList
+											autoFocusItem={open}
+											id="composition-menu"
+											aria-labelledby="composition-button"
+											onKeyDown={handleListKeyDown}
+										>
+											<MenuItem onClick={handleClose}>App Settings</MenuItem>
+											<MenuItem onClick={handleClose}>User Settings</MenuItem>
+											<MenuItem onClick={handleClose}>Tickets Settings</MenuItem>
+										</MenuList>
+									</ClickAwayListener>
+								</Paper>
+							</Grow>
+						)}
+					</Popper>
+
+
+
+
 				</Box>
-			</ButtonBase>
+			</Box>
 		)
 	}
 
@@ -113,6 +218,11 @@ const HomeButton = ({ homeUrl, settingsUrl, isExpanded }) => {
 	)
 }
 
-HomeButton.propTypes = { homeUrl: PropTypes.string, settingsUrl: PropTypes.string, isExpanded: PropTypes.bool }
+HomeButton.propTypes = {
+	homeUrl: PropTypes.string,
+	settingsUrl: PropTypes.string,
+	settingsTooltip: PropTypes.string,
+	isExpanded: PropTypes.bool
+}
 
 export default HomeButton

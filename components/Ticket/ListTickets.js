@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Box, Fab, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY

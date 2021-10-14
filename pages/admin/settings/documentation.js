@@ -22,39 +22,44 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useRef } from "react"
+import React from "react"
+
+// MATERIAL-UI
+import { Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { usePrevious } from "react-use"
-import { forEach, groupBy, isEqual, sortBy } from "lodash"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { useGetDocsQuery } from "../redux/slices/firestoreApi"
+import { getLayout } from "./../../../layout/AdminLayout"
+import useUiSettings from "./../../../helpers/useUiSettings"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGroupedDocs() {
-	const { data, isLoading } = useGetDocsQuery(undefined)
-	const prevData = usePrevious(data)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const groupedDocs = useRef()
 
-	if (isLoading) { return ({ data: [], isLoading: true }) }
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
-	if (isEqual(prevData, data) === false) {
-		//step 0: sort the docs list
-		const sortedDocs = sortBy(data, ["category", "subcategory", "title"])
-		//step 1: group by cat
-		const groupByCat = groupBy(sortedDocs, (i) => i.category)
-		//step 2: group by SubCat
-		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
-			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
-		})
-		groupedDocs.current = Object.entries(groupByCatAndSub)
-	}
+function DocumentationSettings() {
 
-	return ({ data: groupedDocs.current, isLoading: false })
+	useUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
+	return (
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Typography variant="h1">Documentation Settings</Typography>
+
+
+		</Container>
+	)
 }
+
+DocumentationSettings.getLayout = getLayout
+export default DocumentationSettings

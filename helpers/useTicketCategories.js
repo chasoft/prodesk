@@ -26,35 +26,29 @@ import { useRef } from "react"
 
 //THIRD-PARTY
 import { usePrevious } from "react-use"
-import { forEach, groupBy, isEqual, sortBy } from "lodash"
+import { isEqual, sortBy } from "lodash"
 
 //PROJECT IMPORT
-import { useGetDocsQuery } from "../redux/slices/firestoreApi"
+import { useGetCategoriesQuery } from "../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGroupedDocs() {
-	const { data, isLoading } = useGetDocsQuery(undefined)
+export default function useTicketCategories() {
+	const { data, isLoading } = useGetCategoriesQuery(undefined)
 	const prevData = usePrevious(data)
 	//we use useRef here because, later we change the value
 	//and, this hook will not be re-render,
-	const groupedDocs = useRef()
+	const ticketCategories = useRef()
 
 	if (isLoading) { return ({ data: [], isLoading: true }) }
 
 	if (isEqual(prevData, data) === false) {
-		//step 0: sort the docs list
-		const sortedDocs = sortBy(data, ["category", "subcategory", "title"])
-		//step 1: group by cat
-		const groupByCat = groupBy(sortedDocs, (i) => i.category)
-		//step 2: group by SubCat
-		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
-			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
-		})
-		groupedDocs.current = Object.entries(groupByCatAndSub)
+		//sort the docs list
+		const sortedList = sortBy(data, ["name"])
+		ticketCategories.current = sortedList
 	}
 
-	return ({ data: groupedDocs.current, isLoading: false })
+	return ({ data: ticketCategories.current, isLoading: false })
 }

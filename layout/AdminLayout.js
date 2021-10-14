@@ -104,9 +104,9 @@ const ADMIN_MENUS = [
 		items: [
 			{ id: 1, icon: "1", text: "Members", url: "/admin/settings/members" },
 			{ id: 2, icon: "1", text: "Site Pages", url: "/admin/settings/pages" },
-			{ id: 3, icon: "1", text: "Tickets", url: "/admin/settings/tickets" },
-			{ id: 4, icon: "1", text: "Application Settings", url: "/admin/settings/application" },
-			{ id: 6, icon: "1", text: "Tools", url: "/admin/settings/tools" }, //send email to users...v.v.
+			{ id: 3, icon: "1", text: "Tickets", url: "/admin/settings/tickets/department" },
+			{ id: 4, icon: "1", text: "Documentation", url: "/admin/settings/documentation" },
+			{ id: 5, icon: "1", text: "Application Settings", url: "/admin/settings/application" },
 		]
 	},
 
@@ -156,7 +156,9 @@ function AdminLayout({ children }) {
 			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
 				<SideBar
-					homeUrl="/admin" settingsUrl="/admin/settings"
+					homeUrl="/admin"
+					settingsUrl=""
+					settingsTooltip=""
 					data={ADMIN_MENUS}
 				/>
 
@@ -166,7 +168,6 @@ function AdminLayout({ children }) {
 						flexDirection: "column",
 						flexGrow: 1,
 						width: "100%",
-						// overflowX: "hidden"
 					}}
 				>
 					<Header />

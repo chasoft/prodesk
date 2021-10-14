@@ -48,8 +48,16 @@ const UserIcon = () => {
 
 	return <>
 		<Tooltip title="User Menu" placement="bottom">
-			<IconButton onClick={handleToggle} size="large" ref={anchorRef}>
-				<Avatar src="/img/default-avatar.png" sx={{ height: (theme) => theme.spacing(3), width: (theme) => theme.spacing(3) }} />
+			<IconButton
+				onClick={handleToggle} size="large" ref={anchorRef}
+			>
+				<Avatar
+					src="/img/default-avatar.png"
+					sx={{
+						height: (theme) => theme.spacing(3),
+						width: (theme) => theme.spacing(3)
+					}}
+				/>
 			</IconButton>
 		</Tooltip>
 
@@ -65,7 +73,27 @@ const UserIcon = () => {
 			{({ TransitionProps }) => (
 				<ClickAwayListener onClickAway={() => { setOpen(false) }}>
 					<Grow in={open} {...TransitionProps}>
-						<Paper sx={{ padding: 0, width: "300px" }}>
+						<Paper
+							elevation={0}
+							sx={{
+								overflow: "visible",
+								filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+								mt: 1.5,
+								padding: 0, width: "300px",
+								"&:before": {
+									content: "\"\"",
+									display: "block",
+									position: "absolute",
+									top: 0,
+									right: 18,
+									width: 10,
+									height: 10,
+									bgcolor: "background.paper",
+									transform: "translateY(-50%) rotate(45deg)",
+									zIndex: 0,
+								}
+							}}
+						>
 							<Box
 								sx={{
 									display: "flex",
@@ -74,7 +102,13 @@ const UserIcon = () => {
 									padding: (theme) => theme.spacing(3, 2, 0),
 								}}
 							>
-								<Avatar src="/img/default-avatar.png" sx={{ height: (theme) => theme.spacing(11), width: (theme) => theme.spacing(11) }} />
+								<Avatar
+									src="/img/default-avatar.png"
+									sx={{
+										height: (theme) => theme.spacing(11),
+										width: (theme) => theme.spacing(11)
+									}}
+								/>
 								<Typography variant="button">{currentUser.displayName}</Typography>
 								<Typography variant="caption">{currentUser.email}</Typography>
 								<Typography variant="caption">{currentUser.group} {currentUser?.role ? <> | {currentUser?.role}</> : null}</Typography>
@@ -88,7 +122,6 @@ const UserIcon = () => {
 									p: 0,
 									fontSize: "0.875rem",
 									listStyle: "none",
-									mb: 2,
 									"& > li": {
 										display: "flex",
 										alignItems: "center",
@@ -101,7 +134,6 @@ const UserIcon = () => {
 											width: (theme) => theme.spacing(3),
 											height: (theme) => theme.spacing(3)
 										}
-
 									},
 									"& > li:hover": {
 										backgroundColor: "#F7F8F8",
@@ -110,13 +142,28 @@ const UserIcon = () => {
 								}}
 							>
 								<AuthAdminTrue>
-									<li onClick={() => { dispatch(setRedirect("/admin")); setOpen(false) }}><SettingsIcon />Admin Dashboard</li>
+									<li onClick={() => { dispatch(setRedirect("/admin")); setOpen(false) }}>
+										<SettingsIcon />Admin Dashboard
+									</li>
 								</AuthAdminTrue>
+
 								<AuthUserTrue>
-									<li onClick={() => { dispatch(setRedirect("/client")); setOpen(false) }}><SettingsIcon />Client Dashboard</li>
+									<li onClick={() => { dispatch(setRedirect("/client")); setOpen(false) }}>
+										<SettingsIcon />Client Dashboard
+									</li>
 								</AuthUserTrue>
+
 								<li><SettingsIcon />Profile Settings</li>
-								<li onClick={() => { signOut({ enqueueSnackbar, dispatch }); setOpen(false) }}><ExitToAppIcon />Logout</li>
+
+								<li
+									onClick={() => {
+										signOut({ enqueueSnackbar, dispatch }); setOpen(false)
+									}}
+									style={{ borderBottomLeftRadius: "4px", borderBottomRightRadius: "4px" }}
+								>
+									<ExitToAppIcon />Logout
+								</li>
+
 							</Box>
 						</Paper>
 					</Grow>

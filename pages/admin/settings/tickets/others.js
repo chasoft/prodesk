@@ -28,18 +28,18 @@ import React from "react"
 import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 // import { getUiSettings } from "./../../../../redux/selectors"
-import useUiSettings from "./../../../../helpers/useUiSettings"
-import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "./../../../../components/Settings/SettingsPanel"
+import useUiSettings from "../../../../helpers/useUiSettings"
+import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
+import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import EditIcon from "@mui/icons-material/Edit"
-import LabelPopupAddOrModify, { LabelPopupModifyColor } from "./../../../../components/Settings/SettingsPanel/LabelPopup"
+import LabelPopupAddOrModify, { LabelPopupModifyColor } from "../../../../components/Settings/SettingsPanel/LabelPopup"
 
 /*****************************************************************
  * DUMMY DATA                                                    *
@@ -88,7 +88,7 @@ export const TAG_PAGES = {
 function TicketSettingsLabel() {
 
 	useUiSettings({
-		activeTab: TICKET_SETTINGS_NAMES.LABEL,
+		activeTab: TICKET_SETTINGS_NAMES.OTHERS,
 		background: {
 			height: "132px",
 			backgroundImage: ""

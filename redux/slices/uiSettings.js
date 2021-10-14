@@ -80,6 +80,9 @@ const uiSettingsSlice = createSlice({
 	name: "uiSettings",
 	initialState,
 	reducers: {
+		setFixInnerHeight: (state, { payload }) => {
+			state.fixInnerHeight = payload
+		},
 		setIsSideBarExpanded: (state, { payload }) => {
 			state.isSideBarExpanded = payload
 		},

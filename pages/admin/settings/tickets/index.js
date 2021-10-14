@@ -22,78 +22,19 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-
-// MATERIAL-UI
-import { Typography } from "@mui/material"
-
-//THIRD-PARTY
-import { useDispatch } from "react-redux"
-
-//PROJECT IMPORT
-import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import useUiSettings from "./../../../../helpers/useUiSettings"
-import { SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "./../../../../components/Settings/SettingsPanel"
-
-//ASSETS
-
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
+import { useEffect } from "react"
+import { useRouter } from "next/router"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function TicketSettings() {
-
-	useUiSettings({
-		activeTab: TICKET_SETTINGS_NAMES.GENERAL,
-		background: {
-			height: "132px",
-			backgroundImage: ""
-		}
+	const router = useRouter()
+	useEffect(() => {
+		router.push("/admin/settings/tickets/department")
 	})
-
-	return (
-		<>
-			<SettingsHeader>
-				<Typography variant="h2" style={{ margin: 0 }}>Ticket Settings</Typography>
-			</SettingsHeader>
-
-			<SettingsContainer>
-				<SettingsContent>
-
-					<SettingsContentHeader hasBackBtn={false}>
-						Ticket
-					</SettingsContentHeader>
-
-					<SettingsContentHelper>
-
-						<SettingsContentHelperText>
-							Department Overview Department Overview Department Overview Department Overview Department Overview
-							Department Overview Department Overview Department Overview Department
-							<SettingsContentHelperLearnMore target="/admin" />
-						</SettingsContentHelperText>
-
-
-					</SettingsContentHelper>
-
-					<SettingsContentDetails>
-
-						<Typography>hello world</Typography>
-						<Typography>hello world</Typography>
-						<Typography>hello world</Typography>
-
-					</SettingsContentDetails>
-
-
-				</SettingsContent>
-			</SettingsContainer>
-		</>
-	)
+	return null
 }
 
-TicketSettings.getLayout = getLayout
 export default TicketSettings
