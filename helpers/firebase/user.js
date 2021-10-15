@@ -23,189 +23,95 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from "firebase/auth"
-import { collection, doc, getDoc, getDocs, query, where, limit, setDoc, writeBatch } from "firebase/firestore"
+import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore"
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { auth, db } from "."
+import { COLLECTION } from "../../redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/**
- * get admin's document from `adminUsers/${uid}`
- * @param {string} uid
- * @returns Object
- */
-export const getAdminDocByUid = async (uid) => {
-	let adminDoc = {}
-	try {
-		const docSnap = await getDoc(doc(db, "adminUsers", uid))
-		if (docSnap.exists())
-			adminDoc = docSnap.data()
-		else
-			throw new Error("adminUserId not existed.")
-	} catch (e) {
-		throw new Error("Something wrong happenned when trying to get adminUser's data.")
-	}
-	return adminDoc
-}
-
-/**
- * Re-Authorize before any important activities
- * @param {string} email
- * @param {string} password
- * @param {string} newEmail
- */
-
-export const reAuthenticateProviderPassword = async ({ uid, email, password, newEmail }, { enqueueSnackbar }) => {
-	try {
-		const credential = EmailAuthProvider.credential(email, password)
-		await reauthenticateWithCredential(auth.currentUser, credential)
-		await updateEmail(auth.currentUser, newEmail)
-		//Update email in database
-		await setDoc(doc(db, "users", uid), { newEmail }, { merge: true })
-		return true
-	} catch (e) {
-		enqueueSnackbar(e.message, { variant: "error" })
-		return false
-	}
-}
-
-export const changePassword = async ({ email, password, newPassword }, { enqueueSnackbar }) => {
+export const changePassword = async ({ email, password, newPassword }) => {
 	try {
 		const credential = EmailAuthProvider.credential(email, password)
 		await reauthenticateWithCredential(auth.currentUser, credential)
 		await updatePassword(auth.currentUser, newPassword)
-		return true
+		return { data: "Password changed successfully." }
 	} catch (e) {
-		enqueueSnackbar(e.message, { variant: "error" })
-		return false
+		return { error: e.message }
 	}
 }
 
-/**
- * Get user's document (`users/${uid}`) by username
- * @param {string} username
- * @returns Object
- */
-export async function getUserDocByUsername(username) {
-	const q = query(collection(db, "users"), where("username", "==", username), limit(1))
-	const querySnapshot = await getDocs(q)
-	const userDoc = querySnapshot[0].data()
-	return userDoc
-}
-
-/**
- * Get user's document (`users/${uid}`) by uid
- * @param {string} uid
- * @returns Promise
- */
-export const getUserDocByUid = async (uid) => {
-	let userDoc
+export const getUserProfile = async (uid) => {
 	try {
-		const docSnap = await getDoc(doc(db, "users", uid))
-		if (docSnap.exists()) {
-			userDoc = docSnap.data()
-		} else {
-			throw new Error("User not existed!")
-		}
+		let res = []
+		const q = query(
+			collection(db, COLLECTION.USERS),
+			where("uid", "in", [uid])
+		)
+		const querySnapshot = await getDocs(q)
+		querySnapshot.forEach((user) => { res.push(user.data()) })
+		if (res[0]) return { data: res[0] }
+		//---
+		return { error: "User not existed." }
 	} catch (e) {
-		throw new Error("Something wrong happenned when trying to get user's data")
+		return { error: e.message }
 	}
-	return userDoc
 }
 
-/**
- * Get user's document from `usernames/${uid}`
- * @param {string} username
- * @returns Object
- */
-export const getUsernameDocByUsername = async (username) => {
-	let usernameDoc = {}
+export const getUserProfileByUsername = async (username) => {
 	try {
-		const docSnap = await getDoc(doc(db, "usernames", username))
-		if (docSnap.exists())
-			usernameDoc = docSnap.data()
+		let res = []
+		const q = query(
+			collection(db, COLLECTION.USERS),
+			where("username", "==", username)
+		)
+		const querySnapshot = await getDocs(q)
+		querySnapshot.forEach((user) => { res.push(user.data()) })
+		if (res[0]) return { data: res[0] }
+		//---
+		return { error: "User not existed." }
 	} catch (e) {
-		throw new Error("Something wrong happenned when trying to get username's data")
+		return { error: e.message }
 	}
-	return usernameDoc
 }
 
 export const isUsernameAvailable = async (username) => {
-	let usernameAvailability = false
 	try {
-		const docSnap = await getDoc(doc(db, "usernames", username))
-		if (docSnap.exists())
-			usernameAvailability = true
+		let res = []
+		const q = query(
+			collection(db, COLLECTION.USERS),
+			where("username", "==", username)
+		)
+		const querySnapshot = await getDocs(q)
+		querySnapshot.forEach((user) => { res.push(user.data()) })
+		if (res[0]) return { isUsernameAvailable: false, data: res[0] }
+		//---
+		return { isUsernameAvailable: true }
 	} catch (e) {
-		throw new Error("Something wrong happenned when checking username availability")
+		return { error: e.message }
 	}
-	return usernameAvailability
 }
 
-export const userGetDisplayInfo = (uid) => {
-	const userDoc = getUserDocByUid(uid)
-	//in case not yet set userName, then use system default
-	if (!userDoc.username) {
-		return ({
-			displayName: userDoc.displayName ? userDoc?.displayName : userDoc.email,
-			photoURL: userDoc.photoURL ? userDoc.photoURL : "/img/default-avatar.png"
-		})
-	}
+export const setUsername = async (uid, username) => {
+	const res = await isUsernameAvailable(username)
 
-	const userNameDoc = getUsernameDocByUsername(userDoc.username)
-	return ({
-		displayName: userNameDoc.displayName ? userNameDoc.displayName
-			: userDoc.displayName ? userDoc.displayName : userDoc.email,
-		photoURL: userNameDoc.photoURL ? userNameDoc.photoURL
-			: userDoc.photoURL ? userDoc.photoURL : "/img/default-avatar.png"
-	})
-}
+	if (res.error) return res.error
+	if (res.isUsernameAvailable === false) return { error: "Username existed." }
 
-/**
- * User can set username once, after that, username cannot be changed
- * Anyway, user can adjust his/her displayName for decoration
- * @param {*} uid 
- * @param {*} username 
- * @returns Nothing
- */
-export const userSetUsername = async ({ uid, username }, { enqueueSnackbar }) => {
-	// const { exists } = await db.doc(`usernames/${username}`).get()
-	if (!isUsernameAvailable(username)) {
-		enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
-		return
-	}
-
-	const batch = writeBatch(db)
 	try {
-		batch.set(doc(db, "users", uid), { username }, { merge: true })
-		batch.set(doc(db, "usernames", username), { uid })
+		const batch = writeBatch(db)
+		batch.set(doc(db, COLLECTION.USERS, uid), { username }, { merge: true })
+		batch.set(doc(db, COLLECTION.USERNAMES, username), { uid: [uid] }, { merge: true })
 		await batch.commit()
-		enqueueSnackbar("Username created successfully", { variant: "success" })
+		//---
+		return { data: "Username created successfully" }
 	} catch (e) {
-		console.log(e.message)
-		enqueueSnackbar(`Something is wrong! Error message: ${e.message}`, { variant: "error" })
-	}
-}
-
-
-/**
- * Update displayName at `usernames/${username}`
- * @param {string} username
- * @param {string} displayName
- */
-export const userUpdateDisplayName = async ({ username, displayName }, { enqueueSnackbar }) => {
-	try {
-		await setDoc(doc(db, "usernames", username), { displayName }, { merge: true })
-		enqueueSnackbar("Display name updated successfully", { variant: "success" })
-	}
-	catch (e) {
-		console.log(e.message)
-		enqueueSnackbar("Display name updated successfully", { variant: "error" })
+		return { error: e.message }
 	}
 }

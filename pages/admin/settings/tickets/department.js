@@ -79,9 +79,6 @@ function TicketSettingsDepartment() {
 
 	const hasSelectedDepartment = isLoading ? false : some(departments, { department: activeSettingPanel })
 
-	console.log("hasSelectedDepartment", hasSelectedDepartment)
-	console.log("activeSettingPanel", activeSettingPanel)
-
 	return (
 		<>
 			<SettingsHeader>
@@ -99,15 +96,7 @@ function TicketSettingsDepartment() {
 
 			<SettingsContainer>
 
-				<SettingsList
-					sx={{
-						flexGrow: showContent ? 0 : 1,
-						display: {
-							xs: showContent ? "none" : "initial",
-							sm: "initial",
-						}
-					}}
-				>
+				<SettingsList showContent={showContent}>
 					<ListItem
 						selected={activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW}
 						icon={<InfoIcon fontSize="small" />}
@@ -139,7 +128,7 @@ function TicketSettingsDepartment() {
 
 				</SettingsList>
 
-				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+				<SettingsContent showContent={showContent}>
 
 					{isLoading
 						? <div>Loading</div>

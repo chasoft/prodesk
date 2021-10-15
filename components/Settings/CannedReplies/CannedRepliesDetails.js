@@ -80,9 +80,10 @@ const CannedRepliesDetails = ({ crid }) => {
 
 	return (
 		<>
-			<SettingsContentDetails
-				sx={{ display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 } }}
-			>
+			<SettingsContentDetails sx={{
+				display: "flex", flexDirection: "column",
+				pt: { xs: 3, sm: 0 }
+			}}>
 
 				{isLoadingDepartments
 					? <div>Loading...</div>
@@ -94,13 +95,11 @@ const CannedRepliesDetails = ({ crid }) => {
 							value={department}
 							onChange={(e) => { setDepartment(e.target.value) }}
 						>
-							{
-								departments.map((department) => (
-									<MenuItem key={department.did} value={department.department}>
-										{department.department}
-									</MenuItem>
-								))
-							}
+							{departments.map((department) => (
+								<MenuItem key={department.did} value={department.department}>
+									{department.department}
+								</MenuItem>
+							))}
 						</Select>
 					</FormControl>}
 

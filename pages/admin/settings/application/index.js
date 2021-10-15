@@ -72,7 +72,7 @@ function ApplicationSettings() {
 			</SettingsHeader>
 
 			<SettingsContainer>
-				<SettingsList sx={{ display: { xs: showContent ? "none" : "initial", sm: "initial", flexGrow: showContent ? 0 : 1 } }}>
+				<SettingsList showContent={showContent}>
 
 					<ListItem
 						selected={activeSettingPanel === "AA"}
@@ -104,7 +104,7 @@ function ApplicationSettings() {
 				</SettingsList>
 
 
-				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+				<SettingsContent showContent={showContent}>
 
 					<SettingsContentHeader backBtnOnClick={() => setShowContent(false)}>
 						Application Settings

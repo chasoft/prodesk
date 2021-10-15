@@ -1688,7 +1688,7 @@ function EditProfile() {
 				</SettingsHeader>
 
 				<SettingsContainer>
-					<SettingsContent sx={{ flexGrow: 1 }}>
+					<SettingsContent>
 
 						<ContentGroup title="Profile">
 							<ContentRow title="Avatar">
@@ -1715,7 +1715,9 @@ function EditProfile() {
 							<ContentRow tooltip="Display name is used for decoration only" title="Display name" removePadding>
 								<EditButton
 									defaultState={currentUser.displayName}
-									saveAction={() => { }}
+									saveAction={() => {
+										// updateUser({})
+									}}
 								>
 									<TextField
 										label="Display name"

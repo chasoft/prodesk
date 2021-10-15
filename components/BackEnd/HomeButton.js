@@ -182,9 +182,6 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 						)}
 					</Popper>
 
-
-
-
 				</Box>
 			</Box>
 		)

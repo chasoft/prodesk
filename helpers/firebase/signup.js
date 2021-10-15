@@ -33,6 +33,8 @@ import { auth, db } from "."
 import { REDIRECT_URL, USERGROUP } from "./../constants"
 import { setRedirect } from "./../../redux/slices/redirect"
 import { updateAvatarAndLocation } from "./../../redux/slices/auth"
+import { isUsernameAvailable } from "./user"
+import { COLLECTION } from "../../redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -53,25 +55,21 @@ import { updateAvatarAndLocation } from "./../../redux/slices/auth"
 // 		prompt: "select_account",
 // 	});
 
-export const signupCreateProfile = async ({ username, avatar, location }, { dispatch, enqueueSnackbar }) => {
-	const batch = writeBatch(db)
+export const signupCreateProfile = async ({ uid, username, avatar, location }, { dispatch, enqueueSnackbar }) => {
 	try {
-		batch.set(doc(db, "usernames", username), {
+		const batch = writeBatch(db)
+
+		batch.set(doc(db, "users", uid), {
 			photoURL: avatar,
 			location: location,
+		}, { merge: true })
+
+		batch.set(doc(db, "usernames", username), {
 			nextStep: REDIRECT_URL.SURVEY
 		}, { merge: true })
 		await batch.commit()
 
-		//Update redux
-		reduxBatch(() => {
-			dispatch(updateAvatarAndLocation({
-				photoURL: avatar,
-				location: location,
-				// nextStep: REDIRECT_URL.SURVEY
-			}))
-			dispatch(setRedirect(REDIRECT_URL.SURVEY))
-		})
+		dispatch(setRedirect(REDIRECT_URL.SURVEY))
 		// router.push(REDIRECT_URL.SURVEY)
 	}
 	catch (e) {
@@ -114,18 +112,22 @@ export const signupInitSurvey = async ({ username, payload }, { enqueueSnackbar,
  */
 export const signUpViaSocialAccount = async ({ uid, email, name, username, photoURL }, { enqueueSnackbar, dispatch }) => {
 	try {
-		enqueueSnackbar("Creating your account with us...", { key: "signUpViaSocialAccount", variant: "info" })
+
+
+
 
 		const batch = writeBatch(db)
 		batch.set(doc(db, "users", uid), {
+			uid: [uid],
 			email: email,
-			username: username
+			username: username,
+			displayName: name,
+			photoURL: photoURL,
 		})
 		batch.set(doc(db, "usernames", username), {
-			uid: JSON.stringify([uid]),	//all associated account will be stored here in an Array
-			displayName: name,
+			uid: [uid],	//all associated account will be stored here in an Array
 			username: username,
-			photoURL: photoURL,
+			email: email,
 			group: "user", //default usergroup
 			nextStep: REDIRECT_URL.CREATE_PROFILE
 		})
@@ -141,31 +143,28 @@ export const signUpViaSocialAccount = async ({ uid, email, name, username, photo
 	}
 }
 
-/**
- * signUpWithEmail
- * @param {*} email 
- * @param {*} password 
- * @param {*} name 
- * @param {*} username 
- */
-export const signUpWithEmail = async ({ email, password, name, username }, { enqueueSnackbar, dispatch }) => {
+export const signUpWithEmail = async ({ email, password, name, username }) => {
 	try {
-		enqueueSnackbar("Connecting with Authentication Server...", { key: "signUpWithEmail", variant: "info" })
+
+		//Check username availability
+		const res = await isUsernameAvailable(username)
+		if (res.error) return res.error
+		if (res.isUsernameAvailable === false) return { error: "Username existed." }
+
 		const userCredential = createUserWithEmailAndPassword(auth, email, password)
 
 		const batch = writeBatch(db)
-		enqueueSnackbar("Updating the database...", { key: "signUpWithEmail", variant: "info" })
-
-		batch.set(doc(db, "users", userCredential.user.uid), {
-			email: userCredential.user.email,
-			username: username
-		})
-		batch.set(doc(db, "usernames", username), {
-			uid: JSON.stringify([userCredential.user.uid]),	//all associated account will be stored here in an Array
-			displayName: name,
-			email: userCredential.user.email,
-			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+		batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
+			uid: [userCredential.user.uid],
 			username: username,
+			email: userCredential.user.email,
+			displayName: name,
+			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+		})
+		batch.set(doc(db, COLLECTION.USERNAMES, username), {
+			uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+			username: username,
+			email: userCredential.user.email,
 			group: USERGROUP.USER, //default usergroup
 			nextStep: REDIRECT_URL.CREATE_PROFILE
 		})

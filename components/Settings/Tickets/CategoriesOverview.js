@@ -33,7 +33,7 @@ import { useDispatch } from "react-redux"
 import { useUpdateCategoryMutation } from "./../../../redux/slices/firestoreApi"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
 import useTicketCategories from "../../../helpers/useTicketCategories"
-import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
@@ -70,12 +70,8 @@ const CategoriesOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-				</SettingsContentHelperText>
-				<SettingsContentHelperText>
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-					Department Overview
+					If your business have
+					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 
@@ -94,7 +90,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 							alignItems: "center",
 							p: 3,
 							"&>div>button#set-default-button": {
-								visibility: "hidden"
+								visibility: { xs: "visible", sm: "hidden" }
 							},
 							":hover": {
 								cursor: "pointer",
@@ -122,7 +118,6 @@ const CategoriesOverview = ({ backBtnClick }) => {
 							</Box>
 							<Box sx={{
 								display: "flex",
-								flexDirection: { xs: "column", md: "row" },
 								"&>#sub": { marginRight: 0.5 },
 								"&>#sub-default": {
 									marginRight: 0.5,
@@ -154,22 +149,28 @@ const CategoriesOverview = ({ backBtnClick }) => {
 						<Box>
 							{category.default
 								? <Typography color="primary.main" sx={{ fontWeight: "bold" }}>Default</Typography>
-								: <IconButton id="set-default-button" onClick={async (e) => {
-									e.stopPropagation()
-									let affectedItems = []
-									categories.forEach(i => {
-										affectedItems.push({
-											catId: i.catId,
-											default: (i.catId === category.catId) ? true : false
-										})
-									})
-									await updateCategory({
-										categoryItem: {},
-										affectedItems: affectedItems
-									})
-								}}>
-									<CheckBoxIcon />
-								</IconButton>}
+								: <Tooltip title="Set this default Category" placement="left">
+									<IconButton
+										id="set-default-button"
+										onClick={async (e) => {
+											e.stopPropagation()
+											let affectedItems = []
+											categories.forEach(i => {
+												affectedItems.push({
+													catId: i.catId,
+													default: (i.catId === category.catId) ? true : false
+												})
+											})
+											await updateCategory({
+												categoryItem: {},
+												affectedItems: affectedItems
+											})
+										}}
+										sx={{ ":hover": { color: "primary.main" } }}
+									>
+										<CheckBoxIcon />
+									</IconButton>
+								</Tooltip>}
 						</Box>
 
 					</Box>

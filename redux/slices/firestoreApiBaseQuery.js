@@ -25,12 +25,13 @@
 import {
 	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
 } from "firebase/firestore"
+import { createUserWithEmailAndPassword } from "firebase/auth"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { DOC_TYPE } from "./../../helpers/constants"
-import { db } from "./../../helpers/firebase"
+import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
+import { auth, db } from "./../../helpers/firebase"
 import { ACTION, COLLECTION } from "./firestoreApiConstants"
 
 /*****************************************************************
@@ -56,9 +57,176 @@ async function fireStoreBaseQuery(args) {
 	switch (args.action) {
 
 		/*****************************************************************
+		 * SIGN-UP         	                                             *
+		 *****************************************************************/
+		case ACTION.SIGN_UP_WITH_EMAIL:
+			try {
+				//Check username availabitity
+				const res = await isUsernameAvailable(username)
+				if (res.error)
+					return throwError(
+						200, ACTION.SIGN_UP_WITH_EMAIL,
+						{ message: res.error }, null
+					)
+
+				if (res.isUsernameAvailable === false)
+					return throwError(
+						200, ACTION.SIGN_UP_WITH_EMAIL,
+						{ message: "Username existed." }, null
+					)
+
+				const userCredential = createUserWithEmailAndPassword(auth, args.email, args.password)
+
+				const batch = writeBatch(db)
+				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
+					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+					username: args.username,
+					email: userCredential.user.email,
+					displayName: args.name,
+					photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+				})
+				batch.set(doc(db, COLLECTION.USERNAMES, args.username), {
+					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+					username: args.username,
+					email: userCredential.user.email,
+					group: USERGROUP.USER, //default usergroup
+					nextStep: REDIRECT_URL.CREATE_PROFILE
+				})
+				await batch.commit()
+
+				//TODO: verify email!!! userCredential.user.sendEmailVerification()
+
+				return { data: "Account created successfully!", redirect: REDIRECT_URL.CREATE_PROFILE }
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_UP_WITH_EMAIL, e, null)
+			}
+
+		case ACTION.SIGN_UP_VIA_GOOGLE:
+			try {
+				const batch = writeBatch(db)
+				batch.set(doc(db, COLLECTION.USERS, args.uid), {
+					uid: [args.uid],
+					email: args.email,
+					username: args.username,
+					displayName: args.name,
+					photoURL: args.photoURL,
+				})
+				batch.set(doc(db, COLLECTION.USERNAMES, args.username), {
+					uid: [args.uid],	//all associated account will be stored here in an Array
+					username: args.username,
+					email: args.email,
+					group: "user", //default usergroup
+					nextStep: REDIRECT_URL.CREATE_PROFILE
+				})
+				await batch.commit()
+
+				//Go to next step -> /signup/create-profile  (to update avatar & location)
+				// router.push(REDIRECT_URL.CREATE_PROFILE)
+				dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
+				// }
+				// catch (e) {
+				// 	console.log(e.message)
+				// 	enqueueSnackbar(e.message, { key: "signUpViaSocialAccount", variant: "error" })
+				// }
+
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_UP_VIA_SOCIAL, e, null)
+			}
+			break
+
+		case ACTION.SIGN_UP_CREATE_PROFILE:
+			try {
+				//
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_UP_CREATE_PROFILE, e, null)
+			}
+			break
+
+		case ACTION.SIGN_UP_SURVEY:
+			try {
+				//
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_UP_SURVEY, e, null)
+			}
+			break
+
+		/*****************************************************************
+		 * PROFILE         	                                             *
+		 *****************************************************************/
+		case ACTION.GET_PROFILES:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db, COLLECTION.USERS))
+				querySnapshot.forEach((user) => { all.push(user.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PROFILES, e, null)
+			}
+
+		case ACTION.GET_PROFILE:
+			try {
+				let res = []
+				const q = query(
+					collection(db, COLLECTION.USERS),
+					where("uid", "in", [args.uid])
+				)
+				const querySnapshot = await getDocs(q)
+				querySnapshot.forEach((user) => { res.push(user.data()) })
+				return { data: res[0] ?? {} }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PROFILE, e, null)
+			}
+
+		case ACTION.GET_PROFILE_BY_USERNAME:
+			try {
+				let res = []
+				const q = query(
+					collection(db, COLLECTION.USERS),
+					where("username", "==", args.username)
+				)
+				const querySnapshot = await getDocs(q)
+				querySnapshot.forEach((user) => { res.push(user.data()) })
+				return { data: res[0] ?? {} }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PROFILE_BY_USERNAME, e, null)
+			}
+
+		case ACTION.GET_PROFILE_BY_EMAIL:
+			try {
+				let res = []
+				const q = query(
+					collection(db, COLLECTION.USERS),
+					where("email", "==", args.email)
+				)
+				const querySnapshot = await getDocs(q)
+				querySnapshot.forEach((user) => { res.push(user.data()) })
+				return { data: res[0] ?? {} }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PROFILE_BY_EMAIL, e, null)
+			}
+
+		case ACTION.UPDATE_PROFILE:
+			try {
+				updateDoc(
+					doc(db, COLLECTION.USERS, args.body.uid),
+					args.body
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_PROFILE,
+						id: args.body.uid,
+						message: "Profile updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_PROFILE, e, {
+					id: args.body.uid
+				})
+			}
+
+		/*****************************************************************
 		 * DOCUMENTATION                                                 *
 		 *****************************************************************/
-
 		case ACTION.GET_DOCS:
 			try {
 				let all = []
@@ -68,6 +236,7 @@ async function fireStoreBaseQuery(args) {
 			} catch (e) {
 				return throwError(200, ACTION.GET_DOCS, e, null)
 			}
+
 		case ACTION.GET_DOC:
 			try {
 				let docItem = {}
@@ -77,6 +246,7 @@ async function fireStoreBaseQuery(args) {
 			} catch (e) {
 				return throwError(200, ACTION.GET_DOC, e, null)
 			}
+
 		case ACTION.GET_CONTENT:
 			try {
 				let docItemContent = ""
@@ -87,6 +257,7 @@ async function fireStoreBaseQuery(args) {
 			} catch (e) {
 				return throwError(200, ACTION.GET_CONTENT, e, "")
 			}
+
 		case ACTION.ADD_DOC:
 			try {
 				const batch = writeBatch(db)
@@ -113,6 +284,7 @@ async function fireStoreBaseQuery(args) {
 					id: args.body.docItem.docId
 				})
 			}
+
 		case ACTION.UPDATE_DOC:
 			try {
 				if (args.body.docItem.type === DOC_TYPE.EXTERNAL || args.body.docItem.type === DOC_TYPE.DOC) {
@@ -183,6 +355,7 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 			break
+
 		case ACTION.UPDATE_CONTENT:
 			try {
 				const batch = writeBatch(db)

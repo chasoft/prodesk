@@ -1,11 +1,14 @@
 export const COLLECTION = {
 	DOCS: "documentation",
-	SETTINGS: "settings"
+	SETTINGS: "settings",
+	USERS: "users",
+	USERNAMES: "usernames",
 }
 
 export const TYPE = {
 	DOCS: "Docs",
 	USERS: "Users",
+	PROFILES: "Profiles",
 	TICKETS: "Tickets",
 	SETTINGS: "Settings",
 	DEPARTMENTS: "Departments",
@@ -51,4 +54,21 @@ export const ACTION = {
 	ADD_CATEGORY: "addCategory",
 	UPDATE_CATEGORY: "updateCategory",
 	DELETE_CATEGORY: "deleteCategory",
+
+	/* PROFILES */
+	GET_PROFILES: "getProfiles",
+	GET_PROFILE: "getProfile",
+	GET_PROFILE_BY_USERNAME: "getProfileByUsername",
+	GET_PROFILE_BY_EMAIL: "getProfileByEmail",
+	UPDATE_PROFILE: "updateProfile",
+
+	/* USER */
+	GET_USER: "getUser",
+	UPDATE_USER: "updateUser",
+
+	/* SIGN-UP */
+	SIGN_UP_WITH_EMAIL: "signUpWithEmail",
+	SIGN_UP_VIA_GOOGLE: "signUpViaGoogle",
+	SIGN_UP_CREATE_PROFILE: "signUpCreateProfile",
+	SIGN_UP_SURVEY: "signUpSurvey",
 }

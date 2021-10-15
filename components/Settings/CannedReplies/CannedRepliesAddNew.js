@@ -63,11 +63,10 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 				New canned reply
 			</SettingsContentHeader>
 
-			<SettingsContentDetails
-				sx={{
-					display: "flex", flexDirection: "column", pt: { xs: 3, sm: 0 }
-				}}
-			>
+			<SettingsContentDetails sx={{
+				display: "flex", flexDirection: "column",
+				pt: { xs: 3, sm: 0 }
+			}}>
 
 				{isLoadingDepartments
 					? <div>Loading...</div>
@@ -79,13 +78,11 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 							value={department}
 							onChange={(e) => { setDepartment(e.target.value) }}
 						>
-							{
-								departments.map((department) => (
-									<MenuItem key={department.did} value={department.department}>
-										{department.department}
-									</MenuItem>
-								))
-							}
+							{departments.map((department) => (
+								<MenuItem key={department.did} value={department.department}>
+									{department.department}
+								</MenuItem>
+							))}
 						</Select>
 					</FormControl>}
 

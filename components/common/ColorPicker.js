@@ -41,24 +41,26 @@ import {
  * INIT                                                          *
  *****************************************************************/
 
-const SHADE = [500, 300, 400, 600, 700, 800, 900]
-const HUE = { red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, grey, blueGrey }
+export const SHADE = [500, 300, 400, 600, 700, 800, 900] //7 options
+export const HUE = { red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, grey, blueGrey } //19 items
 
 const ListColors = ({ colorFamily, selectedColor, setSelectedColor, size = 30 }) => (
 	<>
 		{
 			SHADE.map((item, idx) => (
 				<Box
-					key={idx} sx={{
+					key={idx}
+					sx={{
 						width: size, height: size,
-						bgcolor: colorFamily[item],
+						backgroundColor: colorFamily[item],
 						borderRadius: (selectedColor === colorFamily[item]) ? "50%" : 0,
 						":hover": {
-							borderRadius: (selectedColor === colorFamily[item]) ? "50%" : 8,
+							// borderRadius: (selectedColor === colorFamily[item]) ? "50%" : 8,
+							border: "3px solid white",
 						}
 					}}
 					onClick={() => { setSelectedColor(colorFamily[item]) }}
-				/>
+				></Box>
 			))
 		}
 	</>
@@ -79,7 +81,7 @@ export function ColorPickerBase({ position, getSelectedColor, children }) {
 	}, [setSelectedColor, getSelectedColor])
 
 	return (
-		<Box sx={{ p: 1 }}>
+		<div style={{ padding: "8px" }}>
 
 			{position === "top" ? children : null}
 
@@ -103,7 +105,7 @@ export function ColorPickerBase({ position, getSelectedColor, children }) {
 
 			{position === "bottom" ? children : null}
 
-		</Box>
+		</div>
 	)
 }
 ColorPickerBase.propTypes = {
@@ -111,6 +113,30 @@ ColorPickerBase.propTypes = {
 	getSelectedColor: PropTypes.func,
 	children: PropTypes.node,
 }
+
+
+export function ColorTable({ getSelectedColor }) {
+	const [selectedColor, setSelectedColor] = useState("")
+
+	const handleSelectedColor = useCallback((color) => {
+		setSelectedColor(color)
+		getSelectedColor(color)
+	}, [setSelectedColor, getSelectedColor])
+
+	return (
+		<div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+			{Object.entries(HUE).map(([key, value]) => (
+				<ListColors
+					key={key}
+					selectedColor={selectedColor}
+					setSelectedColor={handleSelectedColor}
+					colorFamily={value}
+				/>
+			))}
+		</div>
+	)
+}
+ColorTable.propTypes = { getSelectedColor: PropTypes.func }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -126,7 +152,7 @@ export default function ColorPicker({ getSelectedColor }) {
 
 	return (
 		<ColorPickerBase position="bottom" getSelectedColor={handleSelectedColor}>
-			<Box sx={{ display: "flex", mt: 1 }}>
+			<div style={{ display: "flex", marginTop: "8px" }}>
 				<Box
 					sx={{
 						display: "flex",
@@ -140,7 +166,7 @@ export default function ColorPicker({ getSelectedColor }) {
 				>
 					<Typography sx={{ color: selectedColor ? "#FFF" : "#000" }}>Current selected color</Typography>
 				</Box>
-			</Box>
+			</div>
 		</ColorPickerBase>
 	)
 }

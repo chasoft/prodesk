@@ -22,163 +22,174 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
+import { Chip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-// import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-// import { getUiSettings } from "./../../../../redux/selectors"
+import { getUiSettings } from "../../../../redux/selectors"
 import useUiSettings from "../../../../helpers/useUiSettings"
+import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
 import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { SettingsContainer, SettingsContent, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader } from "../../../../components/Settings/SettingsPanel"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
 
 //ASSETS
-import AddIcon from "@mui/icons-material/Add"
-import EditIcon from "@mui/icons-material/Edit"
-import LabelPopupAddOrModify, { LabelPopupModifyColor } from "../../../../components/Settings/SettingsPanel/LabelPopup"
-
-/*****************************************************************
- * DUMMY DATA                                                    *
- *****************************************************************/
-
-const DUMMY_LABELS = [
-	{
-		id: 1,
-		labelName: "Label 1",
-		labelColor: "#EAF",
-	},
-	{
-		id: 2,
-		labelName: "Label 2",
-		labelColor: "#000",
-	},
-	{
-		id: 3,
-		labelName: "Label 3",
-		labelColor: "#F1F",
-	},
-	{
-		id: 4,
-		labelName: "Label 4",
-		labelColor: "#AAF",
-	},
-	{
-		id: 5,
-		labelName: "Label 5",
-		labelColor: "#BBB",
-	},
-]
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
+import LabelIcon from "@mui/icons-material/Label"
+import DoneAllIcon from "@mui/icons-material/DoneAll"
+import PageLabels from "../../../../components/Settings/Tickets/Labels"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const TAG_PAGES = {
-
+export const OTHERS_PAGES = {
+	LABELS: { name: "Labels", icon: <LabelIcon fontSize="small" /> },
+	STATUS: { name: "Ticket status", icon: <DoneAllIcon fontSize="small" /> },
+	PRIORITIES: { name: "Priorities", icon: <PriorityHighIcon fontSize="small" /> },
 }
+
+const PagePriorities = ({ backBtnClick }) => {
+	return (
+		<>
+			<SettingsContentHeader
+				backBtnOnClick={() => backBtnClick(false)}
+			>
+				Priorities settings
+			</SettingsContentHeader>
+
+			<SettingsContentHelper>
+
+				<SettingsContentHelperText>
+					<p>Prodesk only support 3 default levels of priotity:&nbsp;</p>
+					<p>
+						<Chip
+							label="Low"
+							size="small"
+						/>
+						&nbsp;
+						<Chip
+							label="Normal"
+							size="small"
+							color="primary"
+						/>
+						&nbsp;and&nbsp;
+						<Chip
+							label="High"
+							size="small"
+							color="warning"
+						/>
+					</p>
+					<p>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></p>
+
+				</SettingsContentHelperText>
+
+			</SettingsContentHelper>
+
+
+			<SettingsContentDetails>
+				{/* No content */}
+			</SettingsContentDetails>
+		</>
+	)
+}
+PagePriorities.propTypes = { backBtnClick: PropTypes.func }
+
+const PageStatuses = ({ backBtnClick }) => {
+	return (
+		<>
+			<SettingsContentHeader
+				backBtnOnClick={() => backBtnClick(false)}
+			>
+				Ticket status
+			</SettingsContentHeader>
+
+			<SettingsContentHelper>
+
+				<SettingsContentHelperText>
+					<p>Prodesk only support 4 default ticket statuses:</p>
+					<p>1. <b>Open</b>: newly created ticket</p>
+					<p>2. <b>Pending</b>: ticket is waiting reply from supporter</p>
+					<p>3. <b>Replied</b>: ticket is replied, many be waiting for responding from customer</p>
+					<p>4. <b>Closed</b>: solved ticket</p>
+					<p>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></p>
+
+				</SettingsContentHelperText>
+
+			</SettingsContentHelper>
+
+
+			<SettingsContentDetails>
+				{/* No content */}
+			</SettingsContentDetails>
+		</>
+	)
+}
+PageStatuses.propTypes = { backBtnClick: PropTypes.func }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketSettingsLabel() {
+function TicketSettingsOthers() {
 
 	useUiSettings({
 		activeTab: TICKET_SETTINGS_NAMES.OTHERS,
+		activePanel: OTHERS_PAGES.LABELS.name,
 		background: {
 			height: "132px",
 			backgroundImage: ""
 		}
 	})
 
+	const dispatch = useDispatch()
+	const [showContent, setShowContent] = useState(false)
+	const { activeSettingPanel } = useSelector(getUiSettings)
+
 	return (
 		<>
 			<SettingsHeader>
-				<Typography variant="h2" style={{ margin: 0 }}>Label</Typography>
-				<Button
-					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
-					onClick={() => { }}
-				>
-					Add New
-				</Button>
+				<Typography variant="h2" style={{ margin: 0 }}>Others settings</Typography>
 			</SettingsHeader>
 
 			<SettingsContainer>
 
-				<SettingsContent>
+				<SettingsList showContent={showContent}>
 
-					<SettingsContentHeader hasBackBtn={false}>
-						Labels
-					</SettingsContentHeader>
+					<ListTitle>Other settings</ListTitle>
 
-					<SettingsContentHelper>
-
-						<SettingsContentHelperText>
-							Department Overview Department Overview Department Overview Department Overview Department Overview
-							Department Overview Department Overview Department Overview Department
-							<SettingsContentHelperLearnMore target="/admin" />
-						</SettingsContentHelperText>
-
-					</SettingsContentHelper>
-
-
-					{DUMMY_LABELS.map((item) => (
-						<Box
-							key={item.id}
-							sx={{
-								display: "flex",
-								py: 2, px: 3,
-								"&:hover": { bgcolor: "action.hover" },
-								"&:last-child:hover": {
-									borderBottomLeftRadius: "0.5rem",
-									borderBottomRightRadius: "0.5rem",
-								},
+					{Object.entries(OTHERS_PAGES).map((tab) => (
+						<ListItem
+							key={tab[1].name}
+							selected={activeSettingPanel === tab[1].name}
+							icon={tab[1].icon}
+							onClick={() => {
+								dispatch(setActiveSettingPanel(tab[1].name))
+								setShowContent(true)
 							}}
 						>
-							<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-								<LabelPopupModifyColor
-									labelColor={item.labelColor}
-									btnAction={() => { }}
-								>
-									<Box
-										sx={{
-											borderRadius: "50%",
-											bgcolor: item.labelColor,
-											width: 40, height: 40,
-											mr: 2,
-											"&:hover": {
-												cursor: "pointer"
-											}
-										}}
-									/>
-								</LabelPopupModifyColor>
-								<Typography variant="caption" style={{ margin: 0 }}>
-									{item.labelName}
-								</Typography>
-							</Box>
-
-							<Box sx={{ display: "flex", alignItems: "center" }}>
-								<LabelPopupAddOrModify
-									labelName={item.labelName}
-									labelColor={item.labelColor}
-									btnCaption="Edit"
-									btnAction={(label, color) => { console.log("Update label with value", label, color) }}
-								>
-									<Tooltip title="Edit label" placement="bottom">
-										<IconButton>
-											<EditIcon />
-										</IconButton>
-									</Tooltip>
-								</LabelPopupAddOrModify>
-							</Box>
-
-						</Box>
+							{tab[1].name}
+						</ListItem>
 					))}
 
+				</SettingsList>
+
+
+				<SettingsContent showContent={showContent}>
+
+					{(activeSettingPanel === OTHERS_PAGES.LABELS.name)
+						&& <PageLabels backBtnClick={setShowContent} />}
+
+					{(activeSettingPanel === OTHERS_PAGES.STATUS.name)
+						&& <PageStatuses backBtnClick={setShowContent} />}
+
+					{(activeSettingPanel === OTHERS_PAGES.PRIORITIES.name)
+						&& <PagePriorities backBtnClick={setShowContent} />}
 
 				</SettingsContent>
 			</SettingsContainer>
@@ -186,6 +197,6 @@ function TicketSettingsLabel() {
 	)
 }
 
-TicketSettingsLabel.getLayout = getLayout
+TicketSettingsOthers.getLayout = getLayout
 
-export default TicketSettingsLabel
+export default TicketSettingsOthers

@@ -51,6 +51,90 @@ export const firestoreApi = createApi({
 	endpoints: (builder) => ({
 
 		/*****************************************************************
+		 * SIGN-UP                                                       *
+		 *****************************************************************/
+
+		signUpWithEmail: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_UP_WITH_EMAIL, body })
+		}),
+
+		signUpViaGoogle: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_UP_VIA_GOOGLE, body })
+		}),
+
+		signUpCreateProfile: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_UP_CREATE_PROFILE, body })
+		}),
+
+		signUpSurvey: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_UP_SURVEY, body })
+		}),
+
+		/*****************************************************************
+		 * USER                                                          *
+		 *****************************************************************/
+
+		// getUsers: builder.query({
+		// 	query: () => ({ action: ACTION.GET_USERS }),
+		// 	providesTags: [{ type: TYPE.USERS, id: "LIST" }],
+		// 	transformResponse: (response) => fix_datetime_list(response)
+		// }),
+
+		// getUser: builder.query({
+		// 	query: (uid) => ({ action: ACTION.GET_USER, uid }),
+		// 	providesTags: (result, error, uid) => { return [{ type: TYPE.USERS, id: uid }] },
+		// 	transformResponse: (response) => fix_datetime_single(response)
+		// }),
+
+
+
+		/*****************************************************************
+		 * PROFILE				                                         *
+		 *****************************************************************/
+
+		getProfiles: builder.query({
+			query: () => ({ action: ACTION.GET_PROFILES }),
+			providesTags: [{ type: TYPE.PROFILES, id: "LIST" }],
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		getProfile: builder.query({
+			query: (uid) => ({ action: ACTION.GET_PROFILE, uid }),
+			providesTags: (result, error, uid) => { return [{ type: TYPE.PROFILES, id: uid }] },
+			transformResponse: (response) => fix_datetime_single(response)
+		}),
+
+		getProfileByUsername: builder.query({
+			query: (username) => ({ action: ACTION.GET_PROFILE_BY_USERNAME, username }),
+			// providesTags: (result, error, username) => { return [{ type: TYPE.USERS, id: username }] },
+			transformResponse: (response) => fix_datetime_single(response)
+		}),
+
+		getProfileByEmail: builder.query({
+			query: (email) => ({ action: ACTION.GET_PROFILE_BY_EMAIL, email }),
+			// providesTags: (result, error, email) => { return [{ type: TYPE.USERS, id: email }] },
+			transformResponse: (response) => fix_datetime_single(response)
+		}),
+
+		updateProfile: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_PROFILE, body }), //body: {...}
+			invalidatesTags: (result, error, arg) => ([{ type: TYPE.PROFILES, id: arg.uid }]),
+			async onQueryStarted(user, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_PROFILE, user.uid,
+						(draft) => { Object.assign(draft, user) }
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of user's profile and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+		/*****************************************************************
 		 * DOCUMENTATION                                                 *
 		 *****************************************************************/
 
@@ -374,7 +458,10 @@ export const firestoreApi = createApi({
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,
-						(draft) => { Object.assign(draft, label) })
+						(draft) => {
+							let obj = draft.find(e => e.lid === label.lid)
+							Object.assign(obj, label)
+						})
 				)
 				try { await queryFulfilled }
 				catch {
@@ -486,6 +573,18 @@ export const firestoreApi = createApi({
 })
 
 export const {
+	//
+	useSignUpWithEmailMutation,
+	useSignUpViaGoogleMutation,
+	useSignUpCreateProfileMutation,
+	useSignUpSurveyMutation,
+	//
+	useGetProfilesQuery,
+	useGetProfileQuery,
+	useGetProfileByUsernameQuery,
+	useGetProfileByEmailQuery,
+	useUpdateProfileMutation,
+	//
 	useGetDocQuery,
 	useGetDocsQuery,
 	useGetDocContentQuery,

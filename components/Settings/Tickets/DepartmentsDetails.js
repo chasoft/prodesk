@@ -92,17 +92,20 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 						backBtnOnClick={() => backBtnClick(false)}
 						rightButton={
 							<Tooltip title="Delete current department" placement="left">
-								<IconButton onClick={async () => {
-									//User must delete all related canned-reply before they can delete department
-									const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-									if (affectedCannedReplies.length > 0) {
-										enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
-										return
-									}
-									dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-									await deleteDepartment(selectedDepartment)
-								}}>
-									<DeleteIcon fontSize="small" color="warning" />
+								<IconButton
+									sx={{ ":hover": { color: "warning.main" } }}
+									onClick={async () => {
+										//User must delete all related canned-reply before they can delete department
+										const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
+										if (affectedCannedReplies.length > 0) {
+											enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
+											return
+										}
+										dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+										await deleteDepartment(selectedDepartment)
+									}}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
 						}

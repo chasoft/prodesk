@@ -103,15 +103,7 @@ function TicketSettingsCategory() {
 
 			<SettingsContainer>
 
-				<SettingsList
-					sx={{
-						flexGrow: showContent ? 0 : 1,
-						display: {
-							xs: showContent ? "none" : "initial",
-							sm: "initial",
-						}
-					}}
-				>
+				<SettingsList showContent={showContent}>
 					<ListItem
 						selected={activeSettingPanel === CATEGORY_PAGES.OVERVIEW}
 						icon={<InfoIcon fontSize="small" />}
@@ -143,17 +135,17 @@ function TicketSettingsCategory() {
 
 				</SettingsList>
 
-				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+				<SettingsContent showContent={showContent}>
 
-					{isLoading
-						? <div>Loading</div>
-						: (activeSettingPanel === CATEGORY_PAGES.OVERVIEW)
+					{isLoading && <div>Loading</div>}
+
+					{(!isLoading && activeSettingPanel === CATEGORY_PAGES.OVERVIEW)
 						&& <CategoriesOverview backBtnClick={setShowContent} />}
 
-					{(activeSettingPanel === CATEGORY_PAGES.ADD_NEW_CATEGORY)
+					{(!isLoading && activeSettingPanel === CATEGORY_PAGES.ADD_NEW_CATEGORY)
 						&& <CategoriesAddNew backBtnClick={setShowContent} />}
 
-					{hasSelectedCategory
+					{!isLoading && hasSelectedCategory
 						&& <CategoriesDetails backBtnClick={setShowContent} />}
 
 				</SettingsContent>

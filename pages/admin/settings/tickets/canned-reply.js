@@ -215,7 +215,7 @@ function TicketSettingsCannedReply() {
 
 			<SettingsContainer>
 
-				<SettingsList sx={{ display: { xs: showContent ? "none" : "initial", sm: "initial", flexGrow: showContent ? 0 : 1 } }}>
+				<SettingsList showContent={showContent}>
 
 					<ListItem
 						selected={activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW}
@@ -252,7 +252,7 @@ function TicketSettingsCannedReply() {
 
 				</SettingsList>
 
-				<SettingsContent sx={{ display: { xs: showContent ? "initial" : "none", sm: "initial", flexGrow: showContent ? 1 : 0 } }}>
+				<SettingsContent showContent={showContent}>
 
 					{(activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW)
 						&& <CannedRepliesOverview backBtnClick={setShowContent} />}

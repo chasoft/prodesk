@@ -85,11 +85,14 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 
 				rightButton={selectedCrid
 					&& <Tooltip title="Delete current canned-reply" placement="left">
-						<IconButton onClick={async () => {
-							dispatch(setSelectedCrid(""))
-							await deleteCannedReply({ crid: selectedCrid })
-						}}>
-							<DeleteIcon fontSize="small" color="warning" />
+						<IconButton
+							sx={{ ":hover": { color: "warning.main" } }}
+							onClick={async () => {
+								dispatch(setSelectedCrid(""))
+								await deleteCannedReply({ crid: selectedCrid })
+							}}
+						>
+							<DeleteIcon fontSize="small" />
 						</IconButton>
 					</Tooltip>}
 			>

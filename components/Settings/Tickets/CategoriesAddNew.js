@@ -92,6 +92,7 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 			}}>
 				{!currentItem.default && <Tooltip title="Set default" placement="left">
 					<IconButton
+						sx={{ ":hover": { color: "primary.main" } }}
 						onClick={() => {
 							console.log("change default item")
 							const newArray = Array.from(list)
@@ -106,6 +107,7 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 				</Tooltip>}
 				<Tooltip title="Delete" placement="right">
 					<IconButton
+						sx={{ ":hover": { color: "warning.main" } }}
 						onClick={() => {
 							setList(filter(list, (i) => i.name !== currentItem.name))
 						}}

@@ -102,7 +102,7 @@ export const SettingsContainer = ({ children }) => (
 	>{children}</Paper>
 ); SettingsContainer.propTypes = { children: PropTypes.node }
 
-export const SettingsList = ({ sx, children }) => (
+export const SettingsList = ({ showContent, children }) => (
 	<Box
 		sx={{
 			backgroundColor: "#FAFAFA",
@@ -122,12 +122,19 @@ export const SettingsList = ({ sx, children }) => (
 			// display: { xs: "none", sm: "initial" },
 			borderTopRightRadius: { xs: "0.5rem", md: 0 },
 			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
-			...sx
+			//
+			flexGrow: showContent ? 0 : 1,
+			display: {
+				xs: showContent ? "none" : "initial",
+				sm: "initial",
+			}
 		}}
-	>{children}</Box>
-); SettingsList.propTypes = { sx: PropTypes.object, children: PropTypes.node }
+	>
+		{children}
+	</Box>
+); SettingsList.propTypes = { showContent: PropTypes.bool, children: PropTypes.node }
 
-export const SettingsContent = ({ sx, children }) => {
+export const SettingsContent = ({ showContent = true, children }) => {
 	// const theme = useTheme()
 	// const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
 	return (
@@ -136,12 +143,16 @@ export const SettingsContent = ({ sx, children }) => {
 				flexGrow: 1,
 				// borderBottomLeftRadius: 1,
 				// borderBottomRightRadius: 1,
-				...sx
-			}}>
+				// flexGrow: showContent ? 1 : 0,
+				display: {
+					xs: showContent ? "initial" : "none", sm: "initial",
+				}
+			}}
+		>
 			{children}
 		</Box>
 	)
-}; SettingsContent.propTypes = { sx: PropTypes.object, children: PropTypes.node }
+}; SettingsContent.propTypes = { showContent: PropTypes.bool, children: PropTypes.node }
 
 export const SettingsContentDetails = ({ sx, children }) => (
 	<Container sx={{ py: { xs: 3, sm: 2 }, ...sx }}>
@@ -169,12 +180,14 @@ export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () =
 	if (isSmallScreen && hasBackBtn) {
 		return (
 			<ContentHeader>
-				<Tooltip title="Go back" placement="top">
-					<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
-						<NavigateBeforeIcon />
-					</IconButton>
-				</Tooltip>
-				<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+				<Box sx={{ display: "flex", alignItems: "center" }}>
+					<Tooltip title="Go back" placement="top">
+						<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
+							<NavigateBeforeIcon />
+						</IconButton>
+					</Tooltip>
+					<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+				</Box>
 			</ContentHeader>
 		)
 	}
@@ -243,34 +256,48 @@ SettingsContentHelperAlert.propTypes = {
 	children: PropTypes.node
 }
 
-const LearnMore = styled(Box)({
-	display: "flex",
-	alignItems: "center",
-	color: "primary.main",
-	cursor: "pointer",
-	textDecoration: "underline"
-})
-
 export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) => {
 	if (target) {
 		return (
-			<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
+			<Box
+				onClick={action}
+				sx={{
+					display: "inline-block",
+					marginLeft: "5px",
+				}}
+			>
 				<Link href={target ?? ""} passHref>
 					<a href="just-a-placeholder">
-						<LearnMore>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							color: "primary.main",
+							cursor: "pointer",
+							":hover": {
+								textDecoration: "underline",
+							}
+						}}>
 							Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-						</LearnMore>
+						</Box>
 					</a>
 				</Link>
-			</span>
+			</Box>
 		)
 	}
 
 	return (
 		<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
-			<LearnMore>
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+				color: "primary.main",
+				cursor: "pointer",
+				":hover": {
+					textDecoration: "underline",
+				}
+			}}>
 				Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
-			</LearnMore>
+			</Box>
 		</span>
 	)
 }

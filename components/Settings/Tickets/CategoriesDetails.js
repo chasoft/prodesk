@@ -22,8 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton } from "@mui/material"
@@ -95,11 +95,14 @@ const CategoriesDetails = ({ backBtnClick }) => {
 						backBtnOnClick={() => backBtnClick(false)}
 						rightButton={
 							<Tooltip title="Delete current category" placement="left">
-								<IconButton onClick={async () => {
-									dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-									await deleteCategory(selectedCategory)
-								}}>
-									<DeleteIcon fontSize="small" color="warning" />
+								<IconButton
+									sx={{ ":hover": { color: "warning.main" } }}
+									onClick={async () => {
+										dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+										await deleteCategory(selectedCategory)
+									}}
+								>
+									<DeleteIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
 						}

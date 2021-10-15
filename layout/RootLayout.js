@@ -22,7 +22,6 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-//CORE SYSTEM
 import Head from "next/head"
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
@@ -34,11 +33,11 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import { auth } from "./../helpers/firebase"
 import { regAdminURL } from "./../helpers/regex"
-import { setRedirect } from "./../redux/slices/redirect"
 import { ReduxRedirect } from "./../components/AuthCheck"
+// import { setRedirect } from "./../redux/slices/redirect"
+import { getUserProfile } from "./../helpers/firebase/user"
 import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
-import { getUserDocByUid, getUsernameDocByUsername } from "./../helpers/firebase/user"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -50,22 +49,18 @@ function RootLayout({ children }) {
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
+
 			if (user) {
 				//Load settings to Redux
-				const userDoc = await getUserDocByUid(user.uid)
-				const userProperties = await getUsernameDocByUsername(userDoc.username)
+				const userProfile = await getUserProfile(user.uid)
 
 				dispatch(loginSuccess({
 					emailVerified: user.emailVerified,
 					creationTime: user.metadata.creationTime,
 					lastSignInTime: user.metadata.lastSignInTime,
 					providerId: user.providerData[0].providerId,
-					...userProperties
+					...(userProfile.data ?? {})
 				}))
-
-				//Make a copy of username to localStorage
-				//TODO: secure this information later
-				// localStorage.setItem("username", userProperties.username)
 
 				//Whether a social user, redirect if not yet created in db
 				if (user.providerData[0].providerId !== "password") {
@@ -77,32 +72,37 @@ function RootLayout({ children }) {
 						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
 					}))
 
-					const res = await getUserDocByUid(user.uid)
+					const res = await getUserProfile(user.uid)
 					if (res === undefined) {
-						// router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
-						dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
+						// dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
+						router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
 						return
 					}
 				}
 
 				//redirect to any uncompleted steps
-				if (userProperties.nextStep !== REDIRECT_URL.DONE) {
-					dispatch(setRedirect(userProperties.nextStep))
-					// 	return
-				} else {
-					// if user is not admin but loggin at / admin, then redirect to / client
-					if (regAdminURL.test(router.pathname) && (userProperties.group === USERGROUP.USER))
-						dispatch(setRedirect(REDIRECT_URL.CLIENT))
+				if (userProfile.data.nextStep !== REDIRECT_URL.DONE) {
+					// dispatch(setRedirect(userProfile.data.nextStep))
+					router.push(userProfile.data.nextStep)
+					return
 				}
-			} else {
-				//Clear loggedin data
-				// localStorage.removeItem("username")
-				dispatch(logoutSuccess())
-			}
+
+				// if user is not admin but loggin at / admin, then redirect to / client
+				if (regAdminURL.test(router.pathname) && (userProfile.data.group === USERGROUP.USER)) {
+					// dispatch(setRedirect(REDIRECT_URL.CLIENT))
+					router.push(REDIRECT_URL.CLIENT)
+					return
+				}
+
+				return
+			} //end-of-if
+
+			//Clear loggedin data
+			dispatch(logoutSuccess())
 		})
 		//Close connection with Firebase!
 		return unsubscribe
-	}, [dispatch, router.pathname])
+	}, [dispatch, router.pathname, router])
 
 	return (
 		<>

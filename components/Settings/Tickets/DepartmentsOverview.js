@@ -33,7 +33,7 @@ import { useDispatch } from "react-redux"
 import AvatarList from "./../../common/AvatarList"
 import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
 import PublicIcon from "@mui/icons-material/Public"
@@ -60,12 +60,7 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-				</SettingsContentHelperText>
-				<SettingsContentHelperText>
-					Department Overview Department Overview Department Overview Department Overview Department Overview
-					Department Overview
+					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting... <SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 
@@ -92,39 +87,39 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 						}}
 					>
 						<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-							<Box
-								sx={{
-									display: "flex",
-									alignItems: "center"
-								}}
-							>
+							<Box sx={{
+								display: "flex",
+								alignItems: "center"
+							}}>
 								<Typography variant="h3" style={{ margin: 0 }}>
 									{item.department}
 								</Typography>
-								{
-									item.availableForAll
-										?
-										<Tooltip title="All members" placement="top">
-											<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
-										</Tooltip>
-										:
-										<Tooltip title="Only selected members" placement="top">
-											<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
-										</Tooltip>
-								}
-								{
-									item.isPublic
-										?
-										<Tooltip title="Available for all users" placement="top">
-											<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
-										</Tooltip>
-										:
-										<Tooltip title="For internal use only" placement="top">
-											<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
-										</Tooltip>
-								}
+
+								{item.availableForAll
+									?
+									<Tooltip title="All members" placement="top">
+										<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+									</Tooltip>
+									:
+									<Tooltip title="Only selected members" placement="top">
+										<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+									</Tooltip>}
+
+								{item.isPublic
+									?
+									<Tooltip title="Available for all users" placement="top">
+										<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+									</Tooltip>
+									:
+									<Tooltip title="For internal use only" placement="top">
+										<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+									</Tooltip>}
+
 							</Box>
-							<Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}>
+							<Box sx={{
+								display: "flex",
+								flexDirection: { xs: "column", md: "row" }
+							}}>
 								<Typography variant="caption" sx={{ margin: 0 }}>
 									{item.description}
 									{item.description ? <>&nbsp; | &nbsp; </> : null}

@@ -32,14 +32,14 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
-import { isUsernameAvailable } from "./../../helpers/firebase/user"
-import { signUpWithEmail } from "./../../helpers/firebase/signup"
 import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
+import { useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
+import { useRouter } from "next/router"
+import { ACTION } from "../../redux/slices/firestoreApiConstants"
 
 //ASSETS
 
@@ -79,7 +79,8 @@ const validationSchema = yup.object({
 
 const SignupForm = () => {
 	const { enqueueSnackbar } = useSnackbar()
-	const dispatch = useDispatch()
+	const router = useRouter()
+	const [signUpWithEmail] = useSignUpWithEmailMutation()
 
 	useFlexDirection({ payload: "row" })
 
@@ -94,18 +95,22 @@ const SignupForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			if (!isUsernameAvailable(values.username)) {
-				enqueueSnackbar("Username is existed. Please choose another one!", { variant: "error" })
-				return
-			}
-
-			signUpWithEmail({
+			enqueueSnackbar("Registering your account...", { variant: "info", key: ACTION.SIGN_UP_WITH_EMAIL })
+			const res = await signUpWithEmail({
 				email: values.email,
 				password: values.password,
 				name: values.name,
 				username: values.username
-			}, { enqueueSnackbar, dispatch })
-		},
+			})
+
+			if (res.error) {
+				enqueueSnackbar(res.error.data.message, { variant: "error", key: ACTION.SIGN_UP_WITH_EMAIL })
+			}
+			else {
+				enqueueSnackbar(res.data, { variant: "info", key: ACTION.SIGN_UP_WITH_EMAIL })
+				router.push(res.redirect)
+			}
+		}
 	})
 
 	return (
