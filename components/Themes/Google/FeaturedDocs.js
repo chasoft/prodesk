@@ -18,109 +18,65 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import React from "react"
-
-// MATERIAL-UI
-import { InputBase } from "@mui/material"
-
-//THIRD-PARTY
-
-//PROJECT IMPORT
-
-//ASSETS
-import SearchIcon from "@mui/icons-material/Search"
-import { useSelector } from "react-redux"
-import { getUiSettings } from "./../../../redux/selectors"
-import { FRONT_PAGE_TABS_NAME } from "./../../../layout/EntryLayout"
-import { styled } from "@mui/system"
+import PostListItem from "./../../Post/PostListItem"
+import ListGroup from "./../../common/ListGroup"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const Search = styled("div")(({ theme }) => ({
-	position: "relative",
-	borderRadius: theme.shape.borderRadius,
-	backgroundColor: theme.palette.action.hover,
-	"&:hover": {
-		backgroundColor: "white",
-		border: "1px solid",
-		borderColor: theme.palette.divider
+const DummyData = [
+	{
+		docId: 1,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: ["d"]
 	},
-	marginLeft: 0,
-	marginRight: theme.spacing(2),
-	width: "100%",
-	[theme.breakpoints.up("sm")]: {
-		marginLeft: theme.spacing(1),
-		width: "auto",
+	{
+		docId: 2,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: ["d"]
 	},
-}))
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-	padding: theme.spacing(0, 2),
-	height: "100%",
-	position: "absolute",
-	pointerEvents: "none",
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-}))
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-	color: "inherit",
-	"& .MuiInputBase-input": {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-		transition: theme.transitions.create("width"),
-		width: "100%",
-		[theme.breakpoints.up("sm")]: {
-			width: "12ch",
-			"&:focus": {
-				width: "20ch",
-			},
-		},
-		[theme.breakpoints.up("md")]: {
-			width: "20ch",
-			"&:focus": {
-				width: "27ch",
-			},
-		},
-		[theme.breakpoints.up("lg")]: {
-			width: "25ch",
-			"&:focus": {
-				width: "35ch",
-			},
-		}
+	{
+		docId: 3,
+		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
+		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
+		link: "/docs/some-docs-i-dont-know",
+		metaData: []
 	},
-}))
+]
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SearchBox = () => {
-	const { activeSettingTab } = useSelector(getUiSettings)
-
-	//Only show this SearchBox when not at HOME!
-	//(that means... user would be at Docs || troubleshoot page)
-	if (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) { return null }
-
+const FeaturedDocs = () => {
 	return (
-		<Search>
-			<SearchIconWrapper>
-				<SearchIcon />
-			</SearchIconWrapper>
-			<StyledInputBase
-				placeholder="Search…"
-				inputProps={{ "aria-label": "search" }}
-			/>
-		</Search>
+		<ListGroup
+			title="Featured Docs"
+			viewAllText="View all featured docs"
+			viewAllLink="/docs/featured"
+		>
+			{
+				DummyData.map((item, idx) => {
+					return (
+						<PostListItem
+							key={item.docId}
+							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
+							subject={item.subject}
+							excerpt={item.excerpt}
+							link={item.link}
+							metaData={item.metaData}
+						/>
+					)
+				})
+			}
+		</ListGroup>
 	)
 }
 
-export default SearchBox
+export default FeaturedDocs

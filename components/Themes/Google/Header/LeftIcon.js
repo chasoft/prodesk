@@ -22,55 +22,108 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import Head from "next/head"
-import PropTypes from "prop-types"
+import Link from "next/link"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { styled } from "@mui/system"
+import { Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getRootLayout } from "./RootLayout"
-import Footer from "./../components/common/Footer"
-import Header from "./../components/Themes/Google/Header"
+import { Logo } from "./../../../common"
+
+//ASSETS
+import MenuIcon from "@mui/icons-material/Menu"
+import MailIcon from "@mui/icons-material/Mail"
+import { DUMMY_DATA_MENU_BOTTOM, DUMMY_DATA_MENU_TOP } from "./DUMMY_DATA"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const ListItemStyle = styled(ListItem)({ color: "#1a73e8" })
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function BlankLayout({ children }) {
+const LeftIcon = () => {
+	const [showMenu, setShowMenu] = useState(false)
+
+	const handleClose = () => { setShowMenu(false) }
+
 	return (
 		<>
-			<Head>
-				<title>Site Layout</title>
-				<meta name="description" content="Site Layout Description" />
-			</Head>
-
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					minHeight: "100vh",
-				}}
+			<IconButton
+				edge="start" size="large" sx={{ mr: { xs: 0, sm: 2 } }}
+				onClick={() => { setShowMenu(true) }}
 			>
-				<Header />
+				<MenuIcon sx={{ fontSize: 24 }} />
+			</IconButton>
+			<Drawer
+				anchor="left"
+				open={showMenu}
+				onClose={handleClose}
+			>
+				<Box
+					sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
+					onClick={handleClose}
+					onKeyDown={handleClose}
+				>
+					<List>
+						<Link href="/" passHref>
+							<a href="just-a-placeholder">
+								<ListItem sx={{ p: 3 }}>
+									<Logo />
+								</ListItem>
+							</a>
+						</Link>
 
-				{children}
+						{DUMMY_DATA_MENU_TOP.map((item) => (
+							<Link key={item.id} href={item.url} passHref>
+								<a href="just-a-placeholder">
+									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+										<ListItemIcon sx={{ minWidth: 40 }}>
+											<MailIcon />
+										</ListItemIcon>
+										<ListItemText primary={item.title} />
+									</ListItemStyle>
+								</a>
+							</Link>
+						))}
 
-				<Footer />
-			</Box>
+						<Link href="/" passHref>
+							<a href="just-a-placeholder">
+								<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+									<ListItemText primary="Privacy" />
+								</ListItemStyle>
+							</a>
+						</Link>
+					</List>
+
+					<div style={{ flexGrow: 1 }} />
+
+					<List sx={{ mb: 3 }}>
+						{DUMMY_DATA_MENU_BOTTOM.map((item) => (
+							<Link key={item} href={item.url} passHref>
+								<a href="just-a-placeholder">
+									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
+										<ListItemIcon sx={{ minWidth: 40 }}>
+											<MailIcon />
+										</ListItemIcon>
+										<ListItemText primary={item.title} />
+									</ListItemStyle>
+								</a>
+							</Link>
+						))}
+					</List>
+
+				</Box>
+			</Drawer>
 		</>
 	)
 }
 
-BlankLayout.propTypes = { children: PropTypes.node }
-
-export const getLayout = page => getRootLayout(<BlankLayout>{page}</BlankLayout>)
-
-export default BlankLayout
+export default LeftIcon

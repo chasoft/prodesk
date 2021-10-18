@@ -29,8 +29,8 @@ import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
-import PromotedSearch from "./../components/FrontEnd/PromotedSearch"
-import FrontAccordions from "./../components/FrontEnd/FrontAccordions"
+import PromotedSearch from "../components/Themes/PromotedSearch"
+import FrontAccordions from "../components/Themes/FrontAccordions"
 import useUiSettings from "./../helpers/useUiSettings"
 
 /*****************************************************************

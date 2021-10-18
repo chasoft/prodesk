@@ -35,7 +35,7 @@ import Banner from "./../../components/widget/Banner"
 import useUiSettings from "./../../helpers/useUiSettings"
 import SingleCategory from "./../../components/Category/SingleCategory"
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
-import ProBreadcrumbs from "./../../components/FrontEnd/ProBreadcrumbs"
+import ProBreadcrumbs from "./../../components/Themes/Google/ProBreadcrumbs"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

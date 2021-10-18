@@ -22,108 +22,105 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import Link from "next/link"
-import React, { useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
-import { styled } from "@mui/system"
-import { Box, IconButton, Drawer, List, ListItem, ListItemIcon, ListItemText } from "@mui/material"
+import { InputBase } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { Logo } from "./../../common"
 
 //ASSETS
-import MenuIcon from "@mui/icons-material/Menu"
-import MailIcon from "@mui/icons-material/Mail"
-import { DUMMY_DATA_MENU_BOTTOM, DUMMY_DATA_MENU_TOP } from "./DUMMY_DATA"
+import SearchIcon from "@mui/icons-material/Search"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "./../../../../redux/selectors"
+import { FRONT_PAGE_TABS_NAME } from "./../../../../layout/EntryLayout"
+import { styled } from "@mui/system"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ListItemStyle = styled(ListItem)({ color: "#1a73e8" })
+const Search = styled("div")(({ theme }) => ({
+	position: "relative",
+	borderRadius: theme.shape.borderRadius,
+	backgroundColor: theme.palette.action.hover,
+	"&:hover": {
+		backgroundColor: "white",
+		border: "1px solid",
+		borderColor: theme.palette.divider
+	},
+	marginLeft: 0,
+	marginRight: theme.spacing(2),
+	width: "100%",
+	[theme.breakpoints.up("sm")]: {
+		marginLeft: theme.spacing(1),
+		width: "auto",
+	},
+}))
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+	padding: theme.spacing(0, 2),
+	height: "100%",
+	position: "absolute",
+	pointerEvents: "none",
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+}))
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+	color: "inherit",
+	"& .MuiInputBase-input": {
+		padding: theme.spacing(1, 1, 1, 0),
+		// vertical padding + font size from searchIcon
+		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+		transition: theme.transitions.create("width"),
+		width: "100%",
+		[theme.breakpoints.up("sm")]: {
+			width: "12ch",
+			"&:focus": {
+				width: "20ch",
+			},
+		},
+		[theme.breakpoints.up("md")]: {
+			width: "20ch",
+			"&:focus": {
+				width: "27ch",
+			},
+		},
+		[theme.breakpoints.up("lg")]: {
+			width: "25ch",
+			"&:focus": {
+				width: "35ch",
+			},
+		}
+	},
+}))
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const LeftIcon = () => {
-	const [showMenu, setShowMenu] = useState(false)
+const SearchBox = () => {
+	const { activeSettingTab } = useSelector(getUiSettings)
 
-	const handleClose = () => { setShowMenu(false) }
+	//Only show this SearchBox when not at HOME!
+	//(that means... user would be at Docs || troubleshoot page)
+	if (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) { return null }
 
 	return (
-		<>
-			<IconButton
-				edge="start" size="large" sx={{ mr: { xs: 0, sm: 2 } }}
-				onClick={() => { setShowMenu(true) }}
-			>
-				<MenuIcon sx={{ fontSize: 24 }} />
-			</IconButton>
-			<Drawer
-				anchor="left"
-				open={showMenu}
-				onClose={handleClose}
-			>
-				<Box
-					sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
-					onClick={handleClose}
-					onKeyDown={handleClose}
-				>
-					<List>
-						<Link href="/" passHref>
-							<a href="just-a-placeholder">
-								<ListItem sx={{ p: 3 }}>
-									<Logo />
-								</ListItem>
-							</a>
-						</Link>
-
-						{DUMMY_DATA_MENU_TOP.map((item) => (
-							<Link key={item.id} href={item.url} passHref>
-								<a href="just-a-placeholder">
-									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
-										<ListItemIcon sx={{ minWidth: 40 }}>
-											<MailIcon />
-										</ListItemIcon>
-										<ListItemText primary={item.title} />
-									</ListItemStyle>
-								</a>
-							</Link>
-						))}
-
-						<Link href="/" passHref>
-							<a href="just-a-placeholder">
-								<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
-									<ListItemText primary="Privacy" />
-								</ListItemStyle>
-							</a>
-						</Link>
-					</List>
-
-					<div style={{ flexGrow: 1 }} />
-
-					<List sx={{ mb: 3 }}>
-						{DUMMY_DATA_MENU_BOTTOM.map((item) => (
-							<Link key={item} href={item.url} passHref>
-								<a href="just-a-placeholder">
-									<ListItemStyle button sx={{ pl: 4, xy: 1 }}>
-										<ListItemIcon sx={{ minWidth: 40 }}>
-											<MailIcon />
-										</ListItemIcon>
-										<ListItemText primary={item.title} />
-									</ListItemStyle>
-								</a>
-							</Link>
-						))}
-					</List>
-
-				</Box>
-			</Drawer>
-		</>
+		<Search>
+			<SearchIconWrapper>
+				<SearchIcon />
+			</SearchIconWrapper>
+			<StyledInputBase
+				placeholder="Search…"
+				inputProps={{ "aria-label": "search" }}
+			/>
+		</Search>
 	)
 }
 
-export default LeftIcon
+export default SearchBox

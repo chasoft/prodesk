@@ -29,7 +29,7 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import AskNowFrame from "./../../components/Docs/AskNowFrame"
 import useUiSettings from "./../../helpers/useUiSettings"
-import FeaturedDocs from "./../../components/FrontEnd/FeaturedDocs"
+import FeaturedDocs from "./../../components/Themes/Google/FeaturedDocs"
 import { getLayout, FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
 import ListAllCategories from "./../../components/Category/ListAllCategories"
 

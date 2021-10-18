@@ -18,66 +18,109 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import PostListItem from "../Post/PostListItem"
-import ListGroup from "../common/ListGroup"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import Link from "next/link"
+import PropTypes from "prop-types"
+import React, { useCallback, useEffect, useState } from "react"
+
+// MATERIAL-UI
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material"
+
+//THIRD-PARTY
+
+//PROJECT IMPORT
+import { Logo } from "./../../../common"
+import { AuthFalse, AuthTrue } from "./../../../AuthCheck"
+import UserIcon from "./../../../BackEnd/UserIcon"
+import LeftIcon from "./LeftIcon"
+import SearchBox from "./SearchBox"
+import PortfolioLinks from "./PortfolioLinks"
+
+//ASSETS
+import { MORE_BTN } from "./DUMMY_DATA"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DummyData = [
-	{
-		docId: 1,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: ["d"]
-	},
-	{
-		docId: 2,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: ["d"]
-	},
-	{
-		docId: 3,
-		subject: "Introducing the Pixel 5a with 5G to reveal our newest phone, the Pixel 5a with 5G!",
-		excerpt: "Hi Pixel Community, We’re very excited to reveal our newest phone, the Pixel 5a with 5G! We’re very excited to reveal our newest phone, the Pixel 5a with 5G!",
-		link: "/docs/some-docs-i-dont-know",
-		metaData: []
-	},
-]
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const PopularDocs = () => {
+function Header({ showLogo = false, showSlogan = true, title, slogan, separator = " - ", showPortfolio = true }) {
+	const [scrolled, setScrolled] = useState(false)
+
+	const animateHeader = useCallback(() => {
+		setScrolled(window.scrollY > 50 ? true : false)
+	}, [])
+
+	useEffect(() => {
+		window.addEventListener("scroll", animateHeader)
+		return () => window.removeEventListener("scroll", animateHeader)
+	}, [animateHeader])
 
 	return (
-		<ListGroup
-			title="Popular Document"
-			viewAllText="View all popular documents"
-			viewAllLink="/docs/featured"
-		>
-			{
-				DummyData.map((item, idx) => {
-					return (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					)
-				})
-			}
-		</ListGroup>
+		<AppBar position="sticky" color="inherit" elevation={scrolled ? 4 : 0}>
+			<Toolbar>
+
+				<LeftIcon />
+
+				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 2, justifyContent: { xs: showLogo ? null : "center", sm: "left" } }}>
+
+					{showLogo &&
+						<Box sx={{ mt: "4px", mr: 1 }}>
+							<Logo />
+						</Box>}
+
+
+					<Typography sx={{ fontWeight: 400, fontSize: "1.25rem" }} noWrap>
+
+						{showLogo ? null : title}
+
+						{showSlogan &&
+							<Box component="span" sx={{ display: { xs: "none", md: slogan ? "initial" : "none" } }}>
+								{showLogo ? null : separator}
+								{slogan ?? ""}
+							</Box>}
+
+					</Typography>
+
+				</Box>
+
+				<SearchBox />
+
+				<Box sx={{ alignItems: "center" }} >
+
+					{showPortfolio && <PortfolioLinks moreBtn={MORE_BTN} />}
+
+					<AuthFalse>
+						<Link href="/login" passHref>
+							<Button variant="contained" color="primary">
+								Sign in
+							</Button>
+						</Link>
+					</AuthFalse>
+
+					<AuthTrue>
+						<UserIcon />
+					</AuthTrue>
+
+				</Box>
+
+			</Toolbar>
+		</AppBar >
 	)
 }
+Header.propTypes = {
+	showLogo: PropTypes.bool,
+	showSlogan: PropTypes.bool,
+	showPortfolio: PropTypes.bool,
+	title: PropTypes.string,
+	slogan: PropTypes.string,
+	separator: PropTypes.string
+}
 
-export default PopularDocs
+export default Header

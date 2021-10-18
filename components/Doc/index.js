@@ -2,7 +2,7 @@ import React from "react"
 import { Container, Grid } from "@mui/material"
 import DocContent from "./DocContent"
 import ListDocs from "./ListDocs"
-import ProBreadcrumbs from "../FrontEnd/ProBreadcrumbs"
+import ProBreadcrumbs from "../Themes/Google/ProBreadcrumbs"
 
 
 function Doc() {
