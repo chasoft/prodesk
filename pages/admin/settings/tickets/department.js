@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"
@@ -131,7 +131,14 @@ function TicketSettingsDepartment() {
 				<SettingsContent showContent={showContent}>
 
 					{isLoading
-						? <div>Loading</div>
+						? <Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: "200px"
+						}}>
+							<CircularProgress />
+						</Box>
 						: (activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
 						&& <DepartmentsOverview backBtnClick={setShowContent} />}
 

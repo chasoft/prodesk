@@ -24,7 +24,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Tooltip, Typography } from "@mui/material"
+import { Box, CircularProgress, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
@@ -60,15 +60,14 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting... <SettingsContentHelperLearnMore target="/docs" />
+					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting...
+					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 
 			{isLoading ?
 				<SettingsContentDetails>
-					<Typography>
-						Loading...
-					</Typography>
+					<CircularProgress />
 				</SettingsContentDetails>
 				: departments.map((item) => (
 					<Box

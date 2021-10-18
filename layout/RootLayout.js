@@ -28,16 +28,16 @@ import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { auth } from "./../helpers/firebase"
 import { regAdminURL } from "./../helpers/regex"
 import { ReduxRedirect } from "./../components/AuthCheck"
-// import { setRedirect } from "./../redux/slices/redirect"
 import { getUserProfile } from "./../helpers/firebase/user"
 import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 import { loginSuccess, logoutSuccess, loginTemp } from "./../redux/slices/auth"
+import { setRedirect, clearRedirectAfterLoginURL } from "./../redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -51,7 +51,6 @@ function RootLayout({ children }) {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
 
 			if (user) {
-				//Load settings to Redux
 				const userProfile = await getUserProfile(user.uid)
 
 				dispatch(loginSuccess({
@@ -59,38 +58,45 @@ function RootLayout({ children }) {
 					creationTime: user.metadata.creationTime,
 					lastSignInTime: user.metadata.lastSignInTime,
 					providerId: user.providerData[0].providerId,
+					//at this point, userProfile could be existed or not
 					...(userProfile.data ?? {})
 				}))
 
-				//Whether a social user, redirect if not yet created in db
+				//If it is a social user, created profile if not yet
 				if (user.providerData[0].providerId !== "password") {
 					//these information will be loaded in next step @ /signup/account
 					dispatch(loginTemp({
-						uid: user.uid,
+						uid: [user.uid],
 						displayName: user.displayName,
 						email: user.email,
 						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
 					}))
 
-					const res = await getUserProfile(user.uid)
-					if (res === undefined) {
-						// dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
-						router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
+					//go to setup new account
+					if (userProfile?.error) {
+						dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
+						// router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
 						return
 					}
 				}
 
 				//redirect to any uncompleted steps
-				if (userProfile.data.nextStep !== REDIRECT_URL.DONE) {
-					// dispatch(setRedirect(userProfile.data.nextStep))
-					router.push(userProfile.data.nextStep)
-					return
-				}
+				if (userProfile?.data?.nextStep)
+					if (userProfile?.data?.nextStep !== REDIRECT_URL.DONE) {
+						if (router.pathname !== userProfile?.data?.nextStep) {
+
+							console.log("RootLayout::nextStep", userProfile?.data?.nextStep)
+
+							dispatch(setRedirect(userProfile?.data?.nextStep))
+							// router.push(userProfile.data.nextStep)
+							return
+						}
+					}
 
 				// if user is not admin but loggin at / admin, then redirect to / client
 				if (regAdminURL.test(router.pathname) && (userProfile.data.group === USERGROUP.USER)) {
-					// dispatch(setRedirect(REDIRECT_URL.CLIENT))
-					router.push(REDIRECT_URL.CLIENT)
+					// router.push(REDIRECT_URL.CLIENT)
+					dispatch(setRedirect(REDIRECT_URL.CLIENT))
 					return
 				}
 
@@ -98,7 +104,10 @@ function RootLayout({ children }) {
 			} //end-of-if
 
 			//Clear loggedin data
-			dispatch(logoutSuccess())
+			reduxBatch(() => {
+				dispatch(logoutSuccess())
+				dispatch(clearRedirectAfterLoginURL())
+			})
 		})
 		//Close connection with Firebase!
 		return unsubscribe

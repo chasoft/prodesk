@@ -29,13 +29,15 @@ import { Box, Button, FormControlLabel, Paper, Radio, RadioGroup, Typography } f
 
 //THIRD-PARTY
 import { useFormik } from "formik"
-import { useSnackbar } from "notistack"
+// import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
-import { signupInitSurvey } from "./../../helpers/firebase/signup"
+import { REDIRECT_URL } from "./../../helpers/constants"
 import { RegContainer } from "./../../layout/RegLayout"
+import { useSignUpSurveyMutation } from "../../redux/slices/firestoreApi"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -55,9 +57,10 @@ import { RegContainer } from "./../../layout/RegLayout"
 // }
 
 const InitSurveyForm = () => {
-	const { currentUser } = useSelector(getAuth)
-	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
+	// const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
+	const [signUpSurvey] = useSignUpSurveyMutation()
 
 	const formik = useFormik({
 		initialValues: {
@@ -65,11 +68,13 @@ const InitSurveyForm = () => {
 		},
 		// validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			signupInitSurvey({
+			signUpSurvey({
 				username: currentUser.username,
+				uid: currentUser.uid[0],
 				payload: values
-			}, { enqueueSnackbar, dispatch })
-		},
+			})
+			dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))
+		}
 	})
 
 	return (

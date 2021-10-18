@@ -50,7 +50,7 @@ const LoadingIndicator = () => {
 			alignItems: "center",
 			justifyContent: "center",
 		}}>
-			Loading... &nbsp; <CircularProgress size={20} />
+			<CircularProgress size={20} />
 		</div>
 	)
 }
@@ -68,10 +68,13 @@ export function ReduxRedirect(props) {
 	const { isAuthenticated } = useSelector(getAuth)
 	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 
+	console.log("ReduxRedirect::redirectURL", redirectURL)
+
 	if (redirectURL === "") {
 		return props.children
 	}
 
+	//More priority
 	if (redirectURL === REDIRECT_URL.LOGIN ||
 		redirectURL === REDIRECT_URL.SURVEY ||
 		redirectURL === REDIRECT_URL.CREATE_PROFILE ||
@@ -82,16 +85,19 @@ export function ReduxRedirect(props) {
 		return null
 	}
 
+	//Other cases, just follow if there is no "redirectAfterLoginURL"
 	if (redirectAfterLoginURL === "") {
 		dispatch(clearRedirect())
 		router.push(redirectURL.split("@note:")[0])
 		return null
 	}
 
+	//Clear redirectURL & redirectAfterLogin before redirect to redirectAfterLoginURL
 	reduxBatch(() => {
 		dispatch(clearRedirect())
 		if (isAuthenticated) dispatch(clearRedirectAfterLoginURL())
 	})
+
 	router.push(redirectAfterLoginURL)
 	return null
 }
@@ -101,9 +107,9 @@ export function ReduxRedirect(props) {
  * so, if you are not loggedin, you will be redirected to `login page`
  */
 export default function AuthCheck(props) {
-	const { loading, isAuthenticated, currentUser } = useSelector(getAuth)
-	const dispatch = useDispatch()
 	const router = useRouter()
+	const dispatch = useDispatch()
+	const { loading, isAuthenticated, currentUser } = useSelector(getAuth)
 
 	useEffect(() => {
 		//just do redirection Only if both these conditions are matched
@@ -175,23 +181,38 @@ export function AuthAdminTrue(props) {
  * so, if you are Already loggedin, you will be redirected to dashboard
  */
 export function GuestOnly(props) {
+	// const dispatch = useDispatch()
+	const router = useRouter()
 	const { isAuthenticated, currentUser } = useSelector(getAuth)
-	const dispatch = useDispatch()
 
-	if (isAuthenticated) {
-		//Only redirect when there is no required step ahead
-		if (currentUser.nextStep === REDIRECT_URL.DONE) {
-			if (currentUser.group === USERGROUP.USER)
-				dispatch(setRedirect(REDIRECT_URL.CLIENT))
-			else
-				dispatch(setRedirect(REDIRECT_URL.ADMIN))
+	if (isAuthenticated === true
+		//the user logged-in and account created
+		&& currentUser?.nextStep === REDIRECT_URL.DONE) {
+		if (currentUser.group === USERGROUP.USER) {
+			// dispatch(setRedirect(REDIRECT_URL.CLIENT))
+			router.push(REDIRECT_URL.CLIENT)
+			return null
 		}
+
+		// dispatch(setRedirect(REDIRECT_URL.ADMIN))
+		router.push(REDIRECT_URL.ADMIN)
+		return null
 	}
 
+	if (isAuthenticated === false)
+		return props.children
+
+	//Else
 	return (
-		!isAuthenticated
-			? props.children
-			: <></>
+		<div style={{
+			display: "flex",
+			width: "100%",
+			height: "100%",
+			alignItems: "center",
+			justifyContent: "center",
+		}}>
+			<CircularProgress />
+		</div>
 	)
 }
 GuestOnly.propTypes = { children: PropTypes.node }

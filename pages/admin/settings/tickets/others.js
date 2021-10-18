@@ -67,7 +67,7 @@ const PagePriorities = ({ backBtnClick }) => {
 
 				<SettingsContentHelperText>
 					<p>Prodesk only support 3 default levels of priotity:&nbsp;</p>
-					<p>
+					<div>
 						<Chip
 							label="Low"
 							size="small"
@@ -84,8 +84,8 @@ const PagePriorities = ({ backBtnClick }) => {
 							size="small"
 							color="warning"
 						/>
-					</p>
-					<p>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></p>
+					</div>
+					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
 
 				</SettingsContentHelperText>
 
@@ -117,7 +117,7 @@ const PageStatuses = ({ backBtnClick }) => {
 					<p>2. <b>Pending</b>: ticket is waiting reply from supporter</p>
 					<p>3. <b>Replied</b>: ticket is replied, many be waiting for responding from customer</p>
 					<p>4. <b>Closed</b>: solved ticket</p>
-					<p>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></p>
+					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
 
 				</SettingsContentHelperText>
 

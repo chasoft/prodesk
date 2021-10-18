@@ -6,7 +6,7 @@ import Link from "next/link"
 import React, { useCallback, useState } from "react"
 
 // MATERIAL-UI
-import { Button, Grid, Typography, Box, TextField, Container, Autocomplete } from "@mui/material"
+import { Button, Grid, Typography, Box, TextField, Container, Autocomplete, CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
 import { serverTimestamp } from "firebase/firestore"
@@ -54,8 +54,8 @@ export default function TestPage() {
 		<Container sx={{ marginTop: 10 }}>
 			<Autocomplete
 				multiple
-				//options={top100Films}
-				//getOptionLabel={(option) => option.title}
+				options={top100Films}
+				getOptionLabel={(option) => option.title}
 				id="tags-standard"
 				renderInput={(params) => (
 					<TextField
@@ -89,6 +89,17 @@ export default function TestPage() {
 			}}>
 				Set Default Value
 			</Button>
+
+
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				minHeight: "200px",
+				backgroundColor: "red"
+			}}>
+				<CircularProgress />
+			</Box>
 
 		</Container >
 	)

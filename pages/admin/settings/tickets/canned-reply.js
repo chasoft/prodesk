@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"
@@ -231,7 +231,14 @@ function TicketSettingsCannedReply() {
 					<ListTitle>Available groups</ListTitle>
 
 					{isLoading
-						? <div>Loading...</div>
+						? <Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHheight: "200px"
+						}}>
+							<CircularProgress />
+						</Box>
 						: departments.map((item) => (
 							<ListItem
 								key={item.did}

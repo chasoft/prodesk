@@ -26,13 +26,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import {
-	Button,
-	Checkbox,
-	FormControlLabel,
-	Grid,
-	TextField,
-} from "@mui/material"
+import { Button, Checkbox, FormControlLabel, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
@@ -41,13 +35,15 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getRedirect } from "./../../redux/selectors"
 import { ForgotPasswordLink, SignUpLink } from "./../common"
-import { signInWithEmail } from "./../../helpers/firebase/login"
+import { USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
+import { useSignInWithEmailMutation } from "./../../redux/slices/firestoreApi"
 import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import { getRedirect } from "./../../redux/selectors"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
@@ -67,9 +63,10 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 const LoginForm = () => {
-	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 	const { redirectAfterLoginURL } = useSelector(getRedirect)
+	const dispatch = useDispatch()
+	const [signInWithEmail] = useSignInWithEmailMutation()
 
 	const formik = useFormik({
 		initialValues: {
@@ -78,10 +75,28 @@ const LoginForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			signInWithEmail({
+			enqueueSnackbar("Signing you in, please wait...", { variant: "info", key: "start" })
+			const res = await signInWithEmail({
 				username: values.username,
 				password: values.password
-			}, { enqueueSnackbar, dispatch, redirectAfterLoginURL })
+			})
+
+			if (res.error) {
+				closeSnackbar("start")
+				enqueueSnackbar(res.error.data.message, { variant: "error" })
+				return
+			}
+
+			closeSnackbar("start")
+			enqueueSnackbar(res.data.message, { variant: "success" })
+
+			//redirect after login if necessary
+			if (redirectAfterLoginURL === "") {
+				dispatch(setRedirect((res.data.group === USERGROUP.USER)
+					? REDIRECT_URL.CLIENT
+					: REDIRECT_URL.ADMIN)
+				)
+			}
 		},
 	})
 

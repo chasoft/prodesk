@@ -23,9 +23,9 @@
  *****************************************************************/
 
 import {
-	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
+	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp,
 } from "firebase/firestore"
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
 
 //THIRD-PARTY
 
@@ -33,6 +33,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth"
 import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { auth, db } from "./../../helpers/firebase"
 import { ACTION, COLLECTION } from "./firestoreApiConstants"
+import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
 /*****************************************************************
  * INIT                                                          *
@@ -57,72 +58,242 @@ async function fireStoreBaseQuery(args) {
 	switch (args.action) {
 
 		/*****************************************************************
+		 * INSTALL                                                       *
+		 *****************************************************************/
+		case ACTION.INSTALL_GET_STATUS:
+			try {
+				let res = []
+				const q = query(
+					collection(db, COLLECTION.USERS),
+					where("username", "==", "superadmin")
+				)
+				const querySnapshot = await getDocs(q)
+				querySnapshot.forEach((user) => { res.push(user.data()) })
+				return {
+					data: {
+						isInstalled: (res[0]?.nextStep) === REDIRECT_URL.DONE,
+						profile: res[0] ?? {}
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.INSTALL_GET_STATUS, e, null)
+			}
+
+		case ACTION.INSTALL_CREATE_ADMIN:
+			try {
+				const userCredential = await createUserWithEmailAndPassword(auth, args.body.email, args.body.password)
+
+				const batch = writeBatch(db)
+
+				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
+					uid: [userCredential.user.uid],	//!all associated account will be stored 
+					email: userCredential.user.email,
+					username: "superadmin",
+					displayName: args.body.name,
+					photoURL: "/img/default-admin-avatar.png",
+					group: "superadmin", //default usergroup
+					nextStep: REDIRECT_URL.INSTALL_COMPLETED
+				})
+
+				batch.set(doc(db, COLLECTION.USERNAMES, "superadmin"), {
+					uid: [userCredential.user.uid],	//!all associated account will be stored in an Array
+					email: userCredential.user.email,
+					username: "superadmin",
+					group: "superadmin", //default usergroup
+				})
+				await batch.commit()
+
+				return {
+					data: {
+						uid: userCredential.user.uid,
+						message: "SuperAdmin account created successfully",
+						redirect: REDIRECT_URL.INSTALL_COMPLETED
+					}
+				}
+
+			} catch (e) {
+				return throwError(200, ACTION.INSTALL_CREATE_ADMIN, e, null)
+			}
+
+		case ACTION.INSTALL_FINALIZATION:
+			try {
+
+				const batch = writeBatch(db)
+
+				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+					nextStep: REDIRECT_URL.DONE
+				}, { merge: true })
+
+				batch.set(doc(db, COLLECTION.USERNAMES, "superadmin"), {
+					nextStep: REDIRECT_URL.DONE
+				}, { merge: true })
+
+				await batch.commit()
+
+				return { data: { justInstalled: true } } //just dummy data
+
+			} catch (e) {
+				return throwError(200, ACTION.INSTALL_FINALIZATION, e, null)
+			}
+
+		/*****************************************************************
+		 * SIGN-IN (LOGIN-IN)                                            *
+		 *****************************************************************/
+		case ACTION.SIGN_IN_WITH_EMAIL:
+			if (args.body.username.includes("@")) {
+				try {
+					//Login
+					const loggedin = await signInWithEmailAndPassword(auth, args.body.username, args.body.password)
+
+					const userProfile = await getUserProfile(loggedin.user.uid)
+
+					return {
+						data: {
+							userProfile: {
+								emailVerified: loggedin.user.emailVerified,
+								creationTime: loggedin.user.metadata.creationTime,
+								lastSignInTime: loggedin.user.metadata.lastSignInTime,
+								providerId: loggedin.user.providerData[0].providerId,
+								...userProfile?.data
+							},
+							message: "Login success successfully"
+						},
+					}
+				}
+				catch (e) {
+					// return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, e, null)
+					return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, { message: "Please check your credentials and try again" }, null)
+				}
+			}
+
+			try {
+				const userProfile = await getUserProfileByUsername(args.body.username)
+				if (userProfile.data) {
+					const loggedin = await signInWithEmailAndPassword(auth, userProfile.data.email, args.body.password)
+					return {
+						data: {
+							userProfile: {
+								emailVerified: loggedin.user.emailVerified,
+								creationTime: loggedin.user.metadata.creationTime,
+								lastSignInTime: loggedin.user.metadata.lastSignInTime,
+								providerId: loggedin.user.providerData[0].providerId,
+								...userProfile.data
+							},
+							message: "Login success successfully"
+						},
+					}
+				}
+				return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, { message: "Account not found" }, null)
+
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, e, null)
+			}
+
+		case ACTION.SIGN_IN_WITH_GOOGLE:
+			try {
+				const googleAuthProvider = new GoogleAuthProvider()
+				await signInWithPopup(auth, googleAuthProvider)
+				//
+				//nothing to do here?!!
+			} catch (e) {
+				return throwError(200, ACTION.SIGN_IN_WITH_GOOGLE, e, null)
+			}
+			break
+
+		/*****************************************************************
 		 * SIGN-UP         	                                             *
 		 *****************************************************************/
 		case ACTION.SIGN_UP_WITH_EMAIL:
 			try {
 				//Check username availabitity
-				const res = await isUsernameAvailable(username)
+				const res = await isUsernameAvailable(args.body.username)
 				if (res.error)
 					return throwError(
 						200, ACTION.SIGN_UP_WITH_EMAIL,
 						{ message: res.error }, null
 					)
-
 				if (res.isUsernameAvailable === false)
 					return throwError(
 						200, ACTION.SIGN_UP_WITH_EMAIL,
 						{ message: "Username existed." }, null
 					)
 
-				const userCredential = createUserWithEmailAndPassword(auth, args.email, args.password)
+				//You are good to go for now
+				const userCredential = await createUserWithEmailAndPassword(auth, args.body.email, args.body.password)
 
 				const batch = writeBatch(db)
+
 				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
 					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
-					username: args.username,
+					username: args.body.username,
 					email: userCredential.user.email,
-					displayName: args.name,
+					displayName: args.body.name,
 					photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+					group: USERGROUP.USER, //default usergroup
+					nextStep: REDIRECT_URL.CREATE_PROFILE
 				})
-				batch.set(doc(db, COLLECTION.USERNAMES, args.username), {
+
+				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
 					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
-					username: args.username,
+					username: args.body.username,
 					email: userCredential.user.email,
 					group: USERGROUP.USER, //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
 				})
+
 				await batch.commit()
 
 				//TODO: verify email!!! userCredential.user.sendEmailVerification()
 
-				return { data: "Account created successfully!", redirect: REDIRECT_URL.CREATE_PROFILE }
+				return {
+					data: {
+						message: "Account created successfully!",
+						redirect: REDIRECT_URL.CREATE_PROFILE,
+						uid: userCredential.user.uid,
+						username: args.body.username,
+						email: userCredential.user.email,
+						displayName: args.body.name,
+						photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+						group: USERGROUP.USER, //default usergroup
+					}
+				}
 			} catch (e) {
 				return throwError(200, ACTION.SIGN_UP_WITH_EMAIL, e, null)
 			}
 
 		case ACTION.SIGN_UP_VIA_GOOGLE:
 			try {
+
 				const batch = writeBatch(db)
-				batch.set(doc(db, COLLECTION.USERS, args.uid), {
-					uid: [args.uid],
-					email: args.email,
-					username: args.username,
-					displayName: args.name,
-					photoURL: args.photoURL,
-				})
-				batch.set(doc(db, COLLECTION.USERNAMES, args.username), {
-					uid: [args.uid],	//all associated account will be stored here in an Array
-					username: args.username,
-					email: args.email,
+
+				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+					uid: [args.body.uid],
+					email: args.body.email,
+					username: args.body.username,
+					displayName: args.body.name,
+					photoURL: args.body.photoURL,
 					group: "user", //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
 				})
+
+				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
+					uid: [args.body.uid],	//all associated account will be stored here in an Array
+					username: args.body.username,
+					email: args.body.email,
+					group: "user", //default usergroup
+				})
+
 				await batch.commit()
 
 				//Go to next step -> /signup/create-profile  (to update avatar & location)
 				// router.push(REDIRECT_URL.CREATE_PROFILE)
-				dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
+				return {
+					data: {
+						message: "Account created successfully",
+						redirect: REDIRECT_URL.CREATE_PROFILE
+					}
+				}
+				//dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
 				// }
 				// catch (e) {
 				// 	console.log(e.message)
@@ -130,25 +301,54 @@ async function fireStoreBaseQuery(args) {
 				// }
 
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_UP_VIA_SOCIAL, e, null)
+				return throwError(200, ACTION.SIGN_UP_VIA_GOOGLE, e, null)
 			}
-			break
 
 		case ACTION.SIGN_UP_CREATE_PROFILE:
 			try {
-				//
-			} catch (e) {
+				const batch = writeBatch(db)
+
+				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+					photoURL: args.body.avatar,
+					location: args.body.location,
+					nextStep: REDIRECT_URL.SURVEY
+				}, { merge: true })
+
+				await batch.commit()
+
+				return {
+					data: {
+						message: "Profile created successfully",
+						redirect: REDIRECT_URL.SURVEY
+					}
+				}
+			}
+			catch (e) {
 				return throwError(200, ACTION.SIGN_UP_CREATE_PROFILE, e, null)
 			}
-			break
 
 		case ACTION.SIGN_UP_SURVEY:
 			try {
-				//
+				const batch = writeBatch(db)
+				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
+					survey: JSON.stringify(args.body.payload),
+					nextStep: REDIRECT_URL.DONE
+				}, { merge: true })
+				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+					survey: JSON.stringify(args.body.payload),
+					nextStep: REDIRECT_URL.DONE
+				}, { merge: true })
+				await batch.commit()
+				//Update redux
+				return {
+					data: {
+						redirect: REDIRECT_URL.CREATE_COMPLETED
+					}
+				}
+				// dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))
 			} catch (e) {
 				return throwError(200, ACTION.SIGN_UP_SURVEY, e, null)
 			}
-			break
 
 		/*****************************************************************
 		 * PROFILE         	                                             *
@@ -168,7 +368,7 @@ async function fireStoreBaseQuery(args) {
 				let res = []
 				const q = query(
 					collection(db, COLLECTION.USERS),
-					where("uid", "in", [args.uid])
+					where("uid", "array-contains", args.uid)
 				)
 				const querySnapshot = await getDocs(q)
 				querySnapshot.forEach((user) => { res.push(user.data()) })

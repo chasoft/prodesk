@@ -236,7 +236,7 @@ const ContentHelperText = ({ children }) => (
 
 export const SettingsContentHelperText = ({ children }) => (
 	<ContentHelperText>
-		<Typography variant="caption">
+		<Typography component="div" variant="caption">
 			{children}
 		</Typography>
 	</ContentHelperText>

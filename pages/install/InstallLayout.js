@@ -23,17 +23,22 @@
  *****************************************************************/
 
 //CORE SYSTEM
+import React from "react"
 import PropTypes from "prop-types"
 import DefaultErrorPage from "next/error"
-import React, { useEffect, useState } from "react"
 
 // MATERIAL-UI
 import { Box, CircularProgress, Container } from "@mui/material"
 
+//THIRD-PARTY
+import { useSelector } from "react-redux"
+
+
 //PROJECT IMPORT
 import Footer from "./../../components/common/Footer"
+import { getAuth } from "../../redux/selectors"
 import { ReduxRedirect } from "./../../components/AuthCheck"
-import { getInstallStatus } from "./../../helpers/firebase/install"
+import { useGetInstallStatusQuery } from "../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,17 +49,10 @@ import { getInstallStatus } from "./../../helpers/firebase/install"
  *****************************************************************/
 
 function InstallLayout({ children }) {
-	const [isInstalled, setIsInstalled] = useState(null)
+	const { currentUser } = useSelector(getAuth)
+	const { data: installStatus, isLoading } = useGetInstallStatusQuery()
 
-	useEffect(() => {
-		async function fetchInstallStatus() {
-			const installStatus = await getInstallStatus()
-			setIsInstalled(installStatus)
-		}
-		fetchInstallStatus()
-	}, [])
-
-	if (isInstalled)
+	if ((installStatus?.isInstalled === true && currentUser.justInstalled !== true))
 		return <DefaultErrorPage statusCode={404} />
 
 	return (
@@ -67,14 +65,15 @@ function InstallLayout({ children }) {
 				<Container maxWidth="sm" sx={{
 					display: "flex",
 					flexDirection: "column",
-					justifyContent: "center",
 					alignItems: "center",
+					justifyContent: "center",
 					flexGrow: 1
 				}}>
-					{
-						(isInstalled === null) ? <CircularProgress />
-							: children
-					}
+
+					{isLoading && <CircularProgress />}
+
+					{(installStatus?.isInstalled === false) && children}
+
 				</Container>
 
 				<Footer />

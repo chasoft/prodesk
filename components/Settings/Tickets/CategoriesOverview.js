@@ -24,7 +24,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Chip, Typography, IconButton, Tooltip } from "@mui/material"
+import { Box, Chip, Typography, IconButton, Tooltip, CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
@@ -55,9 +55,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 	if (isLoading) {
 		return (
 			<div style={{ display: "flex", alignItems: "center" }} >
-				<Typography>
-					Loading...
-				</Typography>
+				<CircularProgress />
 			</div>
 		)
 	}
@@ -78,7 +76,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 			{isLoading ?
 				<SettingsContentDetails>
 					<Typography>
-						Loading...
+						<CircularProgress />
 					</Typography>
 				</SettingsContentDetails>
 				: categories.map((category) => (

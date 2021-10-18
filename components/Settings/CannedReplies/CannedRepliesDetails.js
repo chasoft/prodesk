@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import { find } from "lodash"
@@ -86,7 +86,7 @@ const CannedRepliesDetails = ({ crid }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <div>Loading...</div>
+					? <div><CircularProgress /></div>
 					: <FormControl variant="standard" fullWidth>
 						<InputLabel id="demo-simple-select-label">Department</InputLabel>
 						<Select
@@ -104,7 +104,7 @@ const CannedRepliesDetails = ({ crid }) => {
 					</FormControl>}
 
 				{isLoadingCannedReplies
-					? <div>Loading...</div>
+					? <div><CircularProgress /></div>
 					: <>
 						<Box sx={{ py: 2 }}>
 							<TextField

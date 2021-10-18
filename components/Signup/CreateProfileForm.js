@@ -28,14 +28,16 @@ import React, { useState } from "react"
 import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useSnackbar } from "notistack"
+// import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
 import { RegContainer } from "./../../layout/RegLayout"
-import { signupCreateProfile } from "./../../helpers/firebase/signup"
 import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
+import { useSignUpCreateProfileMutation } from "../../redux/slices/firestoreApi"
+import { REDIRECT_URL } from "../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
@@ -47,8 +49,10 @@ import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
 
 const CreateProfileForm = () => {
 	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
+	// const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
+	const [signUpCreateProfile] = useSignUpCreateProfileMutation()
+
 	const [location, setLocation] = useState("")
 	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
 
@@ -93,13 +97,16 @@ const CreateProfileForm = () => {
 				<Button
 					type="submit" variant="contained" color="primary"
 					sx={{ mt: 3, mx: 0, mb: 2 }}
-					onClick={(e) => {
+					onClick={async (e) => {
 						e.preventDefault()
-						signupCreateProfile({
+						await signUpCreateProfile({
+							uid: currentUser.uid[0],
 							username: currentUser.username,
 							avatar,
 							location
-						}, { enqueueSnackbar, dispatch })
+						})
+
+						dispatch(setRedirect(REDIRECT_URL.SURVEY))
 					}}
 					disabled={(location === "")}
 				>

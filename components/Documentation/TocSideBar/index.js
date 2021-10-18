@@ -26,7 +26,7 @@ import React, { useCallback, useEffect, useRef } from "react"
 // import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { Box, CircularProgress } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
@@ -136,7 +136,7 @@ const TocSideBar = () => {
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
 					{isLoading
-						? <div>Loading...</div>
+						? <div><CircularProgress /></div>
 						: docsList.map((cat) => {
 							/* Category Level */
 							return (

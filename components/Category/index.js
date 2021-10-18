@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, Grid, Typography } from "@mui/material"
+import { Box, ButtonBase, CircularProgress, Grid, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { findKey } from "lodash"
@@ -100,7 +100,7 @@ function Category() {
 			<Box sx={{ padding: { xs: 3, md: 8 } }}>
 
 				{isLoading
-					? <div>Loading...</div>
+					? <div><CircularProgress /></div>
 					: docsList.map((cat, idx) => (
 						<Box key={cat[0]} sx={{ mt: idx > 1 ? 3 : 0 }}>
 							<Typography

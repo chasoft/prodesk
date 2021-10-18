@@ -45,10 +45,40 @@ export const firestoreApi = createApi({
 		TYPE.CANNED_REPLIES,
 		TYPE.LABELS,
 		TYPE.CATEGORIES,
+		TYPE.INSTALL,
 	],
 	baseQuery: fireStoreBaseQuery,
 	keepUnusedDataFor: 15 * 60,//15 minutes
 	endpoints: (builder) => ({
+
+		/*****************************************************************
+		 * SIGN-IN (LOG-IN)                                              *
+		 *****************************************************************/
+
+		getInstallStatus: builder.query({
+			query: () => ({ action: ACTION.INSTALL_GET_STATUS }),
+			providesTags: [{ type: TYPE.INSTALL }],
+		}),
+
+		createAdminAccount: builder.mutation({
+			query: (body) => ({ action: ACTION.INSTALL_CREATE_ADMIN, body })
+		}),
+
+		finalizeInstallation: builder.mutation({
+			query: (body) => ({ action: ACTION.INSTALL_FINALIZATION, body }),
+			invalidatesTags: [{ type: TYPE.INSTALL }],
+		}),
+
+		/*****************************************************************
+		 * SIGN-IN (LOG-IN)                                              *
+		 *****************************************************************/
+		signInWithEmail: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_IN_WITH_EMAIL, body })
+		}),
+
+		signInWithGoogle: builder.mutation({
+			query: (body) => ({ action: ACTION.SIGN_IN_VIA_GOOGLE, body })
+		}),
 
 		/*****************************************************************
 		 * SIGN-UP                                                       *
@@ -573,6 +603,13 @@ export const firestoreApi = createApi({
 })
 
 export const {
+	//
+	useGetInstallStatusQuery,
+	useCreateAdminAccountMutation,
+	useFinalizeInstallationMutation,
+	//
+	useSignInWithEmailMutation,
+	useSignInWithGoogleMutation,
 	//
 	useSignUpWithEmailMutation,
 	useSignUpViaGoogleMutation,

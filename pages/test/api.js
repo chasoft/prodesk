@@ -27,7 +27,7 @@ import {
 	collection, doc, getDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp
 } from "firebase/firestore"
 import Head from "next/head"
-import { Button, TextField } from "@mui/material"
+import { Button, CircularProgress, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
@@ -49,7 +49,7 @@ const AllDocs = React.memo(function AllDocs() {
 				allDocs.error ? (
 					<>Oh no, there was an error</>
 				) : allDocs.isLoading ? (
-					<>Loading...</>
+					<><CircularProgress /></>
 				) : allDocs.data ? (
 					<>
 						{allDocs.data.map(item => <p key={item.docId}>{item.docId}</p>)}

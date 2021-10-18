@@ -25,7 +25,7 @@
 import React, { useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
-import { Box, InputBase } from "@mui/material"
+import { Box, CircularProgress, InputBase } from "@mui/material"
 import TextEditor from "./../common/TextEditor"
 import DocumentTemplate from "./DocumentTemplate"
 import { getAuth, getDocsCenter, getTextEditor } from "./../../redux/selectors"
@@ -175,7 +175,14 @@ const DocumentEditor = () => {
 			}} />
 
 			{docItemContent.isLoading
-				? <div>Loading...</div>
+				? <Box sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					minHeight: "200px"
+				}}>
+					<CircularProgress />
+				</Box>
 				: <TextEditor
 					ref={editorRef}
 					value={editorDefaultData}

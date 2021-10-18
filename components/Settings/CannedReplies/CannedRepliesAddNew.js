@@ -23,7 +23,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import { nanoid } from "nanoid"
@@ -35,6 +35,7 @@ import { getAuth, getTextEditor } from "../../../redux/selectors"
 import { setActiveSettingPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
 import { useAddCannedReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned-reply"
 
 //PROJECT IMPORT
 
@@ -69,7 +70,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <div>Loading...</div>
+					? <div><CircularProgress /></div>
 					: <FormControl variant="standard" fullWidth>
 						<InputLabel id="demo-simple-select-label">Department</InputLabel>
 						<Select
@@ -107,13 +108,22 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 				<Button
 					variant="outlined"
-					onClick={() => { backBtnClick(false) }}
+					onClick={() => {
+						dispatch(setActiveSettingPanel(CANNED_REPLY_PAGES.OVERVIEW))
+						backBtnClick(false)
+					}}
 				>
 					Cancel
 				</Button>
 
 				<Button
 					variant="contained" color="primary"
+					disabled={
+						(department === "")
+						|| (description === "")
+						|| (editorData.trim() === "")
+						|| (editorData.trim() === "\\")
+					}
 					onClick={async () => {
 						const crid = nanoid(7)
 						const newCannedReply = {

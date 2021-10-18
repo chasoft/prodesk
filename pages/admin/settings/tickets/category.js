@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"
@@ -118,7 +118,14 @@ function TicketSettingsCategory() {
 					<ListTitle>{(categories?.length > 0) ? "Available categories" : "No available category"}</ListTitle>
 
 					{isLoading
-						? <div>Loading</div>
+						? <Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: "200px"
+						}}>
+							<CircularProgress />
+						</Box>
 						: categories.map((category) => (
 							<ListItem
 								key={category.catId}

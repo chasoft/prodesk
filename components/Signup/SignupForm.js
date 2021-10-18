@@ -26,23 +26,23 @@ import React from "react"
 
 // MATERIAL-UI
 import { Button, Checkbox, FormControlLabel, Grid, TextField } from "@mui/material"
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 
 //THIRD-PARTY
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
-import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
+import { setRedirect } from "../../redux/slices/redirect"
 import { useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
-import { useRouter } from "next/router"
-import { ACTION } from "../../redux/slices/firestoreApiConstants"
+import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
-
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -78,9 +78,9 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 const SignupForm = () => {
-	const { enqueueSnackbar } = useSnackbar()
-	const router = useRouter()
+	const dispatch = useDispatch()
 	const [signUpWithEmail] = useSignUpWithEmailMutation()
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 	useFlexDirection({ payload: "row" })
 
@@ -95,7 +95,7 @@ const SignupForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			enqueueSnackbar("Registering your account...", { variant: "info", key: ACTION.SIGN_UP_WITH_EMAIL })
+			enqueueSnackbar("Registering your account", { variant: "info" })
 			const res = await signUpWithEmail({
 				email: values.email,
 				password: values.password,
@@ -104,12 +104,17 @@ const SignupForm = () => {
 			})
 
 			if (res.error) {
-				enqueueSnackbar(res.error.data.message, { variant: "error", key: ACTION.SIGN_UP_WITH_EMAIL })
+				closeSnackbar()
+				enqueueSnackbar(res.error.data.message, { variant: "error" })
+				return
 			}
-			else {
-				enqueueSnackbar(res.data, { variant: "info", key: ACTION.SIGN_UP_WITH_EMAIL })
-				router.push(res.redirect)
-			}
+
+			//Update Redux for next Step
+			// dispatch(loginSuccess(res.data))
+
+			closeSnackbar()
+			enqueueSnackbar(res.data.message, { variant: "success" })
+			dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
 		}
 	})
 

@@ -28,8 +28,8 @@ import React, { useEffect, useRef } from "react"
 import { Box, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 import { once } from "lodash"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"

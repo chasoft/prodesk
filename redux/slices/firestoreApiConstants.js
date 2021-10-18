@@ -14,7 +14,8 @@ export const TYPE = {
 	DEPARTMENTS: "Departments",
 	CANNED_REPLIES: "Canned-replies",
 	LABELS: "Labels",
-	CATEGORIES: "Categories"
+	CATEGORIES: "Categories",
+	INSTALL: "Install"
 }
 
 export const ACTION = {
@@ -71,4 +72,13 @@ export const ACTION = {
 	SIGN_UP_VIA_GOOGLE: "signUpViaGoogle",
 	SIGN_UP_CREATE_PROFILE: "signUpCreateProfile",
 	SIGN_UP_SURVEY: "signUpSurvey",
+
+	/* LOG-IN */
+	SIGN_IN_WITH_GOOGLE: "signInWithGoogle",
+	SIGN_IN_WITH_EMAIL: "signInWithEmail",
+
+	/* INSTALL */
+	INSTALL_CREATE_ADMIN: "createAdminAccount",
+	INSTALL_GET_STATUS: "getInstallStatus",
+	INSTALL_FINALIZATION: "finalizeInstallation",
 }

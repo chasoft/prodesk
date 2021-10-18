@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { uniqueId, random } from "lodash"
@@ -191,8 +191,18 @@ const PageLabels = ({ backBtnClick }) => {
 
 			<SettingsContentDetails>
 				{isLoading
-					? <div>Loading..</div>
-					: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)}
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
+						<CircularProgress />
+					</Box>
+					: (labels.length === 0)
+						? <div>Label list is empty</div>
+						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
+				}
 
 				{/* <Box sx={{
 					display: "flex",

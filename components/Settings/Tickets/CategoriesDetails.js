@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton } from "@mui/material"
+import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
 import { useSnackbar } from "notistack"
@@ -89,7 +89,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 
 	return (
 		<>
-			{isLoading ? <div>Loading...</div> :
+			{isLoading ? <div><CircularProgress /></div> :
 				<>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}

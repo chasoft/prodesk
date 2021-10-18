@@ -23,10 +23,11 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
 // MATERIAL-UI
-import { Avatar, Box, Container, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -36,6 +37,7 @@ import { getRootLayout } from "./RootLayout"
 import Footer from "./../components/common/Footer"
 import { getUiSettings } from "./../redux/selectors"
 import { setflexDirection } from "./../redux/slices/uiSettings"
+import { useGetInstallStatusQuery } from "./../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,17 +45,15 @@ import { setflexDirection } from "./../redux/slices/uiSettings"
 
 const SideImage = ({ imageUrl = null, children }) => {
 	return (
-		<Box
-			sx={{
-				backgroundRepeat: "no-repeat",
-				backgroundColor: (theme) => theme.palette.mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
-				backgroundSize: "cover",
-				backgroundPosition: "center",
-				width: { xs: "40%", xl: "500px" },
-				display: { xs: "none", sm: "block" },
-				backgroundImage: imageUrl ?? "url(https://source.unsplash.com/random)"
-			}}
-		>
+		<Box sx={{
+			backgroundRepeat: "no-repeat",
+			backgroundColor: (theme) => theme.palette.mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
+			backgroundSize: "cover",
+			backgroundPosition: "center",
+			width: { xs: "40%", xl: "500px" },
+			display: { xs: "none", sm: "block" },
+			backgroundImage: imageUrl ?? "url(https://source.unsplash.com/random)"
+		}}>
 			{children}
 		</Box>
 	)
@@ -62,40 +62,32 @@ SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
 
 export const TopLine = ({ left, center, right }) => {
 	return (
-		<Box
-			sx={{
-				width: "100%",
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "space-between",
-				pt: 3,
-			}}
-		>
-			<Box
-				sx={{
-					display: { xs: "none", lg: "flex" },
-					alignItems: "center", justifyContent: "flex-start",
-				}}
-			>
+		<Box sx={{
+			width: "100%",
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+			pt: 3,
+		}}>
+			<Box sx={{
+				display: { xs: "none", lg: "flex" },
+				alignItems: "center", justifyContent: "flex-start",
+			}}>
 				{left ?? ""}
 			</Box>
 
-			<Box
-				sx={{
-					display: { lg: "none", xs: "flex" },
-					alignItems: "center", justifyContent: "center", flexGrow: 1,
-					py: 8,
-				}}
-			>
+			<Box sx={{
+				display: { lg: "none", xs: "flex" },
+				alignItems: "center", justifyContent: "center", flexGrow: 1,
+				py: 8,
+			}}>
 				{center ?? ""}
 			</Box>
 
-			<Box
-				sx={{
-					display: { xs: "none", lg: "flex" },
-					alignItems: "center", justifyContent: "flex-end", pr: 2
-				}}
-			>
+			<Box sx={{
+				display: { xs: "none", lg: "flex" },
+				alignItems: "center", justifyContent: "flex-end", pr: 2
+			}}>
 				{right ?? ""}
 			</Box>
 		</Box>
@@ -109,17 +101,19 @@ TopLine.propTypes = {
 
 export const RegContainer = ({ children }) => {
 	return (
-		<Box sx={{ display: "flex", justifyContent: "center", flexGrow: 1 }}>
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: { xs: "flex-start", lg: "center" },
-					flexGrow: 1,
-					maxWidth: "400px",
-					mb: 4
-				}}
-			>
+		<Box sx={{
+			display: "flex",
+			justifyContent: "center",
+			flexGrow: 1
+		}}>
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: { xs: "flex-start", lg: "center" },
+				flexGrow: 1,
+				maxWidth: "400px",
+				mb: 4
+			}}>
 				{children}
 			</Box>
 		</Box>
@@ -129,15 +123,12 @@ RegContainer.propTypes = { children: PropTypes.node }
 
 export const RegHeader = ({ icon, title }) => {
 	return (
-		<Box
-			sx={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				pt: 0, px: 0, pb: 4
-			}
-			}
-		>
+		<Box sx={{
+			display: "flex",
+			flexDirection: "column",
+			alignItems: "center",
+			pt: 0, px: 0, pb: 4
+		}}>
 			<Avatar sx={{ margin: 1, backgroundColor: "secondary.main", }}>
 				{icon}
 			</Avatar>
@@ -161,7 +152,31 @@ export const useFlexDirection = (props) => {
  *****************************************************************/
 
 function RegLayout({ children }) {
+	const router = useRouter()
 	const { flexDirection } = useSelector(getUiSettings)
+
+	//Checking install status, if not installed, go install
+	const { data: installStatus, isLoading } = useGetInstallStatusQuery()
+	if (installStatus?.isInstalled === false) {
+		router.push("/install")
+		return null
+	}
+
+	//But if not yet got the finall query result, let's wait
+	if (isLoading || (installStatus?.isInstalled !== true)) {
+		return (
+			<div style={{
+				display: "flex",
+				minHeight: "100vh",
+				alignItems: "center",
+				justifyContent: "center",
+			}}>
+				<CircularProgress />
+			</div>
+		)
+	}
+
+	//You are good to go to sign up/sign in pages
 	return (
 		<div style={{ display: "flex", flexDirection: flexDirection, minHeight: "100vh" }}>
 
@@ -177,7 +192,9 @@ function RegLayout({ children }) {
 					width: { xs: "100%", sm: "60%", xl: "100%" }
 				}}
 			>
+
 				{children}
+
 				<Footer />
 			</Container>
 

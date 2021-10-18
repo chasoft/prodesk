@@ -25,6 +25,7 @@
 //CORE SYSTEM
 import React from "react"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Button, Typography, Grid, TextField } from "@mui/material"
@@ -32,13 +33,15 @@ import { Button, Typography, Grid, TextField } from "@mui/material"
 //THIRD-PARTY
 import * as yup from "yup"
 import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
+import { useCreateAdminAccountMutation } from "./../../redux/slices/firestoreApi"
+import { REDIRECT_URL } from "./../../helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
-import { createAdminAccount } from "./../../helpers/firebase/install"
-import { useSnackbar } from "notistack"
-import { useDispatch } from "react-redux"
+import { loginTemp } from "../../redux/slices/auth"
 
 /*****************************************************************
  * INIT                                                          *
@@ -67,8 +70,10 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 function CreateSuperAdmin() {
-	const { enqueueSnackbar } = useSnackbar()
+	const router = useRouter()
 	const dispatch = useDispatch()
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	const [createAdminAccount] = useCreateAdminAccountMutation()
 
 	const formik = useFormik({
 		initialValues: {
@@ -80,16 +85,28 @@ function CreateSuperAdmin() {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			createAdminAccount({
+			enqueueSnackbar("Creating SuperAdmin account", { variant: "info" })
+
+			const res = await createAdminAccount({
 				email: values.email,
 				password: values.password,
 				name: values.name
-			}, { enqueueSnackbar, dispatch })
+			})
+
+			if (res?.error) {
+				enqueueSnackbar(res.error.data.message, { variant: "error" })
+			}
+
+			dispatch(loginTemp({ uid: res.data.uid })) //keep uid for next step
+
+			closeSnackbar()
+			enqueueSnackbar("Account created", { variant: "success" })
+			router.push(REDIRECT_URL.INSTALL_COMPLETED)
 		},
 	})
 
 	return (
-		<>
+		<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 			<div style={{ padding: "3rem" }}>
 				<Logo />
 			</div>
@@ -191,7 +208,7 @@ function CreateSuperAdmin() {
 				</form>
 
 			</div>
-		</>
+		</div>
 	)
 }
 CreateSuperAdmin.propTypes = { children: PropTypes.any }

@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
+import { signOut } from "./../../helpers/firebase/logout"
 import { setRedirect } from "./../../redux/slices/redirect"
 import { AuthAdminTrue, AuthUserTrue } from "./../AuthCheck"
-import { signOut } from "./../../helpers/firebase/logout"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
@@ -142,13 +142,19 @@ const UserIcon = () => {
 								}}
 							>
 								<AuthAdminTrue>
-									<li onClick={() => { dispatch(setRedirect("/admin")); setOpen(false) }}>
+									<li onClick={() => {
+										dispatch(setRedirect("/admin"))
+										setOpen(false)
+									}}>
 										<SettingsIcon />Admin Dashboard
 									</li>
 								</AuthAdminTrue>
 
 								<AuthUserTrue>
-									<li onClick={() => { dispatch(setRedirect("/client")); setOpen(false) }}>
+									<li onClick={() => {
+										dispatch(setRedirect("/client"))
+										setOpen(false)
+									}}>
 										<SettingsIcon />Client Dashboard
 									</li>
 								</AuthUserTrue>
@@ -157,7 +163,8 @@ const UserIcon = () => {
 
 								<li
 									onClick={() => {
-										signOut({ enqueueSnackbar, dispatch }); setOpen(false)
+										signOut({ enqueueSnackbar, dispatch })
+										setOpen(false)
 									}}
 									style={{ borderBottomLeftRadius: "4px", borderBottomRightRadius: "4px" }}
 								>

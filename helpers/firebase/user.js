@@ -52,7 +52,7 @@ export const getUserProfile = async (uid) => {
 		let res = []
 		const q = query(
 			collection(db, COLLECTION.USERS),
-			where("uid", "in", [uid])
+			where("uid", "array-contains", uid)
 		)
 		const querySnapshot = await getDocs(q)
 		querySnapshot.forEach((user) => { res.push(user.data()) })

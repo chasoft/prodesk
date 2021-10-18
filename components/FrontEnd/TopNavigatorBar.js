@@ -24,14 +24,15 @@
 
 import React from "react"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Paper, Tab, Tabs } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { getUiSettings } from "./../../redux/selectors"
-import { setRedirect } from "./../../redux/slices/redirect"
+// import { setRedirect } from "./../../redux/slices/redirect"
 import { FRONT_PAGE_TABS_NAME } from "./../../layout/EntryLayout"
 
 //PROJECT IMPORT
@@ -54,12 +55,14 @@ const getTabId = (tabName, dataSet) => {
  *****************************************************************/
 
 const TopNavigatorBar = ({ dataSet }) => {
-	const dispatch = useDispatch()
+	// const dispatch = useDispatch()
+	const router = useRouter()
 
 	const { activeSettingTab } = useSelector(getUiSettings)
 
 	const handleChange = (event, selectedTabId) => {
-		dispatch(setRedirect(dataSet[selectedTabId][1]))
+		// dispatch(setRedirect(dataSet[selectedTabId][1]))
+		router.push(dataSet[selectedTabId][1])
 	}
 
 	return (

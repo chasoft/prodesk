@@ -75,7 +75,10 @@ const authSlice = createSlice({
 		 *****************************************************************/
 
 		loginTemp: (state, { payload }) => {
-			state.currentUser = payload
+			state.currentUser = {
+				...state.currentUser,
+				...payload
+			}
 			state.isAuthenticated = false
 			state.loading = false
 		},

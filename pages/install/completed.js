@@ -23,36 +23,46 @@
  *****************************************************************/
 
 //CORE SYSTEM
-import React, { useEffect, useRef } from "react"
+import React, { useRef, useEffect } from "react"
 import PropTypes from "prop-types"
+// import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { LinearProgress, Typography } from "@mui/material"
+
+//THIRD-PARTY
 import { once } from "lodash"
+// import { useSnackbar } from "notistack"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getAuth } from "../../redux/selectors"
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
-import { useDispatch } from "react-redux"
-import { installCompleted } from "./../../helpers/firebase/install"
-import { useSnackbar } from "notistack"
+import { REDIRECT_URL } from "./../../helpers/constants"
+import { useFinalizeInstallationMutation } from "./../../redux/slices/firestoreApi"
+import { loginSuccess } from "../../redux/slices/auth"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InstallCompleted() {
-	const [progress, setProgress] = React.useState(0)
-	const [buffer, setBuffer] = React.useState(10)
-	const progressRef = useRef(() => { })
-	const { enqueueSnackbar } = useSnackbar()
 	const dispatch = useDispatch()
-	const onceInstallCompleted = once(installCompleted)
+	const onceDispatch = once(dispatch)
+	//
+	const [buffer, setBuffer] = React.useState(10)
+	const [progress, setProgress] = React.useState(0)
+	const progressRef = useRef(() => { })
+	//
+	const { currentUser } = useSelector(getAuth)	//we have uid from previus step which kept here!
+	const [finalizeInstallation] = useFinalizeInstallationMutation()
 
 	useEffect(() => {
 		progressRef.current = () => {
 			if (progress > 95) {
-				onceInstallCompleted({ enqueueSnackbar, dispatch })
+				onceDispatch(setRedirect(REDIRECT_URL.ADMIN))
 			} else {
 				const diff = Math.random() * 10
 				const diff2 = Math.random() * 10
@@ -63,29 +73,61 @@ function InstallCompleted() {
 	})
 
 	useEffect(() => {
-		const timer = setInterval(() => { progressRef.current() }, 500)
+		const timer = setInterval(() => { progressRef.current() }, 300)
 		return () => { clearInterval(timer) }
 	}, [])
 
+	useEffect(() => {
+		const finalize = async () => {
+			await finalizeInstallation({ uid: currentUser.uid[0] })
+			dispatch(loginSuccess({ justInstalled: true }))
+		}
+		finalize()
+	}, [])
+
 	return (
-		<>
+		<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 			<div style={{ padding: "3rem" }}>
 				<Logo />
 			</div>
 			<Typography variant="h1">Welcome to ProDesk</Typography>
-			<Typography variant="button">Your Elegant &amp; Powerful Blog / Documentation / Ticket System</Typography>
+			<Typography variant="button">Your Elegant &amp; Powerful Support System</Typography>
 
-			<div style={{ padding: "2rem" }}>
-				<Typography variant="h2">Superadmin account has been created successfully.</Typography>
-				<Typography variant="body1">
-					You will be redirected to the dashboard to start setting up your great site!
+			<div style={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				paddingTop: "2rem"
+			}}>
+				<Typography variant="body1" sx={{ textAlign: "justify" }}>
+					Superadmin account has been created successfully. Click the button below to finalize the installation! Then, you will be redirected to admin dashboard.
 				</Typography>
-				<div style={{ paddingTop: "2rem" }}>
+				<div style={{ marginTop: "4rem" }}>
 					<LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
+					{/* <Button
+						variant="contained"
+						color="primary"
+						onClick={
+							async () => {
+								enqueueSnackbar("Finalizing installation", { variant: "info" })
+								await finalizeInstallation({ uid: currentUser.uid[0] })
+
+								closeSnackbar()
+								enqueueSnackbar("Redirecting to admin dashboard", { variant: "success" })
+
+								//Update local Redux to indicate that use logged-in
+								//with extra param: justInstalled = true
+								dispatch(loginSuccess({ justInstalled: true }))
+								router.push(REDIRECT_URL.ADMIN)
+							}
+						}
+					>
+						Finalize Installation
+					</Button> */}
 				</div>
 			</div>
 
-		</>
+		</div >
 	)
 }
 InstallCompleted.propTypes = { children: PropTypes.any }

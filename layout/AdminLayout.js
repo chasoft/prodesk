@@ -36,13 +36,13 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
+import AuthCheck from "./../components/AuthCheck"
 import Footer from "./../components/common/Footer"
 import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
 import { setIsSideBarExpanded, setScrolled } from "./../redux/slices/uiSettings"
-import AuthCheck from "./../components/AuthCheck"
 
 //ASSETS
 

@@ -38,18 +38,20 @@ import {
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
 import { getAuth } from "./../../redux/selectors"
+import { setRedirect } from "../../redux/slices/redirect"
 import { isUsernameAvailable } from "./../../helpers/firebase/user"
-import { signUpViaSocialAccount } from "./../../helpers/firebase/signup"
 import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { useSignUpViaGoogleMutation } from "../../redux/slices/firestoreApi"
+import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -77,9 +79,10 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 const SocialLoginForm = () => {
+	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
-	// const router = useRouter()
 	const { currentUser } = useSelector(getAuth)
+	const [signUpViaGoogle] = useSignUpViaGoogleMutation()
 
 	useFlexDirection({ payload: "row" })
 
@@ -93,17 +96,27 @@ const SocialLoginForm = () => {
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
 			try {
-				if (!(await isUsernameAvailable(values.username))) {
+				const res = isUsernameAvailable(values.username)
+				if (res.error) {
+					enqueueSnackbar("Checking username availability failed", { variant: "warning" })
+					return
+				}
+
+				if (res.isUsernameAvailable === false) {
 					enqueueSnackbar("Username is existed. Please choose another one!", { variant: "warning" })
 					return
 				}
-				await signUpViaSocialAccount({
-					uid: currentUser.uid,
+
+				await signUpViaGoogle({
+					uid: currentUser.uid[0],
 					email: values.email,
 					name: values.name,
 					username: values.username,
 					photoURL: currentUser.photoURL
-				}, { enqueueSnackbar })
+				})
+
+				//Go to next step -> /signup/create-profile  (to update avatar & location)
+				dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
 			}
 			catch (e) {
 				console.log(e.message)
