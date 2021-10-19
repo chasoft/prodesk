@@ -55,7 +55,7 @@ export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { r
 
 	/* Preparing data to create new ticket */
 	try {
-		const ticketId = nanoid(10)
+		const ticketId = nanoid()
 		const ref = db.doc(`users/${currentUser.uid[0]}/tickets/${ticketId}`)
 
 		const ticketData = {
@@ -95,7 +95,7 @@ export const ticketAddReply = async ({ currentUser, ticketId, replyContent }, { 
 		})
 
 		//Add new reply
-		const replyId = nanoid(10)
+		const replyId = nanoid()
 		batch.set(db.doc(`users/${currentUser.uid[0]}/tickets/${ticketId}/replies/${replyId}`), {
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),

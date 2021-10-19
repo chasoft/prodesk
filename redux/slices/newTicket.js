@@ -117,7 +117,7 @@ const newTicketSlice = createSlice({
 				...state.newTicket,
 				currentStep: 0,
 				isReadyNextStep: false,
-				tid: nanoid(10),
+				tid: nanoid(),
 				subject: "",
 				message: "",
 				selectedCategory: {

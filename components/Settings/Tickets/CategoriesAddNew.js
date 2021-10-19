@@ -238,7 +238,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 							return
 						}
 
-						const catId = nanoid(7)
+						const catId = nanoid()
 						const categoryItem = {
 							catId,
 							name: categoryName,

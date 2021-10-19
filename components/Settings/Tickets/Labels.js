@@ -164,7 +164,7 @@ const PageLabels = ({ backBtnClick }) => {
 						size="small"
 						variant="contained"
 						onClick={async () => {
-							const lid = nanoid(7)
+							const lid = nanoid()
 							const incNum = uniqueId()
 							addLabel({
 								lid,

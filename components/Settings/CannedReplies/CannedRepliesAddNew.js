@@ -125,7 +125,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						|| (editorData.trim() === "\\")
 					}
 					onClick={async () => {
-						const crid = nanoid(7)
+						const crid = nanoid()
 						const newCannedReply = {
 							crid,
 							department,

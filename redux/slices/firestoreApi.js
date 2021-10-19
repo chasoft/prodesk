@@ -104,19 +104,7 @@ export const firestoreApi = createApi({
 		 * USER                                                          *
 		 *****************************************************************/
 
-		// getUsers: builder.query({
-		// 	query: () => ({ action: ACTION.GET_USERS }),
-		// 	providesTags: [{ type: TYPE.USERS, id: "LIST" }],
-		// 	transformResponse: (response) => fix_datetime_list(response)
-		// }),
-
-		// getUser: builder.query({
-		// 	query: (uid) => ({ action: ACTION.GET_USER, uid }),
-		// 	providesTags: (result, error, uid) => { return [{ type: TYPE.USERS, id: uid }] },
-		// 	transformResponse: (response) => fix_datetime_single(response)
-		// }),
-
-
+		// Let you query Profiles instead of Users
 
 		/*****************************************************************
 		 * PROFILE				                                         *
@@ -236,7 +224,7 @@ export const firestoreApi = createApi({
 		}),
 
 		updateDocContent: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_CONTENT, body }), //body: {docItem: object, content: { text: <string> } }
+			query: (body) => ({ action: ACTION.UPDATE_DOC_CONTENT, body }), //body: {docItem: object, content: { text: <string> } }
 			invalidatesTags: (result, error, arg) => [{ type: TYPE.DOCS, id: arg.docItem.docId.concat("_content") }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
@@ -599,6 +587,351 @@ export const firestoreApi = createApi({
 				}
 			},
 		}),
+
+		/*****************************************************************
+		 * TICKETS                                                       *
+		 *****************************************************************/
+
+		getTickets: builder.query({
+			query: (username) => ({ action: ACTION.GET_TICKETS, username }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ tid }) => ({ type: TYPE.TICKETS, id: tid })),
+						{ type: TYPE.TICKETS, id: "LIST" }
+					]
+					: [{ type: TYPE.TICKETS, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		getTicketContent: builder.query({
+			query: (body) => ({ action: ACTION.GET_TICKET_CONTENT, body }), //body: { username, tid }
+			providesTags: (result, error, body) => { return [{ type: TYPE.TICKETS, id: body.tid.concat("_content") }] },
+		}),
+
+		getTicketReplies: builder.query({
+			query: (body) => ({ action: ACTION.GET_TICKET_REPLIES, body }),	//body: {username, tid}
+			providesTags: (result, error, body) => {
+				return result
+					? [
+						...result.map(({ trid }) => ({ type: TYPE.TICKETS, id: trid })), //trid
+						{ type: TYPE.TICKETS, id: body.tid.concat("_replies") }
+					]
+					: [{ type: TYPE.TICKETS, id: body.tid.concat("_replies") }]
+			},
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		addTicket: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_TICKET, body }),	//body: {ticketItem, content:string}
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.TICKETS, id: body.ticketItem.tid }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.ticketItem.username,
+						(draft) => { draft.push(body.ticketItem) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		addTicketReply: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_TICKET_REPLY, body }),//body: {ticketItem, replyItem}
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.TICKETS, id: body.ticketItem.tid.concat("_replies") }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKET_REPLIES,
+						{
+							username: body.ticketItem.username,
+							tid: body.ticketItem.tid
+						},
+						(draft) => { draft.push(body.replyItem) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateTicketContent: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_TICKET_CONTENT, body }), //body: {ticketItem, content: {text:string} }
+			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.ticketItem.tid.concat("_content") }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKET_CONTENT,
+						{
+							username: body.ticketItem.username,
+							tid: body.ticketItem.tid
+						},
+						(draft) => { Object.assign(draft, body.content) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateTicketStatus: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_TICKET_STATUS, body }), //body: {...ticketItem}
+			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.tid }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.username,
+						(draft) => {
+							let obj = draft.find(e => e.tid === body.tid)
+							Object.assign(obj, body)
+						}
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateTicketReply: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_TICKET_REPLY, body }), //body: {ticketItem, replyItem}
+			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.replyItem.trid }], //trid, not tid
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKET_REPLIES,
+						{
+							username: body.ticketItem.username,
+							tid: body.ticketItem.tid
+						},
+						(draft) => {
+							let obj = draft.find(e => e.trid === body.replyItem.trid) //trid, for we're updating replyItem
+							Object.assign(obj, body)
+						}
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		deleteTicket: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_TICKET, body }), //body: {username, tid}
+			invalidatesTags: [{ type: TYPE.TICKETS, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.username,
+						(draft) => draft.filter(e => e.tid !== body.tid)
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					patchResult.undo()
+				}
+			},
+		}),
+
+		deleteTicketReply: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_TICKET_REPLY, body }),  //body: {username, tid, trid}
+			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.trid }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKET_REPLIES,
+						{
+							username: body.username,
+							tid: body.tid
+						},
+						(draft) => draft.filter(e => e.trid !== body.trid)
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		/*****************************************************************
+		 * PAGES                                                         *
+		 *****************************************************************/
+
+		getPages: builder.query({
+			query: () => ({ action: ACTION.GET_PAGES }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ pid }) => ({ type: TYPE.PAGES, id: pid })),
+						{ type: TYPE.PAGES, id: "LIST" }
+					]
+					: [{ type: TYPE.PAGES, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		getPage: builder.query({
+			query: (pid) => ({ action: ACTION.GET_PAGE, pid }),	//body: pid
+			providesTags: (result, error, pid) => { return [{ type: TYPE.PAGES, id: pid }] },
+			transformResponse: (response) => fix_datetime_single(response)
+		}),
+
+		getPageContent: builder.query({
+			query: (pid) => ({ action: ACTION.GET_PAGE_CONTENT, pid }), //body: pid
+			providesTags: (result, error, pid) => [{ type: TYPE.PAGES, id: pid.concat("_content") }],
+		}),
+
+		addPage: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_PAGE, body }), // body: {pageItem, content: {text: string} }
+			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pageItem.pid }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_PAGES, undefined,
+						(draft) => { draft.push(body.pageItem) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updatePage: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_PAGE, body }), //body: {...pageItem}
+			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pid }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_PAGES, undefined,
+						(draft) => {
+							let obj = draft.find(e => e.pid === body.pid)
+							Object.assign(obj, body)
+						}
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updatePageContent: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_PAGE_CONTENT, body }), //body: {pageItem: object, content: { text: <string> } }
+			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pageItem.pid.concat("_content") }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_PAGE_CONTENT, body.pageItem.pid.concat("_content"),
+						(draft) => { Object.assign(draft, body.content) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		deletePage: builder.mutation({
+			query: (pid) => ({ action: ACTION.DELETE_PAGE, pid }),
+			invalidatesTags: [{ type: TYPE.PAGES, id: "LIST" }],
+			async onQueryStarted(pid, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_PAGES, undefined,
+						(draft) => draft.filter(e => e.pid !== pid)
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		/*****************************************************************
+		 * BLOG                                                          *
+		 *****************************************************************/
+
+		getBlogPosts: builder.query({
+			query: () => ({ action: ACTION.GET_BLOG_POSTS }),
+			providesTags: (result) => {
+				return result
+					? [
+						...result.map(({ bid }) => ({ type: TYPE.BLOG, id: bid })),
+						{ type: TYPE.BLOG, id: "LIST" }
+					]
+					: [{ type: TYPE.BLOG, id: "LIST" }]
+			},
+			keepUnusedDataFor: 60 * 60,
+			transformResponse: (response) => fix_datetime_list(response)
+		}),
+
+		getBlogPost: builder.query({
+			query: (bid) => ({ action: ACTION.GET_BLOG_POST, bid }),
+			providesTags: (result, error, bid) => { return [{ type: TYPE.BLOG, id: bid }] },
+			transformResponse: (response) => fix_datetime_single(response)
+		}),
+
+		getBlogPostContent: builder.query({
+			query: (bid) => ({ action: ACTION.GET_BLOG_POST_CONTENT, bid }),
+			providesTags: (result, error, bid) => [{ type: TYPE.BLOG, id: bid.concat("_content") }],
+		}),
+
+		addBlogPost: builder.mutation({
+			query: (body) => ({ action: ACTION.ADD_BLOG_POST, body }),	//body: {...blogItem}
+			invalidatesTags: (result, error, body) => {
+				return [{ type: TYPE.BLOG, id: body.bid }]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_BLOG_POSTS, undefined,
+						(draft) => { draft.push(body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateBlogPost: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_BLOG_POST, body }), //body: {...blogItem}
+			invalidatesTags: (result, error, body) => [{ type: TYPE.BLOG, id: body.bid }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_BLOG_POSTS, undefined,
+						(draft) => {
+							let obj = draft.find(e => e.bid === body.bid)
+							Object.assign(obj, body)
+						}
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		updateBlogPostContent: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_BLOG_POST_CONTENT, body }), //body: {blogItem: object, content: { text: <string> } }
+			invalidatesTags: (result, error, body) => [{ type: TYPE.BLOG, id: body.blogItem.bid.concat("_content") }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_BLOG_POST_CONTENT, body.blogItem.bid.concat("_content"),
+						(draft) => { Object.assign(draft, body.content) }
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
+		deleteBlogPost: builder.mutation({
+			query: (bid) => ({ action: ACTION.DELETE_BLOG_POST, bid }),
+			invalidatesTags: [{ type: TYPE.BLOG, id: "LIST" }],
+			async onQueryStarted(bid, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_BLOG_POSTS, undefined,
+						(draft) => draft.filter(e => e.bid !== bid)
+					)
+				)
+				try { await queryFulfilled }
+				catch { patchResult.undo() }
+			},
+		}),
+
 	}),
 })
 
@@ -653,4 +986,31 @@ export const {
 	useAddCategoryMutation,
 	useUpdateCategoryMutation,
 	useDeleteCategoryMutation,
+	//
+	useGetTicketsQuery,
+	useGetTicketContentQuery,
+	useGetTicketRepliesQuery,
+	useAddTicketMutation,
+	useAddTicketReplyMutation,
+	useUpdateTicketContentMutation,
+	useUpdateTicketStatusMutation,
+	useUpdateTicketReplyMutation,
+	useDeleteTicketMutation,
+	useDeleteTicketReplyMutation,
+	//
+	useGetPagesQuery,
+	useGetPageQuery,
+	useGetPageContentQuery,
+	useAddPageMutation,
+	useUpdatePageMutation,
+	useUpdatePageContentMutation,
+	useDeletePageMutation,
+	//
+	useGetBlogPostsQuery,
+	useGetBlogPostQuery,
+	useGetBlogPostContentQuery,
+	useAddBlogPostMutation,
+	useUpdateBlogPostMutation,
+	useUpdateBlogPostContentMutation,
+	useDeleteBlogPostMutation,
 } = firestoreApi

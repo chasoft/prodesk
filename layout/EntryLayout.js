@@ -34,8 +34,8 @@ import { Box } from "@mui/material"
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
 import Footer from "./../components/common/Footer"
-import Header from "../components/Themes/Header"
-import TopNavigatorBar from "../components/Themes/TopNavigatorBar"
+import Header from "../components/Themes/Google/Header"
+import TopNavigatorBar from "../components/Themes/Google/TopNavigatorBar"
 
 /*****************************************************************
  * INIT                                                          *

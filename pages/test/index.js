@@ -75,7 +75,7 @@ const Test = () => {
 	function uploaderPromise(file) {
 		return new Promise((resolve, reject) => {
 			// Prepare the filename
-			const uniqueId = nanoid(5)
+			const uniqueId = nanoid()
 			const extension = file.type.split("/")[1]
 			const filename = file.name.split(".")[0]
 

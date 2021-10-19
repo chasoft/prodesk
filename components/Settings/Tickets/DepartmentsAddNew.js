@@ -124,7 +124,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						return
 					}
 
-					const did = nanoid(7)
+					const did = nanoid()
 					const departmentItem = {
 						did,
 						department,

@@ -40,7 +40,7 @@ import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
  * @returns docItem object
  */
 export const docItemNewDoc = (targetDocItem, username) => {
-	const docId = nanoid(7)
+	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,
@@ -64,7 +64,7 @@ export const docItemNewDoc = (targetDocItem, username) => {
  * @returns docItem object
  */
 export const docItemNewExternal = (targetDocItem, username) => {
-	const docId = nanoid(7)
+	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,
@@ -88,7 +88,7 @@ export const docItemNewExternal = (targetDocItem, username) => {
  * @returns docItem object
  */
 export const docItemNewSubCategory = (targetDocItem, username) => {
-	const docId = nanoid(7)
+	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,
@@ -109,7 +109,7 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
  * @returns docItem object
  */
 export const docItemNewCategory = (username) => {
-	const docId = nanoid(7)
+	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,

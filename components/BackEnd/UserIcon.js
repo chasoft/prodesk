@@ -38,9 +38,12 @@ const Paper = styled(MuiPaper)({
 
 const UserIcon = () => {
 	const [open, setOpen] = useState(false)
-	const anchorRef = useRef(null)
+	const [anchorEl, setAnchorEl] = useState(null)
 
-	const handleToggle = () => { setOpen((p) => !p) }
+	const handleToggle = (e) => {
+		setAnchorEl(e.currentTarget)
+		setOpen(prev => !prev)
+	}
 
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
@@ -48,9 +51,7 @@ const UserIcon = () => {
 
 	return <>
 		<Tooltip title="User Menu" placement="bottom">
-			<IconButton
-				onClick={handleToggle} size="large" ref={anchorRef}
-			>
+			<IconButton onClick={handleToggle} size="large">
 				<Avatar
 					src="/img/default-avatar.png"
 					sx={{
@@ -63,8 +64,8 @@ const UserIcon = () => {
 
 		<Popper
 			id="userInfo-popup"
-			anchorEl={anchorRef.current}
 			open={open}
+			anchorEl={anchorEl}
 			placement="bottom-end"
 			transition
 			disablePortal

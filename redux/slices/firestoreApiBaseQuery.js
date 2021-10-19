@@ -30,9 +30,9 @@ import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, si
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { auth, db } from "./../../helpers/firebase"
 import { ACTION, COLLECTION } from "./firestoreApiConstants"
+import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
 /*****************************************************************
@@ -351,7 +351,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * PROFILE         	                                             *
+		 * PROFILE => uid  	                                             *
 		 *****************************************************************/
 		case ACTION.GET_PROFILES:
 			try {
@@ -425,7 +425,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * DOCUMENTATION                                                 *
+		 * DOCUMENTATION => docId                                        *
 		 *****************************************************************/
 		case ACTION.GET_DOCS:
 			try {
@@ -449,7 +449,7 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTION.GET_CONTENT:
 			try {
-				let docItemContent = ""
+				let docItemContent = {}
 				const docSnap = await getDoc(doc(db, COLLECTION.DOCS, args.docId, "content", "current"))
 				if (docSnap.exists()) { docItemContent = docSnap.data() }
 				console.log({ docItemContent })
@@ -556,27 +556,33 @@ async function fireStoreBaseQuery(args) {
 			}
 			break
 
-		case ACTION.UPDATE_CONTENT:
+		case ACTION.UPDATE_DOC_CONTENT:	//body: {docItem, content: object}
 			try {
 				const batch = writeBatch(db)
 				batch.update(
-					doc(db, COLLECTION.DOCS, args.body.docItem.docId, "content", "current"),
+					doc(db,
+						COLLECTION.DOCS, args.body.docItem.docId,
+						"content", "current"
+					),
 					args.body.content
 				)
 				batch.update(
 					doc(db, COLLECTION.DOCS, args.body.docItem.docId),
-					{ updatedBy: args.body.docItem.updatedBy }
+					{
+						updatedAt: serverTimestamp(),
+						updatedBy: args.body.docItem.updatedBy,
+					}
 				)
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.UPDATE_CONTENT,
+						action: ACTION.UPDATE_DOC_CONTENT,
 						id: args.body.docItem.docId,
 						message: "DocContent updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_CONTENT, e, {
+				return throwError(200, ACTION.UPDATE_DOC_CONTENT, e, {
 					id: args.body.docItem.docId
 				})
 			}
@@ -701,7 +707,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * DEPARTMENTS                                                   *
+		 * DEPARTMENTS => did                                            *
 		 *****************************************************************/
 		case ACTION.GET_DEPARTMENTS:
 			try {
@@ -740,7 +746,10 @@ async function fireStoreBaseQuery(args) {
 
 				batch.update(
 					doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.departmentItem.did),
-					{ ...args.body.departmentItem, updatedAt: serverTimestamp() }
+					{
+						...args.body.departmentItem,
+						updatedAt: serverTimestamp()
+					}
 				)
 
 				args.body.affectedCannedReplies.forEach((affectedItem) => {
@@ -763,6 +772,8 @@ async function fireStoreBaseQuery(args) {
 					id: args.body.departmentItem.did
 				})
 			}
+
+		//Note: do not allow to delete department if there are related canned-replies existed
 		case ACTION.DELETE_DEPARTMENT:
 			try {
 				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.did))
@@ -780,7 +791,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * CANNED REPLIES                                                *
+		 * CANNED REPLIES => crid                                        *
 		 *****************************************************************/
 		case ACTION.GET_CANNED_REPLIES:
 			try {
@@ -817,7 +828,10 @@ async function fireStoreBaseQuery(args) {
 			try {
 				updateDoc(
 					doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", args.body.crid),
-					{ ...args.body, updatedAt: serverTimestamp() }
+					{
+						...args.body,
+						updatedAt: serverTimestamp()
+					}
 				)
 				return {
 					data: {
@@ -848,7 +862,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * LABELS                                                        *
+		 * LABELS => lid                                                 *
 		 *****************************************************************/
 		case ACTION.GET_LABELS:
 			try {
@@ -916,7 +930,7 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
-		 * CATEGORIES                                                    *
+		 * CATEGORIES => catId                                           *
 		 *****************************************************************/
 		case ACTION.GET_CATEGORIES:
 			try {
@@ -995,9 +1009,545 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
+		/*****************************************************************
+		 * TICKETS => tid                                                *
+		 *****************************************************************/
+		case ACTION.GET_TICKETS:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets")
+				)
+				querySnapshot.forEach((ticket) => { all.push(ticket.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_TICKETS, e, null)
+			}
+
+		case ACTION.GET_TICKET_CONTENT:
+			try {
+				let ticketContent = ""
+				const docSnap = await getDoc(doc(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid,
+					"content", "current")
+				)
+				if (docSnap.exists()) { ticketContent = docSnap.data() }
+				return { data: ticketContent }
+			} catch (e) {
+				return throwError(200, ACTION.GET_TICKET_CONTENT, e, "")
+			}
+
+		case ACTION.GET_TICKET_REPLIES:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid,
+					"replies")
+				)
+				querySnapshot.forEach((reply) => { all.push(reply.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_TICKET_REPLIES, e, null)
+			}
+
+		case ACTION.ADD_TICKET:	//body: {ticketItem, content: {text: string}}
+			try {
+				const batch = writeBatch(db)
+				batch.set(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid),
+					{
+						...args.body.ticketItem,
+						createdAt: serverTimestamp(),
+						updatedAt: serverTimestamp()
+					}
+				)
+				batch.set(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid,
+						"content", "current"),
+					args.body.content
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.ADD_TICKET,
+						username: args.body.ticketItem.username,
+						tid: args.body.ticketItem.tid,
+						message: "Ticket added successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.ADD_TICKET, e, {
+					username: args.body.ticketItem.username,
+					tid: args.body.ticketItem.tid,
+				})
+			}
+
+		case ACTION.ADD_TICKET_REPLY:	//body: {ticketItem, replyItem}
+			try {
+				const batch = writeBatch(db)
+				batch.set(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid,
+						"replies", args.body.replyItem.trid),
+					{
+						...args.body.replyItem,
+						createdAt: serverTimestamp(),
+						updatedAt: serverTimestamp()
+					}
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.ADD_TICKET_REPLY,
+						username: args.body.ticketItem.username,
+						tid: args.body.ticketItem.tid,
+						message: "Ticket reply added successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.ADD_TICKET_REPLY, e, {
+					username: args.body.ticketItem.username,
+					tid: args.body.ticketItem.tid,
+				})
+			}
+
+		case ACTION.UPDATE_TICKET_CONTENT:	//body: {ticketItem, content: {text:string} }
+			try {
+				const batch = writeBatch(db)
+				batch.update(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid,
+						"content", "current"
+					),
+					args.body.content
+				)
+				batch.update(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid,
+					),
+					{
+						updatedAt: serverTimestamp()
+					}
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.UPDATE_TICKET_CONTENT,
+						username: args.body.ticketItem.username,
+						tid: args.body.ticketItem.tid,
+						message: "Ticket content updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_TICKET_CONTENT, e, {
+					username: args.body.ticketItem.username,
+					tid: args.body.ticketItem.tid,
+				})
+			}
+
+		case ACTION.UPDATE_TICKET_STATUS:	//body: {...ticketItem}
+			try {
+				updateDoc(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.username,
+						"tickets", args.body.tid
+					),
+					{
+						...args.body,
+						updatedAt: serverTimestamp()
+					}
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_TICKET_STATUS,
+						username: args.body.username,
+						tid: args.body.tid,
+						message: "Ticket properties updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_TICKET_STATUS, e, {
+					username: args.body.username,
+					tid: args.body.tid,
+				})
+			}
+
+		case ACTION.UPDATE_TICKET_REPLY:	//body: {ticketItem, replyItem}
+			try {
+				updateDoc(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid,
+						"replies", args.body.replyItem.trid
+					),
+					{
+						...args.body.replyItem,
+						updatedAt: serverTimestamp()
+					}
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_TICKET_REPLY,
+						username: args.body.ticketItem.username,
+						tid: args.body.ticketItem.tid,
+						message: "Ticket reply updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_TICKET_STATUS, e, {
+					username: args.body.ticketItem.username,
+					tid: args.body.ticketItem.tid,
+				})
+			}
+
+		case ACTION.DELETE_TICKET:	//body: {username, tid}
+			try {
+				const batch = writeBatch(db)
+				//delete ticket's content
+				batch.delete(doc(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid,
+					"content", "current"
+				))
+				//delete ticket's replies
+				//get all replies first
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid,
+					"replies")
+				)
+				//delete all related replies
+				querySnapshot.forEach((reply) => {
+					batch.delete(reply.ref)
+				})
+				//finally, delete main record
+				batch.delete(doc(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid))
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.DELETE_TICKET,
+						username: args.body.username,
+						tid: args.body.tid,
+						message: "Ticket deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.DELETE_TICKET, e, {
+					username: args.body.username,
+					tid: args.body.tid,
+				})
+			}
+
+		case ACTION.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
+			try {
+				await deleteDoc(doc(db,
+					COLLECTION.USERNAMES, args.body.username,
+					"tickets", args.body.tid,
+					"replies", args.body.trid
+				))
+				return {
+					data: {
+						action: ACTION.DELETE_TICKET_REPLY,
+						username: args.body.username,
+						tid: args.body.tid,
+						trid: args.body.trid,
+						message: "Ticket reply deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.DELETE_TICKET_REPLY, e, {
+					username: args.body.username,
+					tid: args.body.tid,
+					trid: args.body.trid,
+				})
+			}
+
+		/*****************************************************************
+		 * PAGES => pid                                                  *
+		 *****************************************************************/
+		case ACTION.GET_PAGES:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db, COLLECTION.PAGES))
+				querySnapshot.forEach((page) => { all.push(page.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PAGES, e, null)
+			}
+
+		case ACTION.GET_PAGE:	//body: pid
+			try {
+				let page = {}
+				const docSnap = await getDoc(doc(db, COLLECTION.PAGES, args.body))
+				if (docSnap.exists()) page = docSnap.data()
+				return { data: page }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PAGE, e, null)
+			}
+
+		case ACTION.GET_PAGE_CONTENT:	//body: pid
+			try {
+				let pageContent = {}
+				const docSnap = await getDoc(doc(db,
+					COLLECTION.PAGES, args.body,
+					"content", "current"
+				))
+				if (docSnap.exists()) { pageContent = docSnap.data() }
+				return { data: pageContent }
+			} catch (e) {
+				return throwError(200, ACTION.GET_PAGE_CONTENT, e, {
+					pid: args.body
+				})
+			}
+
+		case ACTION.ADD_PAGE:	// body: {pageItem, content: {text: string} }
+			try {
+				const batch = writeBatch(db)
+				batch.set(
+					doc(db, COLLECTION.PAGES, args.body.pageItem.pid),
+					{
+						...args.body.pageItem,
+						createdAt: serverTimestamp(),
+						updatedAt: serverTimestamp()
+					}
+				)
+				batch.set(
+					doc(db,
+						COLLECTION.PAGES, args.body.pageItem.pid,
+						"content", "current"
+					),
+					args.body.content
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.ADD_PAGE,
+						pid: args.body.pageItem.pid,
+						message: "Page added successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.ADD_PAGE, e, {
+					pid: args.body.pageItem.pid
+				})
+			}
+
+		case ACTION.UPDATE_PAGE:	//body: {...pageItem}
+			try {
+				updateDoc(
+					doc(db, COLLECTION.PAGES, args.body.pid),
+					{
+						...args.body,
+						updatedAt: serverTimestamp()
+					}
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_PAGE,
+						pid: args.body.pid,
+						message: "Page properties updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_PAGE, e, {
+					pid: args.body.pid,
+				})
+			}
+
+		case ACTION.UPDATE_PAGE_CONTENT:	//body: {pageItem, content: {text:string} }
+			try {
+				const batch = writeBatch(db)
+				batch.update(
+					doc(db,
+						COLLECTION.PAGES, args.body.pageItem.pid,
+						"content", "current"
+					),
+					args.body.content
+				)
+				batch.update(
+					doc(db, COLLECTION.PAGES, args.body.pageItem.pid),
+					{ updatedAt: serverTimestamp() }
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.UPDATE_PAGE_CONTENT,
+						pid: args.body.pageItem.pid,
+						message: "Page content updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_PAGE_CONTENT, e, {
+					pid: args.body.pageItem.pid
+				})
+			}
+
+		case ACTION.DELETE_PAGE:	//body: pid
+			try {
+				const batch = writeBatch(db)
+				batch.delete(doc(db, COLLECTION.PAGES, args.body, "content", "current"))
+				batch.delete(doc(db, COLLECTION.PAGES, args.body))
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.DELETE_PAGE,
+						message: "Page deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.DELETE_PAGE, e, null)
+			}
+
+		/*****************************************************************
+		 * BLOG => bid                                                   *
+		 *****************************************************************/
+		case ACTION.GET_BLOG_POSTS:
+			try {
+				let all = []
+				const querySnapshot = await getDocs(collection(db, COLLECTION.BLOG))
+				querySnapshot.forEach((post) => { all.push(post.data()) })
+				return { data: all }
+			} catch (e) {
+				return throwError(200, ACTION.GET_BLOG_POSTS, e, null)
+			}
+
+		case ACTION.GET_BLOG_POST:	//body: bid
+			try {
+				let page = {}
+				const docSnap = await getDoc(doc(db, COLLECTION.BLOG, args.body))
+				if (docSnap.exists()) page = docSnap.data()
+				return { data: page }
+			} catch (e) {
+				return throwError(200, ACTION.GET_BLOG_POST, e, null)
+			}
+
+		case ACTION.GET_BLOG_POST_CONTENT:	//body: bid
+			try {
+				let pageContent = {}
+				const docSnap = await getDoc(doc(db,
+					COLLECTION.BLOG, args.body,
+					"content", "current"
+				))
+				if (docSnap.exists()) { pageContent = docSnap.data() }
+				return { data: pageContent }
+			} catch (e) {
+				return throwError(200, ACTION.GET_BLOG_POST_CONTENT, e, {
+					bid: args.body
+				})
+			}
+
+		case ACTION.ADD_BLOG_POST:	// body: {blogItem, content: {text: string} }
+			try {
+				const batch = writeBatch(db)
+				batch.set(
+					doc(db, COLLECTION.BLOG, args.body.blogItem.bid),
+					{
+						...args.body.blogItem,
+						createdAt: serverTimestamp(),
+						updatedAt: serverTimestamp()
+					}
+				)
+				batch.set(
+					doc(db,
+						COLLECTION.BLOG, args.body.blogItem.bid,
+						"content", "current"
+					),
+					args.body.content
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.ADD_BLOG_POST,
+						bid: args.body.blogItem.bid,
+						message: "Blog added successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.ADD_BLOG_POST, e, {
+					pid: args.body.blogItem.bid
+				})
+			}
+
+		case ACTION.UPDATE_BLOG_POST:	//body: {...blogItem}
+			try {
+				updateDoc(
+					doc(db, COLLECTION.BLOG, args.body.bid),
+					{
+						...args.body,
+						updatedAt: serverTimestamp()
+					}
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_BLOG_POST,
+						bid: args.body.bid,
+						message: "Blog properties updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_BLOG_POST, e, {
+					pid: args.body.bid,
+				})
+			}
+
+		case ACTION.UPDATE_BLOG_POST_CONTENT:	//body: {blogItem, content: {text:string} }
+			try {
+				const batch = writeBatch(db)
+				batch.update(
+					doc(db,
+						COLLECTION.BLOG, args.body.blogItem.bid,
+						"content", "current"
+					),
+					args.body.content
+				)
+				batch.update(
+					doc(db, COLLECTION.BLOG, args.body.blogItem.bid),
+					{ updatedAt: serverTimestamp() }
+				)
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.UPDATE_BLOG_POST_CONTENT,
+						bid: args.body.blogItem.bid,
+						message: "Blog content updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_BLOG_POST_CONTENT, e, {
+					bid: args.body.blogItem.bid
+				})
+			}
+
+		case ACTION.DELETE_BLOG_POST:	//body: bid
+			try {
+				const batch = writeBatch(db)
+				batch.delete(doc(db, COLLECTION.BLOG, args.body, "content", "current"))
+				batch.delete(doc(db, COLLECTION.BLOG, args.body))
+				await batch.commit()
+				return {
+					data: {
+						action: ACTION.DELETE_BLOG_POST,
+						message: "Blog post deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.DELETE_BLOG_POST, e, null)
+			}
 
 		default:
-			return throwError(200, "OUT OF ACTION RANGE", { message: "OUT OF ACTION RANGE" }, null)
+			return throwError(200, "Action not yet implemented", { message: "Action not yet implemented" }, null)
 	}
 }
 
