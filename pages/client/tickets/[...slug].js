@@ -26,15 +26,19 @@ import React from "react"
 // import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { Container } from "@mui/material"
+import { Box, Container, Grid } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import Post from "./../../../components/Post"
-import useUiSettings from "./../../../helpers/useUiSettings"
+import { getLayout } from "../../../layout/ClientLayout"
+import TicketContent from "../../../components/Ticket/TicketContent"
+import TicketReplies from "../../../components/Ticket/TicketReplies"
+import TicketTimeline from "../../../components/Ticket/TicketTimeline"
+import TicketMetaBox from "../../../components/Ticket/TicketMetaBox"
+import useUiSettings from "../../../helpers/useUiSettings"
+import { useRouter } from "next/router"
 
 //ASSETS
 
@@ -49,19 +53,31 @@ import useUiSettings from "./../../../helpers/useUiSettings"
  *****************************************************************/
 
 function SingleTicket() {
-	// const router = useRouter()
-	// const { tid } = router.query
-	const dispatch = useDispatch()
+	const router = useRouter()
+	const slug = router.query
+	// const 
+
+	// 	useGetTicketsQuery,
+	// 	useGetTicketContentQuery,
+	// 	useGetTicketRepliesQuery,
+
+	// const dispatch = useDispatch()
 	useUiSettings({
 		background: {
 			backgroundImage: ""
 		}
 	})
 
+	console.log(slug)
+
 	return (
-		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Post />
-		</Container>
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+
+			<TicketContent />
+
+			<TicketReplies />
+
+		</Container >
 	)
 }
 

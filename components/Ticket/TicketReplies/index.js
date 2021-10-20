@@ -22,56 +22,77 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box } from "@mui/material"
 import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Box, Button, Fab } from "@mui/material"
 
 //THIRD-PARTY
-// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import UserTicketList from "../../../components/Ticket/TicketList"
-import TicketFilters from "../../../components/Ticket/TicketFilters"
+import ReplyItem from "./Reply"
+import ReplyDialog from "./ReplyDialog"
 
 //ASSETS
+import ReplyIcon from "@mui/icons-material/Reply"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const ReplyButton = ({ sx }) => {
+	return (
+		<Box sx={{
+			display: { xs: "none", xl: "flex" },
+			justifyContent: "flex-end", mb: 4, ...sx
+		}}>
+			<ReplyDialog>
+				<Button variant="outlined" startIcon={<ReplyIcon />} sx={{ px: 3 }}			>
+					Reply
+				</Button>
+			</ReplyDialog>
+		</Box>
+	)
+}
+ReplyButton.propTypes = { sx: PropTypes.object }
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Tickets() {
-
-	useUiSettings({
-		title: "All tickets",
-		background: {
-			backgroundImage: ""
-		}
-	})
-
+function TicketReplies() {
 	return (
-		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
+		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
 
-			<Box sx={{ display: "flex" }}>
+			<ReplyButton />
 
-				<Box sx={{ flexGrow: 1 }}>
-					<UserTicketList />
-				</Box>
-
-				<div>
-					<TicketFilters />
-				</div>
-
+			<Box sx={{
+				border: "1px solid",
+				borderRadius: "0.5rem",
+				borderColor: "divider",
+			}}>
+				{[1, 2, 3, 4].map((item, idx) => {
+					return <ReplyItem key={item} isFirst={idx === 0} />
+				})}
 			</Box>
 
-		</Container >
+			<ReplyDialog>
+				<Fab
+					color="primary" sx={{
+						display: { xs: "initial", xl: "none" },
+						position: "fixed",
+						bottom: { xs: 32, md: 64 },
+						right: { xs: 32, md: 128, lg: 152 }
+					}}>
+					<ReplyIcon />
+				</Fab>
+			</ReplyDialog>
+
+			<ReplyButton sx={{ mt: 3 }} />
+
+		</Box >
 	)
 }
 
-Tickets.getLayout = getLayout
-
-export default Tickets
+export default TicketReplies

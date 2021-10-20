@@ -22,22 +22,24 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import Link from "next/link"
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material"
+import { Select, MenuItem, InputLabel, Grid, FormControl } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getNewTicket } from "./../../redux/selectors"
+import { getNewTicket } from "./../../../redux/selectors"
+import { useGetDepartmentsQuery, useGetCategoriesQuery } from "./../../../redux/slices/firestoreApi"
 import {
 	setSelectedCategory, setSelectedSubCategory,
 	setSelectedPriority,
 	setSelectedDepartment
-} from "./../../redux/slices/newTicket"
+} from "./../../../redux/slices/newTicket"
+import { useGetTicketDetails } from "./NewTicketStepper"
 
 //ASSETS
 
@@ -50,37 +52,54 @@ import {
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DepartmentBlock = ({ departments, selectedDepartment, defaultDepartment }) => {
+const DepartmentBlock = () => {
 	const dispatch = useDispatch()
+	const { data: departments, isLoading } = useGetDepartmentsQuery()
+	const { selectedDepartment } = useSelector(getNewTicket)
+
+	if (isLoading)
+		return (
+			<div>Loading departments..</div>
+		)
+
+	if (!departments?.length)
+		return (
+			<div style={{ display: "block" }}>
+				Please <Link href="/admin/settings/tickets/department">click here</Link> to setup department information!
+			</div>
+		)
+
+	console.log("selectedDepartment", selectedDepartment)
+
 	return (
-		<>
-			<FormControl sx={{ formControl: { m: 1 } }} fullWidth>
-				<InputLabel shrink id="department">Department</InputLabel>
-				<Select
-					labelId="department"
-					label="Department"
-					id="department"
-					value={selectedDepartment ? selectedDepartment : defaultDepartment}
-					onChange={(e) => {
-						dispatch(setSelectedDepartment(e.target.value))
-					}}
-				>
-					{departments?.map(
-						department => <MenuItem key={department} value={department}>{department}</MenuItem>
-					)}
-				</Select>
-			</FormControl>
-		</>
+
+		<FormControl sx={{ formControl: { m: 1 } }} fullWidth>
+			<InputLabel shrink id="department">Department</InputLabel>
+			<Select
+				labelId="department"
+				label="Department"
+				id="department"
+				value={selectedDepartment ?? departments[0].department}
+				onChange={(e) => {
+					dispatch(setSelectedDepartment(e.target.value))
+				}}
+			>
+
+				{departments.map((item) => (
+					<MenuItem key={item.department} value={item.department}>
+						{item.department}
+					</MenuItem>))}
+
+			</Select>
+		</FormControl>
 	)
 }
-DepartmentBlock.propTypes = {
-	departments: PropTypes.array,
-	selectedDepartment: PropTypes.string,
-	defaultDepartment: PropTypes.string,
-}
 
-const PriorityBlock = ({ priorities, selectedPriority, defaultPriority }) => {
+const PriorityBlock = () => {
 	const dispatch = useDispatch()
+	const priorities = ["Low", "Normal", "High"]
+	const { selectedPriority } = useSelector(getNewTicket)
+
 	return (
 		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 			<InputLabel shrink id="priority">Priority</InputLabel>
@@ -88,26 +107,32 @@ const PriorityBlock = ({ priorities, selectedPriority, defaultPriority }) => {
 				labelId="priority"
 				label="Priority"
 				id="priority"
-				value={selectedPriority ? selectedPriority : defaultPriority}
+				value={selectedPriority ? selectedPriority : "Normal"}
 				onChange={(e) => {
 					dispatch(setSelectedPriority(e.target.value))
 				}}
 			>
-				{
-					priorities?.map(priority => <MenuItem key={priority} value={priority}>{priority}</MenuItem>)
-				}
+
+				{priorities.map((priority) => (
+					<MenuItem key={priority} value={priority}>
+						{priority}
+					</MenuItem>))}
+
 			</Select>
 		</FormControl>
 	)
 }
-PriorityBlock.propTypes = {
-	priorities: PropTypes.array,
-	selectedPriority: PropTypes.string,
-	defaultPriority: PropTypes.string,
-}
 
-const CategoryBlock = ({ categories, currentCategory }) => {
+const CategoryBlock = () => {
 	const dispatch = useDispatch()
+	const { selectedCategory } = useSelector(getNewTicket)
+	const { data: categories, isLoading } = useGetCategoriesQuery()
+
+	if (isLoading) return (<div>Loading categories..</div>)
+	if (!categories?.length) return null
+
+	const defaultCategory = categories?.find(i => i.default === true)?.name ?? ""
+
 	return (
 		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 			<InputLabel shrink id="category">Category</InputLabel>
@@ -115,28 +140,29 @@ const CategoryBlock = ({ categories, currentCategory }) => {
 				labelId="category"
 				label="Category"
 				id="category"
-				value={currentCategory}
+				value={selectedCategory ?? defaultCategory}
 				onChange={(e) => {
 					dispatch(setSelectedCategory(e.target.value))
 				}}
 			>
-				{
-					Object.entries(categories)?.map(
-						(category) => <MenuItem key={category[0]} value={category[0]}>{category[0]}</MenuItem>
-					)
-				}
+				{categories.map((item) => (
+					<MenuItem key={item.name} value={item.name}>
+						{item.name}
+					</MenuItem>
+				))}
 			</Select>
 		</FormControl>
 	)
 }
-CategoryBlock.propTypes = {
-	categories: PropTypes.object,
-	currentCategory: PropTypes.string
-}
 
-
-const SubCategoryBlock = ({ categories, currentCategory, currentSubCategory }) => {
+const SubCategoryBlock = () => {
 	const dispatch = useDispatch()
+	const { selectedSubCategory } = useSelector(getNewTicket)
+	const { subCategories, defaultSubCategory, isLoading } = useGetTicketDetails()
+
+	if (isLoading) return (<div>Loading sub-categories..</div>)
+	if (subCategories.length === 0) return null
+
 	return (
 		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
 			<InputLabel shrink id="category">Sub-Category</InputLabel>
@@ -144,103 +170,44 @@ const SubCategoryBlock = ({ categories, currentCategory, currentSubCategory }) =
 				labelId="sub-category"
 				label="Sub-Category"
 				id="sub-category"
-				value={currentSubCategory}
+				value={selectedSubCategory ?? defaultSubCategory}
 				onChange={(e) => {
 					dispatch(setSelectedSubCategory(e.target.value))
 				}}
 			>
-				{
-					categories[currentCategory]?.map(
-						(category) => <MenuItem key={category} value={category}>{category}</MenuItem>
-					)
-				}
+				{subCategories.map((item) => (
+					<MenuItem key={item.name} value={item.name}>
+						{item.name}
+					</MenuItem>
+				))}
 			</Select>
 		</FormControl>
 	)
 }
-SubCategoryBlock.propTypes = {
-	categories: PropTypes.object,
-	currentCategory: PropTypes.string,
-	currentSubCategory: PropTypes.string
-}
-
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const NewTicketStep2 = () => {
-	const { newTicket } = useSelector(getNewTicket)
-	const {
-		/* Selection */
-		categories, priorities, departments,
-		/* SelectedValue */
-		selectedCategory, selectedPriority, selectedDepartment,
-		/* defaultValue */
-		defaultCategory, defaultSubCategory, defaultPriority, defaultDepartment
-	} = newTicket
-
-	const currentCategory = selectedCategory.cat ? selectedCategory.cat : defaultCategory
-
-	let currentSubCategory = ""
-	if (selectedCategory.subCat === "") currentSubCategory = defaultSubCategory[currentCategory]
-	else {
-		if (categories[currentCategory].indexOf(selectedCategory.subCat) === -1)
-			currentSubCategory = defaultSubCategory[currentCategory]
-		else
-			currentSubCategory = selectedCategory.subCat
-	}
-
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
 			<Grid container spacing={4}>
 				<Grid item xs={12} sm={6} >
-
-					{(departments?.length === 0) &&
-						<div style={{ display: "block" }}>
-							Please setup Department information!...
-						</div>}
-
-					{(departments?.length > 0) &&
-						<DepartmentBlock
-							departments={departments}
-							selectedDepartment={selectedDepartment}
-							defaultDepartment={defaultDepartment}
-						/>}
-
+					<DepartmentBlock />
 				</Grid>
 
 				<Grid item xs={12} sm={6} >
-					<PriorityBlock
-						priorities={priorities}
-						selectedPriority={selectedPriority}
-						defaultPriority={defaultPriority}
-					/>
+					<PriorityBlock />
 				</Grid>
 
 				<Grid item xs={12} sm={6} >
-
-					{(Object.entries(categories).length === 0) &&
-						<div style={{ display: "block" }}>
-							Please setup Category information!...
-						</div>}
-
-					{(Object.entries(categories).length > 0) &&
-						<CategoryBlock
-							categories={categories}
-							currentCategory={currentCategory}
-						/>}
-
+					<CategoryBlock />
 				</Grid>
 
-				{(categories[currentCategory]?.length > 0) &&
-					<Grid item xs={12} sm={6} >
-						<SubCategoryBlock
-							categories={categories}
-							currentCategory={currentCategory}
-							currentSubCategory={currentSubCategory}
-						/>
-					</Grid>}
+				<Grid item xs={12} sm={6} >
+					<SubCategoryBlock />
+				</Grid>
 
 			</Grid >
 		</form>

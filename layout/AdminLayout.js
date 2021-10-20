@@ -28,7 +28,6 @@ import React, { useCallback, useEffect } from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
-import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 //THIRD-PARTY
@@ -42,7 +41,7 @@ import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
-import { setIsSideBarExpanded, setScrolled } from "./../redux/slices/uiSettings"
+import { setIsSideBarExpanded, setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -119,24 +118,24 @@ const ADMIN_MENUS = [
 function AdminLayout({ children }) {
 	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
 
-	const theme = useTheme()
-	const router = useRouter()
 	const dispatch = useDispatch()
-	const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"))
+	const isSmallScreen = useMediaQuery("(max-width:600px)")
+
+	console.log({ isSmallScreen })
 
 	const handleSetScrolled = useCallback(() => {
 		dispatch(setScrolled(window.scrollY > 50))
 	}, [dispatch])
 
-	const sideBarExpanding = useCallback(() => {
-		dispatch(setIsSideBarExpanded(window.innerWidth <= 960 ? false : true))
-	}, [dispatch])
+	// const sideBarExpanding = useCallback(() => {
+	// 	dispatch(setIsSideBarExpanded(window.innerWidth <= 960 ? false : true))
+	// }, [dispatch])
 
-	useEffect(() => {
-		sideBarExpanding()
-		window.addEventListener("resize", sideBarExpanding)
-		return () => window.removeEventListener("resize", sideBarExpanding)
-	}, [sideBarExpanding])
+	// useEffect(() => {
+	// 	sideBarExpanding()
+	// 	window.addEventListener("resize", sideBarExpanding)
+	// 	return () => window.removeEventListener("resize", sideBarExpanding)
+	// }, [sideBarExpanding])
 
 	useEffect(() => {
 		window.addEventListener("scroll", handleSetScrolled)
@@ -144,9 +143,8 @@ function AdminLayout({ children }) {
 	}, [handleSetScrolled])
 
 	useEffect(() => {
-		if (router.pathname === "/admin/documentation" && isSmallScreen)
-			dispatch(setIsSideBarExpanded(false))
-	}, [dispatch, isSmallScreen, router.pathname])
+		dispatch(setIsSmallScreen(isSmallScreen))
+	}, [dispatch, isSmallScreen])
 
 	return (
 		<AuthCheck>

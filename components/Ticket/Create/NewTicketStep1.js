@@ -22,17 +22,18 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box } from "@mui/material"
 import React from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { TextField } from "@mui/material"
 
 //THIRD-PARTY
-// import { useDispatch } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import UserTicketList from "../../../components/Ticket/TicketList"
-import TicketFilters from "../../../components/Ticket/TicketFilters"
+import { getNewTicket } from "./../../../redux/selectors"
+import { setSubject } from "./../../../redux/slices/newTicket"
 
 //ASSETS
 
@@ -44,34 +45,32 @@ import TicketFilters from "../../../components/Ticket/TicketFilters"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Tickets() {
-
-	useUiSettings({
-		title: "All tickets",
-		background: {
-			backgroundImage: ""
-		}
-	})
+const NewTicketStep1 = ({ goNextStep }) => {
+	const dispatch = useDispatch()
+	const { subject } = useSelector(getNewTicket)
 
 	return (
-		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
-
-			<Box sx={{ display: "flex" }}>
-
-				<Box sx={{ flexGrow: 1 }}>
-					<UserTicketList />
-				</Box>
-
-				<div>
-					<TicketFilters />
-				</div>
-
-			</Box>
-
-		</Container >
+		<form onSubmit={(e) => {
+			e.preventDefault()
+			if (subject.length > 10) goNextStep()
+		}}>
+			<TextField
+				id="outlined-helperText"
+				label="My question"
+				placeholder="Subject Title Goes Here (Please put long-form question in Describe &amp; post section below)"
+				helperText="10 characters required"
+				variant="outlined"
+				value={subject}
+				onChange={(e) => {
+					dispatch(setSubject(e.target.value))
+				}}
+				fullWidth
+				InputLabelProps={{ shrink: true }}
+			/>
+		</form>
 	)
 }
+NewTicketStep1.propTypes = { goNextStep: PropTypes.func }
 
-Tickets.getLayout = getLayout
 
-export default Tickets
+export default NewTicketStep1

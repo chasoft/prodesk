@@ -1016,7 +1016,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
-					COLLECTION.USERNAMES, args.body.username,
+					COLLECTION.USERNAMES, args.username,
 					"tickets")
 				)
 				querySnapshot.forEach((ticket) => { all.push(ticket.data()) })
@@ -1029,7 +1029,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let ticketContent = ""
 				const docSnap = await getDoc(doc(db,
-					COLLECTION.USERNAMES, args.body.username,
+					COLLECTION.USERNAMES, args.username,
 					"tickets", args.body.tid,
 					"content", "current")
 				)
@@ -1043,7 +1043,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
-					COLLECTION.USERNAMES, args.body.username,
+					COLLECTION.USERNAMES, args.username,
 					"tickets", args.body.tid,
 					"replies")
 				)

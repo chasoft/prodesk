@@ -22,18 +22,17 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../common/TextEditor"
-import { getNewTicket } from "./../../redux/selectors"
-import { setMessage } from "./../../redux/slices/newTicket"
+import TextEditor from "./../../common/TextEditor"
+import { useSelector } from "react-redux"
+import { getTextEditor } from "./../../../redux/selectors"
 
 //ASSETS
 
@@ -46,14 +45,7 @@ import { setMessage } from "./../../redux/slices/newTicket"
  *****************************************************************/
 
 const NewTicketStep3 = () => {
-	const dispatch = useDispatch()
-	const { newTicket } = useSelector(getNewTicket)
-	const { message } = newTicket
-
-	const getEditorData = useCallback((data) => {
-		dispatch(setMessage(data))
-	}, [dispatch])
-
+	const { editorData } = useSelector(getTextEditor)
 	return (
 		<Box sx={{
 			pl: 4, py: 1, my: 0,
@@ -61,8 +53,7 @@ const NewTicketStep3 = () => {
 			minWidth: 120
 		}}>
 			<TextEditor
-				defaultValue={message}
-				pullEditorData={getEditorData}
+				defaultValue={editorData}
 				placeholder="Please describe your issue in details as much as possible."
 			/>
 		</Box>

@@ -31,13 +31,13 @@ import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "./../../redux/selectors"
-import { PRIORITY, TICKET_STATUS } from "./../../helpers/constants"
+import { getUiSettings } from "../../redux/selectors"
+import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
 
 //ASSETS
 import SearchIcon from "@mui/icons-material/Search"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSearchTerm } from "./../../redux/slices/uiSettings"
+import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSearchTerm } from "../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -74,7 +74,7 @@ const FilterCheckbox = (props) => (
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ListTicketsFilter() {
+function TicketFilters() {
 	const dispatch = useDispatch()
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
@@ -222,4 +222,4 @@ function ListTicketsFilter() {
 	)
 }
 
-export default ListTicketsFilter
+export default TicketFilters

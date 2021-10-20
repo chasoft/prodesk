@@ -29,7 +29,7 @@ import useUiSettings from "./../../../helpers/useUiSettings"
 import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import TicketStepper from "./../../../components/Ticket/TicketStepper"
+import TicketStepper from "../../../components/Ticket/Create/NewTicketStepper"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
@@ -102,23 +102,6 @@ function NewTicket() {
 
 					</div>
 				</Box>
-
-				<Box
-					sx={{
-						display: { xs: "none", md: "flex" },
-						flexDirection: "column",
-						ml: 3, mt: 10,
-						px: 3,
-						backgroundColor: "#FFF",
-						borderRadius: "0.5rem",
-						width: "250px",
-						position: "sticky",
-						top: "80px"
-					}}
-				>
-					Widget Goes here!
-				</Box>
-
 			</Box>
 
 		</Container>

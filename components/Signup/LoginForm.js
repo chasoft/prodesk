@@ -63,33 +63,27 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 const LoginForm = () => {
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-	const { redirectAfterLoginURL } = useSelector(getRedirect)
+	useFlexDirection({ payload: "row" })
+	//
 	const dispatch = useDispatch()
+	const { redirectAfterLoginURL } = useSelector(getRedirect)
+	//
 	const [signInWithEmail] = useSignInWithEmailMutation()
-
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	//
 	const formik = useFormik({
-		initialValues: {
-			username: "",
-			password: ""
-		},
+		initialValues: { username: "", password: "" },
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
 			enqueueSnackbar("Signing you in, please wait...", { variant: "info", key: "start" })
-			const res = await signInWithEmail({
-				username: values.username,
-				password: values.password
-			})
-
+			const res = await signInWithEmail({ username: values.username, password: values.password })
 			if (res.error) {
 				closeSnackbar("start")
 				enqueueSnackbar(res.error.data.message, { variant: "error" })
 				return
 			}
-
 			closeSnackbar("start")
 			enqueueSnackbar(res.data.message, { variant: "success" })
-
 			//redirect after login if necessary
 			if (redirectAfterLoginURL === "") {
 				dispatch(setRedirect((res.data.group === USERGROUP.USER)
@@ -99,8 +93,6 @@ const LoginForm = () => {
 			}
 		},
 	})
-
-	useFlexDirection({ payload: "row" })
 
 	return (
 		<RegContainer>

@@ -50,7 +50,7 @@ const LoadingIndicator = () => {
 			alignItems: "center",
 			justifyContent: "center",
 		}}>
-			<CircularProgress size={20} />
+			<CircularProgress />
 		</div>
 	)
 }

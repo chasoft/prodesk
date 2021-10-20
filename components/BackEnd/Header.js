@@ -30,12 +30,13 @@ import React, { useState } from "react"
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
 import NotificationDrawer from "./NotificationDrawer"
 import { getPageMeta, getUiSettings } from "./../../redux/selectors"
+import { setShowSideBar } from "./../../redux/slices/uiSettings"
 
 //ASSETS
 import NotificationsIcon from "@mui/icons-material/Notifications"
@@ -51,7 +52,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications"
 const Header = () => {
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 	const { title } = useSelector(getPageMeta)
-	const { scrolled } = useSelector(getUiSettings)
+	const { scrolled, isSmallScreen } = useSelector(getUiSettings)
+
+	const dispatch = useDispatch()
 
 	return (
 		<AppBar
@@ -68,6 +71,19 @@ const Header = () => {
 			}}
 			elevation={scrolled ? 4 : 0}
 		>
+
+			<Box
+				sx={{
+					cursor: "pointer"
+				}}
+				onClick={() => {
+					if (isSmallScreen) dispatch(setShowSideBar(true))
+				}}
+			>
+				<Typography>Hello</Typography>
+			</Box>
+
+
 			<Box
 				sx={{
 					display: "flex",
@@ -120,7 +136,7 @@ const Header = () => {
 
 			</Box>
 
-		</AppBar>
+		</AppBar >
 	)
 }
 Header.propTypes = { scrolled: PropTypes.bool }

@@ -25,13 +25,16 @@ const defaultBackground = {
 	top: 0,
 	zIndex: -1,
 	width: "100%",
-	height: "300px",
-	position: "absolute",
-	backgroundColor: "#1a73e8",
+	// height: "300px",
+	// position: "absolute",
+	backgroundColor: "transparent",
+	// backgroundColor: "#1a73e8",
 }
 
 export const initialState = {
 	isSideBarExpanded: false,
+	isSmallScreen: false,
+	showSideBar: false,
 	/*
 		used for RegLayout
 		help to switch the imageSideBar to the right of left of the main content
@@ -80,8 +83,11 @@ const uiSettingsSlice = createSlice({
 	name: "uiSettings",
 	initialState,
 	reducers: {
-		setFixInnerHeight: (state, { payload }) => {
-			state.fixInnerHeight = payload
+		setIsSmallScreen: (state, { payload }) => {
+			state.isSmallScreen = payload
+		},
+		setShowSideBar: (state, { payload }) => {
+			state.showSideBar = payload
 		},
 		setIsSideBarExpanded: (state, { payload }) => {
 			state.isSideBarExpanded = payload
@@ -142,6 +148,8 @@ const uiSettingsSlice = createSlice({
 })
 
 export const {
+	setIsSmallScreen,
+	setShowSideBar,
 	setIsSideBarExpanded,
 	setflexDirection,
 	setBackgroundForLoggedinPage,

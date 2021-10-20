@@ -22,19 +22,14 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box } from "@mui/material"
 import React from "react"
 
+// MATERIAL-UI
+import { Box, Typography } from "@mui/material"
+
 //THIRD-PARTY
-// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import UserTicketList from "../../../components/Ticket/TicketList"
-import TicketFilters from "../../../components/Ticket/TicketFilters"
-
-//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
@@ -44,34 +39,15 @@ import TicketFilters from "../../../components/Ticket/TicketFilters"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Tickets() {
-
-	useUiSettings({
-		title: "All tickets",
-		background: {
-			backgroundImage: ""
-		}
-	})
-
+const ReplyNotice = () => {
 	return (
-		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
-
-			<Box sx={{ display: "flex" }}>
-
-				<Box sx={{ flexGrow: 1 }}>
-					<UserTicketList />
-				</Box>
-
-				<div>
-					<TicketFilters />
-				</div>
-
-			</Box>
-
-		</Container >
+		<Box sx={{
+			my: 1, mr: 1,
+			ml: { xs: 0, md: 8 }
+		}}>
+			<Typography variant="caption" color="textSecondary">Last edited 6 hr ago</Typography>
+		</Box>
 	)
 }
 
-Tickets.getLayout = getLayout
-
-export default Tickets
+export default ReplyNotice

@@ -47,7 +47,8 @@ import useUiSettings from "./../../helpers/useUiSettings"
 function Admin() {
 	useUiSettings({
 		background: {
-			backgroundImage: ""
+			backgroundImage: "",
+			backgroundColor: "transparent"
 		}
 	})
 
