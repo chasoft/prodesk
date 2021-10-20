@@ -26,13 +26,12 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Box, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import ReplyDialog from "../Post/Replies/ReplyDialog"
-import ThreadMessagePayload from "../Post/ThreadMessagePayload"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"

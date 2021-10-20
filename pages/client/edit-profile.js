@@ -1671,6 +1671,7 @@ const TimezoneSelect = () => {
 function EditProfile() {
 
 	useUiSettings({
+		title: "Edit Profile",
 		background: {
 			backgroundImage: ""
 		}

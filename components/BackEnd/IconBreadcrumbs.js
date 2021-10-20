@@ -22,24 +22,16 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import React from "react"
+import Link from "next/link"
 import PropTypes from "prop-types"
 
-// MATERIAL-UI
-import { Box, useMediaQuery } from "@mui/material"
+//MATERIAL-UI
+import { Box, Breadcrumbs, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getRootLayout } from "./RootLayout"
-import Footer from "./../components/common/Footer"
-import Header from "./../components/BackEnd/Header"
-import { getUiSettings } from "./../redux/selectors"
-import SideBar from "./../components/BackEnd/SideBar"
-import { MENU_ITEM_TYPE } from "./../helpers/constants"
-import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
-import AuthCheck from "./../components/AuthCheck"
 
 //ASSETS
 
@@ -47,88 +39,44 @@ import AuthCheck from "./../components/AuthCheck"
  * INIT                                                          *
  *****************************************************************/
 
-const CLIENT_MENU = [
-	{
-		id: "menu_support",
-		type: MENU_ITEM_TYPE.GROUP,
-		expanded: true,
-		icon: "0",
-		title: "Support",
-		description: "Getting supports",
-		items: [
-			{ id: "submenu_tickets", icon: "1", text: "All tickets", url: "/client/tickets" },
-			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/tickets/new-ticket" },
-		]
-	},
-	{
-		id: "menu_profile",
-		type: MENU_ITEM_TYPE.GROUP,
-		expanded: false,
-		icon: "0",
-		title: "Account",
-		description: "Managing your account",
-		items: [
-			{ id: "submenu_editprofile", icon: "1", text: "Edit profile", url: "/client/edit-profile" },
-			{ id: "submenu_account", icon: "1", text: "Accounts", url: "/client/account" },
-		]
-	},
-]
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ClientLayout({ children }) {
-	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
-
-	const dispatch = useDispatch()
-	const isSmallScreen = useMediaQuery("(max-width:600px)")
-
-	const handleSetScrolled = useCallback(() => {
-		dispatch(setScrolled(window.scrollY > 50))
-	}, [dispatch])
-
-	useEffect(() => {
-		window.addEventListener("scroll", handleSetScrolled)
-		return () => window.removeEventListener("scroll", handleSetScrolled)
-	}, [handleSetScrolled])
-
-	useEffect(() => {
-		dispatch(setIsSmallScreen(isSmallScreen))
-	}, [dispatch, isSmallScreen])
-
+function IconBreadcrumbs({ icon, title, items }) {
 	return (
-		<AuthCheck>
+		<div role="presentation">
+			<Breadcrumbs aria-label="breadcrumb">
 
-			<Box sx={{ ...backgroundForLoggedinPage }} />
-
-			<Box style={{ display: "flex", minHeight: "100vh" }}>
-
-				<SideBar
-					homeUrl="/client"
-					settingsUrl="/client/edit-profile"
-					settingsTooltip="Account settings"
-					data={CLIENT_MENU}
-				/>
-
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						flexGrow: 1,
-						width: "100%",
-					}}
+				{
+					items.map((item) => (
+						<Link
+							key={item.title}
+							href={item.url}
+							passHref
+						>
+							<Box sx={{ display: "flex", alignItems: "center", cursor: "pointer", ":hover": { color: "primary.main" } }}>
+								{item.icon}
+								{item.title}
+							</Box>
+						</Link>
+					))
+				}
+				<Typography
+					sx={{ display: "flex", alignItems: "center" }}
+					color="text.primary"
 				>
-					<Header />
-					{children}
-					<Footer />
-				</Box>
-			</Box>
-		</AuthCheck>
+					{icon}
+					{title}
+				</Typography>
+			</Breadcrumbs>
+		</div>
 	)
 }
-ClientLayout.propTypes = { children: PropTypes.any }
+IconBreadcrumbs.propTypes = {
+	icon: PropTypes.node,
+	title: PropTypes.string,
+	items: PropTypes.array
+}
 
-export const getLayout = page => getRootLayout(<ClientLayout>{page}</ClientLayout>)
-
-export default ClientLayout
+export default IconBreadcrumbs

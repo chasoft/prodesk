@@ -40,6 +40,7 @@ import { setShowSideBar } from "./../../redux/slices/uiSettings"
 
 //ASSETS
 import NotificationsIcon from "@mui/icons-material/Notifications"
+import MenuIcon from "@mui/icons-material/Menu"
 
 /*****************************************************************
  * INIT                                                          *
@@ -72,27 +73,31 @@ const Header = () => {
 			elevation={scrolled ? 4 : 0}
 		>
 
-			<Box
-				sx={{
-					cursor: "pointer"
-				}}
-				onClick={() => {
-					if (isSmallScreen) dispatch(setShowSideBar(true))
-				}}
-			>
-				<Typography>Hello</Typography>
+			<Box sx={{
+				display: { xs: "flex", sm: "none" },
+				alignItems: "center"
+			}}>
+				<IconButton
+					onClick={() => { if (isSmallScreen) dispatch(setShowSideBar(true)) }}
+				>
+					<MenuIcon sx={{ fill: "white" }} />
+				</IconButton>
+
+				<Typography variant="subtitle2">ProDesk</Typography>
+
 			</Box>
 
-
 			<Box
 				sx={{
-					display: "flex",
+					display: { xs: "none", sm: "flex" },
+					flexGrow: 1,
 					alignItems: "center",
 					justifyContent: "flex-start",
-					fontFamily: "\"Google Sans\", Roboto, sans-serif"
+					fontFamily: "\"Google Sans\", Roboto, sans-serif",
+					fontWeight: 500
 				}}
 			>
-				{scrolled ? title : null}
+				{title}
 			</Box>
 
 			<Box

@@ -140,17 +140,17 @@ const StepperControlButtons = () => {
 
 	return (
 		<Box sx={{
-			mt: 1,
+			mt: 2,
 			mb: 0,
 			display: "flex",
 			alignItems: "center",
-			justifyContent: "space-between",
-			...(currentStep === steps.length - 1 ? { my: 2 } : {})
+			justifyContent: { xs: "flex-end", sm: "space-between" },
+			...(currentStep === steps.length - 1 ? { my: 5 } : {})
 		}}>
 
 			<div>
 				<Button onClick={handleGoBack} sx={{
-					mr: 1, pl: 2, pr: 2,
+					mr: 1, px: { xs: 4, sm: 2 },
 					display: (currentStep === 0) ? "none" : "initial"
 				}}>
 					Back
@@ -163,7 +163,7 @@ const StepperControlButtons = () => {
 					}
 					variant="contained" color="primary"
 					onClick={handleGoNext}
-					sx={{ pl: 2, pr: 2 }}
+					sx={{ px: { xs: 4, sm: 2 } }}
 				>
 					{currentStep === steps.length - 1
 						? "Submit"
@@ -172,10 +172,12 @@ const StepperControlButtons = () => {
 			</div>
 
 			{(currentStep === steps.length - 1) &&
-				<LearnMoreAdvancedTextEditor
-					text="Learn more about"
-					linkText="advanced text editor"
-				/>}
+				<Box sx={{ display: { xs: "none", sm: "initial" } }}>
+					<LearnMoreAdvancedTextEditor
+						text="Learn more about"
+						linkText="advanced text editor"
+					/>
+				</Box>}
 
 		</Box>
 	)

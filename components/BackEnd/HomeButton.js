@@ -99,7 +99,12 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 					}}
 				>
 					<HomeIcon style={{ height: "20px", width: "20px", marginRight: "8px" }} />
-					<Link href={homeUrl} passHref><a href="just-a-placeholder" style={{ flexGrow: 1 }}><Typography>Dashboard</Typography></a></Link>
+					<Link href={homeUrl} passHref>
+						<a href="just-a-placeholder" style={{ flexGrow: 1 }}>
+							<Typography>Dashboard</Typography>
+						</a>
+					</Link>
+
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
 
 					<Tooltip title={settingsTooltip} placement="right">
@@ -148,6 +153,7 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 							<ArrowRight sx={{ position: "absolute", right: 4, opacity: 0 }} />
 						</IconButton>
 					</Tooltip>
+
 					<Popper
 						open={open}
 						anchorEl={anchorRef.current}

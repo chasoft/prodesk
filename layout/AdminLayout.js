@@ -23,7 +23,6 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import { useRouter } from "next/router"
 import React, { useCallback, useEffect } from "react"
 
 // MATERIAL-UI
@@ -41,7 +40,7 @@ import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
-import { setIsSideBarExpanded, setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
+import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -121,21 +120,9 @@ function AdminLayout({ children }) {
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")
 
-	console.log({ isSmallScreen })
-
 	const handleSetScrolled = useCallback(() => {
 		dispatch(setScrolled(window.scrollY > 50))
 	}, [dispatch])
-
-	// const sideBarExpanding = useCallback(() => {
-	// 	dispatch(setIsSideBarExpanded(window.innerWidth <= 960 ? false : true))
-	// }, [dispatch])
-
-	// useEffect(() => {
-	// 	sideBarExpanding()
-	// 	window.addEventListener("resize", sideBarExpanding)
-	// 	return () => window.removeEventListener("resize", sideBarExpanding)
-	// }, [sideBarExpanding])
 
 	useEffect(() => {
 		window.addEventListener("scroll", handleSetScrolled)

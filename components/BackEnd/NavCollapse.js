@@ -74,7 +74,10 @@ const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 					},
 					width: "256px",
 				}}
-				onClick={() => setExpanded(p => !p)}
+				onClick={(e) => {
+					e.stopPropagation()
+					setExpanded(p => !p)
+				}}
 			>
 				<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
 					<div style={{ display: "flex", alignItems: "center" }}>

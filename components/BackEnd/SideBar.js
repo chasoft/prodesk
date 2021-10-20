@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, ClickAwayListener, IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector, useDispatch } from "react-redux"
@@ -39,7 +39,7 @@ import HomeButton from "./HomeButton"
 import NavCollapse from "./NavCollapse"
 import { MENU_ITEM_TYPE } from "./../../helpers/constants"
 import { getUiSettings } from "./../../redux/selectors"
-import { setIsSideBarExpanded, setIsSmallScreen, setShowSideBar } from "./../../redux/slices/uiSettings"
+import { setIsSideBarExpanded, setShowSideBar } from "./../../redux/slices/uiSettings"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"
@@ -257,7 +257,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 		<>
 			<Box
 				sx={{
-					position: { xs: "absolute", sm: "sticky" },
+					position: { xs: "fixed", sm: "sticky" },
 					top: 0,
 					display: "flex",
 					flexDirection: "column",
@@ -272,6 +272,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 					transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1), left .3s cubic-bezier(0.4, 0, 0.2, 1)",
 					zIndex: 500
 				}}
+				onClick={() => { dispatch(setShowSideBar(false)) }}
 			>
 
 				<Box
@@ -315,7 +316,10 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 						color="secondary"
 						aria-label="Settings"
 						style={{ padding: "5px" }}
-						onClick={() => dispatch(setIsSideBarExpanded(!isSideBarExpanded))}
+						onClick={(e) => {
+							e.stopPropagation()
+							dispatch(setIsSideBarExpanded(!isSideBarExpanded))
+						}}
 						size="large">
 						{isSideBarExpanded
 							? <ArrowBackIosIcon style={{ color: "#fff", height: "20px", width: "20px" }} />
@@ -327,8 +331,8 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 
 			<Box
 				sx={{
-					position: "absolute",
-					display: showSideBar ? "block" : "none",
+					position: "fixed",
+					display: showSideBar ? "absolute" : "none",
 					backgroundColor: "action.hover",
 					zIndex: 499,
 					width: "100%",

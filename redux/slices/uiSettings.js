@@ -32,7 +32,7 @@ const defaultBackground = {
 }
 
 export const initialState = {
-	isSideBarExpanded: false,
+	isSideBarExpanded: true,
 	isSmallScreen: false,
 	showSideBar: false,
 	/*

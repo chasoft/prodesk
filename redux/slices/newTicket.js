@@ -64,7 +64,7 @@ const newTicketSlice = createSlice({
 			//--
 			state.subject = ""
 			state.selectedDepartment = null
-			state.selectedPriority = null
+			state.selectedPriority = PRIORITY.NORMAL
 			state.selectedCategory = null
 			state.selectedSubCategory = null
 		},

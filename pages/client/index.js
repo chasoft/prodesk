@@ -52,7 +52,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 function Client() {
 	const dispatch = useDispatch()
 	useUiSettings({
-		title: "",
+		title: "Client Dashboard",
 		background: {
 			backgroundImage: ""
 		}
