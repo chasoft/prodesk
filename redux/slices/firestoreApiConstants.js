@@ -24,6 +24,11 @@ export const TYPE = {
 	BLOG: "Blog"
 }
 
+export const GROUP = {
+	PUBLIC_PROFILES: "public-profiles",
+	PRIVATE_PROFILES: "private-profiles"
+}
+
 export const ACTION = {
 	/* DOCUMENTATION => docId */
 	GET_DOCS: "getDocs",

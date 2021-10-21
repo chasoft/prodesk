@@ -114,7 +114,7 @@ export const firestoreApi = createApi({
 		getProfiles: builder.query({
 			query: () => ({ action: ACTION.GET_PROFILES }),
 			providesTags: [{ type: TYPE.PROFILES, id: "LIST" }],
-			transformResponse: (response) => fix_datetime_list(response)
+			// transformResponse: (response) => fix_datetime_list(response)
 		}),
 
 		getProfile: builder.query({
@@ -137,7 +137,10 @@ export const firestoreApi = createApi({
 
 		updateProfile: builder.mutation({
 			query: (body) => ({ action: ACTION.UPDATE_PROFILE, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.PROFILES, id: arg.uid }]),
+			invalidatesTags: (result, error, arg) => ([
+				{ type: TYPE.PROFILES, id: arg.uid },
+				{ type: TYPE.PROFILES, id: "LIST" },
+			]),
 			async onQueryStarted(user, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(

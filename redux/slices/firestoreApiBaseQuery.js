@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import {
-	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp,
+	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp, runTransaction
 } from "firebase/firestore"
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
 
@@ -31,7 +31,7 @@ import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, si
 
 //PROJECT IMPORT
 import { auth, db } from "./../../helpers/firebase"
-import { ACTION, COLLECTION } from "./firestoreApiConstants"
+import { ACTION, COLLECTION, GROUP } from "./firestoreApiConstants"
 import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
@@ -224,9 +224,7 @@ async function fireStoreBaseQuery(args) {
 
 				const batch = writeBatch(db)
 
-
-
-				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
+				const publicProfile = {
 					uid: userCredential.user.uid,
 					username: args.body.username,
 					email: userCredential.user.email,
@@ -234,15 +232,17 @@ async function fireStoreBaseQuery(args) {
 					photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
 					group: USERGROUP.USER, //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
-				})
+				}
+				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), publicProfile)
 
-				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
+				const privateProfile = {
 					uid: userCredential.user.uid,
 					username: args.body.username,
 					email: userCredential.user.email,
 					group: USERGROUP.USER, //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
-				})
+				}
+				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
 
 				await batch.commit()
 
@@ -269,7 +269,7 @@ async function fireStoreBaseQuery(args) {
 
 				const batch = writeBatch(db)
 
-				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+				const publicProfile = {
 					uid: args.body.uid,
 					email: args.body.email,
 					username: args.body.username,
@@ -277,31 +277,25 @@ async function fireStoreBaseQuery(args) {
 					photoURL: args.body.photoURL,
 					group: "user", //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
-				})
+				}
+				batch.set(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
 
-				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
+				const privateProfile = {
 					uid: args.body.uid,
 					username: args.body.username,
 					email: args.body.email,
 					group: "user", //default usergroup
-				})
+				}
+				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
 
 				await batch.commit()
 
-				//Go to next step -> /signup/create-profile  (to update avatar & location)
-				// router.push(REDIRECT_URL.CREATE_PROFILE)
 				return {
 					data: {
 						message: "Account created successfully",
 						redirect: REDIRECT_URL.CREATE_PROFILE
 					}
 				}
-				//dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
-				// }
-				// catch (e) {
-				// 	console.log(e.message)
-				// 	enqueueSnackbar(e.message, { key: "signUpViaSocialAccount", variant: "error" })
-				// }
 
 			} catch (e) {
 				return throwError(200, ACTION.SIGN_UP_VIA_GOOGLE, e, null)
@@ -309,15 +303,12 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTION.SIGN_UP_CREATE_PROFILE:
 			try {
-				const batch = writeBatch(db)
-
-				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
+				const publicProfile = {
 					photoURL: args.body.avatar,
 					location: args.body.location,
 					nextStep: REDIRECT_URL.SURVEY
-				}, { merge: true })
-
-				await batch.commit()
+				}
+				await updateDoc(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
 
 				return {
 					data: {
@@ -342,6 +333,20 @@ async function fireStoreBaseQuery(args) {
 					nextStep: REDIRECT_URL.DONE
 				}, { merge: true })
 				await batch.commit()
+
+				//UPDATE `GROUP` when account sign-up completed
+				//By this time, just create PUBLIC_PROFILES
+				//cause by default, all accounts are clients only
+				//Only set change usergroup, then add/create PRIVATE_PROFILES
+				await runTransaction(db, async (transaction) => {
+					const profileRef = await transaction.get(doc(db, COLLECTION.USERS, args.body.uid))
+					const profile = profileRef.data()
+					transaction.set(
+						doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES),
+						profile
+					)
+				})
+
 				//Update redux
 				return {
 					data: {
@@ -356,12 +361,12 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * PROFILE => uid  	                                             *
 		 *****************************************************************/
-		case ACTION.GET_PROFILES:
+		case ACTION.GET_PROFILES:	//Get from GROUP.PUBLIC_PROFILES
 			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.USERS))
-				querySnapshot.forEach((user) => { all.push(user.data()) })
-				return { data: all }
+				let res = {}
+				const docSnapshot = await getDoc(doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES))
+				if (docSnapshot.exists()) { res = docSnapshot.data() }
+				return { data: res }
 			} catch (e) {
 				return throwError(200, ACTION.GET_PROFILES, e, null)
 			}
@@ -410,10 +415,23 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTION.UPDATE_PROFILE:
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db, COLLECTION.USERS, args.body.uid),
 					args.body
 				)
+
+				//UPDATE bigPublicProfiles
+				await runTransaction(db, async (transaction) => {
+					const profileSnapshot = await transaction.get(doc(db, COLLECTION.USERS, args.body.uid))
+					const profileData = profileSnapshot.data()
+					transaction.update(
+						doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES),
+						{
+							[args.body.uid]: profileData
+						}
+					)
+				})
+
 				return {
 					data: {
 						action: ACTION.UPDATE_PROFILE,
