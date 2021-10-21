@@ -114,7 +114,10 @@ export const firestoreApi = createApi({
 		getProfiles: builder.query({
 			query: () => ({ action: ACTION.GET_PROFILES }),
 			providesTags: [{ type: TYPE.PROFILES, id: "LIST" }],
-			// transformResponse: (response) => fix_datetime_list(response)
+			transformResponse: (response) => {
+				const converted = Object.entries(response).map(i => i[1])
+				return fix_datetime_list(converted)
+			}
 		}),
 
 		getProfile: builder.query({
