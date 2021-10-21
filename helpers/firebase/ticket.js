@@ -56,7 +56,7 @@ export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { r
 	/* Preparing data to create new ticket */
 	try {
 		const ticketId = nanoid()
-		const ref = db.doc(`users/${currentUser.uid[0]}/tickets/${ticketId}`)
+		const ref = db.doc(`users/${currentUser.uid}/tickets/${ticketId}`)
 
 		const ticketData = {
 			id: ticketId,
@@ -66,7 +66,7 @@ export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { r
 			content: ticketContent,
 			status: TICKET_STATUS.OPEN,
 			//username: currentUser.username,
-			authorUid: currentUser.uid[0]
+			authorUid: currentUser.uid
 		}
 		await ref.set(ticketData)
 		enqueueSnackbar("Ticket created! We will check and reply to you soon!", { variant: "success" })
@@ -89,18 +89,18 @@ export const ticketAddReply = async ({ currentUser, ticketId, replyContent }, { 
 	try {
 
 		//Update the status && datetime of current ticket
-		batch.update(db.doc(`users/${currentUser.uid[0]}/tickets/${ticketId}`), {
+		batch.update(db.doc(`users/${currentUser.uid}/tickets/${ticketId}`), {
 			status: TICKET_STATUS.OPEN,
 			updatedAt: serverTimestamp()
 		})
 
 		//Add new reply
 		const replyId = nanoid()
-		batch.set(db.doc(`users/${currentUser.uid[0]}/tickets/${ticketId}/replies/${replyId}`), {
+		batch.set(db.doc(`users/${currentUser.uid}/tickets/${ticketId}/replies/${replyId}`), {
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
 			content: replyContent,
-			authorUid: currentUser.uid[0],
+			authorUid: currentUser.uid,
 			id: replyId
 		})
 

@@ -47,10 +47,10 @@ import { getLayout, TopLine, useFlexDirection } from "./../../layout/RegLayout"
  *****************************************************************/
 
 function SignUpCompleted() {
-	const [progress, setProgress] = React.useState(0)
-	const [buffer, setBuffer] = React.useState(10)
-	const progressRef = useRef(() => { })
 	const dispatch = useDispatch()
+	const progressRef = useRef(() => { })
+	const [buffer, setBuffer] = React.useState(10)
+	const [progress, setProgress] = React.useState(0)
 
 	const onceDispatch = once(dispatch)
 

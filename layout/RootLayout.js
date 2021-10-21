@@ -66,7 +66,7 @@ function RootLayout({ children }) {
 				if (user.providerData[0].providerId !== "password") {
 					//these information will be loaded in next step @ /signup/account
 					dispatch(loginTemp({
-						uid: [user.uid],
+						uid: user.uid,
 						displayName: user.displayName,
 						email: user.email,
 						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",

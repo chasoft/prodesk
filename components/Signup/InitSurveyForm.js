@@ -70,7 +70,7 @@ const InitSurveyForm = () => {
 		onSubmit: async (values) => {
 			signUpSurvey({
 				username: currentUser.username,
-				uid: currentUser.uid[0],
+				uid: currentUser.uid,
 				payload: values
 			})
 			dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))

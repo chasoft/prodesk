@@ -100,7 +100,7 @@ const CreateProfileForm = () => {
 					onClick={async (e) => {
 						e.preventDefault()
 						await signUpCreateProfile({
-							uid: currentUser.uid[0],
+							uid: currentUser.uid,
 							username: currentUser.username,
 							avatar,
 							location

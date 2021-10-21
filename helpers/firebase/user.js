@@ -107,7 +107,7 @@ export const setUsername = async (uid, username) => {
 	try {
 		const batch = writeBatch(db)
 		batch.set(doc(db, COLLECTION.USERS, uid), { username }, { merge: true })
-		batch.set(doc(db, COLLECTION.USERNAMES, username), { uid: [uid] }, { merge: true })
+		batch.set(doc(db, COLLECTION.USERNAMES, username), { uid }, { merge: true })
 		await batch.commit()
 		//---
 		return { data: "Username created successfully" }

@@ -25,7 +25,7 @@
 import {
 	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp,
 } from "firebase/firestore"
-import { createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
 
 //THIRD-PARTY
 
@@ -86,7 +86,7 @@ async function fireStoreBaseQuery(args) {
 				const batch = writeBatch(db)
 
 				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
-					uid: [userCredential.user.uid],	//!all associated account will be stored 
+					uid: userCredential.user.uid,
 					email: userCredential.user.email,
 					username: "superadmin",
 					displayName: args.body.name,
@@ -96,7 +96,7 @@ async function fireStoreBaseQuery(args) {
 				})
 
 				batch.set(doc(db, COLLECTION.USERNAMES, "superadmin"), {
-					uid: [userCredential.user.uid],	//!all associated account will be stored in an Array
+					uid: userCredential.user.uid,
 					email: userCredential.user.email,
 					username: "superadmin",
 					group: "superadmin", //default usergroup
@@ -192,8 +192,8 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.SIGN_IN_WITH_GOOGLE:
 			try {
 				const googleAuthProvider = new GoogleAuthProvider()
-				await signInWithRedirect(auth, googleAuthProvider)
-				// await signInWithPopup(auth, googleAuthProvider)
+				// await signInWithRedirect(auth, googleAuthProvider)
+				await signInWithPopup(auth, googleAuthProvider)
 				//
 				//nothing to do here?!!
 			} catch (e) {
@@ -224,8 +224,10 @@ async function fireStoreBaseQuery(args) {
 
 				const batch = writeBatch(db)
 
+
+
 				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
-					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+					uid: userCredential.user.uid,
 					username: args.body.username,
 					email: userCredential.user.email,
 					displayName: args.body.name,
@@ -235,7 +237,7 @@ async function fireStoreBaseQuery(args) {
 				})
 
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
-					uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+					uid: userCredential.user.uid,
 					username: args.body.username,
 					email: userCredential.user.email,
 					group: USERGROUP.USER, //default usergroup
@@ -268,7 +270,7 @@ async function fireStoreBaseQuery(args) {
 				const batch = writeBatch(db)
 
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
-					uid: [args.body.uid],
+					uid: args.body.uid,
 					email: args.body.email,
 					username: args.body.username,
 					displayName: args.body.name,
@@ -278,7 +280,7 @@ async function fireStoreBaseQuery(args) {
 				})
 
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
-					uid: [args.body.uid],	//all associated account will be stored here in an Array
+					uid: args.body.uid,
 					username: args.body.username,
 					email: args.body.email,
 					group: "user", //default usergroup

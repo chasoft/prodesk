@@ -79,7 +79,7 @@ function InstallCompleted() {
 
 	useEffect(() => {
 		const finalize = async () => {
-			await finalizeInstallation({ uid: currentUser.uid[0] })
+			await finalizeInstallation({ uid: currentUser.uid })
 			dispatch(loginSuccess({ justInstalled: true }))
 		}
 		finalize()
@@ -110,7 +110,7 @@ function InstallCompleted() {
 						onClick={
 							async () => {
 								enqueueSnackbar("Finalizing installation", { variant: "info" })
-								await finalizeInstallation({ uid: currentUser.uid[0] })
+								await finalizeInstallation({ uid: currentUser.uid })
 
 								closeSnackbar()
 								enqueueSnackbar("Redirecting to admin dashboard", { variant: "success" })

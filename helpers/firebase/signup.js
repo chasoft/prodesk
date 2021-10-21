@@ -114,14 +114,14 @@
 // 	try {
 // 		const batch = writeBatch(db)
 // 		batch.set(doc(db, "users", uid), {
-// 			uid: [uid],
+// 			uid: uid,
 // 			email: email,
 // 			username: username,
 // 			displayName: name,
 // 			photoURL: photoURL,
 // 		})
 // 		batch.set(doc(db, "usernames", username), {
-// 			uid: [uid],	//all associated account will be stored here in an Array
+// 			uid: uid,	
 // 			username: username,
 // 			email: email,
 // 			group: "user", //default usergroup
@@ -151,14 +151,14 @@
 
 // 		const batch = writeBatch(db)
 // 		batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), {
-// 			uid: [userCredential.user.uid],
+// 			uid: userCredential.user.uid,
 // 			username: username,
 // 			email: userCredential.user.email,
 // 			displayName: name,
 // 			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
 // 		})
 // 		batch.set(doc(db, COLLECTION.USERNAMES, username), {
-// 			uid: [userCredential.user.uid],	//!all associated account will be stored here in an Array
+// 			uid: userCredential.user.uid,
 // 			username: username,
 // 			email: userCredential.user.email,
 // 			group: USERGROUP.USER, //default usergroup

@@ -108,7 +108,7 @@ const SocialLoginForm = () => {
 				}
 
 				await signUpViaGoogle({
-					uid: currentUser.uid[0],
+					uid: currentUser.uid,
 					email: values.email,
 					name: values.name,
 					username: values.username,
