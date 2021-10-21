@@ -25,7 +25,7 @@
 import {
 	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp,
 } from "firebase/firestore"
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
 
 //THIRD-PARTY
 
@@ -192,7 +192,8 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.SIGN_IN_WITH_GOOGLE:
 			try {
 				const googleAuthProvider = new GoogleAuthProvider()
-				await signInWithPopup(auth, googleAuthProvider)
+				await signInWithRedirect(auth, googleAuthProvider)
+				// await signInWithPopup(auth, googleAuthProvider)
 				//
 				//nothing to do here?!!
 			} catch (e) {
@@ -1029,7 +1030,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let ticketContent = ""
 				const docSnap = await getDoc(doc(db,
-					COLLECTION.USERNAMES, args.username,
+					COLLECTION.USERNAMES, args.body.username,
 					"tickets", args.body.tid,
 					"content", "current")
 				)
@@ -1043,7 +1044,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
-					COLLECTION.USERNAMES, args.username,
+					COLLECTION.USERNAMES, args.body.username,
 					"tickets", args.body.tid,
 					"replies")
 				)

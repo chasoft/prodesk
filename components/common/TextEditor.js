@@ -31,9 +31,10 @@ import { Box, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { nanoid } from "nanoid"
+import { isFunction } from "lodash"
 import { useSnackbar } from "notistack"
-import { useDispatch, useSelector } from "react-redux"
 import Editor from "rich-markdown-editor"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { setEditorData } from "./../../redux/slices/textEditor"
@@ -79,7 +80,7 @@ LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired }
  */
 
 const TextEditor = React.forwardRef((props, ref) => {
-	const { defaultValue = "", readOnly = false, storageDestination = "uploads", ...otherProps } = props
+	const { defaultValue = "", readOnly = false, storageDestination = "uploads", onChange, ...otherProps } = props
 
 	const { scrollTo } = useSelector(getTextEditor)
 	const { currentUser } = useSelector(getAuth)
@@ -143,7 +144,9 @@ const TextEditor = React.forwardRef((props, ref) => {
 				readOnly={readOnly}
 				defaultValue={defaultValue}
 				onChange={(funcGetData) => {
-					dispatch(setEditorData(funcGetData()))
+					const data = funcGetData()
+					if (isFunction(onChange)) onChange(data)
+					dispatch(setEditorData(data))
 				}}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
@@ -167,6 +170,7 @@ TextEditor.propTypes = {
 		STORAGE_DESTINATION.DOCUMENTATION,
 		STORAGE_DESTINATION.SETTINGS
 	]),
+	onChange: PropTypes.func,
 	others: PropTypes.object,
 }
 

@@ -26,7 +26,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Box, CircularProgress, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -37,6 +37,10 @@ import ReplyDialog from "../Post/Replies/ReplyDialog"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import ReplyIcon from "@mui/icons-material/Reply"
 import CloseIcon from "@mui/icons-material/Close"
+import TextEditor from "../common/TextEditor"
+import { useGetTicketContentQuery } from "../../redux/slices/firestoreApi"
+import { useSelector } from "react-redux"
+import { getAuth } from "../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -57,12 +61,12 @@ MenuItemStyled.propTypes = {
 	children: PropTypes.node
 }
 
-const PopupMenu = () => {
+const PopupMenu = ({ ticketId }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const open = Boolean(anchorEl)
 
-	const handleClick = (event) => { setAnchorEl(event.currentTarget) }
 	const handleClose = () => { setAnchorEl(null) }
+	const handleClick = (event) => { setAnchorEl(event.currentTarget) }
 
 	return (
 		<>
@@ -99,11 +103,32 @@ const PopupMenu = () => {
 	)
 }
 
+PopupMenu.propTypes = {
+	ticketId: PropTypes.string
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketContent() {
+function TicketContent({ ticket }) {
+	const { currentUser } = useSelector(getAuth)
+	const { data: ticketContent, isLoadingContent } = useGetTicketContentQuery({
+		username: currentUser.username,
+		tid: ticket.tid
+	})
+
+	if (isLoadingContent) {
+		return (
+			<Paper component="main" sx={{
+				borderRadius: "0.5rem",
+				mt: 2
+			}}>
+				<CircularProgress />
+			</Paper>
+		)
+	}
+
 	return (
 		<Paper component="main" sx={{
 			borderRadius: "0.5rem",
@@ -121,43 +146,37 @@ function TicketContent() {
 			}}>
 
 				<Typography variant="h2" sx={{ fontWeight: 500 }} >
-					Heading of the post Heading of the post Heading of the
+					{ticket.subject}
 				</Typography>
 
 
 				<Box sx={{ display: { xs: "none", sm: "initial" } }}>
-					<PopupMenu />
+					<PopupMenu ticketId={ticket.tid} />
 				</Box>
 
 			</Box>
 
 			<Box sx={{
-				px: { xs: 3, md: 6 },
-				pb: { xs: 0, md: 3 },
+				px: { xs: 3, sm: 6 },
+				pb: { xs: 2, sm: 4 },
 				"&>p": { lineHeight: "1.5rem" }
-			}}
-			>
-				<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
-
-				<p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. </p>
-
-				<p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
-
-				<p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+			}}>
+				<TextEditor
+					value={ticketContent?.text}
+					readOnly={true}
+				/>
 			</Box>
 
-			<Box
-				sx={{
-					display: { xs: "flex", md: "none" },
-					px: { xs: 3, md: 6 },
-					py: { xs: 2, md: 2 },
-					backgroundColor: "#F8F9FA",
-					borderBottomLeftRadius: "0.5rem",
-					borderBottomRightRadius: "0.5rem",
-					borderTop: "1px solid",
-					borderTopColor: "divider"
-				}}
-			>
+			<Box sx={{
+				display: { xs: "flex", md: "none" },
+				px: { xs: 3, md: 6 },
+				py: { xs: 2, md: 2 },
+				backgroundColor: "#F8F9FA",
+				borderBottomLeftRadius: "0.5rem",
+				borderBottomRightRadius: "0.5rem",
+				borderTop: "1px solid",
+				borderTopColor: "divider"
+			}}>
 				<Typography variant="caption">
 					Community content may not be verified or up-to-date. Learn more.
 				</Typography>
@@ -165,6 +184,9 @@ function TicketContent() {
 
 		</Paper>
 	)
+}
+TicketContent.propTypes = {
+	ticket: PropTypes.object
 }
 
 export default TicketContent

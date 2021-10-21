@@ -40,6 +40,7 @@ import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
 import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 import AuthCheck from "./../components/AuthCheck"
+import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
 
 //ASSETS
 
@@ -96,6 +97,8 @@ function ClientLayout({ children }) {
 	useEffect(() => {
 		dispatch(setIsSmallScreen(isSmallScreen))
 	}, [dispatch, isSmallScreen])
+
+	usePrefetchImmediately("getProfiles", undefined)
 
 	return (
 		<AuthCheck>

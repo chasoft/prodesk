@@ -75,7 +75,7 @@ function IconBreadcrumbs({ icon, title, items }) {
 }
 IconBreadcrumbs.propTypes = {
 	icon: PropTypes.node,
-	title: PropTypes.string,
+	title: PropTypes.node,
 	items: PropTypes.array
 }
 

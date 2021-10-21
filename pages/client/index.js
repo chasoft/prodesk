@@ -29,7 +29,6 @@ import Link from "next/link"
 import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../layout/ClientLayout"
@@ -50,7 +49,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  *****************************************************************/
 
 function Client() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		title: "Client Dashboard",
 		background: {

@@ -28,7 +28,6 @@ import React from "react"
 import { Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
@@ -46,7 +45,7 @@ import useUiSettings from "./../../../../helpers/useUiSettings"
  *****************************************************************/
 
 function ApplicationSettingsSmtp() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: APPLICATION_SETTINGS_NAMES.SMTP,
 		background: {

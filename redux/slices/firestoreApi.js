@@ -40,6 +40,7 @@ export const firestoreApi = createApi({
 		TYPE.DOCS,
 		TYPE.USERS,
 		TYPE.TICKETS,
+		TYPE.PROFILES,
 		TYPE.SETTINGS,
 		TYPE.DEPARTMENTS,
 		TYPE.CANNED_REPLIES,
@@ -753,6 +754,9 @@ export const firestoreApi = createApi({
 				catch { patchResult.undo() }
 			},
 		}),
+
+
+
 
 		/*****************************************************************
 		 * PAGES                                                         *

@@ -38,7 +38,6 @@ import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
 import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
 import { getDocsCenter } from "./../../../redux/selectors"
 import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
-import { useGetDocsQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 

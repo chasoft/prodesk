@@ -30,10 +30,17 @@ import PropTypes from "prop-types"
 import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
+import { PRIORITY } from "../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
+import { setTicketId } from "../../redux/slices/uiSettings"
 
 //ASSETS
+import ApartmentIcon from "@mui/icons-material/Apartment"
+import LowPriorityIcon from "@mui/icons-material/LowPriority"
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 
 /*****************************************************************
  * INIT                                                          *
@@ -88,7 +95,7 @@ UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTyp
  *****************************************************************/
 
 function TicketListItem({ ticket, isFirst = false, isLast = false }) {
-	console.log({ ticket })
+	const dispatch = useDispatch()
 	return (
 		<Box
 			sx={{
@@ -96,80 +103,110 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 				borderColor: "divider",
 			}}
 		>
-			<Link href={`/client/tickets/${ticket.slug}`} passHref>
-				<a href="just-a-placeholder">
-					<Box
+			<Box
+				onClick={() => {
+					reduxBatch(() => {
+						dispatch(setTicketId(ticket.tid))
+						dispatch(setRedirect(`/client/tickets/${ticket.slug}`))
+					})
+				}}
+				sx={{
+					display: "flex",
+					"&:hover": { backgroundColor: "action.hover", cursor: "pointer" },
+					borderTopLeftRadius: isFirst ? "0.5rem" : 0,
+					borderTopRightRadius: isFirst ? "0.5rem" : 0,
+					borderBottomLeftRadius: isLast ? "0.5rem" : 0,
+					borderBottomRightRadius: isLast ? "0.5rem" : 0,
+				}}
+			>
+
+				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
+					flexGrow: 1
+				}}>
+
+					<Typography
+						variant="subtitle2"
 						sx={{
-							display: "flex", flexDirection: "column",
-							"&:hover": { backgroundColor: "action.hover", cursor: "pointer" },
-							borderTopLeftRadius: isFirst ? "0.5rem" : 0,
-							borderTopRightRadius: isFirst ? "0.5rem" : 0,
-							borderBottomLeftRadius: isLast ? "0.5rem" : 0,
-							borderBottomRightRadius: isLast ? "0.5rem" : 0,
-						}}
-					>
-
-						<Typography variant="h5" sx={{ pt: 3, px: 3 }}>
-							{ticket.subject}
-						</Typography>
-
-						<Box sx={{
 							display: "flex",
 							alignItems: "center",
-							borderBottomLeftRadius: "0.5rem",
-							borderBottomRightRadius: "0.5rem",
-							pt: 1, px: 3, pb: 3,
-							"& > *": { mr: 0.5 }
-						}}>
-
-							<Tooltip title="Department" placement="top">
-								<Chip
-									size="small"
-									label="Sales"
-									variant="outlined"
-								/>
+							pt: 3, px: 3
+						}}
+					>
+						{ticket.priority === PRIORITY.LOW &&
+							<Tooltip title="Low priority" placement="left">
+								<LowPriorityIcon color="disabled" sx={{ mr: 0.5 }} />
 							</Tooltip>
-
-							<Tooltip title="Category" placement="top">
-								<Chip
-									size="small"
-									label="Hosting/Wordpress"
-									variant="outlined"
-								/>
+						}
+						{ticket.priority === PRIORITY.HIGH &&
+							<Tooltip title="High priority" placement="left">
+								<PriorityHighIcon color="warning" />
 							</Tooltip>
+						}
+						{ticket.subject}
+					</Typography>
 
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						flexWrap: "wrap",
+						borderBottomLeftRadius: "0.5rem",
+						borderBottomRightRadius: "0.5rem",
+						pt: 1, px: 3, pb: 3,
+						"& > *": {
+							mr: 0.5,
+							mt: { xs: 0.5, sm: 0 }
+						}
+					}}>
+
+						<Tooltip title="Department" placement="bottom">
 							<Chip
 								size="small"
-								avatar={<Avatar>2</Avatar>}
-								label="replies"
-								variant="outlined"
-								sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
+								label="Sales"
+								avatar={<ApartmentIcon />}
 							/>
+						</Tooltip>
 
-							<Tooltip title="Priority" placement="top">
-								<Chip
-									size="small"
-									label="Low"
-									variant="outlined"
-									color="info"
-								/>
-							</Tooltip>
-
-
-							<Tooltip title="Priority" placement="top">
-								<Chip
-									size="small"
-									label="Important"
-									variant="outlined"
-									color="warning"
-								/>
-							</Tooltip>
-
-						</Box>
+						<Tooltip title="Category" placement="bottom">
+							<Chip
+								size="small"
+								label="Hosting/Wordpress"
+							/>
+						</Tooltip>
 
 					</Box>
-				</a>
-			</Link>
+
+				</Box>
+
+				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					px: 3
+				}}>
+					<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+						<Typography noWrap sx={{ fontStyle: "italic", color: "grey.500" }}>
+							(25 days ago)
+						</Typography>
+						<Typography noWrap sx={{ ml: { xs: 0, sm: 0.5 } }}>
+							20-Oct-2021
+						</Typography>
+					</Box>
+					<Chip
+						size="small"
+						avatar={<Avatar>2</Avatar>}
+						label="replies"
+						variant="outlined"
+						sx={{
+							mt: 0.5,
+							".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
+						}}
+					/>
+				</Box>
+
+			</Box>
+
 		</Box>
 	)
 }

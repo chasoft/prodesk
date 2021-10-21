@@ -41,6 +41,7 @@ import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE } from "./../helpers/constants"
 import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
+import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
 
 //ASSETS
 
@@ -132,6 +133,8 @@ function AdminLayout({ children }) {
 	useEffect(() => {
 		dispatch(setIsSmallScreen(isSmallScreen))
 	}, [dispatch, isSmallScreen])
+
+	usePrefetchImmediately("getProfiles", undefined)
 
 	return (
 		<AuthCheck>

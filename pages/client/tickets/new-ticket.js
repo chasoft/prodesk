@@ -40,7 +40,6 @@ import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
 
 /*****************************************************************
  * INIT                                                          *

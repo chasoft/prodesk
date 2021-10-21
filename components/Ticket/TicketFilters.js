@@ -25,7 +25,7 @@
 import React from "react"
 
 import withStyles from "@mui/styles/withStyles"
-import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, OutlinedInput, InputAdornment, SvgIcon } from "@mui/material"
+import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, SvgIcon } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -35,9 +35,9 @@ import { getUiSettings } from "../../redux/selectors"
 import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
 
 //ASSETS
-import SearchIcon from "@mui/icons-material/Search"
+// import SearchIcon from "@mui/icons-material/Search"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import { resetTicketsFilter, setSelectedPriority, setSelectedStatus, setTicketSearchTerm } from "../../redux/slices/uiSettings"
+import { resetTicketsFilter, setSelectedPriority, setSelectedStatus } from "../../redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -76,7 +76,7 @@ const FilterCheckbox = (props) => (
 
 function TicketFilters() {
 	const dispatch = useDispatch()
-	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
+	const { /*ticketSearchTerm,*/ selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
 	const handleSelectTicketStatus = (e) => {
 		dispatch(setSelectedStatus({ [e.target.name]: e.target.checked }))
@@ -98,11 +98,12 @@ function TicketFilters() {
 		>
 
 			<Box sx={{ display: "flex", alignItems: "center", my: 1 }} >
-				<Typography style={{ flexGrow: 1, fontWeight: 500 }}>
+				<Typography variant="h4" style={{ flexGrow: 1, fontWeight: 500 }}>
 					Filter
 				</Typography>
 				<Button
-					style={{ fontSize: "0.9rem" }}
+					size="small"
+					variant="outlined"
 					onClick={() => { dispatch(resetTicketsFilter()) }}
 				>
 					Reset
@@ -183,7 +184,7 @@ function TicketFilters() {
 				</FormControl>
 			</Box>
 
-			<Box>
+			{/* <Box>
 				<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Has word</Typography>
 				<FormControl variant="outlined">
 					<OutlinedInput
@@ -216,7 +217,7 @@ function TicketFilters() {
 						}}
 					/>
 				</FormControl>
-			</Box>
+			</Box> */}
 
 		</Box >
 	)

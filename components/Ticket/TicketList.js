@@ -23,12 +23,12 @@
  *****************************************************************/
 
 import React, { useRef } from "react"
-import { Box, CircularProgress, Fab, Paper, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { usePrevious } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
-import { isEqual, sortBy, groupBy, filter } from "lodash"
+import { isEqual, sortBy, reverse, groupBy, filter } from "lodash"
 
 //PROJECT IMPORT
 import AskNow from "../Docs/AskNow"
@@ -37,9 +37,10 @@ import TicketListItem from "./TicketListItem"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
 import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
+import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
-import AddIcon from "@mui/icons-material/Add"
+import HomeIcon from "@mui/icons-material/Home"
 
 /*****************************************************************
  * INIT                                                          *
@@ -65,7 +66,6 @@ const useGetTickets = () => {
 
 	console.log("tickets", tickets)
 
-
 	if (!isEqual(prevTickets, tickets) ||
 		!isEqual(prevSearchTerm, ticketSearchTerm) ||
 		!isEqual(prevPriority, selectedPriority) ||
@@ -79,8 +79,8 @@ const useGetTickets = () => {
 
 		//filter by status
 		filtered = filter(filtered, (i) => _Status.includes(i.status))
-		//sort the list
-		const sortedDocs = sortBy(filtered, ["status", "updatedAt"])
+		//sort the list - descensing by `createdAt`
+		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
 		//group by status
 		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
 
@@ -94,7 +94,7 @@ const useGetTickets = () => {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketsList() {
+function TicketList() {
 	const dispatch = useDispatch()
 	const { data: tickets, isLoading } = useGetTickets()
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
@@ -112,26 +112,56 @@ function TicketsList() {
 		)
 	}
 
-	console.log("tickets", tickets)
-
 	return (
 		<Box sx={{
 			display: "flex",
 			flexDirection: "column",
-			minWidth: 0
+			minWidth: 0,
 		}}>
-			<Typography variant="h1" style={{ color: "white", textAlign: "center" }}>All tickets</Typography>
+
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "flex-start",
+				pl: { xs: 0, sm: 3 },
+				pt: { xs: 3, sm: 6, md: 8, lg: 10 },
+				pb: 2
+			}}>
+				<IconBreadcrumbs
+					icon={null}
+					title="All tickets"
+					items={[
+						{
+							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Home",
+							url: "/client"
+						}
+					]}
+				/>
+				<Box sx={{
+					display: "flex",
+					alignItems: "space-between",
+					justifyContent: "center",
+					width: "100%",
+					mt: 4
+				}}>
+					<Typography variant="h1" sx={{ flexGrow: 1 }}>
+						All tickets
+					</Typography>
+					<Button variant="contained" sx={{ mb: 1 }}>
+						New ticket
+					</Button>
+				</Box>
+			</Box>
 
 			{(tickets.length === 0) &&
-				<Box sx={{
-					ml: 3,
-					mt: { xs: "0.5rem", md: "3rem" },
-				}}>
-					<Typography variant="h2" style={{ color: "white" }}>
+				<Box sx={{ ml: 3, mt: "0.5rem" }}>
+
+					<Typography variant="h2">
 						There are no tickets that matched your criteria
 					</Typography>
 
-					<Typography variant="body" style={{ color: "white" }}>
+					<Typography variant="body">
 						Try again by using other search criteria or click &quot;
 						<Box component="span" onClick={handleResetSearchCriteria} sx={{
 							cursor: "pointer",
@@ -145,25 +175,16 @@ function TicketsList() {
 				</Box>}
 
 			{(tickets.length > 0) &&
-				tickets.map((statusGroupItem, idx) => (
-					<div key={statusGroupItem[0]}>
-
-						<Typography variant="h2" sx={{
-							ml: 3,
-							marginTop: "3rem",
-							mt: { xs: "0.5rem", md: "3rem" },
-							...((idx === 0) ? { color: "white" } : {})
-						}}>
-							{statusGroupItem[0]}
-						</Typography>
+				tickets.map((group) => (
+					<div key={group[0]}>
 
 						<Paper elevation={2} >
-							{statusGroupItem[1].map((ticket, idx) => (
+							{group[1].map((ticket, idx) => (
 								<TicketListItem
 									key={ticket.tid}
 									ticket={ticket}
 									isFirst={idx === 0}
-									isLast={idx === statusGroupItem[1].length - 1}
+									isLast={idx === group[1].length - 1}
 								/>
 							))}
 						</Paper>
@@ -171,19 +192,8 @@ function TicketsList() {
 				))}
 
 			<AskNow />
-
-			<Fab
-				color="primary" aria-label="add"
-				sx={{
-					position: "fixed",
-					bottom: (theme) => theme.spacing(2),
-					right: (theme) => theme.spacing(2),
-				}}
-			>
-				<AddIcon />
-			</Fab>
 		</Box>
 	)
 }
 
-export default TicketsList
+export default TicketList

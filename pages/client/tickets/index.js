@@ -31,7 +31,7 @@ import React from "react"
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
 import useUiSettings from "./../../../helpers/useUiSettings"
-import UserTicketList from "../../../components/Ticket/TicketList"
+import TicketList from "../../../components/Ticket/TicketList"
 import TicketFilters from "../../../components/Ticket/TicketFilters"
 
 //ASSETS
@@ -56,10 +56,10 @@ function Tickets() {
 	return (
 		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
 
-			<Box sx={{ display: "flex" }}>
+			<Box sx={{ display: "flex", height: "100%" }}>
 
 				<Box sx={{ flexGrow: 1 }}>
-					<UserTicketList />
+					<TicketList />
 				</Box>
 
 				<div>

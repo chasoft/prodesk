@@ -28,7 +28,6 @@ import React from "react"
 import { Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
@@ -46,7 +45,7 @@ import useUiSettings from "./../../../helpers/useUiSettings"
  *****************************************************************/
 
 function Pages() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		background: {
 			backgroundImage: ""

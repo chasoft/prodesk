@@ -31,10 +31,15 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 //THIRD-PARTY
+import { size } from "lodash"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
 import { LearnMoreAdvancedTextEditor } from "./../../common"
+import { nanoid } from "nanoid"
+import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import { useSelector } from "react-redux"
+import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
 
 //ASSETS
 
@@ -47,23 +52,44 @@ import { LearnMoreAdvancedTextEditor } from "./../../common"
  *****************************************************************/
 
 const ReplyDialog = ({ children }) => {
-	const [textEditorData, setTextEditorData] = useState("")
 	const [open, setOpen] = useState(false)
 	const theme = useTheme()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
+
+	const { currentUser } = useSelector(getAuth)
+	const { ticketId } = useSelector(getUiSettings)
+	const { editorData } = useSelector(getTextEditor)
+	const [addTicketReply] = useAddTicketReplyMutation()
 
 	const handleClose = useCallback(() => { setOpen(false) }, [])
 	const handleClickOpen = useCallback(() => { setOpen(true) }, [])
 	const loadLocalStorage = useCallback(() => { return localStorage.getItem("NewReply") ?? "" }, [])
 
 	const handleGetEditorData = useCallback((data) => {
-		setTextEditorData(data)
 		localStorage.setItem("NewReply", data)
-		console.log(data)
 	}, [])
 
-	const handleSubmitReply = () => {
-		console.log("Submit new reply")
+	const handleCancelReply = () => {
+		setOpen(false)
+		localStorage.removeItem("NewReply")
+	}
+
+	const handleSubmitReply = async () => {
+		setOpen(false)
+		const trid = nanoid()
+		const newReplyItem = {
+			ticketItem: {
+				username: currentUser.username,
+				tid: ticketId
+			},
+			replyItem: {
+				trid,
+				tid: ticketId,
+				content: editorData,
+				username: currentUser.username,
+			}
+		}
+		await addTicketReply(newReplyItem)
 		localStorage.removeItem("NewReply")
 	}
 
@@ -105,7 +131,7 @@ const ReplyDialog = ({ children }) => {
 						<TextEditor
 							defaultValue={loadLocalStorage()}
 							placeholder="Provides as many details as possible..."
-							pullEditorData={handleGetEditorData}
+							onChange={handleGetEditorData}
 						/>
 					</Box>
 				</DialogContent>
@@ -113,7 +139,7 @@ const ReplyDialog = ({ children }) => {
 				<DialogActions sx={{ justifyContent: "flex-end", pr: 3, mb: 2 }}>
 					<Button
 						size="small" variant="outlined"
-						onClick={handleSubmitReply}
+						onClick={handleCancelReply}
 						sx={{ px: 3, minWidth: "100px" }}
 					>
 						Cancel
@@ -123,6 +149,7 @@ const ReplyDialog = ({ children }) => {
 						size="small" variant="contained"
 						onClick={handleSubmitReply}
 						sx={{ px: 4, minWidth: "100px" }}
+						disabled={loadLocalStorage() < 10 || size(editorData) < 10}
 					>
 						Post
 					</Button>
@@ -146,6 +173,9 @@ const ReplyDialog = ({ children }) => {
 		</>
 	)
 }
-ReplyDialog.propTypes = { children: PropTypes.node }
+ReplyDialog.propTypes = {
+	ticketId: PropTypes.string,
+	children: PropTypes.node
+}
 
 export default ReplyDialog

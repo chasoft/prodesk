@@ -34,9 +34,10 @@ import { useDispatch } from "react-redux"
  * INIT                                                          *
  *****************************************************************/
 
-export function usePrefetchImmediately(endpoint, arg, options = {}) {
+export default function usePrefetchImmediately(endpoint, arg, options = {}) {
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(firestoreApi.util.prefetch(endpoint, arg, options))
+		console.log("prefetch")
 	}, []) //No dependency here, for we want to execute only once
 }

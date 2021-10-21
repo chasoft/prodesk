@@ -55,7 +55,7 @@ const AskNow = () => {
 					alignItems: "center",
 					"& > *:not(:last-child)": { mr: 4 },
 					px: { xs: 4, md: 4 },
-					py: { xs: 3, md: 4 }
+					py: { xs: 2, md: 3 }
 				}}
 			>
 
@@ -79,7 +79,7 @@ const AskNow = () => {
 						size="small"
 						color="primary"
 						endIcon={<ArrowForwardIcon />}
-						sx={{ whiteSpace: "nowrap" }}
+						sx={{ whiteSpace: "nowrap", px: 2, ml: { xs: -2, sm: 0 } }}
 						onClick={() => dispatch(setRedirect("/client/tickets/new-ticket"))}
 					>
 						Ask now

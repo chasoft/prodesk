@@ -62,6 +62,9 @@ export const initialState = {
 	},
 	selectedPriority: PRIORITY.ALL,
 	ticketSearchTerm: "",
+	//used for admins in filtering tickets
+	ticketAssignee: "",
+	ticketAssigner: "",
 
 	/*
 		Active Tabs for Settings Page in Admin view
@@ -76,7 +79,10 @@ export const initialState = {
 	*/
 	//keep ref of SideBar here
 	sideBarLeft: 0,
-	showTocSideBarDetails: false
+	showTocSideBarDetails: false,
+
+	//keep current ticketId
+	ticketId: null
 }
 
 const uiSettingsSlice = createSlice({
@@ -144,6 +150,10 @@ const uiSettingsSlice = createSlice({
 		setShowTocSideBarDetails: (state, { payload }) => {
 			state.showTocSideBarDetails = payload
 		},
+		//
+		setTicketId: (state, { payload }) => {
+			state.ticketId = payload
+		},
 	}
 })
 
@@ -156,7 +166,8 @@ export const {
 	setScrolled,
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
-	setSideBarLeft, setShowTocSideBarDetails
+	setSideBarLeft, setShowTocSideBarDetails,
+	setTicketId
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

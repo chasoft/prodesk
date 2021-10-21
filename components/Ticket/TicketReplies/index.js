@@ -26,13 +26,17 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, Fab } from "@mui/material"
+import { Box, Button, CircularProgress, Fab } from "@mui/material"
 
 //THIRD-PARTY
+import { size } from "lodash"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import ReplyItem from "./Reply"
 import ReplyDialog from "./ReplyDialog"
+import { getUiSettings, getAuth } from "../../../redux/selectors"
+import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import ReplyIcon from "@mui/icons-material/Reply"
@@ -44,11 +48,11 @@ import ReplyIcon from "@mui/icons-material/Reply"
 const ReplyButton = ({ sx }) => {
 	return (
 		<Box sx={{
-			display: { xs: "none", xl: "flex" },
+			display: { xs: "none", sm: "flex" },
 			justifyContent: "flex-end", mb: 4, ...sx
 		}}>
 			<ReplyDialog>
-				<Button variant="outlined" startIcon={<ReplyIcon />} sx={{ px: 3 }}			>
+				<Button variant="contained" startIcon={<ReplyIcon />} sx={{ px: 3 }}>
 					Reply
 				</Button>
 			</ReplyDialog>
@@ -62,25 +66,47 @@ ReplyButton.propTypes = { sx: PropTypes.object }
  *****************************************************************/
 
 function TicketReplies() {
+	const { currentUser } = useSelector(getAuth)
+	const { ticketId } = useSelector(getUiSettings)
+
+	const { data: ticketReplies, isLoadingReplies } = useGetTicketRepliesQuery({
+		username: currentUser.username,
+		tid: ticketId
+	})
+
+	if (isLoadingReplies) {
+		return (
+			<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
+				<CircularProgress />
+			</Box>
+		)
+	}
+
 	return (
 		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-
-			<ReplyButton />
 
 			<Box sx={{
 				border: "1px solid",
 				borderRadius: "0.5rem",
 				borderColor: "divider",
 			}}>
-				{[1, 2, 3, 4].map((item, idx) => {
-					return <ReplyItem key={item} isFirst={idx === 0} />
-				})}
+
+				{!size(ticketReplies) &&
+					<Box sx={{ p: 4 }}>There is no replies!</Box>}
+
+				{ticketReplies?.map((replyItem, idx) =>
+					<ReplyItem
+						key={replyItem.trid}
+						replyItem={replyItem}
+						isFirst={idx === 0}
+					/>
+				)}
 			</Box>
 
 			<ReplyDialog>
 				<Fab
 					color="primary" sx={{
-						display: { xs: "initial", xl: "none" },
+						display: { xs: "initial", sm: "none" },
 						position: "fixed",
 						bottom: { xs: 32, md: 64 },
 						right: { xs: 32, md: 128, lg: 152 }

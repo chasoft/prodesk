@@ -22,30 +22,35 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-// import { useRouter } from "next/router"
+import React, { useEffect } from "react"
+import { useRouter } from "next/router"
+import Link from "next/link"
 
 // MATERIAL-UI
-import { Box, Container, Grid } from "@mui/material"
+import { Box, CircularProgress, Container } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+import { filter, size } from "lodash"
+import { useDeepCompareEffect } from "react-use"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getAuth } from "../../../redux/selectors"
 import { getLayout } from "../../../layout/ClientLayout"
+import useUiSettings from "../../../helpers/useUiSettings"
+import { setTicketId } from "../../../redux/slices/uiSettings"
 import TicketContent from "../../../components/Ticket/TicketContent"
 import TicketReplies from "../../../components/Ticket/TicketReplies"
-import TicketTimeline from "../../../components/Ticket/TicketTimeline"
-import TicketMetaBox from "../../../components/Ticket/TicketMetaBox"
-import useUiSettings from "../../../helpers/useUiSettings"
-import { useRouter } from "next/router"
+import { useGetTicketsQuery } from "../../../redux/slices/firestoreApi"
+import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
+import HomeIcon from "@mui/icons-material/Home"
+import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
 
 
 /*****************************************************************
@@ -54,28 +59,74 @@ import { useRouter } from "next/router"
 
 function SingleTicket() {
 	const router = useRouter()
-	const slug = router.query
-	// const 
+	const { slug } = router.query
+	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
+	//
+	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
 
-	// 	useGetTicketsQuery,
-	// 	useGetTicketContentQuery,
-	// 	useGetTicketRepliesQuery,
-
-	// const dispatch = useDispatch()
 	useUiSettings({
+		title: "Title",
 		background: {
 			backgroundImage: ""
 		}
 	})
 
-	console.log(slug)
+	useEffect(() => {
+		if (size(slug)) dispatch(setTicketId(slug[1]))
+		console.log(slug)
+	}, [dispatch, slug])
+
+	//fix bug when nagivate to other page
+	if (!slug) return null
+
+	//Note: ticket is array of object => [{}]
+	const ticket = filter(tickets ?? [], { tid: slug[1] })
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 
-			<TicketContent />
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "flex-start",
+				pl: { xs: 0, sm: 3 },
+				pt: { xs: 3, sm: 4, md: 6, lg: 8 },
+				pb: 2
+			}}>
+				<IconBreadcrumbs
+					icon={null}
+					title={size(ticket) ? ticket[0].subject : <CircularProgress size="20" />}
+					items={[
+						{
+							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Home",
+							url: "/client"
+						},
+						{
+							icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "All tickets",
+							url: "/client/tickets"
+						}
+					]}
+				/>
+			</Box>
 
-			<TicketReplies />
+			{isLoading &&
+				<Box sx={{ display: "flex", height: "70%", alignItems: "center", justifyContent: "center" }}>
+					<CircularProgress />
+				</Box>}
+
+			{(!isLoading && !size(ticket)) ?
+				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+					Ticket is not existed! Go back to <Link href="/client/tickets">All tickets</Link>
+				</Box> : null}
+
+			{(!isLoading && size(ticket)) ?
+				<>
+					<TicketContent ticket={ticket[0]} />
+					<TicketReplies />
+				</> : null}
 
 		</Container >
 	)

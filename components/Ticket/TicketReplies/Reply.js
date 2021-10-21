@@ -27,10 +27,15 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Avatar, Box, Typography } from "@mui/material"
+import { useGetProfilesQuery } from "../../../redux/slices/firestoreApi"
 
 //THIRD-PARTY
+import { size } from "lodash"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
+import TextEditor from "./../../common/TextEditor"
 
 //ASSETS
 
@@ -38,41 +43,54 @@ import { Avatar, Box, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ReplyItem({ isFirst = false }) {
+function ReplyItem({ replyItem, isFirst = false }) {
+
+	const { profile } = useGetProfilesQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			profile: data?.find((profile) => profile.username === replyItem.username) ?? undefined,
+		})
+	})
+
+	dayjs.extend(relativeTime)
+
 	return (
 		<Box sx={{
-			px: { xs: 3, md: 3 },
-			py: { xs: 3, md: 4 },
-			...(!isFirst && { borderTop: "1px solid", borderColor: "divider" }),
 			display: "flex",
-			flexDirection: { xs: "column", sm: "row" }
+			px: 3, py: { xs: 3, md: 4 },
+			flexDirection: { xs: "column", sm: "row" },
+			...(!isFirst && { borderTop: "1px solid", borderColor: "divider" }),
 		}}>
 
 			<Box sx={{
 				display: "flex",
 				flexDirection: { xs: "row", sm: "column" },
+				justifyContent: { xs: "space-between", sm: "flex-start" },
 				alignItems: "center",
-				justifyContent: { xs: "space-between", sm: "flex-start" }
 			}}>
 
 				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-					<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+					<Avatar alt="Remy Sharp" src={profile ? profile.photoURL : "/default-avatar/1.png"} />
 
 					<Typography variant="caption" sx={{
-						whiteSpace: "nowrap",
 						display: { xs: "block", sm: "none" },
+						whiteSpace: "nowrap",
+						fontWeight: 500,
+						flexGrow: 1,
 						mx: 2,
-						flexGrow: 1
 					}}>
-						Camille V.
+						{size(profile) ? profile.displayName : "loading..."}
 					</Typography>
 
 					<Box sx={{
 						display: { xs: "flex", sm: "none" },
 						alignItems: "flex-end",
 					}}>
-						<Typography>10-Oct-2021</Typography>
-						<Typography sx={{ fontStyle: "italic" }}>(10 days ago)</Typography>
+						<Typography>
+							{dayjs(replyItem.createdAt).format("MMMM D, YYYY h:mm A")}
+						</Typography>
+						<Typography sx={{ fontStyle: "italic" }}>
+							({dayjs(replyItem.createdAt).fromNow()})
+						</Typography>
 					</Box>
 				</Box>
 			</Box>
@@ -84,25 +102,29 @@ function ReplyItem({ isFirst = false }) {
 					ml: { xs: 0, sm: 3 },
 					"&>p": { lineHeight: "1.5rem" }
 				}}>
-					<Typography variant="body1" >
-						The 5a is the first Pixel that does not use CDMA service at all, so for Verizon the line needs to be configured as a CDMAless device.This is a fairly known issue with Verizon Tech support so you should be able to get it resolved quickly.They may not have known that regarding the Pixel 5A since there really isnt a ton of information ahead of the full release.
-					</Typography>
+					<TextEditor
+						value={replyItem.content}
+						readOnly={true} >
+					</TextEditor>
 				</Box>
 
-				<Typography
-					variant="caption" color="textSecondary"
-					sx={{
+
+				{(replyItem.createdAt !== replyItem.updatedAt)
+					? <Typography variant="caption" color="textSecondary" sx={{
 						my: 1,
 						ml: { xs: 0, sm: 3 }
-					}}
-				>
-					Last edited 6 hr ago
-				</Typography>
+					}}>
+						<span>Last edited {dayjs(replyItem.updatedAt).fromNow()} </span>
+					</Typography>
+					: null}
 
 			</Box>
 		</Box >
 	)
 }
-ReplyItem.propTypes = { isFirst: PropTypes.bool }
+ReplyItem.propTypes = {
+	replyItem: PropTypes.object,
+	isFirst: PropTypes.bool
+}
 
 export default ReplyItem

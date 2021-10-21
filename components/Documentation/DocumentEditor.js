@@ -26,16 +26,15 @@ import React, { useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, CircularProgress, InputBase } from "@mui/material"
+
+//THIRD-PARTY
+import { random } from "lodash"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+
+//PROJECT IMPORT
 import TextEditor from "./../common/TextEditor"
 import DocumentTemplate from "./DocumentTemplate"
 import { getAuth, getDocsCenter, getTextEditor } from "./../../redux/selectors"
-
-//THIRD-PARTY
-import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
-import { random } from "lodash"
-import { usePrevious } from "react-use"
-
-//PROJECT IMPORT
 import { setEditorData, setEditorDefaultData, setEditorDataHeadings } from "./../../redux/slices/textEditor"
 import { useGetDocContentQuery, useGetDocsQuery, useUpdateDocContentMutation, useUpdateDocMutation } from "./../../redux/slices/firestoreApi"
 

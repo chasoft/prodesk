@@ -129,7 +129,7 @@ const StepperControlButtons = () => {
 					category: raw.selectedCategory,
 					subCatgory: raw.selectedSubCategory,
 					status: STATUS_FILTER.OPEN,
-					slug: slugify(subject + "/" + tid)
+					slug: slugify(subject) + "/" + tid
 				},
 				content: { text: editorData }
 			})

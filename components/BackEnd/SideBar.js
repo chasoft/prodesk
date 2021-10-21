@@ -270,7 +270,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 					backgroundRepeat: "no-repeat",
 					backgroundSize: "256px 556px",
 					transition: "width .3s cubic-bezier(0.4, 0, 0.2, 1), left .3s cubic-bezier(0.4, 0, 0.2, 1)",
-					zIndex: 500
+					zIndex: 165
 				}}
 				onClick={() => { dispatch(setShowSideBar(false)) }}
 			>
@@ -334,7 +334,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 					position: "fixed",
 					display: showSideBar ? "absolute" : "none",
 					backgroundColor: "action.hover",
-					zIndex: 499,
+					zIndex: 164,
 					width: "100%",
 					height: "100%"
 				}}

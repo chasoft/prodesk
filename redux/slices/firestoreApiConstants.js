@@ -100,6 +100,8 @@ export const ACTION = {
 	UPDATE_TICKET_REPLY: "updateTicketReply",
 	DELETE_TICKET: "deleteTicket",
 	DELETE_TICKET_REPLY: "deleteTicketReply",
+	//
+	GET_TICKETS_FOR_ADMIN: "getTicketsForAdmin",
 
 	/* MEMBERS */
 	//members is a sub-set of users (aka Profiles),
