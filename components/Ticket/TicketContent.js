@@ -22,25 +22,31 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, CircularProgress, IconButton, Menu, MenuItem, Paper, Typography } from "@mui/material"
+import { Box, Chip, Popper, Button, IconButton, MenuList, ClickAwayListener, Grow, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
+import { useSnackbar } from "notistack"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import TextEditor from "../common/TextEditor"
+import { getAuth } from "../../redux/selectors"
 import ReplyDialog from "../Post/Replies/ReplyDialog"
+import { setRedirect } from "../../redux/slices/redirect"
+import { DATE_FORMAT, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
+import { useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
 //ASSETS
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import ReplyIcon from "@mui/icons-material/Reply"
 import CloseIcon from "@mui/icons-material/Close"
-import TextEditor from "../common/TextEditor"
-import { useGetTicketContentQuery } from "../../redux/slices/firestoreApi"
-import { useSelector } from "react-redux"
-import { getAuth } from "../../redux/selectors"
+import ReplyIcon from "@mui/icons-material/Reply"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import ApartmentIcon from "@mui/icons-material/Apartment"
 
 /*****************************************************************
  * INIT                                                          *
@@ -61,50 +67,131 @@ MenuItemStyled.propTypes = {
 	children: PropTypes.node
 }
 
-const PopupMenu = ({ ticketId }) => {
-	const [anchorEl, setAnchorEl] = useState(null)
-	const open = Boolean(anchorEl)
+const PopupMenu = ({ ticket }) => {
+	const dispatch = useDispatch()
+	const anchorRef = useRef(null)
+	const { currentUser } = useSelector(getAuth)
+	const [open, setOpen] = useState(false)
+	const { enqueueSnackbar } = useSnackbar()
 
-	const handleClose = () => { setAnchorEl(null) }
-	const handleClick = (event) => { setAnchorEl(event.currentTarget) }
+	const [updateTicket] = useUpdateTicketMutation()
+
+	const handleToggle = () => { setOpen((prevOpen) => !prevOpen) }
+
+	const handleClose = (event) => {
+		if (anchorRef.current && anchorRef.current.contains(event.target)) {
+			return
+		}
+		setOpen(false)
+	}
+
+	function handleListKeyDown(event) {
+		if (event.key === "Tab") {
+			event.preventDefault()
+			setOpen(false)
+		} else if (event.key === "Escape") {
+			setOpen(false)
+		}
+	}
+
+	// return focus to the button when we transitioned from !open -> open
+	const prevOpen = useRef(open)
+	useEffect(() => {
+		if (prevOpen.current === true && open === false) {
+			anchorRef.current.focus()
+		}
+		prevOpen.current = open
+	}, [open])
 
 	return (
 		<>
-
-			<IconButton onClick={handleClick} size="large">
+			<IconButton
+				size="large"
+				ref={anchorRef}
+				id="composition-button"
+				aria-controls={open ? "composition-menu" : undefined}
+				aria-expanded={open ? "true" : undefined}
+				aria-haspopup="true"
+				onClick={handleToggle}
+			>
 				<MoreVertIcon />
 			</IconButton>
 
-			<Menu
-				anchorEl={anchorEl} open={open} onClose={handleClose}
-				anchorOrigin={{ vertical: "top", horizontal: "right", }}
-				transformOrigin={{ vertical: "top", horizontal: "right", }}
+			<Popper
+				open={open}
+				anchorEl={anchorRef.current}
+				role={undefined}
+				placement="bottom-end"
+				transition
+				disablePortal
+				style={{ zIndex: 1 }}
 			>
-
-				<ReplyDialog>
-					<MenuItemStyled ItemIcon={ReplyIcon}>
-						Reply
-					</MenuItemStyled>
-				</ReplyDialog>
-
-				<MenuItemStyled
-					ItemIcon={CloseIcon}
-					onClick={() => {
-						console.log("Ticket \"Closed\"")
-						handleClose()
-					}}
-				>
-					Close
-				</MenuItemStyled>
-
-			</Menu>
-
+				{({ TransitionProps }) => (
+					<Grow {...TransitionProps} style={{ transformOrigin: "right top" }}>
+						<Paper>
+							<ClickAwayListener onClickAway={handleClose}>
+								<MenuList
+									autoFocusItem={open}
+									id="composition-menu"
+									aria-labelledby="composition-button"
+									onKeyDown={handleListKeyDown}
+								>
+									<ReplyDialog>
+										<MenuItem onClick={handleClose}>
+											{<ReplyIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
+											<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+												Reply
+											</Typography>
+										</MenuItem>
+									</ReplyDialog>
+									<MenuItem
+										disabled={ticket.status === STATUS_FILTER.CLOSED}
+										onClick={async () => {
+											enqueueSnackbar("Ticket closed successfully", { variant: "success" })
+											await updateTicket({
+												username: currentUser.username,
+												tid: ticket.tid,
+												status: STATUS_FILTER.CLOSED
+											})
+											dispatch(setRedirect(REDIRECT_URL.TICKETS))
+										}}
+									>
+										{<CloseIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
+										<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+											Close
+										</Typography>
+									</MenuItem>
+								</MenuList>
+							</ClickAwayListener>
+						</Paper>
+					</Grow>
+				)}
+			</Popper>
 		</>
 	)
 }
 
 PopupMenu.propTypes = {
-	ticketId: PropTypes.string
+	ticket: PropTypes.object
+}
+
+export const StatusChip = ({ status }) => {
+	const chipColor = {
+		[STATUS_FILTER.OPEN]: "primary",
+		[STATUS_FILTER.PENDING]: "warning",
+		[STATUS_FILTER.REPLIED]: "success",
+		[STATUS_FILTER.CLOSED]: "secondary",
+	}
+
+	return <Chip
+		size="small"
+		color={chipColor[status]}
+		label={status}
+		sx={{ mr: 1, mb: 1 }}
+	/>
+}
+StatusChip.propTypes = {
+	status: PropTypes.string.isRequired,
 }
 
 /*****************************************************************
@@ -112,27 +199,11 @@ PopupMenu.propTypes = {
  *****************************************************************/
 
 function TicketContent({ ticket }) {
-	const { currentUser } = useSelector(getAuth)
-	const { data: ticketContent, isLoadingContent } = useGetTicketContentQuery({
-		username: currentUser.username,
-		tid: ticket.tid
-	})
-
-	if (isLoadingContent) {
-		return (
-			<Paper component="main" sx={{
-				borderRadius: "0.5rem",
-				mt: 2
-			}}>
-				<CircularProgress />
-			</Paper>
-		)
-	}
-
+	dayjs.extend(relativeTime)
 	return (
 		<Paper component="main" sx={{
 			borderRadius: "0.5rem",
-			mt: 2
+			mt: 2,
 		}}>
 
 			<Box sx={{
@@ -145,13 +216,34 @@ function TicketContent({ ticket }) {
 				pr: { xs: 2, md: 3 }
 			}}>
 
-				<Typography variant="h2" sx={{ fontWeight: 500 }} >
-					{ticket.subject}
-				</Typography>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+				}}>
+					<StatusChip status={ticket.status} />
+					<Typography variant="h2" sx={{ fontWeight: 500, ml: 1, mb: 0 }} >
+						{ticket.subject}
+					</Typography>
+				</Box>
 
+				<Box sx={{
+					display: { xs: "none", sm: "flex" },
+					alignItems: "center"
+				}}>
+					<Box sx={{
+						display: "flex",
+						flexDirection: { xs: "column", md: "row" },
+						alignItems: "flex-end"
+					}}>
+						<Typography noWrap>
+							{dayjs(ticket.createdAt).format(DATE_FORMAT.LONG)} &nbsp;
+						</Typography>
+						<Typography noWrap sx={{ fontStyle: "italic", mr: 1 }} color="textSecondary">
+							({dayjs(ticket.createdAt).fromNow()})
+						</Typography>
+					</Box>
 
-				<Box sx={{ display: { xs: "none", sm: "initial" } }}>
-					<PopupMenu ticketId={ticket.tid} />
+					<PopupMenu ticket={ticket} />
 				</Box>
 
 			</Box>
@@ -162,13 +254,13 @@ function TicketContent({ ticket }) {
 				"&>p": { lineHeight: "1.5rem" }
 			}}>
 				<TextEditor
-					value={ticketContent?.text}
+					value={ticket.content}
 					readOnly={true}
 				/>
 			</Box>
 
 			<Box sx={{
-				display: { xs: "flex", md: "none" },
+				display: "flex",
 				px: { xs: 3, md: 6 },
 				py: { xs: 2, md: 2 },
 				backgroundColor: "#F8F9FA",
@@ -177,9 +269,22 @@ function TicketContent({ ticket }) {
 				borderTop: "1px solid",
 				borderTopColor: "divider"
 			}}>
-				<Typography variant="caption">
-					Community content may not be verified or up-to-date. Learn more.
-				</Typography>
+				<Tooltip arrow title="Department" placement="top">
+					<Chip
+						size="small"
+						label={ticket.department}
+						avatar={<ApartmentIcon />}
+						sx={{ mr: 1 }}
+					/>
+				</Tooltip>
+
+				<Tooltip arrow title="Category" placement="top">
+					{ticket.category &&
+						<Chip
+							size="small"
+							label={ticket.category + (ticket?.subCategory ? ("/" + ticket.subCategory) : "")}
+						/>}
+				</Tooltip>
 			</Box>
 
 		</Paper>

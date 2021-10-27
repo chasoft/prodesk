@@ -23,31 +23,31 @@
  *****************************************************************/
 
 import React, { useRef } from "react"
-
-// MATERIAL-UI
-import { Box, Container } from "@mui/material"
+import Link from "next/link"
+import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { isEqual, filter, reverse, groupBy, sortBy } from "lodash"
 import { usePrevious } from "react-use"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { isEqual, sortBy, reverse, groupBy, filter } from "lodash"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import { useGetTicketsQuery } from "./../../../redux/slices/firestoreApi"
-import { getAuth, getUiSettings } from "../../../redux/selectors"
-import { PRIORITY } from "../../../helpers/constants"
-import AdminTicketList from "../../../components/Ticket/AdminTicketList"
-import AdminTicketFilters from "../../../components/Ticket/AdminTicketFilters"
+import AskNow from "../Docs/AskNow"
+import { PRIORITY } from "../../helpers/constants"
+import TicketListItem from "./TicketListItem"
+import { getAuth, getUiSettings } from "../../redux/selectors"
+import { resetTicketsFilter } from "../../redux/slices/uiSettings"
+import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
+import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
+import HomeIcon from "@mui/icons-material/Home"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useGetTicketsAdmin = () => {
+const useGetTickets = () => {
 	const { currentUser } = useSelector(getAuth)
 	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
@@ -63,6 +63,9 @@ const useGetTicketsAdmin = () => {
 	const filteredTickets = useRef()
 
 	if (isLoading) { return ({ data: [], isLoading: true }) }
+
+
+	console.log("tickets", tickets)
 
 	if (!isEqual(prevTickets, tickets) ||
 		!isEqual(prevSearchTerm, ticketSearchTerm) ||
@@ -92,35 +95,108 @@ const useGetTicketsAdmin = () => {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Tickets() {
+function AdminTicketList() {
+	const dispatch = useDispatch()
+	const { data: tickets, isLoading } = useGetTickets()
+	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
 
-	useUiSettings({
-		title: "Tickets management",
-		background: {
-			backgroundImage: ""
-		}
-	})
-
-	const { data: tickets, isLoading } = useGetTicketsAdmin()
+	if (isLoading) {
+		return (
+			<Box sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				height: "100%"
+			}}>
+				<CircularProgress />
+			</Box>
+		)
+	}
 
 	return (
-		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
+		<Box sx={{
+			display: "flex",
+			flexDirection: "column",
+			minWidth: 0,
+		}}>
 
-			<Box sx={{ display: "flex", height: "100%" }}>
-
-				<Box sx={{ flexGrow: 1 }}>
-					<AdminTicketList />
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "flex-start",
+				pl: { xs: 0, sm: 3 },
+				pt: { xs: 3, sm: 6, md: 8, lg: 10 },
+				pb: 2
+			}}>
+				<IconBreadcrumbs
+					icon={null}
+					title="All tickets"
+					items={[
+						{
+							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Home",
+							url: "/client"
+						}
+					]}
+				/>
+				<Box sx={{
+					display: "flex",
+					alignItems: "space-between",
+					justifyContent: "center",
+					width: "100%",
+					mt: 4
+				}}>
+					<Typography variant="h1" sx={{ flexGrow: 1 }}>
+						All tickets
+					</Typography>
+					<Link href="/client/tickets/new-ticket" passHref>
+						<Button variant="contained" sx={{ mb: 1 }}>
+							New ticket
+						</Button>
+					</Link>
 				</Box>
-
-				<div>
-					<AdminTicketFilters />
-				</div>
-
 			</Box>
 
-		</Container >
+			{(tickets.length === 0) &&
+				<Box sx={{ ml: 3, mt: "0.5rem" }}>
+
+					<Typography variant="h2">
+						There are no tickets that matched your criteria
+					</Typography>
+
+					<Typography variant="body">
+						Try again by using other search criteria or click &quot;
+						<Box component="span" onClick={handleResetSearchCriteria} sx={{
+							cursor: "pointer",
+							fontWeight: 500,
+							"&:hover": { textDecoration: "underline" }
+						}}>
+							here
+						</Box>
+						&quot; to reset.
+					</Typography>
+				</Box>}
+
+			{(tickets.length > 0) &&
+				tickets.map((group) => (
+					<Box key={group[0]} sx={{ mb: 4 }}>
+
+						<Paper elevation={2} >
+							{group[1].map((ticket, idx) => (
+								<TicketListItem
+									key={ticket.tid}
+									ticket={ticket}
+									isFirst={idx === 0}
+									isLast={idx === group[1].length - 1}
+								/>
+							))}
+						</Paper>
+					</Box>
+				))}
+
+			<AskNow />
+		</Box>
 	)
 }
 
-Tickets.getLayout = getLayout
-export default Tickets
+export default AdminTicketList

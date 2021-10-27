@@ -79,7 +79,7 @@ const ReplyDialog = ({ children }) => {
 		addTicketReply({
 			ticketItem: {
 				username: currentUser.username,
-				tid: ticketId
+				tid: ticketId,
 			},
 			replyItem: {
 				trid,

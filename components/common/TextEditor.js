@@ -40,6 +40,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { setEditorData } from "./../../redux/slices/textEditor"
 import { getAuth, getTextEditor } from "./../../redux/selectors"
 import { STATE_CHANGED, storage } from "./../../helpers/firebase"
+import { EditorLightTheme } from "./../Themes/Editor/defaultEditorTheme"
 
 //ASSETS
 
@@ -150,6 +151,7 @@ const TextEditor = React.forwardRef((props, ref) => {
 				}}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
+				theme={EditorLightTheme}
 				{...otherProps}
 			/>
 			{uploading && <LinearProgressWithLabel value={progress} />}

@@ -28,6 +28,8 @@ import { useRouter } from "next/router"
 // MATERIAL-UI
 import { Box, Container } from "@mui/material"
 
+//THIRD-PARTY
+
 //PROJECT IMPORT
 import { Copyright } from "."
 

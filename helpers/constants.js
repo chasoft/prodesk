@@ -40,6 +40,17 @@ export const REDIRECT_URL = {
 	INSTALL_COMPLETED: "/install/completed",
 	INSTALL_CREATE: "/install/create",
 	DONE: "DONE",
+	//
+	TICKETS: "/client/tickets",
+	NEW_TICKETS: "/client/tickets/new-ticket",
+	//
+	CLIENT_EDIT_PROFILE: "/client/edit-profile"
+}
+
+export const DATE_FORMAT = {
+	SHORT: "DD-MMM-YY",
+	LONG: "DD-MMM-YY hh:mm A",
+	FULL: "MMMM D, YYYY hh:mm A",
 }
 
 

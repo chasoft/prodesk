@@ -26,7 +26,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Fab } from "@mui/material"
+import { Box, Button, CircularProgress, Fab, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import { size } from "lodash"
@@ -45,21 +45,27 @@ import ReplyIcon from "@mui/icons-material/Reply"
  * INIT                                                          *
  *****************************************************************/
 
-const ReplyButton = ({ sx }) => {
+export const ReplyButton = ({ tooltip = "", variant = "contained", sx }) => {
 	return (
 		<Box sx={{
 			display: { xs: "none", sm: "flex" },
 			justifyContent: "flex-end", mb: 4, ...sx
 		}}>
 			<ReplyDialog>
-				<Button variant="contained" startIcon={<ReplyIcon />} sx={{ px: 3 }}>
-					Reply
-				</Button>
+				<Tooltip arrow title={tooltip} placement="left">
+					<Button variant={variant} startIcon={<ReplyIcon />} sx={{ px: 3 }}>
+						Reply
+					</Button>
+				</Tooltip>
 			</ReplyDialog>
 		</Box>
 	)
 }
-ReplyButton.propTypes = { sx: PropTypes.object }
+ReplyButton.propTypes = {
+	tooltip: PropTypes.string,
+	variant: PropTypes.string,
+	sx: PropTypes.object
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -114,9 +120,6 @@ function TicketReplies() {
 					<ReplyIcon />
 				</Fab>
 			</ReplyDialog>
-
-			<ReplyButton sx={{ mt: 3 }} />
-
 		</Box >
 	)
 }

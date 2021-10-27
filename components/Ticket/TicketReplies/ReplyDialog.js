@@ -57,7 +57,7 @@ const ReplyDialog = ({ children }) => {
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { currentUser } = useSelector(getAuth)
-	const { ticketId } = useSelector(getUiSettings)
+	const { ticketId, ticketStatus } = useSelector(getUiSettings)
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
 

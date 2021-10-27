@@ -30,6 +30,7 @@ import React, { useState } from "react"
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isMobile } from "react-device-detect"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
@@ -74,11 +75,11 @@ const Header = () => {
 		>
 
 			<Box sx={{
-				display: { xs: "flex", sm: "none" },
+				display: isMobile ? "flex" : { xs: "flex", sm: "none" },
 				alignItems: "center"
 			}}>
 				<IconButton
-					onClick={() => { if (isSmallScreen) dispatch(setShowSideBar(true)) }}
+					onClick={() => { if (isSmallScreen || isMobile) dispatch(setShowSideBar(true)) }}
 				>
 					<MenuIcon sx={{ fill: "white" }} />
 				</IconButton>
@@ -89,7 +90,7 @@ const Header = () => {
 
 			<Box
 				sx={{
-					display: { xs: "none", sm: "flex" },
+					display: isMobile ? "none" : { xs: "none", sm: "flex" },
 					flexGrow: 1,
 					alignItems: "center",
 					justifyContent: "flex-start",
@@ -108,7 +109,7 @@ const Header = () => {
 					"& > *": { ml: 1 }
 				}}
 			>
-				<Tooltip title="Help Center" placement="bottom">
+				<Tooltip arrow title="Help Center" placement="bottom">
 					<Typography
 						sx={{
 							fontFamily: "\"Google Sans\", Roboto, sans-serif",
@@ -120,7 +121,7 @@ const Header = () => {
 					</Typography>
 				</Tooltip>
 
-				<Tooltip title="Notifications" placement="bottom">
+				<Tooltip arrow title="Notifications" placement="bottom">
 					<IconButton
 						size="medium" color="inherit"
 						onClick={() => setShowNotificationDraw(true)}

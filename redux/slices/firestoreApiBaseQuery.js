@@ -23,16 +23,17 @@
  *****************************************************************/
 
 import {
-	collection, doc, getDoc, setDoc, getDocs, deleteDoc, query, where, writeBatch, updateDoc, serverTimestamp, runTransaction
+	collection, deleteDoc, doc, getDoc, getDocs, increment, query, runTransaction, serverTimestamp, setDoc, updateDoc, where, writeBatch
 } from "firebase/firestore"
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "firebase/auth"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 
 //PROJECT IMPORT
 import { auth, db } from "./../../helpers/firebase"
 import { ACTION, COLLECTION, GROUP } from "./firestoreApiConstants"
-import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
+import { DOC_TYPE, USERGROUP, REDIRECT_URL, STATUS_FILTER } from "./../../helpers/constants"
 import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
 /*****************************************************************
@@ -342,7 +343,7 @@ async function fireStoreBaseQuery(args) {
 					const profileRef = await transaction.get(doc(db, COLLECTION.USERS, args.body.uid))
 					const profile = profileRef.data()
 					transaction.set(
-						doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES),
+						doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC),
 						profile
 					)
 				})
@@ -364,7 +365,7 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_PROFILES:	//Get from GROUP.PUBLIC_PROFILES
 			try {
 				let res = {}
-				const docSnapshot = await getDoc(doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES))
+				const docSnapshot = await getDoc(doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC))
 				if (docSnapshot.exists()) { res = docSnapshot.data() }
 				return { data: res }
 			} catch (e) {
@@ -425,7 +426,7 @@ async function fireStoreBaseQuery(args) {
 					const profileSnapshot = await transaction.get(doc(db, COLLECTION.USERS, args.body.uid))
 					const profileData = profileSnapshot.data()
 					transaction.update(
-						doc(db, COLLECTION.USERS, GROUP.PUBLIC_PROFILES),
+						doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC),
 						{
 							[args.body.uid]: profileData
 						}
@@ -1033,6 +1034,16 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * TICKETS => tid                                                *
 		 *****************************************************************/
+		case ACTION.GET_TICKETS_FOR_ADMIN:	//Get from GROUP.TICKETS_GROUP
+			try {
+				let res = {}
+				const docSnapshot = await getDoc(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+				if (docSnapshot.exists()) { res = docSnapshot.data() }
+				return { data: res }
+			} catch (e) {
+				return throwError(200, ACTION.GET_TICKETS_FOR_ADMIN, e, null)
+			}
+
 		case ACTION.GET_TICKETS:
 			try {
 				let all = []
@@ -1044,20 +1055,6 @@ async function fireStoreBaseQuery(args) {
 				return { data: all }
 			} catch (e) {
 				return throwError(200, ACTION.GET_TICKETS, e, null)
-			}
-
-		case ACTION.GET_TICKET_CONTENT:
-			try {
-				let ticketContent = ""
-				const docSnap = await getDoc(doc(db,
-					COLLECTION.USERNAMES, args.body.username,
-					"tickets", args.body.tid,
-					"content", "current")
-				)
-				if (docSnap.exists()) { ticketContent = docSnap.data() }
-				return { data: ticketContent }
-			} catch (e) {
-				return throwError(200, ACTION.GET_TICKET_CONTENT, e, "")
 			}
 
 		case ACTION.GET_TICKET_REPLIES:
@@ -1074,39 +1071,47 @@ async function fireStoreBaseQuery(args) {
 				return throwError(200, ACTION.GET_TICKET_REPLIES, e, null)
 			}
 
-		case ACTION.ADD_TICKET:	//body: {ticketItem, content: {text: string}}
+		case ACTION.ADD_TICKET:	//body: {...ticketItem}
 			try {
 				const batch = writeBatch(db)
+				const newTicket = {
+					...args.body,
+					replyCount: 0,
+					createdAt: serverTimestamp(),
+					updatedAt: serverTimestamp()
+				}
 				batch.set(
 					doc(db,
-						COLLECTION.USERNAMES, args.body.ticketItem.username,
-						"tickets", args.body.ticketItem.tid),
+						COLLECTION.USERNAMES, args.body.username,
+						"tickets", args.body.tid),
+					newTicket
+				)
+				//GROUP
+				batch.set(
+					doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
 					{
-						...args.body.ticketItem,
-						createdAt: serverTimestamp(),
-						updatedAt: serverTimestamp()
-					}
+						[args.body.tid]: {
+							...newTicket,
+							createdAt: dayjs().format("MMMM D, YYYY h:mm A"),
+							updatedAt: dayjs().format("MMMM D, YYYY h:mm A")
+						}
+					},
+					{ merge: true }
 				)
-				batch.set(
-					doc(db,
-						COLLECTION.USERNAMES, args.body.ticketItem.username,
-						"tickets", args.body.ticketItem.tid,
-						"content", "current"),
-					args.body.content
-				)
+
 				await batch.commit()
 				return {
 					data: {
 						action: ACTION.ADD_TICKET,
-						username: args.body.ticketItem.username,
-						tid: args.body.ticketItem.tid,
+						username: args.body.username,
+						tid: args.body.tid,
 						message: "Ticket added successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.ADD_TICKET, e, {
-					username: args.body.ticketItem.username,
-					tid: args.body.ticketItem.tid,
+					username: args.body.username,
+					tid: args.body.tid,
 				})
 			}
 
@@ -1124,7 +1129,37 @@ async function fireStoreBaseQuery(args) {
 						updatedAt: serverTimestamp()
 					}
 				)
+				//update reply's counter and updatedAt for Ticket
+				batch.update(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid),
+					{
+						replyCount: increment(1),
+						updatedAt: serverTimestamp(),
+						//whenever, new reply added, then, status of the ticket always is `pending`
+						status: STATUS_FILTER.PENDING,
+					}
+				)
 				await batch.commit()
+
+				//update reply's counter and updatedAt for Group
+				await runTransaction(db, async (transaction) => {
+					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+					const ticketX = ticketXRef.data()
+					transaction.update(
+						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+						{
+							[args.body.ticketItem.tid]: {
+								...ticketX[args.body.ticketItem.tid],
+								replyCount: ticketX[args.body.ticketItem.tid].replyCount + 1,
+								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
+								status: STATUS_FILTER.PENDING,
+							}
+						}
+					)
+				})
+
 				return {
 					data: {
 						action: ACTION.ADD_TICKET_REPLY,
@@ -1140,45 +1175,10 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		case ACTION.UPDATE_TICKET_CONTENT:	//body: {ticketItem, content: {text:string} }
+		case ACTION.UPDATE_TICKET:	//body: {...ticketItem}
 			try {
 				const batch = writeBatch(db)
 				batch.update(
-					doc(db,
-						COLLECTION.USERNAMES, args.body.ticketItem.username,
-						"tickets", args.body.ticketItem.tid,
-						"content", "current"
-					),
-					args.body.content
-				)
-				batch.update(
-					doc(db,
-						COLLECTION.USERNAMES, args.body.ticketItem.username,
-						"tickets", args.body.ticketItem.tid,
-					),
-					{
-						updatedAt: serverTimestamp()
-					}
-				)
-				await batch.commit()
-				return {
-					data: {
-						action: ACTION.UPDATE_TICKET_CONTENT,
-						username: args.body.ticketItem.username,
-						tid: args.body.ticketItem.tid,
-						message: "Ticket content updated successfully"
-					}
-				}
-			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET_CONTENT, e, {
-					username: args.body.ticketItem.username,
-					tid: args.body.ticketItem.tid,
-				})
-			}
-
-		case ACTION.UPDATE_TICKET_STATUS:	//body: {...ticketItem}
-			try {
-				updateDoc(
 					doc(db,
 						COLLECTION.USERNAMES, args.body.username,
 						"tickets", args.body.tid
@@ -1188,16 +1188,34 @@ async function fireStoreBaseQuery(args) {
 						updatedAt: serverTimestamp()
 					}
 				)
+				await batch.commit()
+
+				//Update GROUP
+				await runTransaction(db, async (transaction) => {
+					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+					const ticketX = ticketXRef.data()
+					transaction.update(
+						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+						{
+							[args.body.tid]: {
+								...ticketX[args.body.tid],
+								...args.body,
+								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
+							}
+						}
+					)
+				})
+
 				return {
 					data: {
-						action: ACTION.UPDATE_TICKET_STATUS,
+						action: ACTION.UPDATE_TICKET,
 						username: args.body.username,
 						tid: args.body.tid,
-						message: "Ticket properties updated successfully"
+						message: "Ticket updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET_STATUS, e, {
+				return throwError(200, ACTION.UPDATE_TICKET, e, {
 					username: args.body.username,
 					tid: args.body.tid,
 				})
@@ -1205,7 +1223,7 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTION.UPDATE_TICKET_REPLY:	//body: {ticketItem, replyItem}
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db,
 						COLLECTION.USERNAMES, args.body.ticketItem.username,
 						"tickets", args.body.ticketItem.tid,
@@ -1216,6 +1234,22 @@ async function fireStoreBaseQuery(args) {
 						updatedAt: serverTimestamp()
 					}
 				)
+
+				//Update GROUP (updatedAt)
+				await runTransaction(db, async (transaction) => {
+					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+					const ticketX = ticketXRef.data()
+					transaction.update(
+						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+						{
+							[args.body.ticketItem.tid]: {
+								...ticketX[args.body.ticketItem.tid],
+								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
+							}
+						}
+					)
+				})
+
 				return {
 					data: {
 						action: ACTION.UPDATE_TICKET_REPLY,
@@ -1225,7 +1259,7 @@ async function fireStoreBaseQuery(args) {
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET_STATUS, e, {
+				return throwError(200, ACTION.UPDATE_TICKET_REPLY, e, {
 					username: args.body.ticketItem.username,
 					tid: args.body.ticketItem.tid,
 				})
@@ -1234,12 +1268,6 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.DELETE_TICKET:	//body: {username, tid}
 			try {
 				const batch = writeBatch(db)
-				//delete ticket's content
-				batch.delete(doc(db,
-					COLLECTION.USERNAMES, args.body.username,
-					"tickets", args.body.tid,
-					"content", "current"
-				))
 				//delete ticket's replies
 				//get all replies first
 				const querySnapshot = await getDocs(collection(db,
@@ -1255,6 +1283,13 @@ async function fireStoreBaseQuery(args) {
 				batch.delete(doc(db,
 					COLLECTION.USERNAMES, args.body.username,
 					"tickets", args.body.tid))
+
+				//delete GROUP by set it's data to null
+				batch.set(
+					doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+					{ [args.body.tid]: null },
+					{ merge: true }
+				)
 				await batch.commit()
 				return {
 					data: {
@@ -1273,11 +1308,40 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTION.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
 			try {
-				await deleteDoc(doc(db,
+				const batch = writeBatch(db)
+				batch.delete(doc(db,
 					COLLECTION.USERNAMES, args.body.username,
 					"tickets", args.body.tid,
 					"replies", args.body.trid
 				))
+				//update reply's counter and updatedAt for Ticket & Group
+				batch.update(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.ticketItem.username,
+						"tickets", args.body.ticketItem.tid),
+					{
+						replyCount: increment(-1),
+						updatedAt: serverTimestamp()
+					}
+				)
+				await batch.commit()
+
+				//update reply's counter and updatedAt for Group
+				await runTransaction(db, async (transaction) => {
+					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+					const ticketX = ticketXRef.data()
+					transaction.update(
+						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+						{
+							[args.body.ticketItem.tid]: {
+								...ticketX[args.body.ticketItem.tid],
+								replyCount: ticketX[args.body.ticketItem.tid].replyCount - 1,
+								updatedAt: dayjs().format("MMMM D, YYYY h:mm A")
+							}
+						}
+					)
+				})
+
 				return {
 					data: {
 						action: ACTION.DELETE_TICKET_REPLY,

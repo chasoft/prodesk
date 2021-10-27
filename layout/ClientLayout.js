@@ -37,7 +37,7 @@ import Footer from "./../components/common/Footer"
 import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
-import { MENU_ITEM_TYPE } from "./../helpers/constants"
+import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
 import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 import AuthCheck from "./../components/AuthCheck"
 import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
@@ -108,8 +108,8 @@ function ClientLayout({ children }) {
 			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
 				<SideBar
-					homeUrl="/client"
-					settingsUrl="/client/edit-profile"
+					homeUrl={REDIRECT_URL.CLIENT}
+					settingsUrl={REDIRECT_URL.CLIENT_EDIT_PROFILE}
 					settingsTooltip="Account settings"
 					data={CLIENT_MENU}
 				/>

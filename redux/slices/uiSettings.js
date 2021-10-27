@@ -82,7 +82,8 @@ export const initialState = {
 	showTocSideBarDetails: false,
 
 	//keep current ticketId
-	ticketId: null
+	ticketId: null,
+	ticketStatus: null
 }
 
 const uiSettingsSlice = createSlice({
@@ -154,6 +155,9 @@ const uiSettingsSlice = createSlice({
 		setTicketId: (state, { payload }) => {
 			state.ticketId = payload
 		},
+		setTicketStatus: (state, { payload }) => {
+			state.ticketStatus = payload
+		},
 	}
 })
 
@@ -167,7 +171,7 @@ export const {
 	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
 	setSideBarLeft, setShowTocSideBarDetails,
-	setTicketId
+	setTicketId, setTicketStatus
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

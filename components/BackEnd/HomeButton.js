@@ -107,7 +107,7 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 
 					<div style={{ borderRight: "1px solid #ffffff80", margin: "5px 0 5px", }}>&nbsp;</div>
 
-					<Tooltip title={settingsTooltip} placement="right">
+					<Tooltip arrow title={settingsTooltip} placement="right">
 						<IconButton
 							ref={anchorRef}
 							id="composition-button"
@@ -194,7 +194,7 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 	}
 
 	return (
-		<Tooltip title="Dashboard" placement="right">
+		<Tooltip arrow title="Dashboard" placement="right">
 			<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 				<Link href={homeUrl} passHref>
 					<a href="just-a-placeholder">

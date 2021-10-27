@@ -39,7 +39,7 @@ import Footer from "./../components/common/Footer"
 import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
-import { MENU_ITEM_TYPE } from "./../helpers/constants"
+import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
 import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
 
@@ -144,7 +144,7 @@ function AdminLayout({ children }) {
 			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
 				<SideBar
-					homeUrl="/admin"
+					homeUrl={REDIRECT_URL.ADMIN}
 					settingsUrl=""
 					settingsTooltip=""
 					data={ADMIN_MENUS}

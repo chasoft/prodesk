@@ -50,7 +50,7 @@ const UserIcon = () => {
 	const { currentUser } = useSelector(getAuth)
 
 	return <>
-		<Tooltip title="User Menu" placement="bottom">
+		<Tooltip arrow title="User Menu" placement="bottom">
 			<IconButton onClick={handleToggle} size="large">
 				<Avatar
 					src="/img/default-avatar.png"

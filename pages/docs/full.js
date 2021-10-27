@@ -28,7 +28,7 @@ import React from "react"
 import { Box, Container, Grid } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import Banner from "./../../components/widget/Banner"
@@ -42,7 +42,7 @@ import ListAllCategories from "./../../components/Category/ListAllCategories"
  *****************************************************************/
 
 function ViewFull() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "view full all category",
 	})

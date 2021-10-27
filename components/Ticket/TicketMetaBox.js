@@ -22,8 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
+import React, { useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { Box, Chip, Paper, Typography } from "@mui/material"

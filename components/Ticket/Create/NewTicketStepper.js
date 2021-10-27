@@ -31,7 +31,7 @@ import { Box, Button, Paper, Step, StepContent, StepLabel, Stepper, Typography }
 import { size } from "lodash"
 import { nanoid } from "nanoid"
 import slugify from "react-slugify"
-import { useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import NewTicketStep1 from "./NewTicketStep1"
@@ -42,8 +42,9 @@ import { STATUS_FILTER } from "./../../../helpers/constants"
 import { setRedirect } from "./../../../redux/slices/redirect"
 import { setCurrentStep } from "./../../../redux/slices/newTicket"
 import { getPlainTextFromMarkDown } from "./../../../helpers/utils"
-import { getAuth, getNewTicket, getTextEditor } from "./../../../redux/selectors"
+import { getAuth, getNewTicket, getTextEditor, getUiSettings } from "./../../../redux/selectors"
 import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
+import { setTicketId } from "../../../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -115,27 +116,30 @@ const StepperControlButtons = () => {
 
 	const handleGoBack = () => { dispatch(setCurrentStep(currentStep - 1)) }
 	const handleGoNext = () => {
+		let slug
 		if (currentStep === steps.length - 1) {
 			console.log("Submit new ticket")
 			//
 			const tid = nanoid()
+			slug = slugify(subject) + "/" + tid
 			addTicket({
-				ticketItem: {
-					tid,
-					username: currentUser.username,
-					subject: subject,
-					department: raw.selectedDepartment,
-					priority: raw.selectedPriority,
-					category: raw.selectedCategory,
-					subCatgory: raw.selectedSubCategory,
-					status: STATUS_FILTER.OPEN,
-					slug: slugify(subject) + "/" + tid
-				},
-				content: { text: editorData }
+				tid,
+				username: currentUser.username,
+				subject: subject,
+				department: raw.selectedDepartment,
+				priority: raw.selectedPriority,
+				category: raw.selectedCategory,
+				subCatgory: raw.selectedSubCategory,
+				status: STATUS_FILTER.OPEN,
+				slug,
+				content: editorData
 			})
 
 		}
-		dispatch(setCurrentStep(currentStep + 1))
+		reduxBatch(() => {
+			dispatch(setTicketId(slug))
+			dispatch(setCurrentStep(currentStep + 1))
+		})
 	}
 
 	return (
@@ -192,6 +196,7 @@ export default function TicketStepper() {
 
 	const newTicketData = useGetNewTicketData()
 	const { currentStep } = useSelector(getNewTicket)
+	const { ticketId } = useSelector(getUiSettings)
 
 	return (
 		<div style={{ width: "100%" }}>
@@ -233,7 +238,7 @@ export default function TicketStepper() {
 					</Typography>
 
 					<Button
-						onClick={() => { }}
+						onClick={() => dispatch(setRedirect("/client/tickets/" + ticketId))}
 						variant="outlined"
 						sx={{
 							mt: 1, mr: 1,

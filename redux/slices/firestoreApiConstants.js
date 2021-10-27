@@ -25,8 +25,9 @@ export const TYPE = {
 }
 
 export const GROUP = {
-	PUBLIC_PROFILES: "public-profiles",
-	PRIVATE_PROFILES: "private-profiles"
+	PROFILES_PUBLIC: "profiles-public-group",
+	PROFILES_PRIVATE: "profiles-private-group",
+	TICKETS_GROUP: "tickets-group"
 }
 
 export const ACTION = {
@@ -94,14 +95,10 @@ export const ACTION = {
 
 	/* TICKETS => tid */
 	GET_TICKETS: "getTickets",
-	GET_TICKET_CONTENT: "getTicketContent",
 	GET_TICKET_REPLIES: "getTicketReplies",
 	ADD_TICKET: "addTicket",
 	ADD_TICKET_REPLY: "addTicketReply",
-	//you can only update a ticket within 3 minute
-	UPDATE_TICKET_CONTENT: "updateTicketContent",
-	UPDATE_TICKET_STATUS: "updateTicketStatus",
-	//you can only update a ticket_reply within 3 minute
+	UPDATE_TICKET: "updateTicket",
 	UPDATE_TICKET_REPLY: "updateTicketReply",
 	DELETE_TICKET: "deleteTicket",
 	DELETE_TICKET_REPLY: "deleteTicketReply",

@@ -22,8 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useRef } from "react"
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material"
+import React, { useRef, useState } from "react"
+import Link from "next/link"
+import PropTypes from "prop-types"
+import { Box, Button, CircularProgress, Drawer, IconButton, Paper, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { usePrevious } from "react-use"
@@ -32,15 +34,17 @@ import { isEqual, sortBy, reverse, groupBy, filter } from "lodash"
 
 //PROJECT IMPORT
 import AskNow from "../Docs/AskNow"
-import { PRIORITY } from "../../helpers/constants"
+import TicketFilters from "./TicketFilters"
 import TicketListItem from "./TicketListItem"
 import { getAuth, getUiSettings } from "../../redux/selectors"
+import { PRIORITY, REDIRECT_URL } from "../../helpers/constants"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
 import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
+import FilterListIcon from "@mui/icons-material/FilterList"
 
 /*****************************************************************
  * INIT                                                          *
@@ -90,12 +94,35 @@ const useGetTickets = () => {
 	return ({ data: filteredTickets.current, isLoading: false })
 }
 
+const FilterDrawer = ({ isOpen, handleClose }) => {
+	return (
+		<Drawer
+			anchor="right"
+			open={isOpen}
+			onClose={handleClose}
+		>
+			<Box
+				sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
+				onClick={handleClose}
+				onKeyDown={handleClose}
+			>
+				<TicketFilters sx={{ p: 2 }} />
+			</Box>
+		</Drawer>
+	)
+}
+FilterDrawer.propTypes = {
+	isOpen: PropTypes.bool,
+	handleClose: PropTypes.func
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function TicketList() {
 	const dispatch = useDispatch()
+	const [showFilter, setShowFilter] = useState(false)
 	const { data: tickets, isLoading } = useGetTickets()
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
 
@@ -134,13 +161,12 @@ function TicketList() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: "/client"
+							url: REDIRECT_URL.CLIENT
 						}
 					]}
 				/>
 				<Box sx={{
 					display: "flex",
-					alignItems: "space-between",
 					justifyContent: "center",
 					width: "100%",
 					mt: 4
@@ -148,9 +174,26 @@ function TicketList() {
 					<Typography variant="h1" sx={{ flexGrow: 1 }}>
 						All tickets
 					</Typography>
-					<Button variant="contained" sx={{ mb: 1 }}>
-						New ticket
-					</Button>
+
+					<Link href={REDIRECT_URL.NEW_TICKETS} passHref>
+						<Button variant="contained" sx={{ mb: 1 }}>
+							New ticket
+						</Button>
+					</Link>
+
+					<Tooltip arrow title="Filters" placement="top">
+						<IconButton
+							onClick={() => { setShowFilter(true) }}
+							sx={{ display: { xs: "flex", md: "none" }, mb: 1, ml: 1 }}
+						>
+							<FilterListIcon fontSize="medium" color="primary" />
+						</IconButton>
+					</Tooltip>
+
+					<FilterDrawer
+						isOpen={showFilter}
+						handleClose={() => setShowFilter(false)}
+					/>
 				</Box>
 			</Box>
 
@@ -176,7 +219,7 @@ function TicketList() {
 
 			{(tickets.length > 0) &&
 				tickets.map((group) => (
-					<div key={group[0]}>
+					<Box key={group[0]} sx={{ mb: 4 }}>
 
 						<Paper elevation={2} >
 							{group[1].map((ticket, idx) => (
@@ -188,7 +231,7 @@ function TicketList() {
 								/>
 							))}
 						</Paper>
-					</div>
+					</Box>
 				))}
 
 			<AskNow />

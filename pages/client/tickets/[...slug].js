@@ -22,36 +22,99 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect } from "react"
-import { useRouter } from "next/router"
+import PropTypes from "prop-types"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import React, { useEffect } from "react"
 
 // MATERIAL-UI
-import { Box, CircularProgress, Container } from "@mui/material"
+import { Box, Button, CircularProgress, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { filter, size } from "lodash"
-import { useDeepCompareEffect } from "react-use"
-import { useDispatch, useSelector } from "react-redux"
+import { useSnackbar } from "notistack"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "../../../redux/selectors"
 import { getLayout } from "../../../layout/ClientLayout"
 import useUiSettings from "../../../helpers/useUiSettings"
-import { setTicketId } from "../../../redux/slices/uiSettings"
+import { setRedirect } from "../../../redux/slices/redirect"
+import { setTicketId, setTicketStatus } from "../../../redux/slices/uiSettings"
 import TicketContent from "../../../components/Ticket/TicketContent"
-import TicketReplies from "../../../components/Ticket/TicketReplies"
-import { useGetTicketsQuery } from "../../../redux/slices/firestoreApi"
+import { REDIRECT_URL, STATUS_FILTER } from "../../../helpers/constants"
 import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
+import TicketReplies, { ReplyButton } from "../../../components/Ticket/TicketReplies"
+import { useGetTicketsQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
+import ErrorIcon from "@mui/icons-material/Error"
+import CloseIcon from "@mui/icons-material/Close"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+const BreadcrumbsBox = ({ children }) => (
+	<Box sx={{
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "flex-start",
+		pl: { xs: 0, sm: 3 },
+		pt: { xs: 3, sm: 4, md: 6, lg: 8 },
+		pb: 2
+	}}>
+		{children}
+	</Box>
+)
+BreadcrumbsBox.propTypes = { children: PropTypes.node }
+
+const ActionButtons = ({ ticket }) => {
+	const dispatch = useDispatch()
+	const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
+	const [updateTicket] = useUpdateTicketMutation()
+
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+		}}>
+			<Button
+				disabled={ticket.status === STATUS_FILTER.CLOSED}
+				variant="outlined"
+				sx={{ px: 4, visibility: { xs: "hidden", sm: "visible" } }}
+				startIcon={<CloseIcon />}
+				onClick={async () => {
+					enqueueSnackbar("Ticket closed successfully", { variant: "success" })
+					await updateTicket({
+						username: currentUser.username,
+						tid: ticket.tid,
+						status: STATUS_FILTER.CLOSED
+					})
+					dispatch(setRedirect(REDIRECT_URL.TICKETS))
+				}}
+			>
+				Close
+			</Button>
+
+			<ReplyButton
+				tooltip={
+					(ticket.status === STATUS_FILTER.CLOSED)
+						? "The ticket would be re-open if you reply"
+						: ""
+				}
+				variant={(ticket.status === STATUS_FILTER.CLOSED) ? "outlined" : "contained"}
+				sx={{ mt: 3 }}
+			/>
+
+		</Box>
+	)
+}
+ActionButtons.propTypes = { ticket: PropTypes.object }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -73,9 +136,14 @@ function SingleTicket() {
 	})
 
 	useEffect(() => {
-		if (size(slug)) dispatch(setTicketId(slug[1]))
+		if (size(slug)) {
+			reduxBatch(() => {
+				dispatch(setTicketId(slug[1]))
+				dispatch(setTicketStatus(ticket?.status))
+			})
+		}
 		console.log(slug)
-	}, [dispatch, slug])
+	}, [dispatch, slug, ticket?.status])
 
 	//fix bug when nagivate to other page
 	if (!slug) return null
@@ -83,49 +151,64 @@ function SingleTicket() {
 	//Note: ticket is array of object => [{}]
 	const ticket = filter(tickets ?? [], { tid: slug[1] })
 
+	if (isLoading) {
+		return (
+			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+				<Box sx={{
+					display: "flex",
+					height: "70%",
+					alignItems: "center",
+					justifyContent: "center"
+				}}>
+					<CircularProgress />
+				</Box >
+			</Container>
+		)
+	}
+
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 
-			<Box sx={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "flex-start",
-				pl: { xs: 0, sm: 3 },
-				pt: { xs: 3, sm: 4, md: 6, lg: 8 },
-				pb: 2
-			}}>
+			<BreadcrumbsBox>
 				<IconBreadcrumbs
 					icon={null}
-					title={size(ticket) ? ticket[0].subject : <CircularProgress size="20" />}
+					title={size(ticket) ? ticket[0].subject : "Ticket not existed"}
 					items={[
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: "/client"
+							url: REDIRECT_URL.CLIENT
 						},
 						{
 							icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "All tickets",
-							url: "/client/tickets"
+							url: REDIRECT_URL.TICKETS
 						}
 					]}
 				/>
-			</Box>
-
-			{isLoading &&
-				<Box sx={{ display: "flex", height: "70%", alignItems: "center", justifyContent: "center" }}>
-					<CircularProgress />
-				</Box>}
+			</BreadcrumbsBox>
 
 			{(!isLoading && !size(ticket)) ?
-				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-					Ticket is not existed! Go back to <Link href="/client/tickets">All tickets</Link>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+					flexDirection: "column",
+					justifyContent: "center",
+					height: "70%"
+				}}>
+					<ErrorIcon color="warning" sx={{ fontSize: 80 }} />
+					<Typography variant="caption" sx={{ p: 3 }}>Ticket is not existed!</Typography>
+					<Link href={REDIRECT_URL.TICKETS} passHref>
+						<Button variant="outlined">Go back to All tickets</Button>
+					</Link>
+
 				</Box> : null}
 
 			{(!isLoading && size(ticket)) ?
 				<>
 					<TicketContent ticket={ticket[0]} />
 					<TicketReplies />
+					<ActionButtons ticket={ticket[0]} />
 				</> : null}
 
 		</Container >

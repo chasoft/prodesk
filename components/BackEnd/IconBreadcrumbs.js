@@ -63,7 +63,7 @@ function IconBreadcrumbs({ icon, title, items }) {
 					))
 				}
 				<Typography
-					sx={{ display: "flex", alignItems: "center" }}
+					sx={{ display: "flex", alignItems: "center", fontWeight: 500 }}
 					color="text.primary"
 				>
 					{icon}

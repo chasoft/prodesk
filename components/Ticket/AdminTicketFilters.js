@@ -22,8 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import PropTypes from "prop-types"
 import React, { useMemo } from "react"
+
 import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, SvgIcon } from "@mui/material"
 
 //THIRD-PARTY
@@ -69,7 +69,7 @@ const FilterCheckbox = (props) => (
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketFilters({ sx }) {
+function AdminTicketFilters() {
 	const dispatch = useDispatch()
 	const { /*ticketSearchTerm,*/ selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
@@ -82,7 +82,19 @@ function TicketFilters({ sx }) {
 	), [selectedStatus])
 
 	return (
-		<Box sx={sx}>
+		<Box
+			sx={{
+				display: { xs: "none", md: "flex" },
+				flexDirection: "column",
+				mt: "124px",
+				ml: 3, px: 3,
+				backgroundColor: "#FFF",
+				borderRadius: "0.5rem",
+				width: "250px",
+				position: "sticky",
+				top: "80px"
+			}}
+		>
 
 			<Box sx={{ display: "flex", alignItems: "center", my: 1 }} >
 				<Typography variant="h4" style={{ flexGrow: 1, fontWeight: 500 }}>
@@ -91,10 +103,7 @@ function TicketFilters({ sx }) {
 				<Button
 					size="small"
 					variant="outlined"
-					onClick={(e) => {
-						e.stopPropagation()
-						dispatch(resetTicketsFilter())
-					}}
+					onClick={() => { dispatch(resetTicketsFilter()) }}
 				>
 					Reset
 				</Button>
@@ -108,8 +117,7 @@ function TicketFilters({ sx }) {
 							<FilterCheckbox
 								checked={statusCount === 4}
 								indeterminate={(statusCount > 0) && (statusCount < 4)}
-								onChange={(e) => {
-									e.stopPropagation()
+								onChange={() => {
 									if (statusCount < 4)
 										dispatch(setSelectedStatus({
 											[TICKET_STATUS.OPEN]: true,
@@ -133,10 +141,7 @@ function TicketFilters({ sx }) {
 						control={
 							<FilterCheckbox
 								checked={selectedStatus[TICKET_STATUS.OPEN]}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
+								onChange={handleSelectTicketStatus}
 								name={TICKET_STATUS.OPEN}
 							/>
 						}
@@ -146,10 +151,7 @@ function TicketFilters({ sx }) {
 						control={
 							<FilterCheckbox
 								name={TICKET_STATUS.PENDING}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
+								onChange={handleSelectTicketStatus}
 								checked={selectedStatus[TICKET_STATUS.PENDING]}
 							/>
 						}
@@ -159,10 +161,7 @@ function TicketFilters({ sx }) {
 						control={
 							<FilterCheckbox
 								name={TICKET_STATUS.REPLIED}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
+								onChange={handleSelectTicketStatus}
 								checked={selectedStatus[TICKET_STATUS.REPLIED]}
 							/>
 						}
@@ -172,10 +171,7 @@ function TicketFilters({ sx }) {
 						control={
 							<FilterCheckbox
 								name={TICKET_STATUS.CLOSED}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
+								onChange={handleSelectTicketStatus}
 								checked={selectedStatus[TICKET_STATUS.CLOSED]}
 							/>
 						}
@@ -201,10 +197,7 @@ function TicketFilters({ sx }) {
 							}
 						}}
 						value={selectedPriority}
-						onChange={(e) => {
-							e.stopPropagation()
-							dispatch(setSelectedPriority(e.target.value))
-						}}
+						onChange={(e) => { dispatch(setSelectedPriority(e.target.value)) }}
 					>
 						{
 							Object.entries(PRIORITY).map((item) => {
@@ -253,8 +246,5 @@ function TicketFilters({ sx }) {
 		</Box >
 	)
 }
-TicketFilters.propTypes = {
-	sx: PropTypes.object
-}
 
-export default TicketFilters
+export default AdminTicketFilters

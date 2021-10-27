@@ -30,6 +30,7 @@ import PropTypes from "prop-types"
 import { Box, ButtonBase, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isMobile } from "react-device-detect"
 import { useSelector, useDispatch } from "react-redux"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
@@ -174,7 +175,7 @@ const SideBarContentCollapsed = ({ data }) => (
 			if (group.type === MENU_ITEM_TYPE.ITEM)
 				return (
 					<Link key={group.url} href={group.url} passHref >
-						<Tooltip title={group.description} placement="right">
+						<Tooltip arrow title={group.description} placement="right">
 							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 								<Box
 									sx={{
@@ -225,7 +226,7 @@ const SideBarContentCollapsed = ({ data }) => (
 						}}
 					>
 						{group.items.map((item) => (
-							<Tooltip key={item.id} title={item.text} placement="right">
+							<Tooltip arrow key={item.id} title={item.text} placement="right">
 								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 									<li>
 										<Link href={item.url} passHref>
@@ -253,16 +254,17 @@ SideBarContentCollapsed.propTypes = { data: PropTypes.array }
 const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 	const { showSideBar, isSmallScreen, isSideBarExpanded } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
+	console.log({ isMobile })
 	return (
 		<>
 			<Box
 				sx={{
-					position: { xs: "fixed", sm: "sticky" },
+					position: isMobile ? "fixed" : { xs: "fixed", sm: "sticky" },
 					top: 0,
 					display: "flex",
 					flexDirection: "column",
 					width: isSideBarExpanded ? "256px" : "68px",
-					...(isSmallScreen ? showSideBar ? { left: 0 } : { left: isSideBarExpanded ? "-257px" : "-69px" } : {}),
+					...((isSmallScreen || isMobile) ? showSideBar ? { left: 0 } : { left: isSideBarExpanded ? "-257px" : "-69px" } : {}),
 					height: "100vh",
 					backgroundAttachment: "fixed",
 					backgroundColor: "#051e34",

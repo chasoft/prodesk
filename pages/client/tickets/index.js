@@ -27,6 +27,7 @@ import React from "react"
 
 //THIRD-PARTY
 // import { useDispatch } from "react-redux"
+import { isMobile } from "react-device-detect"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/ClientLayout"
@@ -54,7 +55,9 @@ function Tickets() {
 	})
 
 	return (
-		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="lg" sx={{
+			minHeight: isMobile ? "calc(100vh - 150px)" : "calc(100vh - 200px)"
+		}}>
 
 			<Box sx={{ display: "flex", height: "100%" }}>
 
@@ -63,7 +66,17 @@ function Tickets() {
 				</Box>
 
 				<div>
-					<TicketFilters />
+					<TicketFilters sx={{
+						display: { xs: "none", md: "flex" },
+						flexDirection: "column",
+						mt: "124px",
+						ml: 3, px: 3,
+						backgroundColor: "#FFF",
+						borderRadius: "0.5rem",
+						width: "250px",
+						position: "sticky",
+						top: "80px"
+					}} />
 				</div>
 
 			</Box>

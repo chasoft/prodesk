@@ -40,6 +40,8 @@ import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
+import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
+import { REDIRECT_URL } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -90,7 +92,12 @@ function NewTicket() {
 								{
 									icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 									title: "Home",
-									url: "/client"
+									url: REDIRECT_URL.CLIENT
+								},
+								{
+									icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+									title: "All tickets",
+									url: REDIRECT_URL.TICKETS
 								}
 							]}
 						/>
