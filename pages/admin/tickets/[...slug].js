@@ -37,14 +37,14 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "../../../redux/selectors"
-import { getLayout } from "../../../layout/ClientLayout"
+import { getLayout } from "../../../layout/AdminLayout"
 import useUiSettings from "../../../helpers/useUiSettings"
 import { setRedirect } from "../../../redux/slices/redirect"
 import TicketContent from "../../../components/Ticket/TicketContent"
 import { REDIRECT_URL, STATUS_FILTER } from "../../../helpers/constants"
 import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 import TicketReplies, { ReplyButton } from "../../../components/Ticket/TicketReplies"
-import { useGetTicketsQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
+import { useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
@@ -104,11 +104,8 @@ const ActionButtons = ({ ticket }) => {
 
 			<ReplyButton
 				ticket={ticket}
-				tooltip={
-					(ticket.status === STATUS_FILTER.CLOSED)
-						? "The ticket would be re-open if you reply"
-						: ""
-				}
+				disabled={currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED}
+				tooltip=""
 				variant={(ticket.status === STATUS_FILTER.CLOSED) ? "outlined" : "contained"}
 				sx={{ mt: 3 }}
 			/>
@@ -122,12 +119,11 @@ ActionButtons.propTypes = { ticket: PropTypes.object }
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function SingleTicket() {
+function AdminSingleTicket() {
 	const router = useRouter()
 	const { slug } = router.query
-	const { currentUser } = useSelector(getAuth)
 	//
-	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
+	const { data: tickets, isLoading } = useGetTicketsForAdminQuery(undefined)
 
 	useUiSettings({
 		title: "Title",
@@ -168,12 +164,12 @@ function SingleTicket() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.CLIENT
+							url: REDIRECT_URL.ADMIN
 						},
 						{
 							icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
-							title: "All tickets",
-							url: REDIRECT_URL.TICKETS
+							title: "Tickets management",
+							url: REDIRECT_URL.ADMIN_TICKETS
 						}
 					]}
 				/>
@@ -189,7 +185,7 @@ function SingleTicket() {
 				}}>
 					<ErrorIcon color="warning" sx={{ fontSize: 80 }} />
 					<Typography variant="caption" sx={{ p: 3 }}>Ticket is not existed!</Typography>
-					<Link href={REDIRECT_URL.TICKETS} passHref>
+					<Link href={REDIRECT_URL.ADMIN_TICKETS} passHref>
 						<Button variant="outlined">Go back to All tickets</Button>
 					</Link>
 
@@ -210,6 +206,6 @@ function SingleTicket() {
 	)
 }
 
-SingleTicket.getLayout = getLayout
+AdminSingleTicket.getLayout = getLayout
 
-export default SingleTicket
+export default AdminSingleTicket

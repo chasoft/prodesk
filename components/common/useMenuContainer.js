@@ -22,116 +22,102 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Fab, Tooltip } from "@mui/material"
+import { ClickAwayListener, Grow, MenuList, Paper, Popper } from "@mui/material"
 
 //THIRD-PARTY
-import { size } from "lodash"
 
 //PROJECT IMPORT
-import ReplyItem from "./Reply"
-import ReplyDialog from "./ReplyDialog"
-import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
-
-//ASSETS
-import ReplyIcon from "@mui/icons-material/Reply"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
+const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, children }) => {
 	return (
-		<Box sx={{
-			display: { xs: "none", sm: "flex" },
-			justifyContent: "flex-end", mb: 4, ...sx
-		}}>
-			<ReplyDialog
-				ticketId={ticket.tid}
-				ticketStatus={ticket.status}
-				ticketUsername={ticket.username}
-			>
-				<Tooltip arrow title={tooltip} placement="left">
-					<Button disabled={disabled} variant={variant} startIcon={<ReplyIcon />} sx={{ px: 3 }}>
-						Reply
-					</Button>
-				</Tooltip>
-			</ReplyDialog>
-		</Box>
+		<Popper
+			open={open}
+			anchorEl={anchorRef.current}
+			role={undefined}
+			placement={placement}
+			transition
+			disablePortal
+			style={{ zIndex: 1 }}
+		>
+			{({ TransitionProps }) => (
+				<Grow {...TransitionProps} style={{ transformOrigin: transformOrigin }}>
+					<Paper elevation={elevation} sx={{ minWidth: "120px" }}>
+						<ClickAwayListener onClickAway={handleClose}>
+							<MenuList
+								autoFocusItem={open}
+								id="composition-menu"
+								aria-labelledby="composition-button"
+								onKeyDown={handleListKeyDown}
+							>
+								{children}
+							</MenuList>
+						</ClickAwayListener>
+					</Paper>
+				</Grow>
+			)}
+		</Popper>
 	)
 }
-ReplyButton.propTypes = {
-	ticket: PropTypes.object,
-	tooltip: PropTypes.string,
-	variant: PropTypes.string,
-	disabled: PropTypes.bool,
-	sx: PropTypes.object
+MenuContainer.propTypes = {
+	open: PropTypes.bool,
+	anchorRef: PropTypes.any,
+	elevation: PropTypes.number,
+	handleClose: PropTypes.func,
+	handleListKeyDown: PropTypes.func,
+	placement: PropTypes.string,
+	transformOrigin: PropTypes.string,
+	children: PropTypes.node
 }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
-	const { data: ticketReplies, isLoadingReplies } = useGetTicketRepliesQuery({
-		username: ticketUsername,
-		tid: ticketId
-	})
+const useMenuContainer = () => {
+	const anchorRef = useRef(null)
+	const [open, setOpen] = useState(false)
 
-	if (isLoadingReplies) {
-		return (
-			<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-				<CircularProgress />
-			</Box>
-		)
-	}
-
-	return (
-		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-
-			<Box sx={{
-				border: "1px solid",
-				borderRadius: "0.5rem",
-				borderColor: "divider",
-			}}>
-
-				{!size(ticketReplies) &&
-					<Box sx={{ p: 4 }}>There is no replies!</Box>}
-
-				{ticketReplies?.map((replyItem, idx) =>
-					<ReplyItem
-						key={replyItem.trid}
-						replyItem={replyItem}
-						isFirst={idx === 0}
-					/>
-				)}
-			</Box>
-
-			<ReplyDialog
-				ticketId={ticketId}
-				ticketStatus={ticketStatus}
-				ticketUsername={ticketUsername}
-			>
-				<Fab
-					color="primary" sx={{
-						display: { xs: "initial", sm: "none" },
-						position: "fixed",
-						bottom: { xs: 32, md: 64 },
-						right: { xs: 32, md: 128, lg: 152 }
-					}}>
-					<ReplyIcon />
-				</Fab>
-			</ReplyDialog>
-		</Box >
+	const handlers = React.useMemo(
+		() => ({
+			handleToggle: () => {
+				setOpen((prevOpen) => !prevOpen)
+			},
+			handleClose: (e) => {
+				if (anchorRef.current && anchorRef.current.contains(e.target)) {
+					return
+				}
+				setOpen(false)
+			},
+			handleListKeyDown: (e) => {
+				if (e.key === "Tab") {
+					e.preventDefault()
+					setOpen(false)
+				} else if (e.key === "Escape") {
+					setOpen(false)
+				}
+			},
+		}),
+		[]
 	)
-}
-TicketReplies.propTypes = {
-	ticketId: PropTypes.string,
-	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string
+
+	// return focus to the button when we transitioned from !open -> open
+	const prevOpen = useRef(open)
+	useEffect(() => {
+		if (prevOpen.current === true && open === false) {
+			anchorRef.current.focus()
+		}
+		prevOpen.current = open
+	}, [open])
+
+	return [MenuContainer, open, anchorRef, handlers]
 }
 
-export default TicketReplies
+export default useMenuContainer

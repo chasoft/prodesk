@@ -22,22 +22,16 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useRef } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Box, Container } from "@mui/material"
 
 //THIRD-PARTY
-import { isEqual, filter, reverse, groupBy, sortBy } from "lodash"
-import { usePrevious } from "react-use"
-import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "./../../../layout/AdminLayout"
 import useUiSettings from "./../../../helpers/useUiSettings"
-import { useGetTicketsQuery } from "./../../../redux/slices/firestoreApi"
-import { getAuth, getUiSettings } from "../../../redux/selectors"
-import { PRIORITY } from "../../../helpers/constants"
 import AdminTicketList from "../../../components/Ticket/AdminTicketList"
 import AdminTicketFilters from "../../../components/Ticket/AdminTicketFilters"
 
@@ -46,47 +40,6 @@ import AdminTicketFilters from "../../../components/Ticket/AdminTicketFilters"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useGetTicketsAdmin = () => {
-	const { currentUser } = useSelector(getAuth)
-	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
-	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
-
-	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])
-
-	const prevTickets = usePrevious(tickets)
-	const prevSearchTerm = usePrevious(ticketSearchTerm)
-	const prevPriority = usePrevious(selectedPriority)
-	const prevStatus = usePrevious(_Status)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const filteredTickets = useRef()
-
-	if (isLoading) { return ({ data: [], isLoading: true }) }
-
-	if (!isEqual(prevTickets, tickets) ||
-		!isEqual(prevSearchTerm, ticketSearchTerm) ||
-		!isEqual(prevPriority, selectedPriority) ||
-		!isEqual(prevStatus, selectedStatus)) {
-
-		//filter by priority
-		let filtered = tickets
-		if (selectedPriority !== PRIORITY.ALL) {
-			filtered = filter(tickets, { priority: selectedPriority })
-		}
-
-		//filter by status
-		filtered = filter(filtered, (i) => _Status.includes(i.status))
-		//sort the list - descensing by `createdAt`
-		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
-		//group by status
-		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
-
-		filteredTickets.current = Object.entries(groupByStatus)
-	}
-
-	return ({ data: filteredTickets.current, isLoading: false })
-}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -101,8 +54,6 @@ function Tickets() {
 		}
 	})
 
-	const { data: tickets, isLoading } = useGetTicketsAdmin()
-
 	return (
 		<Container maxWidth="lg" sx={{ minHeight: "calc(100vh - 150px)" }}>
 
@@ -112,8 +63,18 @@ function Tickets() {
 					<AdminTicketList />
 				</Box>
 
-				<div>
-					<AdminTicketFilters />
+				<div> {/* this `div` is a placeholder for sticky feature works */}
+					<AdminTicketFilters sx={{
+						display: { xs: "none", md: "flex" },
+						flexDirection: "column",
+						mt: "124px",
+						ml: 3, px: 3,
+						backgroundColor: "#FFF",
+						borderRadius: "0.5rem",
+						width: "250px",
+						position: "sticky",
+						top: "80px"
+					}} />
 				</div>
 
 			</Box>

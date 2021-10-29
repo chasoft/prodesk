@@ -37,7 +37,7 @@ import { useDispatch } from "react-redux"
 import { LoginLink } from "./../common"
 import { regRule } from "./../../helpers/regex"
 import { setRedirect } from "../../redux/slices/redirect"
-import { useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
+import { useGetAppSettingsQuery, useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
 import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
 
 //ASSETS
@@ -81,6 +81,7 @@ const SignupForm = () => {
 	const dispatch = useDispatch()
 	const [signUpWithEmail] = useSignUpWithEmailMutation()
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	const { data: AppSettings, isLoading } = useGetAppSettingsQuery()
 
 	useFlexDirection({ payload: "row" })
 
@@ -95,6 +96,12 @@ const SignupForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
+
+			if (AppSettings.restrictedUsernames.indexOf(values.username) !== -1) {
+				enqueueSnackbar("Your provided username is restricted", { variant: "error" })
+				return
+			}
+
 			enqueueSnackbar("Registering your account", { variant: "info" })
 			const res = await signUpWithEmail({
 				email: values.email,
@@ -225,7 +232,7 @@ const SignupForm = () => {
 				<Button
 					type="submit" fullWidth variant="contained" color="primary"
 					sx={{ mt: 3, mx: 0, mb: 2 }}
-					disabled={!(formik.isValid && formik.dirty)}
+					disabled={!(formik.isValid && formik.dirty && isLoading)}
 				>
 					Create Account
 				</Button>

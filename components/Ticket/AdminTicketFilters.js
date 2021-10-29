@@ -22,33 +22,30 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import PropTypes from "prop-types"
 import React, { useMemo } from "react"
-
-import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, SvgIcon } from "@mui/material"
+import { Box, Button, ToggleButton, Tooltip, ToggleButtonGroup, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "../../redux/selectors"
-import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
+import { PRIORITY, TICKET_STATUS, TICKET_INBOXES } from "../../helpers/constants"
+import { setSelectedPriority, setSelectedStatus, setSelectedInbox, resetTicketsFilter } from "../../redux/slices/uiSettings"
 
 //ASSETS
 // import SearchIcon from "@mui/icons-material/Search"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import { resetTicketsFilter, setSelectedPriority, setSelectedStatus } from "../../redux/slices/uiSettings"
+import { CheckBoxNewIcon } from "../svgIcon"
+import WhatshotIcon from "@mui/icons-material/Whatshot"
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn"
+import AssignmentIcon from "@mui/icons-material/Assignment"
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-function CheckBoxNewIcon(props) {
-	return (
-		<SvgIcon {...props}>
-			<path d="M3,3v18h18V3H3z M19,8v11H5v-7V5h14V8z" />
-			<polygon points="10,14.2 6.4,10.6 5,12 10,17 19,8 17.6,6.6 " />
-		</SvgIcon>
-	)
-}
 
 const FilterCheckbox = (props) => (
 	<Checkbox
@@ -63,13 +60,68 @@ const FilterCheckbox = (props) => (
 	/>
 )
 
+export const TICKET_INBOXES_LIST = [
+	{
+		name: TICKET_INBOXES.IN_PROGRESS,
+		title: "Tickets in progress",
+		icon: <WhatshotIcon />
+	},
+	{
+		name: TICKET_INBOXES.MINE,
+		title: "My assigned tickets",
+		icon: <AssignmentTurnedInIcon />
+	},
+	{
+		name: TICKET_INBOXES.ASSIGNED,
+		title: "Assigned tickets",
+		icon: <AssignmentIcon />
+	},
+	{
+		name: TICKET_INBOXES.UNASSIGNED,
+		title: "Unassigned tickets",
+		icon: <AssignmentLateIcon />
+	}
+]
 
+const FilterTicketInbox = () => {
+	const { selectedInbox } = useSelector(getUiSettings)
+	const dispatch = useDispatch()
+	const handleChangeInbox = (e, selectedInbox) => {
+		if (selectedInbox) {
+			dispatch(setSelectedInbox(selectedInbox))
+		}
+	}
+	return (
+		<ToggleButtonGroup
+			exclusive
+			size="small"
+			color="primary"
+			value={selectedInbox}
+			onChange={handleChangeInbox}
+			sx={{ display: "flex" }}
+		>
+			{TICKET_INBOXES_LIST.map((item) => {
+				return (
+					<ToggleButton
+						key={item.name}
+						value={item.name}
+						sx={{ flexGrow: 1 }}
+					>
+						<Tooltip arrow title={item.title} placement="top">
+							{item.icon}
+						</Tooltip>
+					</ToggleButton>
+				)
+			})}
+		</ToggleButtonGroup>
+	)
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function AdminTicketFilters() {
+function AdminTicketFilters({ sx }) {
 	const dispatch = useDispatch()
 	const { /*ticketSearchTerm,*/ selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
@@ -82,34 +134,27 @@ function AdminTicketFilters() {
 	), [selectedStatus])
 
 	return (
-		<Box
-			sx={{
-				display: { xs: "none", md: "flex" },
-				flexDirection: "column",
-				mt: "124px",
-				ml: 3, px: 3,
-				backgroundColor: "#FFF",
-				borderRadius: "0.5rem",
-				width: "250px",
-				position: "sticky",
-				top: "80px"
-			}}
-		>
-
+		<Box sx={sx}>
 			<Box sx={{ display: "flex", alignItems: "center", my: 1 }} >
 				<Typography variant="h4" style={{ flexGrow: 1, fontWeight: 500 }}>
-					Filter
+					Ticket Filters
 				</Typography>
 				<Button
 					size="small"
 					variant="outlined"
-					onClick={() => { dispatch(resetTicketsFilter()) }}
+					onClick={(e) => {
+						e.stopPropagation()
+						dispatch(resetTicketsFilter())
+					}}
 				>
 					Reset
 				</Button>
 			</Box>
 
 			<Box>
+
+				<FilterTicketInbox />
+
 				<Typography sx={{ fontWeight: 500, my: 1 }}>Status</Typography>
 				<FormGroup>
 					<FormControlLabel
@@ -183,12 +228,10 @@ function AdminTicketFilters() {
 
 			<Box>
 				<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
-				<FormControl fullWidth
-					sx={{
-						border: "1px solid #ced4da",
-						borderRadius: "0.25rem"
-					}}
-				>
+				<FormControl fullWidth sx={{
+					border: "1px solid #ced4da",
+					borderRadius: "0.25rem"
+				}}>
 					<Select
 						sx={{
 							"&&": {
@@ -199,11 +242,9 @@ function AdminTicketFilters() {
 						value={selectedPriority}
 						onChange={(e) => { dispatch(setSelectedPriority(e.target.value)) }}
 					>
-						{
-							Object.entries(PRIORITY).map((item) => {
-								return <MenuItem key={item[1]} value={item[1]}>{item[1]}</MenuItem>
-							})
-						}
+						{Object.entries(PRIORITY).map((item) => {
+							return <MenuItem key={item[1]} value={item[1]}>{item[1]}</MenuItem>
+						})}
 					</Select>
 				</FormControl>
 			</Box>
@@ -245,6 +286,9 @@ function AdminTicketFilters() {
 
 		</Box >
 	)
+}
+AdminTicketFilters.propTypes = {
+	sx: PropTypes.object
 }
 
 export default AdminTicketFilters

@@ -55,10 +55,12 @@ function IconBreadcrumbs({ icon, title, items }) {
 							href={item.url}
 							passHref
 						>
-							<Box sx={{ display: "flex", alignItems: "center", cursor: "pointer", ":hover": { color: "primary.main" } }}>
-								{item.icon}
-								{item.title}
-							</Box>
+							<a href="just-a-placeholder">
+								<Box sx={{ display: "flex", alignItems: "center", cursor: "pointer", ":hover": { color: "primary.main" } }}>
+									{item.icon}
+									{item.title}
+								</Box>
+							</a>
 						</Link>
 					))
 				}

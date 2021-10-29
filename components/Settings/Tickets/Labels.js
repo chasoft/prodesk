@@ -24,13 +24,15 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, CircularProgress, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { uniqueId, random } from "lodash"
 import { nanoid } from "nanoid"
+import { useSelector } from "react-redux"
+import { uniqueId, random } from "lodash"
 
 //PROJECT IMPORT
+import { getUiSettings } from "./../../../redux/selectors"
 import { useAddLabelMutation, useDeleteLabelMutation, useGetLabelsQuery, useUpdateLabelMutation } from "./../../../redux/slices/firestoreApi"
 import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
@@ -45,9 +47,71 @@ import SaveIcon from "@mui/icons-material/Save"
  * INIT                                                          *
  *****************************************************************/
 
+export const LabelEditorDialog = ({ open, handleClose }) => {
+	const [addLabel] = useAddLabelMutation()
+	const { isSmallScreen } = useSelector(getUiSettings)
+	const { data: labels, isLoading } = useGetLabelsQuery()
+	return (
+		<Dialog
+			open={open}
+			onClose={handleClose}
+			fullWidth={isSmallScreen}
+		>
+			<DialogTitle>Add New Label</DialogTitle>
+			<DialogContent>
+				<DialogContentText>
+					Label is advanced feature to manage your tickets in case you have so many tickets and types of tickets which Department, Category/Subcategory still not enough.
+				</DialogContentText>
+
+				<Box sx={{
+					display: "flex",
+					justifyContent: "flex-end",
+					my: 2
+				}}>
+					<Button
+						startIcon={<AddIcon />}
+						size="small"
+						variant="contained"
+						onClick={async () => {
+							const lid = nanoid()
+							const incNum = uniqueId()
+							addLabel({
+								lid,
+								name: "Label " + incNum,
+								color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]]
+							})
+						}}
+					>
+						Add new
+					</Button>
+				</Box>
+
+				{isLoading
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "100px"
+					}}>
+						<CircularProgress />
+					</Box>
+					: (labels.length === 0)
+						? <div>Label list is empty</div>
+						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
+				}
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={handleClose} sx={{ mb: 1, mr: 2, px: 4 }}>Close</Button>
+			</DialogActions>
+		</Dialog>
+	)
+}
+LabelEditorDialog.propTypes = {
+	open: PropTypes.bool,
+	handleClose: PropTypes.func
+}
 
 export const SubCatItem = ({ currentItem }) => {
-
 	const [updateLabel] = useUpdateLabelMutation()
 	const [deleteLabel] = useDeleteLabelMutation()
 
@@ -70,7 +134,7 @@ export const SubCatItem = ({ currentItem }) => {
 
 			<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
 
-				<Box sx={{ display: "flex", alignItems: "center" }}>
+				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
 
 					{!showColorTable &&
 						<>
@@ -149,11 +213,8 @@ SubCatItem.propTypes = { currentItem: PropTypes.object }
  *****************************************************************/
 
 const PageLabels = ({ backBtnClick }) => {
-	const { data: labels, isLoading } = useGetLabelsQuery()
-	// const [color, setColor] = useState("#FFFFFF")
-
 	const [addLabel] = useAddLabelMutation()
-
+	const { data: labels, isLoading } = useGetLabelsQuery()
 	return (
 		<>
 			<SettingsContentHeader
@@ -203,23 +264,6 @@ const PageLabels = ({ backBtnClick }) => {
 						? <div>Label list is empty</div>
 						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
 				}
-
-				{/* <Box sx={{
-					display: "flex",
-				}}>
-					<Box
-						sx={{
-							width: 8, height: 8, backgroundColor: color
-						}}
-					>
-						{color}
-					</Box>
-					<ColorTable
-						getSelectedColor={setColor}
-					/>
-
-				</Box> */}
-
 			</SettingsContentDetails>
 		</>
 	)

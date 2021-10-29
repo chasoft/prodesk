@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { PRIORITY, TICKET_STATUS } from "./../../helpers/constants"
+import { PRIORITY, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
 
 const defaultBackground = {
 	top: 0,
@@ -62,6 +62,7 @@ export const initialState = {
 	},
 	selectedPriority: PRIORITY.ALL,
 	ticketSearchTerm: "",
+	selectedInbox: TICKET_INBOXES.IN_PROGRESS,
 	//used for admins in filtering tickets
 	ticketAssignee: "",
 	ticketAssigner: "",
@@ -81,9 +82,10 @@ export const initialState = {
 	sideBarLeft: 0,
 	showTocSideBarDetails: false,
 
-	//keep current ticketId
-	ticketId: null,
-	ticketStatus: null
+	/* Ticket management for Admin */
+	//keep selected tid
+	selectedTickets: [],
+
 }
 
 const uiSettingsSlice = createSlice({
@@ -123,6 +125,9 @@ const uiSettingsSlice = createSlice({
 				...payload
 			}
 		},
+		setSelectedInbox: (state, { payload }) => {
+			state.selectedInbox = payload
+		},
 		resetTicketsFilter: (state) => {
 			state.selectedStatus = {
 				[TICKET_STATUS.OPEN]: true,
@@ -132,6 +137,8 @@ const uiSettingsSlice = createSlice({
 			}
 			state.selectedPriority = PRIORITY.ALL
 			state.ticketSearchTerm = ""
+			state.selectedInbox = TICKET_INBOXES.IN_PROGRESS
+			state.selectedTickets = []
 		},
 		/* */
 		setActiveSettingTab: (state, { payload }) => {
@@ -151,12 +158,9 @@ const uiSettingsSlice = createSlice({
 		setShowTocSideBarDetails: (state, { payload }) => {
 			state.showTocSideBarDetails = payload
 		},
-		//
-		setTicketId: (state, { payload }) => {
-			state.ticketId = payload
-		},
-		setTicketStatus: (state, { payload }) => {
-			state.ticketStatus = payload
+		/* */
+		setSelectedTickets: (state, { payload }) => {
+			state.selectedTickets = payload
 		},
 	}
 })
@@ -168,10 +172,10 @@ export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrolled,
-	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter,
+	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter, setSelectedInbox,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
 	setSideBarLeft, setShowTocSideBarDetails,
-	setTicketId, setTicketStatus
+	setSelectedTickets
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

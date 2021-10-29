@@ -22,73 +22,229 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useRef } from "react"
 import Link from "next/link"
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material"
+import PropTypes from "prop-types"
+import React, { useState } from "react"
+import { Box, Button, CircularProgress, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { usePrevious } from "react-use"
+import { size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
-import { isEqual, sortBy, reverse, groupBy, filter } from "lodash"
 
 //PROJECT IMPORT
 import AskNow from "../Docs/AskNow"
-import { PRIORITY } from "../../helpers/constants"
-import TicketListItem from "./TicketListItem"
-import { getAuth, getUiSettings } from "../../redux/selectors"
+import AdminTicketListItem from "./AdminTicketListItem"
+import useMenuContainer from "../common/useMenuContainer"
+import { LabelEditorDialog } from "../Settings/Tickets/Labels"
+import { getUiSettings, getAuth } from "../../redux/selectors"
+import useGroupedTickets from "../../helpers/useGroupedTickets"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
-import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
+import { useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
+import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
+import { REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
 
 //ASSETS
+import AddIcon from "@mui/icons-material/Add"
 import HomeIcon from "@mui/icons-material/Home"
+import FlagIcon from "@mui/icons-material/Flag"
+import LabelIcon from "@mui/icons-material/Label"
+import DeleteIcon from "@mui/icons-material/Delete"
+import FilterListIcon from "@mui/icons-material/FilterList"
+import AssignmentIcon from "@mui/icons-material/Assignment"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const useGetTickets = () => {
-	const { currentUser } = useSelector(getAuth)
-	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
-	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
+const AdminFilterDrawer = ({ isOpen, handleClose }) => {
+	return (
+		<Drawer
+			anchor="right"
+			open={isOpen}
+			onClose={handleClose}
+		>
+			<Box
+				sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column", alignItems: "space-between" }}
+				onClick={handleClose}
+				onKeyDown={handleClose}
+			>
+				<AdminTicketFilters sx={{ p: 2 }} />
+			</Box>
+		</Drawer>
+	)
+}
+AdminFilterDrawer.propTypes = {
+	isOpen: PropTypes.bool,
+	handleClose: PropTypes.func
+}
 
-	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])
+const AssignButton = () => {
+	const { selectedInbox } = useSelector(getUiSettings)
+	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+	return (
+		<>
+			<Tooltip arrow title="Assign" placement="top">
+				<IconButton
+					ref={anchorRef}
+					onClick={handleToggle}
+				>
+					<AssignmentIcon />
+				</IconButton>
+			</Tooltip>
+			<MenuContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={handleListKeyDown}
+				placement="bottom-end"
+				transformOrigin="right top"
+			>
+				{(selectedInbox !== TICKET_INBOXES.IN_PROGRESS && selectedInbox !== TICKET_INBOXES.MINE) &&
+					[
+						<MenuItem key="assign-to-myself">Assign to myself</MenuItem>,
+						<Divider key="divider" />
+					]
+				}
 
-	const prevTickets = usePrevious(tickets)
-	const prevSearchTerm = usePrevious(ticketSearchTerm)
-	const prevPriority = usePrevious(selectedPriority)
-	const prevStatus = usePrevious(_Status)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const filteredTickets = useRef()
+				<MenuItem>...</MenuItem>
+				<MenuItem>...</MenuItem>
+			</MenuContainer>
+		</>
+	)
+}
 
-	if (isLoading) { return ({ data: [], isLoading: true }) }
+const StatusButton = () => {
+	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+	return (
+		<>
+			<Tooltip arrow title="Change status" placement="top">
+				<IconButton
+					ref={anchorRef}
+					onClick={handleToggle}
+				>
+					<FlagIcon />
+				</IconButton>
+			</Tooltip>
+			<MenuContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={handleListKeyDown}
+				placement="bottom-end"
+				transformOrigin="right top"
+			>
+				{[STATUS_FILTER.OPEN, STATUS_FILTER.PENDING, STATUS_FILTER.REPLIED, STATUS_FILTER.CLOSED].map((item) => (
+					<MenuItem
+						key={item}
+						onClick={() => {
+
+						}}
+					>
+						{item}
+					</MenuItem>
+				))}
+			</MenuContainer>
+		</>
+	)
+}
+
+const LabelButton = () => {
+	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
+	const { data: labels, isLoadingLabels } = useGetLabelsQuery()
+	const { data: tickets, isLoadingTickets } = useGetTicketsForAdminQuery()
+	const [MenuContainer, open, anchorRef, { handleToggle, handleClose }] = useMenuContainer()
+	const { selectedTickets } = useSelector(getUiSettings)
+	const [updateTicket] = useUpdateTicketMutation()
 
 
-	console.log("tickets", tickets)
+	const handleApplyLabel = useCallback(async (labelId) => {
+		const selectedIndex = selectedTickets.indexOf(ticketId)
+		let newSelected = []
 
-	if (!isEqual(prevTickets, tickets) ||
-		!isEqual(prevSearchTerm, ticketSearchTerm) ||
-		!isEqual(prevPriority, selectedPriority) ||
-		!isEqual(prevStatus, selectedStatus)) {
-
-		//filter by priority
-		let filtered = tickets
-		if (selectedPriority !== PRIORITY.ALL) {
-			filtered = filter(tickets, { priority: selectedPriority })
+		if (selectedIndex === -1) {
+			newSelected = newSelected.concat(selectedTickets, ticketId)
+		} else if (selectedIndex === 0) {
+			newSelected = newSelected.concat(selectedTickets.slice(1))
+		} else if (selectedIndex === selectedTickets.length - 1) {
+			newSelected = newSelected.concat(selectedTickets.slice(0, -1))
+		} else if (selectedIndex > 0) {
+			newSelected = newSelected.concat(
+				selectedTickets.slice(0, selectedIndex),
+				selectedTickets.slice(selectedIndex + 1),
+			)
 		}
 
-		//filter by status
-		filtered = filter(filtered, (i) => _Status.includes(i.status))
-		//sort the list - descensing by `createdAt`
-		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
-		//group by status
-		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
 
-		filteredTickets.current = Object.entries(groupByStatus)
-	}
 
-	return ({ data: filteredTickets.current, isLoading: false })
+		await updateTicket({
+			username: "",
+			tid: ""
+		})
+	}, [dispatch, selectedTickets])
+
+
+	return (
+		<>
+			<Tooltip arrow title="Add label" placement="top">
+				<IconButton
+					ref={anchorRef}
+					onClick={handleToggle}
+				>
+					<LabelIcon />
+				</IconButton>
+			</Tooltip>
+
+			<MenuContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={() => { }}
+				placement="bottom-end"
+				transformOrigin="right top"
+			>
+				{(isLoadingLabels && isLoadingTickets) && <MenuItem>Loading... <CircularProgress size="14" /></MenuItem>}
+
+				{size(labels) &&
+					labels.map((label) => (
+						<MenuItem
+							key={label.lid}
+							onClick={handleApplyLabel(label.lid)}
+						>
+							<LabelIcon sx={{ color: label.color }} />&nbsp;<span style={{ color: label.color }}>{label.name}</span>
+						</MenuItem>
+					))}
+
+				{size(labels) ?
+					[
+						<Divider key="divider" />,
+						<MenuItem
+							key="open-add-new-label-dialog"
+							onClick={() => { setOpenNewLableDialog(true) }}
+						>
+							Add new label...
+						</MenuItem>
+					]
+					: <MenuItem>No pre-defined label</MenuItem>}
+
+			</MenuContainer>
+
+			<LabelEditorDialog
+				open={openNewLableDialog}
+				handleClose={() => setOpenNewLableDialog(false)}
+			/>
+		</>
+	)
+}
+
+const DeleteButton = () => {
+	return (
+		<Tooltip arrow title="Delete tickets" placement="top">
+			<IconButton>
+				<DeleteIcon />
+			</IconButton>
+		</Tooltip>
+	)
 }
 
 /*****************************************************************
@@ -97,8 +253,13 @@ const useGetTickets = () => {
 
 function AdminTicketList() {
 	const dispatch = useDispatch()
-	const { data: tickets, isLoading } = useGetTickets()
+	const [showFilter, setShowFilter] = useState(false)
+	const { currentUser } = useSelector(getAuth)
+	const { selectedTickets, selectedInbox } = useSelector(getUiSettings)
+	const { data: tickets, isLoading } = useGroupedTickets()
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
+
+	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === selectedInbox)
 
 	if (isLoading) {
 		return (
@@ -106,7 +267,7 @@ function AdminTicketList() {
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
-				height: "100%"
+				height: "70%"
 			}}>
 				<CircularProgress />
 			</Box>
@@ -130,31 +291,79 @@ function AdminTicketList() {
 			}}>
 				<IconBreadcrumbs
 					icon={null}
-					title="All tickets"
+					title="Tickets managment"
 					items={[
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: "/client"
+							url: REDIRECT_URL.ADMIN
 						}
 					]}
 				/>
+
 				<Box sx={{
 					display: "flex",
-					alignItems: "space-between",
-					justifyContent: "center",
+					justifyContent: "space-between",
+					alignItems: "center",
 					width: "100%",
 					mt: 4
 				}}>
-					<Typography variant="h1" sx={{ flexGrow: 1 }}>
-						All tickets
-					</Typography>
-					<Link href="/client/tickets/new-ticket" passHref>
-						<Button variant="contained" sx={{ mb: 1 }}>
-							New ticket
-						</Button>
-					</Link>
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						flexGrow: 1
+					}}>
+						{currentInbox.icon}
+						<Typography variant="h1" sx={{ flexGrow: 1, mb: 0 }}>
+							{currentInbox.name}
+						</Typography>
+					</Box>
+
+					{size(selectedTickets)
+						? <Box sx={{
+							display: "flex",
+							flexDirection: { xs: "column", sm: "row" },
+							alignItems: "center",
+							maxHeight: "40px"
+						}}>
+							<Typography sx={{ mr: { xs: 0, sm: 1 } }}><b>{size(selectedTickets)}</b> items selected</Typography>
+							<div>
+								<AssignButton />
+								<StatusButton />
+								<LabelButton />
+								{(currentUser.username === "superadmin" || currentUser.permission.deleteTicket) &&
+									<DeleteButton />}
+							</div>
+						</Box>
+						: <Link href={REDIRECT_URL.ADMIN_NEW_TICKETS} passHref>
+							<span>
+								<Button variant="outlined" sx={{ display: { xs: "none", sm: "block" } }}>
+									New ticket
+								</Button>
+								<Tooltip arrow title="Add new ticket" placement="top">
+									<IconButton sx={{ display: { xs: "block", sm: "none" } }}>
+										<AddIcon fontSize="medium" />
+									</IconButton>
+								</Tooltip>
+							</span>
+						</Link>}
+
+					<Tooltip arrow title="Filters" placement="top">
+						<IconButton
+							onClick={() => { setShowFilter(true) }}
+							sx={{ display: { xs: "flex", md: "none" }, mb: 1, ml: 1 }}
+						>
+							<FilterListIcon fontSize="medium" color="primary" />
+						</IconButton>
+					</Tooltip>
+
+					<AdminFilterDrawer
+						isOpen={showFilter}
+						handleClose={() => setShowFilter(false)}
+					/>
 				</Box>
+
+
 			</Box>
 
 			{(tickets.length === 0) &&
@@ -183,7 +392,7 @@ function AdminTicketList() {
 
 						<Paper elevation={2} >
 							{group[1].map((ticket, idx) => (
-								<TicketListItem
+								<AdminTicketListItem
 									key={ticket.tid}
 									ticket={ticket}
 									isFirst={idx === 0}

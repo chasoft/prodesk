@@ -44,7 +44,11 @@ export const REDIRECT_URL = {
 	TICKETS: "/client/tickets",
 	NEW_TICKETS: "/client/tickets/new-ticket",
 	//
-	CLIENT_EDIT_PROFILE: "/client/edit-profile"
+	CLIENT_EDIT_PROFILE: "/client/edit-profile",
+	//
+	ADMIN_TICKETS: "/admin/tickets",
+	ADMIN_NEW_TICKETS: "/admin/tickets/new-ticket",
+
 }
 
 export const DATE_FORMAT = {
@@ -52,7 +56,6 @@ export const DATE_FORMAT = {
 	LONG: "DD-MMM-YY hh:mm A",
 	FULL: "MMMM D, YYYY hh:mm A",
 }
-
 
 export const ADVANCED_TABLE_COL = {
 	CHECKBOX: "CheckBox",
@@ -106,9 +109,19 @@ export const TICKET_STATUS = {
 export const USERGROUP = {
 	SUPERADMIN: "superadmin",
 	ADMIN: "admin",
-	MEMBER: "member",
-	USER: "user"
+	STAFF: "staff",		//staff is your labor worker
+	MEMBER: "member",	//member is validated user
+	USER: "user"		//freely register account
 }
+
+
+export const TICKET_INBOXES = {
+	IN_PROGRESS: "In progress",
+	MINE: "Mine",
+	ASSIGNED: "Assigned",
+	UNASSIGNED: "Unassigned",
+}
+
 
 /****************************************************************
  * SETTING PAGES
@@ -189,7 +202,6 @@ export const ACTION = {
 	UPDATE: "Update",
 	CLEAR: "Clear",
 }
-
 
 export const SETTINGS_NAME = {
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"

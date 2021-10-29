@@ -26,7 +26,7 @@ import React, { useState, useRef, useEffect } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Chip, Popper, Button, IconButton, MenuList, ClickAwayListener, Grow, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
+import { Box, Chip, Popper, IconButton, MenuList, ClickAwayListener, Grow, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -128,7 +128,7 @@ const PopupMenu = ({ ticket }) => {
 			>
 				{({ TransitionProps }) => (
 					<Grow {...TransitionProps} style={{ transformOrigin: "right top" }}>
-						<Paper>
+						<Paper elevation={4}>
 							<ClickAwayListener onClickAway={handleClose}>
 								<MenuList
 									autoFocusItem={open}
@@ -136,7 +136,11 @@ const PopupMenu = ({ ticket }) => {
 									aria-labelledby="composition-button"
 									onKeyDown={handleListKeyDown}
 								>
-									<ReplyDialog>
+									<ReplyDialog
+										ticketId={ticket.tid}
+										ticketStatus={ticket.status}
+										ticketUsername={ticket.username}
+									>
 										<MenuItem onClick={handleClose}>
 											{<ReplyIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
 											<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>

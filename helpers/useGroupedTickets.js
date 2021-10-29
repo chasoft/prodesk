@@ -22,116 +22,60 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import PropTypes from "prop-types"
-
-// MATERIAL-UI
-import { Box, Button, CircularProgress, Fab, Tooltip } from "@mui/material"
+import { useRef } from "react"
 
 //THIRD-PARTY
-import { size } from "lodash"
+import { usePrevious } from "react-use"
+import { groupBy, isEqual, sortBy, filter, reverse } from "lodash"
 
 //PROJECT IMPORT
-import ReplyItem from "./Reply"
-import ReplyDialog from "./ReplyDialog"
-import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
-
-//ASSETS
-import ReplyIcon from "@mui/icons-material/Reply"
+import { useGetTicketsForAdminQuery } from "../redux/slices/firestoreApi"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "../redux/selectors"
+import { PRIORITY } from "./constants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
-	return (
-		<Box sx={{
-			display: { xs: "none", sm: "flex" },
-			justifyContent: "flex-end", mb: 4, ...sx
-		}}>
-			<ReplyDialog
-				ticketId={ticket.tid}
-				ticketStatus={ticket.status}
-				ticketUsername={ticket.username}
-			>
-				<Tooltip arrow title={tooltip} placement="left">
-					<Button disabled={disabled} variant={variant} startIcon={<ReplyIcon />} sx={{ px: 3 }}>
-						Reply
-					</Button>
-				</Tooltip>
-			</ReplyDialog>
-		</Box>
-	)
-}
-ReplyButton.propTypes = {
-	ticket: PropTypes.object,
-	tooltip: PropTypes.string,
-	variant: PropTypes.string,
-	disabled: PropTypes.bool,
-	sx: PropTypes.object
-}
+export default function useGroupedTickets() {
+	const { data: tickets, isLoading } = useGetTicketsForAdminQuery(undefined)
+	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])
 
-function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
-	const { data: ticketReplies, isLoadingReplies } = useGetTicketRepliesQuery({
-		username: ticketUsername,
-		tid: ticketId
-	})
+	const prevTickets = usePrevious(tickets)
+	const prevSearchTerm = usePrevious(ticketSearchTerm)
+	const prevPriority = usePrevious(selectedPriority)
+	const prevStatus = usePrevious(_Status)
+	//we use useRef here because, later we change the value
+	//and, this hook will not be re-render,
+	const filteredTickets = useRef()
 
-	if (isLoadingReplies) {
-		return (
-			<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-				<CircularProgress />
-			</Box>
-		)
+	if (isLoading) { return ({ data: [], isLoading: true }) }
+
+	if (!isEqual(prevTickets, tickets) ||
+		!isEqual(prevSearchTerm, ticketSearchTerm) ||
+		!isEqual(prevPriority, selectedPriority) ||
+		!isEqual(prevStatus, selectedStatus)) {
+
+		//filter by priority
+		let filtered = tickets
+		if (selectedPriority !== PRIORITY.ALL) {
+			filtered = filter(tickets, { priority: selectedPriority })
+		}
+
+		//filter by status
+		filtered = filter(filtered, (i) => _Status.includes(i.status))
+		//sort the list - descensing by `createdAt`
+		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
+		//group by status
+		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
+
+		filteredTickets.current = Object.entries(groupByStatus)
+
+		console.log({ filteredTickets: filteredTickets.current })
 	}
 
-	return (
-		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-
-			<Box sx={{
-				border: "1px solid",
-				borderRadius: "0.5rem",
-				borderColor: "divider",
-			}}>
-
-				{!size(ticketReplies) &&
-					<Box sx={{ p: 4 }}>There is no replies!</Box>}
-
-				{ticketReplies?.map((replyItem, idx) =>
-					<ReplyItem
-						key={replyItem.trid}
-						replyItem={replyItem}
-						isFirst={idx === 0}
-					/>
-				)}
-			</Box>
-
-			<ReplyDialog
-				ticketId={ticketId}
-				ticketStatus={ticketStatus}
-				ticketUsername={ticketUsername}
-			>
-				<Fab
-					color="primary" sx={{
-						display: { xs: "initial", sm: "none" },
-						position: "fixed",
-						bottom: { xs: 32, md: 64 },
-						right: { xs: 32, md: 128, lg: 152 }
-					}}>
-					<ReplyIcon />
-				</Fab>
-			</ReplyDialog>
-		</Box >
-	)
+	return ({ data: filteredTickets.current, isLoading: false })
 }
-TicketReplies.propTypes = {
-	ticketId: PropTypes.string,
-	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string
-}
-
-export default TicketReplies

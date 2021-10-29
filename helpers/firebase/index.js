@@ -25,7 +25,6 @@ import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 
 //THIRD-PARTY
-import dayjs from "dayjs"
 
 //FIREBASE CONFIGURATION
 const firebaseConfig = {
@@ -54,10 +53,11 @@ export const storage = getStorage(firebaseApp)
 export const STATE_CHANGED = "state_changed"
 
 //HELPER FUNCTIONS
+//Convert sang Milis, to use this data, use this => dayjs(millis).format(DATE_FORMAT.LONG)
 export const fix_datetime_list = (items) => items.map((item) => fix_datetime_single(item))
 export const fix_datetime_single = (item) => ({
 	...item,
-	createdAt: dayjs(item?.createdAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0,
-	updatedAt: dayjs(item?.updatedAt?.toMillis()).format("DD-MMM-YY HH:mm") || 0
+	createdAt: item?.createdAt?.toMillis() || 0,
+	updatedAt: item?.updatedAt?.toMillis() || 0
 })
 

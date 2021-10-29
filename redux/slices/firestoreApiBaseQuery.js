@@ -129,6 +129,11 @@ async function fireStoreBaseQuery(args) {
 					nextStep: REDIRECT_URL.DONE
 				}, { merge: true })
 
+				//popular default settings
+				batch.set(doc(db, COLLECTION.SETTINGS, "settings"), {
+					restrictedUsernames: ["admin", "admins", "superadmin", "superadmins", "staff", "staffs", "member", "members", "user", "users", "key", "password", "ticket", "department", "label", "labels", "category", "categories", "default", "profile", "profiles", "setting", "settings", "application"]
+				}, { merge: true })
+
 				await batch.commit()
 
 				return { data: { justInstalled: true } } //just dummy data
@@ -232,6 +237,7 @@ async function fireStoreBaseQuery(args) {
 					displayName: args.body.name,
 					photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
 					group: USERGROUP.USER, //default usergroup
+					permission: [],
 					nextStep: REDIRECT_URL.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), publicProfile)
@@ -276,7 +282,8 @@ async function fireStoreBaseQuery(args) {
 					username: args.body.username,
 					displayName: args.body.name,
 					photoURL: args.body.photoURL,
-					group: "user", //default usergroup
+					permission: [],
+					group: USERGROUP.USER, //default usergroup
 					nextStep: REDIRECT_URL.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
@@ -285,7 +292,7 @@ async function fireStoreBaseQuery(args) {
 					uid: args.body.uid,
 					username: args.body.username,
 					email: args.body.email,
-					group: "user", //default usergroup
+					group: USERGROUP.USER, //default usergroup
 				}
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
 
@@ -344,7 +351,9 @@ async function fireStoreBaseQuery(args) {
 					const profile = profileRef.data()
 					transaction.set(
 						doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC),
-						profile
+						{
+							[args.body.uid]: profile
+						}
 					)
 				})
 
@@ -1287,7 +1296,9 @@ async function fireStoreBaseQuery(args) {
 				//delete GROUP by set it's data to null
 				batch.set(
 					doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
-					{ [args.body.tid]: null },
+					{
+						[args.body.tid]: null
+					},
 					{ merge: true }
 				)
 				await batch.commit()

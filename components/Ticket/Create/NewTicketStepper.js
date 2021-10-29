@@ -38,19 +38,20 @@ import NewTicketStep1 from "./NewTicketStep1"
 import NewTicketStep2 from "./NewTicketStep2"
 import NewTicketStep3 from "./NewTicketStep3"
 import { LearnMoreAdvancedTextEditor } from "./../../common"
-import { STATUS_FILTER } from "./../../../helpers/constants"
 import { setRedirect } from "./../../../redux/slices/redirect"
-import { setCurrentStep } from "./../../../redux/slices/newTicket"
+import { setCurrentStep, setNewlyAddedTicketSlug } from "./../../../redux/slices/newTicket"
 import { getPlainTextFromMarkDown } from "./../../../helpers/utils"
-import { getAuth, getNewTicket, getTextEditor, getUiSettings } from "./../../../redux/selectors"
+import { REDIRECT_URL, STATUS_FILTER } from "./../../../helpers/constants"
+import { getAuth, getNewTicket, getTextEditor } from "./../../../redux/selectors"
 import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
-import { setTicketId } from "../../../redux/slices/uiSettings"
+import useAdmin from "../../../helpers/useAdmin"
 
 //ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
 const steps = ["Create your question", "Select details", "Describe & post"]
 
 export const useGetTicketDetails = () => {
@@ -78,8 +79,6 @@ export const useGetTicketDetails = () => {
 		isLoading: Boolean(isLoadingCategories) || Boolean(isLoadingDepartments)
 	}
 
-	console.log("useGetTicketDetails", res)
-
 	return res
 }
 
@@ -106,13 +105,12 @@ export const useGetNewTicketData = () => {
 
 const StepperControlButtons = () => {
 	const dispatch = useDispatch()
-	const { editorData } = useSelector(getTextEditor)
-	const { currentStep, subject } = useSelector(getNewTicket)
-
-	const [addTicket] = useAddTicketMutation()
 	const { currentUser } = useSelector(getAuth)
+	const { editorData } = useSelector(getTextEditor)
+	const { currentStep, subject, onBehalf } = useSelector(getNewTicket)
+	const [addTicket] = useAddTicketMutation()
+	const { isAdminURL } = useAdmin()
 	const raw = useGetTicketDetails()
-
 
 	const handleGoBack = () => { dispatch(setCurrentStep(currentStep - 1)) }
 	const handleGoNext = () => {
@@ -124,20 +122,24 @@ const StepperControlButtons = () => {
 			slug = slugify(subject) + "/" + tid
 			addTicket({
 				tid,
-				username: currentUser.username,
+				username: onBehalf ?? currentUser.username,	//owner of the ticket
+				createdBy: currentUser.username, // who create the ticket, sometimes, admin will create ticket on behalf of customer
 				subject: subject,
 				department: raw.selectedDepartment,
 				priority: raw.selectedPriority,
 				category: raw.selectedCategory,
 				subCatgory: raw.selectedSubCategory,
 				status: STATUS_FILTER.OPEN,
+				assignee: "",
+				assignor: "",
+				note: "",
+				label: [],
 				slug,
 				content: editorData
 			})
-
 		}
 		reduxBatch(() => {
-			dispatch(setTicketId(slug))
+			dispatch(setNewlyAddedTicketSlug(slug))
 			dispatch(setCurrentStep(currentStep + 1))
 		})
 	}
@@ -162,7 +164,7 @@ const StepperControlButtons = () => {
 
 				<Button
 					disabled={
-						(currentStep === 0 && subject.length < 10)
+						(currentStep === 0 && subject.length < 10 || isAdminURL ? (onBehalf ? (false || subject.length < 10) : true) : false)
 						|| (currentStep === 2 && editorData.length < 20)
 					}
 					variant="contained" color="primary"
@@ -193,10 +195,9 @@ const StepperControlButtons = () => {
 
 export default function TicketStepper() {
 	const dispatch = useDispatch()
-
 	const newTicketData = useGetNewTicketData()
-	const { currentStep } = useSelector(getNewTicket)
-	const { ticketId } = useSelector(getUiSettings)
+	const { currentStep, newlyAddedTicketSlug } = useSelector(getNewTicket)
+	const { isAdminURL } = useAdmin()
 
 	return (
 		<div style={{ width: "100%" }}>
@@ -238,7 +239,11 @@ export default function TicketStepper() {
 					</Typography>
 
 					<Button
-						onClick={() => dispatch(setRedirect("/client/tickets/" + ticketId))}
+						onClick={() => dispatch(
+							setRedirect(
+								(isAdminURL ? REDIRECT_URL.ADMIN_TICKETS : REDIRECT_URL.TICKETS) + "/" + newlyAddedTicketSlug
+							)
+						)}
 						variant="outlined"
 						sx={{
 							mt: 1, mr: 1,
@@ -250,7 +255,9 @@ export default function TicketStepper() {
 					</Button>
 
 					<Button
-						onClick={() => dispatch(setRedirect("/client"))}
+						onClick={() => dispatch(setRedirect(
+							isAdminURL ? REDIRECT_URL.ADMIN_TICKETS : REDIRECT_URL.TICKETS
+						))}
 						variant="contained" color="primary"
 						sx={{
 							mt: 1, mr: 1,
@@ -258,7 +265,7 @@ export default function TicketStepper() {
 							width: { xs: "100%", sm: "initial" }
 						}}
 					>
-						Go to Dashboard
+						{isAdminURL ? "Go to Tickets management" : "Go to All tickets"}
 					</Button>
 
 				</Paper>

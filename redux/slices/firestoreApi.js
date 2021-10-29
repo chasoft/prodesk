@@ -24,7 +24,7 @@
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { sortBy } from "lodash"
+import { sortBy, reverse } from "lodash"
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
@@ -606,10 +606,7 @@ export const firestoreApi = createApi({
 			query: () => ({ action: ACTION.GET_TICKETS_FOR_ADMIN }),
 			providesTags: [{ type: TYPE.TICKETS, id: "ADMIN" }],
 			keepUnusedDataFor: 5 * 60,
-			transformResponse: (response) => {
-				const converted = Object.entries(response).map(i => i[1])
-				return fix_datetime_list(converted)
-			}
+			transformResponse: (response) => Object.entries(response).map(i => i[1])
 		}),
 
 		getTickets: builder.query({
@@ -638,7 +635,7 @@ export const firestoreApi = createApi({
 			},
 			transformResponse: (response) => {
 				const res = fix_datetime_list(response)
-				return sortBy(res, ["createdAt"])
+				return reverse(sortBy(res, ["createdAt"]))
 			}
 		}),
 
@@ -955,11 +952,12 @@ export const firestoreApi = createApi({
 })
 
 export const {
-	//
+	/* APPLICATION INSTALLATION */
 	useGetInstallStatusQuery,
 	useCreateAdminAccountMutation,
 	useFinalizeInstallationMutation,
-	//
+
+	/* SIGN-IN & SIGN-UP */
 	useSignInWithEmailMutation,
 	useSignInWithGoogleMutation,
 	//
@@ -967,13 +965,19 @@ export const {
 	useSignUpViaGoogleMutation,
 	useSignUpCreateProfileMutation,
 	useSignUpSurveyMutation,
-	//
+
+	/* APPLICATION SETTINGS */
+	useGetAppSettingsQuery,
+	useUpdateAppSettingsMutation,
+
+	/* PROFILES */
 	useGetProfilesQuery,
 	useGetProfileQuery,
 	useGetProfileByUsernameQuery,
 	useGetProfileByEmailQuery,
 	useUpdateProfileMutation,
-	//
+
+	/* DOCUMENTATION */
 	useGetDocQuery,
 	useGetDocsQuery,
 	useGetDocContentQuery,
@@ -982,10 +986,8 @@ export const {
 	useUpdateDocMutation,
 	useUpdateDocContentMutation,
 	useDeleteDocMutation,
-	//
-	useGetAppSettingsQuery,
-	useUpdateAppSettingsMutation,
-	//
+
+	/* TICKET SETTINGS */
 	useGetDepartmentsQuery,
 	useAddDepartmentMutation,
 	useUpdateDepartmentMutation,
@@ -1005,7 +1007,9 @@ export const {
 	useAddCategoryMutation,
 	useUpdateCategoryMutation,
 	useDeleteCategoryMutation,
-	//
+
+	/* TICKETS */
+	useGetTicketsForAdminQuery,
 	useGetTicketsQuery,
 	useGetTicketRepliesQuery,
 	useAddTicketMutation,
@@ -1014,7 +1018,8 @@ export const {
 	useUpdateTicketReplyMutation,
 	useDeleteTicketMutation,
 	useDeleteTicketReplyMutation,
-	//
+
+	/* PAGES */
 	useGetPagesQuery,
 	useGetPageQuery,
 	useGetPageContentQuery,
@@ -1022,7 +1027,8 @@ export const {
 	useUpdatePageMutation,
 	useUpdatePageContentMutation,
 	useDeletePageMutation,
-	//
+
+	/* BLOG */
 	useGetBlogPostsQuery,
 	useGetBlogPostQuery,
 	useGetBlogPostContentQuery,

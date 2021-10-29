@@ -32,6 +32,8 @@ export const initialState = {
 	selectedSubCategory: null,
 	//Step 3
 	//-- text is saved at textEditorSlice
+	newlyAddedTicketSlug: null,
+	onBehalf: null
 }
 
 const newTicketSlice = createSlice({
@@ -61,12 +63,20 @@ const newTicketSlice = createSlice({
 		//
 		resetNewTicket: (state) => {
 			state.currentStep = 0
-			//--
+			//---
 			state.subject = ""
 			state.selectedDepartment = null
 			state.selectedPriority = PRIORITY.NORMAL
 			state.selectedCategory = null
 			state.selectedSubCategory = null
+			state.onBehalf = null
+			state.newlyAddedTicketSlug = null
+		},
+		setOnBehalf: (state, { payload }) => {
+			state.onBehalf = payload
+		},
+		setNewlyAddedTicketSlug: (state, { payload }) => {
+			state.newlyAddedTicketSlug = payload
 		},
 	}
 })
@@ -81,7 +91,9 @@ export const {
 	setSelectedSubCategory,
 	setTicketContent,
 	//--
-	resetNewTicket
+	resetNewTicket,
+	setOnBehalf,
+	setNewlyAddedTicketSlug
 } = newTicketSlice.actions
 
 export default newTicketSlice.reducer

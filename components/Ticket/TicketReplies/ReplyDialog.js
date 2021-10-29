@@ -32,14 +32,15 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "
 
 //THIRD-PARTY
 import { size } from "lodash"
+import { nanoid } from "nanoid"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
+import { STATUS_FILTER } from "./../../../helpers/constants"
 import { LearnMoreAdvancedTextEditor } from "./../../common"
-import { nanoid } from "nanoid"
 import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
-import { useSelector } from "react-redux"
-import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
+import { getAuth, getTextEditor } from "../../../redux/selectors"
 
 //ASSETS
 
@@ -51,13 +52,12 @@ import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ReplyDialog = ({ children }) => {
+const ReplyDialog = ({ ticketId, ticketStatus, ticketUsername, children }) => {
 	const [open, setOpen] = useState(false)
 	const theme = useTheme()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { currentUser } = useSelector(getAuth)
-	const { ticketId, ticketStatus } = useSelector(getUiSettings)
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
 
@@ -76,11 +76,19 @@ const ReplyDialog = ({ children }) => {
 
 	const handleSubmitReply = async () => {
 		setOpen(false)
+
+		//prevent non-owner to reply a closed ticket
+		if (currentUser.username !== ticketUsername && ticketStatus === STATUS_FILTER.CLOSED) return
+
 		const trid = nanoid()
 		const newReplyItem = {
 			ticketItem: {
-				username: currentUser.username,
-				tid: ticketId
+				username: ticketUsername,
+				tid: ticketId,
+				...((currentUser.username === ticketUsername)
+					? ((ticketStatus !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
+					: { status: STATUS_FILTER.REPLIED }
+				)
 			},
 			replyItem: {
 				trid,
@@ -175,6 +183,8 @@ const ReplyDialog = ({ children }) => {
 }
 ReplyDialog.propTypes = {
 	ticketId: PropTypes.string,
+	ticketStatus: PropTypes.string,
+	ticketUsername: PropTypes.string,
 	children: PropTypes.node
 }
 

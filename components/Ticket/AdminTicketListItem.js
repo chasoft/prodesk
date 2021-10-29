@@ -22,12 +22,13 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useCallback, useMemo } from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
+import { alpha } from "@mui/material/styles"
+import { Avatar, Checkbox, Box, Chip, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -38,13 +39,15 @@ import { useDispatch, useSelector } from "react-redux"
 import { StatusChip } from "./TicketContent"
 import { getUiSettings } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
+import { setSelectedTickets } from "../../redux/slices/uiSettings"
 import { DATE_FORMAT, PRIORITY, REDIRECT_URL } from "../../helpers/constants"
 
 //ASSETS
-import PersonIcon from '@mui/icons-material/Person'
 import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
+import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
+import { CheckBoxNewIcon } from "../svgIcon"
 
 /*****************************************************************
  * INIT                                                          *
@@ -101,7 +104,7 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 	if (!isSmallScreen) return null
 
 	return (
-		<Box sx={{ display: "flex", flexDirection: { xs: "column" } }}>
+		<Box sx={{ display: "flex", flexDirection: "column" }}>
 			<Box sx={{ display: "flex" }}>
 				<Typography>
 					Created&nbsp;
@@ -141,13 +144,16 @@ const TicketDateTime = ({ ticket }) => {
 	if (isSmallScreen) return null
 
 	return (
-		<Box sx={{
-			display: "flex",
-			flexDirection: "column",
-			alignItems: "flex-end",
-			justifyContent: "center",
-			mr: 2
-		}}>
+		<Box
+			id="date-time"
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "flex-end",
+				justifyContent: "center",
+				mr: 2
+			}}
+		>
 			<Box sx={{ display: "flex" }}>
 				<Tooltip arrow title={dayjs(ticket.createdAt).format(DATE_FORMAT.LONG)} placement="left">
 					<Typography>
@@ -170,10 +176,6 @@ const TicketDateTime = ({ ticket }) => {
 						</Typography>
 					</Tooltip>
 				</Box>}
-
-			{(ticket.createdBy !== ticket.username) &&
-				<Typography>by {ticket.createdBy}</Typography>}
-
 		</Box>
 	)
 }
@@ -184,9 +186,35 @@ TicketDateTime.propTypes = { ticket: PropTypes.object }
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketListItem({ ticket, isFirst = false, isLast = false }) {
+function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const { selectedTickets } = useSelector(getUiSettings)
+
+	const handleSelectTicket = useCallback((event, ticketId) => {
+		const selectedIndex = selectedTickets.indexOf(ticketId)
+		let newSelected = []
+
+		if (selectedIndex === -1) {
+			newSelected = newSelected.concat(selectedTickets, ticketId)
+		} else if (selectedIndex === 0) {
+			newSelected = newSelected.concat(selectedTickets.slice(1))
+		} else if (selectedIndex === selectedTickets.length - 1) {
+			newSelected = newSelected.concat(selectedTickets.slice(0, -1))
+		} else if (selectedIndex > 0) {
+			newSelected = newSelected.concat(
+				selectedTickets.slice(0, selectedIndex),
+				selectedTickets.slice(selectedIndex + 1),
+			)
+		}
+
+		dispatch(setSelectedTickets(newSelected))
+	}, [dispatch, selectedTickets])
+
+	const isSelected = useMemo(() => {
+		console.log("executed isSelected " + ticket.tid)
+		return selectedTickets.indexOf(ticket.tid) !== -1
+	}, [selectedTickets, ticket.tid])
+
 	return (
 		<Box
 			sx={{
@@ -197,28 +225,39 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 		>
 			<Box
 				onClick={() => {
-					dispatch(setRedirect(`${REDIRECT_URL.TICKETS}/${ticket.slug}`))
+					dispatch(setRedirect(`${REDIRECT_URL.ADMIN_TICKETS}/${ticket.slug}`))
 				}}
 				sx={{
 					display: "flex",
+					"&>#ticket-selector": { display: { xs: "block", sm: "none" } },
 					"&:hover": {
-						backgroundColor: "action.hover",
-						cursor: "pointer"
+						cursor: "pointer",
+						backgroundColor: isSelected
+							? (theme) =>
+								alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+							: "action.hover",
+						transition: "background-color 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+						"&>#ticket-selector": { display: "block" },
+						"&>#date-time": { marginRight: "-1.875rem" }
 					},
 					borderTopLeftRadius: isFirst ? "0.5rem" : 0,
 					borderTopRightRadius: isFirst ? "0.5rem" : 0,
 					borderBottomLeftRadius: isLast ? "0.5rem" : 0,
 					borderBottomRightRadius: isLast ? "0.5rem" : 0,
+					...(isSelected &&
+					{
+						backgroundColor: (theme) =>
+							alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+					})
 				}}
 			>
-
 				<Box sx={{
 					display: "flex",
 					flexDirection: "column",
 					flexGrow: 1,
-					ml: 1
+					ml: 1,
+					mr: -4
 				}}>
-
 					<Typography
 						variant="subtitle2"
 						sx={{
@@ -256,7 +295,7 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 						<Box>
 							<StatusChip status={ticket.status} />
 
-							<Tooltip arrow title="Department" placement="top">
+							<Tooltip arrow title="Department" placement="bottom">
 								<Chip
 									size="small"
 									label={ticket.department}
@@ -265,7 +304,7 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 								/>
 							</Tooltip>
 
-							<Tooltip arrow title="Category" placement="top">
+							<Tooltip arrow title="Category" placement="bottom">
 								{ticket.category &&
 									<Chip
 										size="small"
@@ -273,18 +312,6 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 										label={ticket.category + (ticket?.subCategory ? ("/" + ticket.subCategory) : "")}
 									/>}
 							</Tooltip>
-
-							{(ticket.createdBy !== ticket.username && isSmallScreen) &&
-								<Tooltip arrow title={`This ticket is created by ${ticket.createdBy}`} placement="top">
-									<Chip
-										size="small"
-										avatar={<PersonIcon color="success" />}
-										label={ticket.createdBy}
-										variant="outlined"
-										color="success"
-										sx={{ mr: 1, mb: 1 }}
-									/>
-								</Tooltip>}
 
 							<Chip
 								size="small"
@@ -305,15 +332,29 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 
 				<TicketDateTime ticket={ticket} />
 
+
+				<Box
+					id="ticket-selector"
+					onClick={(e) => e.stopPropagation()}
+					sx={{ float: "right" }}
+				>
+					<Checkbox
+						checked={isSelected}
+						onChange={(e) => handleSelectTicket(e, ticket.tid)}
+						icon={<CheckBoxOutlineBlankSharpIcon />}
+						checkedIcon={<CheckBoxNewIcon />}
+					/>
+				</Box>
+
 			</Box>
 
 		</Box >
 	)
 }
-TicketListItem.propTypes = {
+AdminTicketListItem.propTypes = {
 	ticket: PropTypes.object,
 	isFirst: PropTypes.bool,
 	isLast: PropTypes.bool,
 }
 
-export default TicketListItem
+export default React.memo(AdminTicketListItem)
