@@ -26,8 +26,8 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Typography } from "@mui/material"
 import { useGetProfilesQuery } from "../../../redux/slices/firestoreApi"
+import { Avatar, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { size } from "lodash"
@@ -39,18 +39,22 @@ import TextEditor from "./../../common/TextEditor"
 import { DATE_FORMAT } from "../../../helpers/constants"
 
 //ASSETS
+import DeleteIcon from "@mui/icons-material/Delete"
+import useConfirmDialogYesNo from "../../common/useConfirmDialogYesNo"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ReplyItem({ replyItem, isFirst = false }) {
+function ReplyItem({ isAdmin, replyItem, isFirst = false }) {
 
 	const { profile } = useGetProfilesQuery(undefined, {
 		selectFromResult: ({ data }) => ({
 			profile: data?.find((profile) => profile.username === replyItem.username) ?? undefined,
 		})
 	})
+
+	const { ConfirmDialogYesNo, open, setOpen, agreed, setAgreed } = useConfirmDialogYesNo()
 
 	dayjs.extend(relativeTime)
 
@@ -62,7 +66,13 @@ function ReplyItem({ replyItem, isFirst = false }) {
 			...(!isFirst && { borderTop: "1px solid", borderColor: "divider" }),
 			":hover": {
 				backgroundColor: "action.hover",
-				transition: "background-color 500ms cubic-bezier(0.4, 0, 0.2, 1)"
+				transition: "background-color 500ms cubic-bezier(0.4, 0, 0.2, 1)",
+				"& > #delete-reply-button": {
+					visibility: "visible"
+				}
+			},
+			"& > #delete-reply-button": {
+				visibility: "hidden"
 			}
 		}}>
 
@@ -84,7 +94,7 @@ function ReplyItem({ replyItem, isFirst = false }) {
 				}}>
 					<Avatar
 						alt="Remy Sharp"
-						src={profile ? profile.photoURL : "/default-avatar/1.png"}
+						src={profile ? profile.photoURL : "/avatar/1.png"}
 						sx={{
 							marginLeft: "auto",
 							marginRight: "auto"
@@ -115,7 +125,7 @@ function ReplyItem({ replyItem, isFirst = false }) {
 				</Box>
 			</Box>
 
-			<Box>
+			<Box sx={{ flexGrow: 1 }}>
 
 				<Box sx={{
 					display: { xs: "none", sm: "flex" },
@@ -150,12 +160,48 @@ function ReplyItem({ replyItem, isFirst = false }) {
 						<span>last edited {dayjs(replyItem.updatedAt).fromNow()} </span>
 					</Typography>
 					: null}
-
 			</Box>
+
+			{isAdmin &&
+				<Box
+					id="delete-reply-button"
+					sx={{
+						float: "right",
+						mt: { xs: -2, md: -3 },
+						mr: -2
+					}}
+				>
+					<Tooltip title="Delete reply..." placement="top" >
+						<IconButton onClick={() => { setOpen(true) }}>
+							<DeleteIcon color="warning" />
+						</IconButton>
+					</Tooltip>
+
+					<ConfirmDialogYesNo
+						title="Delete reply confirmation"
+						open={open}
+						setOpen={setOpen}
+						setHasAgreed={setAgreed}
+					>
+						<Box sx={{
+							display: "flex"
+						}}>
+							<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
+							<Typography sx={{ lineHeight: 2 }}>
+								Are you sure you want to delete this reply?<br />Please note that this action can not be undo.
+							</Typography>
+						</Box>
+					</ConfirmDialogYesNo>
+				</Box>}
+
+			{agreed && "you confirmed to delete"}
+			{console.log({ hasAgreed: agreed, trid: replyItem.trid })}
+
 		</Box >
 	)
 }
 ReplyItem.propTypes = {
+	isAdmin: PropTypes.bool,
 	replyItem: PropTypes.object,
 	isFirst: PropTypes.bool
 }

@@ -86,7 +86,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 	return (
 		<>
-			{isLoading ? <div><CircularProgress /></div> :
+			{(isLoading && isLoadingCannedReplies) ? <div><CircularProgress /></div> :
 				<>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}

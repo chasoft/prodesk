@@ -25,6 +25,9 @@ import { DOC_TYPE } from "../../helpers/constants"
 import { db } from "../../helpers/firebase"
 import { doc, getDoc } from "@firebase/firestore"
 
+
+import dayjs from "dayjs"
+import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
@@ -50,6 +53,15 @@ export default function TestPage() {
 
 	const [onInputChangeValue, setOnInputChangeValue] = useState("")
 	const [onChangeValue, setOnChangeValue] = useState("")
+
+	const { data, isLoading } = useGetTicketsQuery("hello")
+
+	const a = dayjs().valueOf()
+
+	console.log({ a })
+
+	console.log(dayjs(a).format("MMMM D, YYYY h:mm A"))
+
 	return (
 		<Container sx={{ marginTop: 10 }}>
 			<Autocomplete
@@ -98,7 +110,12 @@ export default function TestPage() {
 				minHeight: "200px",
 				backgroundColor: "red"
 			}}>
-				<CircularProgress />
+
+			</Box>
+
+			<Box>
+
+				{isLoading && JSON.stringify({ data })}
 			</Box>
 
 		</Container >

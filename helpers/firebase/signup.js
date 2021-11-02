@@ -155,7 +155,7 @@
 // 			username: username,
 // 			email: userCredential.user.email,
 // 			displayName: name,
-// 			photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+// 			photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
 // 		})
 // 		batch.set(doc(db, COLLECTION.USERNAMES, username), {
 // 			uid: userCredential.user.uid,

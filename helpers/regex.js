@@ -7,3 +7,5 @@ export const regBackendURL = /^(\/admin)$|^(\/admin\/)|^(\/client$)|^(\/client\/
 export const regLoginSignUpURL = /^(\/login)$|^(\/login\/)|^(\/signup$)|^(\/signup\/)/
 
 //export const regInternalLink = /^(\/admin)$|^(\/admin\/)/
+
+export const regEmail = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i

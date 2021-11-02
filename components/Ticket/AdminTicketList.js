@@ -39,10 +39,10 @@ import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
 import useGroupedTickets from "../../helpers/useGroupedTickets"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
-import { useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
 import { REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
+import { useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -151,38 +151,26 @@ const StatusButton = () => {
 
 const LabelButton = () => {
 	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
-	const { data: labels, isLoadingLabels } = useGetLabelsQuery()
-	const { data: tickets, isLoadingTickets } = useGetTicketsForAdminQuery()
+	const { data: labels, isLoading: isLoadingLabels } = useGetLabelsQuery()
+	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose }] = useMenuContainer()
 	const { selectedTickets } = useSelector(getUiSettings)
 	const [updateTicket] = useUpdateTicketMutation()
 
+	const handleApplyLabel = async (labelId) => {
+		let affectedTickets = []
+		selectedTickets.forEach((tid) => {
+			const isLabelExisted = tickets.labels.indexOf(tid) !== -1
+			if (isLabelExisted) return
 
-	const handleApplyLabel = useCallback(async (labelId) => {
-		const selectedIndex = selectedTickets.indexOf(ticketId)
-		let newSelected = []
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selectedTickets, ticketId)
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selectedTickets.slice(1))
-		} else if (selectedIndex === selectedTickets.length - 1) {
-			newSelected = newSelected.concat(selectedTickets.slice(0, -1))
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(
-				selectedTickets.slice(0, selectedIndex),
-				selectedTickets.slice(selectedIndex + 1),
-			)
-		}
-
-
-
-		await updateTicket({
-			username: "",
-			tid: ""
+			affectedTickets.push({
+				username: tickets[tid].username,
+				tid: tid,
+				labels: [...tickets[tid].labels, labelId].sort()
+			})
 		})
-	}, [dispatch, selectedTickets])
-
+		await updateTicket(affectedTickets)
+	}
 
 	return (
 		<>
@@ -306,15 +294,16 @@ function AdminTicketList() {
 					justifyContent: "space-between",
 					alignItems: "center",
 					width: "100%",
-					mt: 4
+					mt: 4,
 				}}>
 					<Box sx={{
 						display: "flex",
 						alignItems: "center",
-						flexGrow: 1
+						flexGrow: 1,
+						ml: { xs: 0, sm: -3 }
 					}}>
 						{currentInbox.icon}
-						<Typography variant="h1" sx={{ flexGrow: 1, mb: 0 }}>
+						<Typography variant="h1" sx={{ flexGrow: 1, mb: 0, ml: 0.5 }}>
 							{currentInbox.name}
 						</Typography>
 					</Box>

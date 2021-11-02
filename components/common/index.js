@@ -27,11 +27,9 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { styled } from "@mui/material/styles"
-import { Avatar, Box, Grid, Typography } from "@mui/material"
+import { Avatar, Box, Collapse, Grid, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { motion } from "framer-motion"
 
 //PROJECT IMPORT
 
@@ -89,48 +87,58 @@ export const SignUpLink = () => {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-export const Logo = ({ isSmall = false, theme = "light", height = "30px" }) => {
+export const Logo = ({ isSmall = false, theme = "light", height = "30px", style = {} }) => {
 	if (isSmall) {
 		return (
-			<Link href="/">
+			<Link href="/" passHref>
 				<img
 					src={`/ProDesk-logo-${theme}-square.png`}
 					height={height} width={height}
-					style={{ cursor: "pointer" }}
 					alt="Logo of ProDesk"
+					style={{ cursor: "pointer", ...style }}
 				/>
 			</Link>
 		)
 	}
 
 	return (
-		<Link href="/">
+		<Link href="/" passHref>
 			<img
 				src={`/ProDesk-logo-${theme}.png`}
 				height={height} width={Math.round(height * 5.25).toString()}
-				style={{ cursor: "pointer" }}
 				alt="Logo of ProDesk"
+				style={{ cursor: "pointer", ...style }}
 			/>
 		</Link>
 	)
 }
-Logo.propTypes = { isSmall: PropTypes.bool, theme: PropTypes.string, height: PropTypes.string }
+Logo.propTypes = {
+	isSmall: PropTypes.bool,
+	theme: PropTypes.string,
+	height: PropTypes.string,
+	style: PropTypes.object
+}
 
 export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
 		<Box sx={{ marginTop: "0.5rem" }}>
 			<Box
-				sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					cursor: "pointer",
+					mb: 1
+				}}
 				onClick={() => setExpanded(p => !p)}
 			>
 				{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				{title}
 			</Box>
 
-			<motion.div animate={{ opacity: expanded ? 1 : 0 }}>
+			<Collapse in={expanded}>
 				{children}
-			</motion.div>
+			</Collapse>
 		</Box>
 	)
 }
@@ -140,42 +148,43 @@ SimpleTogglePanel.propTypes = {
 	children: PropTypes.any,
 }
 
-export const AvatarStyle = styled((props) => <Avatar {...props} />)(({ theme }) => ({
-	cursor: "pointer",
-	border: "1px solid transparent",
-	"&:hover": {
-		border: "1px solid",
-		borderColor: theme.palette.divider,
-		borderRadius: "50%"
-	}
-}))
+export const DefaultAvatarPanel = ({ size = 45, callback }) => {
 
-export const DefaultAvatarPanel = ({ size = 32, callback, defaultAvatar }) => {
 	const DefaultAvatarList = [
-		{ id: 1, alt: "default avatar", url: "/default-avatar/1.png" },
-		{ id: 2, alt: "default avatar", url: "/default-avatar/2.png" },
-		{ id: 3, alt: "default avatar", url: "/default-avatar/3.png" },
-		{ id: 4, alt: "default avatar", url: "/default-avatar/4.png" },
-		{ id: 5, alt: "default avatar", url: "/default-avatar/5.png" },
+		{ id: 0, alt: "Default Avatar", url: "/avatar/default.png" },
+		{ id: 2, alt: "Avatar 2", src: "/avatar/2.png" },
+		{ id: 1, alt: "Avatar 1", src: "/avatar/1.png" },
+		{ id: 3, alt: "Avatar 3", src: "/avatar/3.png" },
+		{ id: 4, alt: "Avatar 4", src: "/avatar/4.png" },
+		{ id: 5, alt: "Avatar 5", src: "/avatar/5.png" },
 	]
 
 	return (
-
 		<Grid container spacing={1} alignContent="space-between">
-			<Grid item onClick={() => callback(defaultAvatar)}>
-				<AvatarStyle alt="defaultAvatar" url={defaultAvatar} sx={{ width: size, height: size }} />
-			</Grid>
-			{
-				DefaultAvatarList.map((avatar) => {
-					return (
-						<Grid item key={avatar.id} onClick={() => callback(avatar.url)}>
-							<AvatarStyle alt={avatar.alt} url={avatar.url} sx={{ width: size, height: size }} />
-						</Grid>
-					)
-				})
-			}
-		</Grid>
 
+			{DefaultAvatarList.map((avatar) => (
+				<Grid item key={avatar.id}>
+					<Avatar
+						alt={avatar.alt}
+						src={avatar.src}
+						sx={{
+							cursor: "pointer",
+							border: "1px solid transparent",
+							"&:hover": {
+								border: "3px solid",
+								borderColor: "white",
+								borderRadius: "50%",
+								boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+							},
+							width: size,
+							height: size
+						}}
+						onClick={() => callback(avatar.src)}
+					/>
+				</Grid>
+			))}
+
+		</Grid>
 	)
 }
 DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }

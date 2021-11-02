@@ -44,7 +44,7 @@ import TicketContent from "../../../components/Ticket/TicketContent"
 import { REDIRECT_URL, STATUS_FILTER } from "../../../helpers/constants"
 import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 import TicketReplies, { ReplyButton } from "../../../components/Ticket/TicketReplies"
-import { useGetTicketsQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
+import { useGetTicketsForUserQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
@@ -91,11 +91,11 @@ const ActionButtons = ({ ticket }) => {
 				startIcon={<CloseIcon />}
 				onClick={async () => {
 					enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-					await updateTicket({
+					await updateTicket([{
 						username: currentUser.username,
 						tid: ticket.tid,
 						status: STATUS_FILTER.CLOSED
-					})
+					}])
 					dispatch(setRedirect(REDIRECT_URL.TICKETS))
 				}}
 			>
@@ -127,7 +127,7 @@ function SingleTicket() {
 	const { slug } = router.query
 	const { currentUser } = useSelector(getAuth)
 	//
-	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
+	const { data: tickets, isLoading } = useGetTicketsForUserQuery(currentUser.username)
 
 	useUiSettings({
 		title: "Title",

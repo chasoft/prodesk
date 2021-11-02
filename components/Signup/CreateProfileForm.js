@@ -29,15 +29,16 @@ import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 // import { useSnackbar } from "notistack"
-import { useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "./../../redux/selectors"
+import { loginSuccess } from "../../redux/slices/auth"
+import { REDIRECT_URL } from "../../helpers/constants"
 import { RegContainer } from "./../../layout/RegLayout"
+import { setRedirect } from "../../redux/slices/redirect"
 import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
 import { useSignUpCreateProfileMutation } from "../../redux/slices/firestoreApi"
-import { REDIRECT_URL } from "../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
@@ -54,10 +55,10 @@ const CreateProfileForm = () => {
 	const [signUpCreateProfile] = useSignUpCreateProfileMutation()
 
 	const [location, setLocation] = useState("")
-	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/img/default-avatar.png")
+	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/avatar/default.png")
 
 	return (
-		<RegContainer>
+		<RegContainer maxWidth="500px">
 
 			<Box sx={{ mb: 4 }}>
 				<Typography variant="h1">{"Welcome! Let's create your profile"}</Typography>
@@ -65,14 +66,14 @@ const CreateProfileForm = () => {
 			</Box>
 
 			<Typography variant="h2">Add an avatar</Typography>
-			<Grid container spacing={2}>
+			<Grid container spacing={2} sx={{ mb: 4 }}>
 				<Grid item>
-					<Avatar url={avatar} sx={{ width: 128, height: 128 }} />
+					<Avatar src={avatar} sx={{ width: 128, height: 128 }} />
 				</Grid>
 				<Grid item>
 					<Button variant="outlined" color="secondary">Choose Image</Button>
 					<SimpleTogglePanel title="or choose one of our defaults">
-						<DefaultAvatarPanel callback={(url) => { setAvatar(url) }} defaultAvatar={currentUser.photoURL} />
+						<DefaultAvatarPanel callback={(src) => { setAvatar(src) }} />
 					</SimpleTogglePanel>
 				</Grid>
 			</Grid>
@@ -106,7 +107,13 @@ const CreateProfileForm = () => {
 							location
 						})
 
-						dispatch(setRedirect(REDIRECT_URL.SURVEY))
+						reduxBatch(() => {
+							dispatch(loginSuccess({
+								photoURL: avatar,
+								location
+							}))
+							dispatch(setRedirect(REDIRECT_URL.SURVEY))
+						})
 					}}
 					disabled={(location === "")}
 				>

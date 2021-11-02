@@ -142,7 +142,6 @@ function TicketSettingsOthers() {
 		activeTab: TICKET_SETTINGS_NAMES.OTHERS,
 		activePanel: OTHERS_PAGES.LABELS.name,
 		background: {
-			height: "132px",
 			backgroundImage: ""
 		}
 	})

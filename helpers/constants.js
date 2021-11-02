@@ -45,6 +45,7 @@ export const REDIRECT_URL = {
 	NEW_TICKETS: "/client/tickets/new-ticket",
 	//
 	CLIENT_EDIT_PROFILE: "/client/edit-profile",
+	ADMIN_EDIT_PROFILE: "/admin/edit-profile",
 	//
 	ADMIN_TICKETS: "/admin/tickets",
 	ADMIN_NEW_TICKETS: "/admin/tickets/new-ticket",
@@ -113,7 +114,6 @@ export const USERGROUP = {
 	MEMBER: "member",	//member is validated user
 	USER: "user"		//freely register account
 }
-
 
 export const TICKET_INBOXES = {
 	IN_PROGRESS: "In progress",
@@ -203,6 +203,29 @@ export const ACTION = {
 	CLEAR: "Clear",
 }
 
-export const SETTINGS_NAME = {
+export const APP_SETTINGS_NAME = {
+	/* DOCUMENTATION */
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
+}
+
+export const USER_SETTINGS_NAME = {
+	hasAdminPermissions: "hasAdminPermissions",
+	/* TICKETS */
+	createTicket: "createTicket",
+	updateTicket: "updateTicket",
+	deleteTicket: "deleteTicket",
+	//
+
+
+	/* USERS */
+
+
+
+	/* DOCUMENTATION */
+
+
+	/* BLOG */
+
+
+
 }

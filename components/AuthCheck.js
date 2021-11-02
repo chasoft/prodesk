@@ -65,12 +65,12 @@ const LoadingIndicator = () => {
 export function ReduxRedirect(props) {
 	const router = useRouter()
 	const dispatch = useDispatch()
-	const { isAuthenticated } = useSelector(getAuth)
+	const { currentUser, isAuthenticated } = useSelector(getAuth)
 	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 
 	console.log("ReduxRedirect::redirectURL", redirectURL)
 
-	if (redirectURL === "") {
+	if (redirectURL === "" || (redirectURL === "" && currentUser.justInstalled === true)) {
 		return props.children
 	}
 

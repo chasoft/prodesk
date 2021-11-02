@@ -152,11 +152,11 @@ const PopupMenu = ({ ticket }) => {
 										disabled={ticket.status === STATUS_FILTER.CLOSED}
 										onClick={async () => {
 											enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-											await updateTicket({
+											await updateTicket([{
 												username: currentUser.username,
 												tid: ticket.tid,
 												status: STATUS_FILTER.CLOSED
-											})
+											}])
 											dispatch(setRedirect(REDIRECT_URL.TICKETS))
 										}}
 									>

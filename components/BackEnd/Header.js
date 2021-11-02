@@ -88,18 +88,19 @@ const Header = () => {
 
 			</Box>
 
-			<Box
+			<Typography
 				sx={{
 					display: isMobile ? "none" : { xs: "none", sm: "flex" },
 					flexGrow: 1,
 					alignItems: "center",
 					justifyContent: "flex-start",
 					fontFamily: "\"Google Sans\", Roboto, sans-serif",
+					fontSize: "1.1rem",
 					fontWeight: 500
 				}}
 			>
 				{title}
-			</Box>
+			</Typography>
 
 			<Box
 				sx={{
@@ -109,11 +110,12 @@ const Header = () => {
 					"& > *": { ml: 1 }
 				}}
 			>
-				<Tooltip arrow title="Help Center" placement="bottom">
+				<Tooltip arrow title="Help Center" placement="left">
 					<Typography
 						sx={{
 							fontFamily: "\"Google Sans\", Roboto, sans-serif",
 							cursor: "pointer",
+							fontSize: "1rem",
 							"&:hover": { fontWeight: 500 }
 						}}
 					>

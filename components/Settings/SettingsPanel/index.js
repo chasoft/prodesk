@@ -27,7 +27,6 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { styled } from "@mui/material/styles"
 import { Alert, Box, ButtonBase, Container, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 
 //THIRD-PARTY
@@ -62,6 +61,7 @@ export const ListItem = ({ selected, icon, onClick, children }) => {
 					alignItems: "center",
 					"&:hover": {
 						backgroundColor: selected ? "#e8f0fe" : "action.hover",
+						transition: "background-color 400ms cubic-bezier(0.4, 0, 0.2, 1)",
 						cursor: "pointer",
 					},
 					bgcolor: selected ? "#e8f0fe" : "",

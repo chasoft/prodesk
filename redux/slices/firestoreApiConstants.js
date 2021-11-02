@@ -15,6 +15,7 @@ export const TYPE = {
 	PROFILES: "Profiles",
 	TICKETS: "Tickets",
 	SETTINGS: "Settings",
+	USER_SETTINGS: "UserSettings",
 	DEPARTMENTS: "Departments",
 	CANNED_REPLIES: "Canned-replies",
 	LABELS: "Labels",
@@ -43,6 +44,10 @@ export const ACTION = {
 	/* APPLICATION SETTINGS */
 	GET_APPSETTINGS: "getAppSettings",
 	UPDATE_APPSETTINGS: "updateAppSettings",
+
+	/* USER SETTINGS */
+	GET_USERSETTINGS: "getUserSettings",
+	UPDATE_USERSETTINGS: "updateUserSettings",
 
 	/* DEPARTMENTS => did */
 	GET_DEPARTMENTS: "getDepartments",
@@ -94,16 +99,16 @@ export const ACTION = {
 	INSTALL_FINALIZATION: "finalizeInstallation",
 
 	/* TICKETS => tid */
-	GET_TICKETS: "getTickets",
+	GET_TICKETS_FOR_ADMIN: "getTicketsForAdmin",
+	GET_TICKETS_FOR_USER: "getTicketsForUser",
 	GET_TICKET_REPLIES: "getTicketReplies",
 	ADD_TICKET: "addTicket",
 	ADD_TICKET_REPLY: "addTicketReply",
 	UPDATE_TICKET: "updateTicket",
 	UPDATE_TICKET_REPLY: "updateTicketReply",
 	DELETE_TICKET: "deleteTicket",
+	DELETE_TICKET_TEMP: "deleteTicketTemp",
 	DELETE_TICKET_REPLY: "deleteTicketReply",
-	//
-	GET_TICKETS_FOR_ADMIN: "getTicketsForAdmin",
 
 	/* MEMBERS */
 	//members is a sub-set of users (aka Profiles),

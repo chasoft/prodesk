@@ -133,9 +133,9 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						isPublic,
 						members
 					}
-					await addDepartment(departmentItem).unwrap()
-					//
 					dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+					await addDepartment(departmentItem)
+					//
 				}}>Add</Button>
 			</SettingsContentActionBar>
 

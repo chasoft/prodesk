@@ -27,7 +27,7 @@ import { useCallback, useRef } from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { SETTINGS_NAME } from "./constants"
+import { APP_SETTINGS_NAME } from "./constants"
 import { useGetAppSettingsQuery } from "../redux/slices/firestoreApi"
 
 /*****************************************************************
@@ -37,18 +37,18 @@ import { useGetAppSettingsQuery } from "../redux/slices/firestoreApi"
 export default function useAppSettings(query) {
 	const { data, isLoading } = useGetAppSettingsQuery(undefined)
 
-	const defaultSettings = useRef({
-		[SETTINGS_NAME.autoGenerateSlugFromTitle]: true
+	const defaultAppSettings = useRef({
+		//List default application settings here
+		[APP_SETTINGS_NAME.autoGenerateSlugFromTitle]: true
 	})
 
 	//get a setting or all if no query provided
 	const getAppSettings = useCallback((settingName) => {
 		const warehouse = isLoading
-			? defaultSettings.current
-			: { ...defaultSettings.current, ...data }
-
+			? defaultAppSettings.current
+			: { ...defaultAppSettings.current, ...data }
 		return settingName ? warehouse[settingName] : warehouse
 	}, [data, isLoading])
 
-	return query ? getAppSettings(query) : getAppSettings
+	return getAppSettings(query)
 }

@@ -39,7 +39,7 @@ import TicketListItem from "./TicketListItem"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import { PRIORITY, REDIRECT_URL } from "../../helpers/constants"
 import { resetTicketsFilter } from "../../redux/slices/uiSettings"
-import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
+import { useGetTicketsForUserQuery } from "../../redux/slices/firestoreApi"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
@@ -52,7 +52,7 @@ import FilterListIcon from "@mui/icons-material/FilterList"
 
 const useGetTickets = () => {
 	const { currentUser } = useSelector(getAuth)
-	const { data: tickets, isLoading } = useGetTicketsQuery(currentUser.username)
+	const { data: tickets, isLoading } = useGetTicketsForUserQuery(currentUser.username)
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
 	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])

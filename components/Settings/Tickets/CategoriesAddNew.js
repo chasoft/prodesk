@@ -248,7 +248,8 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 							updatedBy: currentUser.username,
 						}
 						//Go to newly created category
-						dispatch(setActiveSettingPanel(categoryName))
+						// dispatch(setActiveSettingPanel(categoryName))
+						dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
 						await addCategory(categoryItem).unwrap()
 					}}
 				>

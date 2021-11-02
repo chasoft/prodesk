@@ -1,4 +1,3 @@
-
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
  * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
@@ -23,95 +22,46 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore"
-import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth"
+import React from "react"
+
+// MATERIAL-UI
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { auth, db } from "."
-import { COLLECTION } from "../../redux/slices/firestoreApiConstants"
+import { getLayout } from "./../../layout/AdminLayout"
+import useUiSettings from "./../../helpers/useUiSettings"
+
+//ASSETS
+import UserProfile from "../../components/Settings/UserProfile"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const changePassword = async ({ email, password, newPassword }) => {
-	try {
-		const credential = EmailAuthProvider.credential(email, password)
-		await reauthenticateWithCredential(auth.currentUser, credential)
-		await updatePassword(auth.currentUser, newPassword)
-		return { data: "Password changed successfully." }
-	} catch (e) {
-		return { error: e.message }
-	}
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+function EditProfile() {
+
+	useUiSettings({
+		title: "Edit Profile",
+		background: {
+			backgroundImage: ""
+		}
+	})
+
+	return (
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+
+			<UserProfile />
+
+		</Container >
+	)
 }
 
-export const getUserProfile = async (uid) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("uid", "==", uid)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
-		//---
-		return { error: "User not existed." }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
+EditProfile.getLayout = getLayout
 
-export const getUserProfileByUsername = async (username) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("username", "==", username)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
-		//---
-		return { error: "User not existed." }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
-
-export const isUsernameAvailable = async (username) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("username", "==", username)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { isUsernameAvailable: false, data: res[0] }
-		//---
-		return { isUsernameAvailable: true }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
-
-export const setUsername = async (uid, username) => {
-	const res = await isUsernameAvailable(username)
-
-	if (res.error) return res.error
-	if (res.isUsernameAvailable === false) return { error: "Username existed." }
-
-	try {
-		const batch = writeBatch(db)
-		batch.set(doc(db, COLLECTION.USERS, uid), { username }, { merge: true })
-		batch.set(doc(db, COLLECTION.USERNAMES, username), { uid }, { merge: true })
-		await batch.commit()
-		//---
-		return { data: "Username created successfully" }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
+export default EditProfile

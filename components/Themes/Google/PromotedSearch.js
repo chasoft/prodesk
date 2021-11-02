@@ -68,7 +68,7 @@ function PromotedSearch() {
 						padding: "0.5rem",
 					}}
 				>
-					<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+					<Avatar alt="Remy Sharp" src="/avatar/1.png" />
 				</Box>
 				<Typography variant="h4"
 					sx={{

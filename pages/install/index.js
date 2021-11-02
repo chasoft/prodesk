@@ -25,26 +25,31 @@
 //CORE SYSTEM
 import React from "react"
 import PropTypes from "prop-types"
-import { useRouter } from "next/router"
+// import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Button, Typography } from "@mui/material"
+
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
 import { getInstallLayout } from "./InstallLayout"
 import { REDIRECT_URL } from "./../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Install() {
-	const router = useRouter()
+	// const router = useRouter()
+	const dispatch = useDispatch()
 	return (
 		<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 			<div style={{ padding: "3rem" }}>
-				<Logo />
+				<Logo style={{ backgroundColor: "white" }} />
 			</div>
 			<Typography variant="h1">
 				Welcome to ProDesk
@@ -57,9 +62,8 @@ function Install() {
 				<Button
 					variant="contained" color="primary" style={{ paddingLeft: "3rem", paddingRight: "3rem" }}
 					onClick={() => {
-						// router.push("/install/create")
-						// dispatch(setRedirect(REDIRECT_URL.INSTALL_CREATE))
-						router.push(REDIRECT_URL.INSTALL_CREATE)
+						dispatch(setRedirect(REDIRECT_URL.INSTALL_CREATE))
+						// router.push(REDIRECT_URL.INSTALL_CREATE)
 					}}
 				>
 					Start

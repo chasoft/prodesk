@@ -25,6 +25,7 @@
 //CORE SYSTEM
 import React from "react"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 import DefaultErrorPage from "next/error"
 
 // MATERIAL-UI
@@ -44,11 +45,34 @@ import { useGetInstallStatusQuery } from "../../redux/slices/firestoreApi"
  * INIT                                                          *
  *****************************************************************/
 
+const bgImgList = {
+	"/install": {
+		backgroundImage: "url('/img/installation_1.svg')",
+		backgroundRepeat: "no-repeat",
+		backgroundPosition: "95% 95%",
+		backgroundSize: { xs: "70%", sm: "50%", md: "40%", lg: "30%", xl: "25%" }
+	},
+	"/install/create": {
+		backgroundImage: "url('/img/installation_2.svg')",
+		backgroundRepeat: "no-repeat",
+		backgroundPosition: "95% 95%",
+		backgroundSize: { xs: "70%", sm: "50%", md: "40%", lg: "30%", xl: "25%" }
+	},
+	"/install/completed": {
+		backgroundImage: "url('/img/installation_3.svg')",
+		backgroundRepeat: "no-repeat",
+		backgroundPosition: "3% 96%",
+		backgroundSize: { xs: "70%", sm: "50%", md: "40%", lg: "30%", xl: "25%" }
+	}
+}
+
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function InstallLayout({ children }) {
+	const router = useRouter()
 	const { currentUser } = useSelector(getAuth)
 	const { data: installStatus, isLoading } = useGetInstallStatusQuery()
 
@@ -61,6 +85,7 @@ function InstallLayout({ children }) {
 				display: "flex",
 				flexDirection: "column",
 				minHeight: "100vh",
+				...bgImgList[router.pathname]
 			}}>
 				<Container maxWidth="sm" sx={{
 					display: "flex",

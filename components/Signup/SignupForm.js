@@ -22,10 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Checkbox, FormControlLabel, Grid, TextField } from "@mui/material"
+import { Button, CircularProgress, Checkbox, FormControlLabel, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
@@ -35,7 +35,7 @@ import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { LoginLink } from "./../common"
-import { regRule } from "./../../helpers/regex"
+import { regEmail, regRule } from "./../../helpers/regex"
 import { setRedirect } from "../../redux/slices/redirect"
 import { useGetAppSettingsQuery, useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
 import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
@@ -54,12 +54,12 @@ const validationSchema = yup.object({
 		.required("Name is required"),
 	username: yup
 		.string("Enter your username")
-		.min(3, "At least 3 characters")
+		.min(4, "At least 4 characters")
 		.matches(regRule, "lowercase, no spacing, no special characters")
 		.required("Username is required"),
 	email: yup
 		.string("Enter your email")
-		.email("Enter a valid email")
+		.matches(regEmail, "Enter a valid email")
 		.required("Email is required"),
 	password: yup
 		.string("Enter your password")
@@ -79,8 +79,9 @@ const validationSchema = yup.object({
 
 const SignupForm = () => {
 	const dispatch = useDispatch()
+	const [isProcessing, setIsProcessing] = useState(false)
 	const [signUpWithEmail] = useSignUpWithEmailMutation()
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	const { enqueueSnackbar } = useSnackbar()
 	const { data: AppSettings, isLoading } = useGetAppSettingsQuery()
 
 	useFlexDirection({ payload: "row" })
@@ -96,13 +97,13 @@ const SignupForm = () => {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-
-			if (AppSettings.restrictedUsernames.indexOf(values.username) !== -1) {
+			if (AppSettings.restrictedUsernames.indexOf(values.username.toLowerCase()) !== -1) {
 				enqueueSnackbar("Your provided username is restricted", { variant: "error" })
 				return
 			}
 
-			enqueueSnackbar("Registering your account", { variant: "info" })
+			setIsProcessing(true)
+
 			const res = await signUpWithEmail({
 				email: values.email,
 				password: values.password,
@@ -110,18 +111,15 @@ const SignupForm = () => {
 				username: values.username
 			})
 
-			if (res.error) {
-				closeSnackbar()
+			if (res?.error) {
 				enqueueSnackbar(res.error.data.message, { variant: "error" })
+				setIsProcessing(false)
 				return
 			}
 
-			//Update Redux for next Step
-			// dispatch(loginSuccess(res.data))
-
-			closeSnackbar()
-			enqueueSnackbar(res.data.message, { variant: "success" })
 			dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
+
+			setIsProcessing(false)
 		}
 	})
 
@@ -156,7 +154,7 @@ const SignupForm = () => {
 							id="userName"
 							name="username"
 							label="Username"
-							value={formik.values.username}
+							value={formik.values.username.toLowerCase()}
 							onChange={formik.handleChange}
 							onBlur={formik.handleBlur}
 							error={formik.touched.username && Boolean(formik.errors.username)}
@@ -232,9 +230,9 @@ const SignupForm = () => {
 				<Button
 					type="submit" fullWidth variant="contained" color="primary"
 					sx={{ mt: 3, mx: 0, mb: 2 }}
-					disabled={!(formik.isValid && formik.dirty && isLoading)}
+					disabled={(!formik.isValid || isLoading || isProcessing)}
 				>
-					Create Account
+					Create Account &nbsp; {isProcessing && <CircularProgress size={14} />}
 				</Button>
 
 				<Grid container justifyContent="flex-end">

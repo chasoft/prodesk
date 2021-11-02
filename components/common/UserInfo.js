@@ -49,7 +49,7 @@ const UserInfo = () => {
 		>
 
 			<Box sx={{ mr: 1 }}>
-				<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+				<Avatar alt="Remy Sharp" src="/avatar/default.png" />
 			</Box>
 
 			<Box

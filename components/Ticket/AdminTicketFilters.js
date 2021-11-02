@@ -24,7 +24,7 @@
 
 import PropTypes from "prop-types"
 import React, { useMemo } from "react"
-import { Box, Button, ToggleButton, Tooltip, ToggleButtonGroup, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox } from "@mui/material"
+import { Badge, Box, Button, ToggleButton, Tooltip, ToggleButtonGroup, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -64,22 +64,26 @@ export const TICKET_INBOXES_LIST = [
 	{
 		name: TICKET_INBOXES.IN_PROGRESS,
 		title: "Tickets in progress",
-		icon: <WhatshotIcon />
+		icon: <WhatshotIcon />,
+		color: "primary"
 	},
 	{
 		name: TICKET_INBOXES.MINE,
 		title: "My assigned tickets",
-		icon: <AssignmentTurnedInIcon />
+		icon: <AssignmentTurnedInIcon />,
+		color: "warning"
 	},
 	{
 		name: TICKET_INBOXES.ASSIGNED,
 		title: "Assigned tickets",
-		icon: <AssignmentIcon />
+		icon: <AssignmentIcon />,
+		color: "secondary"
 	},
 	{
 		name: TICKET_INBOXES.UNASSIGNED,
 		title: "Unassigned tickets",
-		icon: <AssignmentLateIcon />
+		icon: <AssignmentLateIcon />,
+		color: "info"
 	}
 ]
 
@@ -98,18 +102,21 @@ const FilterTicketInbox = () => {
 			color="primary"
 			value={selectedInbox}
 			onChange={handleChangeInbox}
-			sx={{ display: "flex" }}
+			sx={{ display: "flex", mt: 2 }}
 		>
 			{TICKET_INBOXES_LIST.map((item) => {
 				return (
+
 					<ToggleButton
 						key={item.name}
 						value={item.name}
 						sx={{ flexGrow: 1 }}
 					>
-						<Tooltip arrow title={item.title} placement="top">
-							{item.icon}
-						</Tooltip>
+						<Badge badgeContent={4} color={item.color}>
+							<Tooltip arrow title={item.title} placement="top">
+								{item.icon}
+							</Tooltip>
+						</Badge>
 					</ToggleButton>
 				)
 			})}

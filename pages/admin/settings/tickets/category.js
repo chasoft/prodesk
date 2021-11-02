@@ -73,7 +73,6 @@ function TicketSettingsCategory() {
 		activeTab: TICKET_SETTINGS_NAMES.CATEGORY,
 		activePanel: CATEGORY_PAGES.OVERVIEW,
 		background: {
-			height: "132px",
 			backgroundImage: ""
 		}
 	})

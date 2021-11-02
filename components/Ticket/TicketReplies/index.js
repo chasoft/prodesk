@@ -30,10 +30,14 @@ import { Box, Button, CircularProgress, Fab, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import { size } from "lodash"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import ReplyItem from "./Reply"
 import ReplyDialog from "./ReplyDialog"
+import { getAuth } from "../../../redux/selectors"
+import useUserSettings from "../../../helpers/useUserSettings"
+import { USER_SETTINGS_NAME } from "../../../helpers/constants"
 import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
@@ -76,14 +80,25 @@ ReplyButton.propTypes = {
  *****************************************************************/
 
 function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
-	const { data: ticketReplies, isLoadingReplies } = useGetTicketRepliesQuery({
+
+	const { currentUser } = useSelector(getAuth)
+	const hasAdminPermissions = useUserSettings(currentUser.username, USER_SETTINGS_NAME.hasAdminPermissions)
+
+	const { data: ticketReplies, isLoading: isLoadingReplies } = useGetTicketRepliesQuery({
 		username: ticketUsername,
 		tid: ticketId
 	})
 
+	const isAdmin = currentUser.username === "superadmin" || hasAdminPermissions
+
 	if (isLoadingReplies) {
 		return (
-			<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				p: 5
+			}}>
 				<CircularProgress />
 			</Box>
 		)
@@ -104,6 +119,7 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
 				{ticketReplies?.map((replyItem, idx) =>
 					<ReplyItem
 						key={replyItem.trid}
+						isAdmin={isAdmin}
 						replyItem={replyItem}
 						isFirst={idx === 0}
 					/>

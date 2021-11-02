@@ -107,7 +107,7 @@ const AddMemberList = ({ department, members, children }) => {
 									<ListItemAvatar>
 										<Avatar
 											alt={`Avatar n°${value + 1}`}
-											src={`/default-avatar/${value}.png`}
+											src={`/avatar/${value}.png`}
 										/>
 									</ListItemAvatar>
 									<ListItemText

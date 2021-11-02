@@ -110,7 +110,7 @@ const PortfolioLinks = ({ moreBtn }) => {
 												}}>
 													<Box
 														sx={{
-															backgroundImage: "url(\"/img/default-avatar.png\")",
+															backgroundImage: "url(\"/avatar/default.png\")",
 															backgroundPosition: `0 -${idx * 64}px`,
 															height: "64px",
 															width: "64px"

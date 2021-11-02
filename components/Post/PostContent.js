@@ -125,7 +125,7 @@ function PostContent() {
 					alignItems: "center",
 				}}>
 					<Avatar
-						alt="Remy Sharp" src="/img/demo-avatar.jpg"
+						alt="Remy Sharp" src="/avatar/default.jpg"
 						sx={{
 							bgcolor: "#FFF",
 							width: 64, height: 64,

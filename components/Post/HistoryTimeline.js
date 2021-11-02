@@ -86,7 +86,7 @@ const TimeConnector = () => {
 	)
 }
 
-const TimeAuthor = ({ photoURL = "/default-avatar/1.png", userInfo }) => {
+const TimeAuthor = ({ photoURL = "/avatar/default.png", userInfo }) => {
 	return (
 
 		<TimelineContent
@@ -139,7 +139,6 @@ const TimelineItemStyled = styled(TimelineItem)({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-// eslint-disable-next-line react/display-name
 const HistoryTimeline = () => {
 	return (
 		<Timeline>
@@ -148,7 +147,7 @@ const HistoryTimeline = () => {
 				<TimeBlock date="2021-09-26" time="09:15 AM" />
 				<TimeConnector />
 				<TimeAuthor
-					photoURL="/default-avatar/9.png"
+					photoURL="/avatar/9.png"
 					userInfo={{
 						name: "Camille V.",
 						role: "Techical Supporter"
@@ -176,5 +175,6 @@ const HistoryTimeline = () => {
 		</Timeline>
 	)
 }
+HistoryTimeline.displayName = "HistoryTimeLine"
 
 export default HistoryTimeline

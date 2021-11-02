@@ -91,7 +91,7 @@ async function fireStoreBaseQuery(args) {
 					email: userCredential.user.email,
 					username: "superadmin",
 					displayName: args.body.name,
-					photoURL: "/img/default-admin-avatar.png",
+					photoURL: "/avatar/admin-default.png",
 					group: "superadmin", //default usergroup
 					nextStep: REDIRECT_URL.INSTALL_COMPLETED
 				})
@@ -131,7 +131,7 @@ async function fireStoreBaseQuery(args) {
 
 				//popular default settings
 				batch.set(doc(db, COLLECTION.SETTINGS, "settings"), {
-					restrictedUsernames: ["admin", "admins", "superadmin", "superadmins", "staff", "staffs", "member", "members", "user", "users", "key", "password", "ticket", "department", "label", "labels", "category", "categories", "default", "profile", "profiles", "setting", "settings", "application"]
+					restrictedUsernames: ["admin", "admins", "superadmin", "superadmins", "staff", "staffs", "member", "members", "user", "users", "password", "ticket", "department", "label", "labels", "category", "categories", "default", "profile", "profiles", "setting", "settings", "application"]
 				}, { merge: true })
 
 				await batch.commit()
@@ -235,7 +235,7 @@ async function fireStoreBaseQuery(args) {
 					username: args.body.username,
 					email: userCredential.user.email,
 					displayName: args.body.name,
-					photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+					photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
 					group: USERGROUP.USER, //default usergroup
 					permission: [],
 					nextStep: REDIRECT_URL.CREATE_PROFILE
@@ -263,7 +263,7 @@ async function fireStoreBaseQuery(args) {
 						username: args.body.username,
 						email: userCredential.user.email,
 						displayName: args.body.name,
-						photoURL: userCredential.user.providerData[0].photoURL ?? "/img/default-avatar.png",
+						photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
 						group: USERGROUP.USER, //default usergroup
 					}
 				}
@@ -353,7 +353,8 @@ async function fireStoreBaseQuery(args) {
 						doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC),
 						{
 							[args.body.uid]: profile
-						}
+						},
+						{ merge: true }
 					)
 				})
 
@@ -738,6 +739,35 @@ async function fireStoreBaseQuery(args) {
 			}
 
 		/*****************************************************************
+		 * APPLICATION SETTINGS                                          *
+		 *****************************************************************/
+		case ACTION.GET_USERSETTINGS:	//args.username
+			try {
+				let settings = {}
+				const docSnap = await getDoc(doc(db, COLLECTION.USERNAMES, args.username))
+				if (docSnap.exists()) settings = docSnap.data()
+				return { data: settings }
+			} catch (e) {
+				return throwError(200, ACTION.GET_USERSETTINGS, e, null)
+			}
+		case ACTION.UPDATE_USERSETTINGS:	//args.body = { username:string, settings: object}
+			try {
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, args.body.username),
+					args.body.settings,
+					{ merge: true }
+				)
+				return {
+					data: {
+						action: ACTION.UPDATE_USERSETTINGS,
+						message: "User settings updated successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_USERSETTINGS, e, null)
+			}
+
+		/*****************************************************************
 		 * DEPARTMENTS => did                                            *
 		 *****************************************************************/
 		case ACTION.GET_DEPARTMENTS:
@@ -1043,7 +1073,20 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * TICKETS => tid                                                *
 		 *****************************************************************/
-		case ACTION.GET_TICKETS_FOR_ADMIN:	//Get from GROUP.TICKETS_GROUP
+		case ACTION.GET_TICKETS_FOR_USER:
+			try {
+				let res = []
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.USERNAMES, args.username,
+					"tickets")
+				)
+				querySnapshot.forEach((ticket) => { res.push(ticket.data()) })
+				return { data: res }
+			} catch (e) {
+				return throwError(200, ACTION.GET_TICKETS_FOR_USER, e, null)
+			}
+
+		case ACTION.GET_TICKETS_FOR_ADMIN:
 			try {
 				let res = {}
 				const docSnapshot = await getDoc(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
@@ -1051,19 +1094,6 @@ async function fireStoreBaseQuery(args) {
 				return { data: res }
 			} catch (e) {
 				return throwError(200, ACTION.GET_TICKETS_FOR_ADMIN, e, null)
-			}
-
-		case ACTION.GET_TICKETS:
-			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db,
-					COLLECTION.USERNAMES, args.username,
-					"tickets")
-				)
-				querySnapshot.forEach((ticket) => { all.push(ticket.data()) })
-				return { data: all }
-			} catch (e) {
-				return throwError(200, ACTION.GET_TICKETS, e, null)
 			}
 
 		case ACTION.GET_TICKET_REPLIES:
@@ -1086,6 +1116,11 @@ async function fireStoreBaseQuery(args) {
 				const newTicket = {
 					...args.body,
 					replyCount: 0,
+					assignee: "",
+					assignor: "",
+					note: "",
+					labels: [],
+					removed: false, //used for temporarily delete feature
 					createdAt: serverTimestamp(),
 					updatedAt: serverTimestamp()
 				}
@@ -1101,8 +1136,8 @@ async function fireStoreBaseQuery(args) {
 					{
 						[args.body.tid]: {
 							...newTicket,
-							createdAt: dayjs().format("MMMM D, YYYY h:mm A"),
-							updatedAt: dayjs().format("MMMM D, YYYY h:mm A")
+							createdAt: dayjs().valueOf(),
+							updatedAt: dayjs().valueOf()
 						}
 					},
 					{ merge: true }
@@ -1138,7 +1173,7 @@ async function fireStoreBaseQuery(args) {
 						updatedAt: serverTimestamp()
 					}
 				)
-				//update reply's counter and updatedAt for Ticket
+				//update reply's counter and updatedAt for USER
 				batch.update(
 					doc(db,
 						COLLECTION.USERNAMES, args.body.ticketItem.username,
@@ -1146,13 +1181,11 @@ async function fireStoreBaseQuery(args) {
 					{
 						replyCount: increment(1),
 						updatedAt: serverTimestamp(),
-						//whenever, new reply added, then, status of the ticket always is `pending`
-						status: STATUS_FILTER.PENDING,
 					}
 				)
 				await batch.commit()
 
-				//update reply's counter and updatedAt for Group
+				//update reply's counter and updatedAt for ADMIN
 				await runTransaction(db, async (transaction) => {
 					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 					const ticketX = ticketXRef.data()
@@ -1162,7 +1195,7 @@ async function fireStoreBaseQuery(args) {
 							[args.body.ticketItem.tid]: {
 								...ticketX[args.body.ticketItem.tid],
 								replyCount: ticketX[args.body.ticketItem.tid].replyCount + 1,
-								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
+								updatedAt: dayjs().valueOf(),
 								status: STATUS_FILTER.PENDING,
 							}
 						}
@@ -1184,35 +1217,40 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		case ACTION.UPDATE_TICKET:	//body: {...ticketItem}
+		case ACTION.UPDATE_TICKET:	//body: [{...ticketItem1}, {...ticketItem2}]
 			try {
 				const batch = writeBatch(db)
-				batch.update(
-					doc(db,
-						COLLECTION.USERNAMES, args.body.username,
-						"tickets", args.body.tid
-					),
-					{
-						...args.body,
-						updatedAt: serverTimestamp()
-					}
-				)
+				args.body.forEach((ticketItem) => {
+					batch.update(
+						doc(db,
+							COLLECTION.USERNAMES, ticketItem.username,
+							"tickets", ticketItem.tid
+						),
+						{
+							...ticketItem,
+							updatedAt: serverTimestamp()
+						}
+					)
+				})
 				await batch.commit()
 
 				//Update GROUP
 				await runTransaction(db, async (transaction) => {
 					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 					const ticketX = ticketXRef.data()
-					transaction.update(
-						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
+					//prepare the data
+					const updatedTime = dayjs().valueOf()
+					let newObject = {}
+					args.body.forEach((item) => {
+						newObject[item.tid] =
 						{
-							[args.body.tid]: {
-								...ticketX[args.body.tid],
-								...args.body,
-								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
-							}
+							...ticketX[item.tid],
+							...item,
+							updatedAt: updatedTime,
 						}
-					)
+					})
+					//do the update
+					transaction.update(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP), newObject)
 				})
 
 				return {
@@ -1253,7 +1291,7 @@ async function fireStoreBaseQuery(args) {
 						{
 							[args.body.ticketItem.tid]: {
 								...ticketX[args.body.ticketItem.tid],
-								updatedAt: dayjs().format("MMMM D, YYYY h:mm A"),
+								updatedAt: dayjs().valueOf(),
 							}
 						}
 					)
@@ -1341,13 +1379,14 @@ async function fireStoreBaseQuery(args) {
 				await runTransaction(db, async (transaction) => {
 					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 					const ticketX = ticketXRef.data()
+					const ticketId = args.body.ticketItem.tid
 					transaction.update(
 						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
 						{
-							[args.body.ticketItem.tid]: {
-								...ticketX[args.body.ticketItem.tid],
-								replyCount: ticketX[args.body.ticketItem.tid].replyCount - 1,
-								updatedAt: dayjs().format("MMMM D, YYYY h:mm A")
+							[ticketId]: {
+								...ticketX[ticketId],
+								replyCount: ticketX[ticketId].replyCount - 1,
+								updatedAt: dayjs().valueOf()
 							}
 						}
 					)

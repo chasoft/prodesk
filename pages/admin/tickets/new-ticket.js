@@ -111,13 +111,17 @@ function AdminNewTicket() {
 						</Typography>
 
 						{(currentStep === 0) &&
-							<Box sx={{ display: "flex", alignItems: "center" }}>
+							<Box sx={{
+								display: "flex",
+								alignItems: { xs: "flex-start", sm: "center" },
+								flexDirection: { xs: "column", sm: "row" }
+							}}>
 								<Typography variant="body2">
 									Post a question on behalf of
 								</Typography>
 
 								{!isLoading &&
-									<FormControl variant="standard" sx={{ m: 1 }}>
+									<FormControl variant="standard" sx={{ ml: { xs: 0, sm: 1 } }}>
 										<Select
 											labelId="on-behalf-of"
 											id="on-behalf-of"

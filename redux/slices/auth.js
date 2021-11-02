@@ -39,7 +39,6 @@ const authSlice = createSlice({
 		/*****************************************************************
 		 * Authentication                                                *
 		 *****************************************************************/
-
 		login: (state) => {
 			state.loading = true
 		},
@@ -48,7 +47,10 @@ const authSlice = createSlice({
 		 * @param {object} payload - Object of properties
 		 */
 		loginSuccess: (state, { payload }) => {
-			state.currentUser = payload
+			state.currentUser = {
+				...state.currentUser,
+				...payload
+			}
 			state.isAuthenticated = true
 			state.loading = false
 		},

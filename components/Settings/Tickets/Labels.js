@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Collapse, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { nanoid } from "nanoid"
@@ -134,40 +134,38 @@ export const SubCatItem = ({ currentItem }) => {
 
 			<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
 
-				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
 
-					{!showColorTable &&
-						<>
-							<LabelIcon
-								sx={{ color: color, mr: 0.5, cursor: "pointer" }}
-								onClick={() => { setShowColorTable(true) }}
-							/>
-							<InputBase
-								fullWidth
-								value={name}
-								onChange={(e) => { setName(e.target.value) }}
-								sx={{
-									color,
-									cursor: "pointer",
-									borderBottom: "1px solid transparent",
-									"&.Mui-focused": {
-										borderColor: isModified ? (theme) => theme.palette.warning.main : color
-									}
-								}}
-							/>
-						</>
-					}
+				<Collapse in={!showColorTable} sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+					<Box sx={{ display: "flex" }}>
+						<LabelIcon
+							sx={{ color: color, mr: 0.5, cursor: "pointer" }}
+							onClick={() => { setShowColorTable(true) }}
+						/>
+						<InputBase
+							fullWidth
+							value={name}
+							onChange={(e) => { setName(e.target.value) }}
+							sx={{
+								color,
+								cursor: "pointer",
+								borderBottom: "1px solid transparent",
+								"&.Mui-focused": {
+									borderColor: isModified ? (theme) => theme.palette.warning.main : color
+								}
+							}}
+						/>
+					</Box>
+				</Collapse>
 
-					{showColorTable &&
-						<Box sx={{ py: 2, justifyItems: "center" }}>
-							<Typography sx={{ pb: 1 }}>Select color for label <b>&quot;{name}&quot;</b></Typography>
-							<ColorTable getSelectedColor={(color) => {
-								setColor(color)
-								setShowColorTable(false)
-							}} />
-						</Box>
-					}
-				</Box>
+				<Collapse in={showColorTable} sx={{ py: 2, justifyItems: "center", width: showColorTable ? "initial" : "0px" }}>
+
+					<Typography sx={{ pb: 1 }}>Select color for label <b>&quot;{name}&quot;</b></Typography>
+					<ColorTable getSelectedColor={(color) => {
+						setColor(color)
+						setShowColorTable(false)
+					}} />
+
+				</Collapse>
 
 			</Box>
 

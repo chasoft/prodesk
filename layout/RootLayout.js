@@ -53,6 +53,8 @@ function RootLayout({ children }) {
 			if (user) {
 				const userProfile = await getUserProfile(user.uid)
 
+				console.log("userProfile", { userProfile })
+
 				dispatch(loginSuccess({
 					emailVerified: user.emailVerified,
 					creationTime: user.metadata.creationTime,
@@ -69,7 +71,7 @@ function RootLayout({ children }) {
 						uid: user.uid,
 						displayName: user.displayName,
 						email: user.email,
-						photoURL: user.providerData[0].photoURL ?? "/img/default-avatar.png",
+						photoURL: user.providerData[0].photoURL ?? "/avatar/default.png",
 					}))
 
 					//go to setup new account

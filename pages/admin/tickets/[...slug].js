@@ -91,11 +91,11 @@ const ActionButtons = ({ ticket }) => {
 				startIcon={<CloseIcon />}
 				onClick={async () => {
 					enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-					await updateTicket({
+					await updateTicket([{
 						username: currentUser.username,
 						tid: ticket.tid,
 						status: STATUS_FILTER.CLOSED
-					})
+					}])
 					dispatch(setRedirect(REDIRECT_URL.TICKETS))
 				}}
 			>
@@ -188,7 +188,6 @@ function AdminSingleTicket() {
 					<Link href={REDIRECT_URL.ADMIN_TICKETS} passHref>
 						<Button variant="outlined">Go back to All tickets</Button>
 					</Link>
-
 				</Box> : null}
 
 			{(!isLoading && size(ticket)) ?

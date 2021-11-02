@@ -23,10 +23,10 @@
  *****************************************************************/
 
 //CORE SYSTEM
-import React from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, IconButton, Checkbox, FormControlLabel, Grid, SvgIcon, TextField } from "@mui/material"
+import { Box, Button, CircularProgress, IconButton, Checkbox, FormControlLabel, Grid, SvgIcon, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
@@ -97,27 +97,26 @@ function GithubIcon(props) {
 
 const LoginForm = () => {
 	useFlexDirection({ payload: "row" })
+	const [isLoading, setIsLoading] = useState(false)
 	//
 	const dispatch = useDispatch()
 	const { redirectAfterLoginURL } = useSelector(getRedirect)
 	//
 	const [signInWithEmail] = useSignInWithEmailMutation()
 	const [signInWithGoogle] = useSignInWithGoogleMutation()
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	const { enqueueSnackbar } = useSnackbar()
 	//
 	const formik = useFormik({
 		initialValues: { username: "", password: "" },
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			enqueueSnackbar("Signing you in, please wait...", { variant: "info", key: "start" })
+			setIsLoading(true)
 			const res = await signInWithEmail({ username: values.username, password: values.password })
-			if (res.error) {
-				closeSnackbar("start")
+			if (res?.error) {
 				enqueueSnackbar(res.error.data.message, { variant: "error" })
+				setIsLoading(false)
 				return
 			}
-			closeSnackbar("start")
-			enqueueSnackbar(res.data.message, { variant: "success" })
 			//redirect after login if necessary
 			if (redirectAfterLoginURL === "") {
 				dispatch(setRedirect((res.data.group === USERGROUP.USER)
@@ -125,6 +124,7 @@ const LoginForm = () => {
 					: REDIRECT_URL.ADMIN)
 				)
 			}
+			setIsLoading(false)
 		},
 	})
 
@@ -234,9 +234,9 @@ const LoginForm = () => {
 							variant="contained"
 							color="primary"
 							sx={{ mt: 0, mx: 0, mb: 2 }}
-							disabled={!(formik.isValid && formik.dirty)}
+							disabled={!(formik.isValid && formik.dirty) || isLoading}
 						>
-							Login
+							Login &nbsp; {isLoading && <CircularProgress size={14} />}
 						</Button>
 					</Grid>
 				</Grid>

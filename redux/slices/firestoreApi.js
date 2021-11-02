@@ -24,7 +24,7 @@
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { sortBy, reverse } from "lodash"
+import { forEach, omit, orderBy } from "lodash"
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
@@ -45,6 +45,7 @@ export const firestoreApi = createApi({
 		TYPE.TICKETS,
 		TYPE.PROFILES,
 		TYPE.SETTINGS,
+		TYPE.USER_SETTINGS,
 		TYPE.DEPARTMENTS,
 		TYPE.CANNED_REPLIES,
 		TYPE.LABELS,
@@ -52,7 +53,7 @@ export const firestoreApi = createApi({
 		TYPE.INSTALL,
 	],
 	baseQuery: fireStoreBaseQuery,
-	keepUnusedDataFor: 15 * 60,//15 minutes
+	keepUnusedDataFor: 3 * 60,	//default 3 minutes
 	endpoints: (builder) => ({
 
 		/*****************************************************************
@@ -143,15 +144,15 @@ export const firestoreApi = createApi({
 
 		updateProfile: builder.mutation({
 			query: (body) => ({ action: ACTION.UPDATE_PROFILE, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([
-				{ type: TYPE.PROFILES, id: arg.uid },
+			invalidatesTags: (result, error, body) => ([
+				{ type: TYPE.PROFILES, id: body.uid },
 				{ type: TYPE.PROFILES, id: "LIST" },
 			]),
-			async onQueryStarted(user, { dispatch, queryFulfilled }) {
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
-						ACTION.GET_PROFILE, user.uid,
-						(draft) => { Object.assign(draft, user) }
+						ACTION.GET_PROFILE, body.uid,
+						(draft) => { Object.assign(draft, body) }
 					)
 				)
 				try { await queryFulfilled }
@@ -283,6 +284,34 @@ export const firestoreApi = createApi({
 				try { await queryFulfilled }
 				catch {
 					console.log("error when updating cache of AppSettings and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+
+		/*****************************************************************
+		 * APPLICATION SETTINGS                                          *
+		 *****************************************************************/
+
+		getUserSettings: builder.query({
+			query: (username) => ({ action: ACTION.GET_USERSETTINGS, username: username }),
+			providesTags: (result) => ([{ type: TYPE.USER_SETTINGS, id: result.username }]),
+			keepUnusedDataFor: 60 * 60,
+		}),
+
+		updateUserSettings: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_USERSETTINGS, body }),	//body = { username:string, settings: object}
+			invalidatesTags: (result, error, body) => ([{ type: TYPE.USER_SETTINGS, id: body.username }]),
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_USERSETTINGS, body.username,
+						(draft) => { Object.assign(draft, body.settings) }
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating cache of UserSettings and undo")
 					patchResult.undo()
 				}
 			},
@@ -602,32 +631,46 @@ export const firestoreApi = createApi({
 		 * TICKETS                                                       *
 		 *****************************************************************/
 		//TODO!: cần thêm tính năng stream update... tự động update khó dữ liệu mới
-		getTicketsForAdmin: builder.query({
-			query: () => ({ action: ACTION.GET_TICKETS_FOR_ADMIN }),
-			providesTags: [{ type: TYPE.TICKETS, id: "ADMIN" }],
-			keepUnusedDataFor: 5 * 60,
-			transformResponse: (response) => Object.entries(response).map(i => i[1])
-		}),
-
-		getTickets: builder.query({
-			query: (username) => ({ action: ACTION.GET_TICKETS, username }),
+		getTicketsForUser: builder.query({
+			query: (username) => ({ action: ACTION.GET_TICKETS_FOR_USER, username }),
 			providesTags: (result) => {
-				return result
-					? [
+				return result ?
+					[
 						...result.map(({ tid }) => ({ type: TYPE.TICKETS, id: tid })),
 						{ type: TYPE.TICKETS, id: "LIST" }
 					]
 					: [{ type: TYPE.TICKETS, id: "LIST" }]
 			},
-			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response)
+			transformResponse: (response) => {
+				const fixedDate = fix_datetime_list(response)
+				return fixedDate.filter(i => i.removed === false)
+			}
+		}),
+
+		getTicketsForAdmin: builder.query({
+			query: () => ({ action: ACTION.GET_TICKETS_FOR_ADMIN }),
+			providesTags: (result) => {
+				let tagsArray = [{ type: TYPE.TICKETS, id: "LIST" }]
+				forEach(result, function (value, key) {
+					tagsArray.push({ type: TYPE.TICKETS, id: key })
+				})
+				return tagsArray
+			},
+			transformResponse: (response) => {
+				forEach(response, function (value, key) {
+					if (value.removed === true) {
+						delete response[key]
+					}
+				})
+				return (response)
+			}
 		}),
 
 		getTicketReplies: builder.query({
 			query: (body) => ({ action: ACTION.GET_TICKET_REPLIES, body }),	//body: {username, tid}
 			providesTags: (result, error, body) => {
-				return result
-					? [
+				return result ?
+					[
 						...result.map(({ trid }) => ({ type: TYPE.TICKETS, id: trid })), //trid
 						{ type: TYPE.TICKETS, id: body.tid.concat("_replies") }
 					]
@@ -635,34 +678,43 @@ export const firestoreApi = createApi({
 			},
 			transformResponse: (response) => {
 				const res = fix_datetime_list(response)
-				return reverse(sortBy(res, ["createdAt"]))
+				return orderBy(res, ["createdAt"])
 			}
 		}),
 
 		addTicket: builder.mutation({
 			query: (body) => ({ action: ACTION.ADD_TICKET, body }),	//body: {...ticketItem}
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.TICKETS, id: body.tid }]
-			},
+			// invalidatesTags: (result, error, body) => {
+			// 	return [{ type: TYPE.TICKETS, id: body.tid }]
+			// },
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.username,
+				const patchTicketsForUser = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_USER, body.username,
 						(draft) => { draft.push(body) }
 					)
 				)
+
+				const patchTicketsForAdmin = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_ADMIN, undefined,
+						(draft) => { Object.assign(draft, { [body.tid]: body }) }
+					)
+				)
 				try { await queryFulfilled }
-				catch { patchResult.undo() }
+				catch {
+					patchTicketsForUser.undo()
+					patchTicketsForAdmin.undo()
+				}
 			},
 		}),
 
 		addTicketReply: builder.mutation({
 			query: (body) => ({ action: ACTION.ADD_TICKET_REPLY, body }),//body: {ticketItem, replyItem}
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.TICKETS, id: body.ticketItem.tid.concat("_replies") }]
-			},
+			// invalidatesTags: (result, error, body) => {
+			// 	return [{ type: TYPE.TICKETS, id: body.ticketItem.tid.concat("_replies") }]
+			// },
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				//Update ticket relies
-				const patchResult_replies = dispatch(
+				const patchReplies = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_TICKET_REPLIES,
 						{
@@ -672,17 +724,75 @@ export const firestoreApi = createApi({
 						(draft) => { draft.push(body.replyItem) }
 					)
 				)
-				//Update metaInfo (replyCount & updatedAt)
-				const patchResult_ticket = dispatch(
+				// Update (replyCount & updatedAt) for USER
+				const patchRepliesUser = dispatch(
 					firestoreApi.util.updateQueryData(
-						ACTION.GET_TICKETS,
-						body.ticketItem.username,
+						ACTION.GET_TICKETS_FOR_USER, body.ticketItem.username,
 						(draft) => {
-							let obj = draft.find(e => e.tid === body.ticketItem.tid)
+							let obj = draft.find(i => i.tid === body.ticketItem.tid)
 							Object.assign(obj, {
 								replyCount: obj.replyCount + 1,
-								updatedAt: dayjs().format("MMMM D, YYYY hh:mm A"),
+								updatedAt: dayjs().valueOf(),
 								status: STATUS_FILTER.PENDING
+							})
+						}
+					)
+				)
+				//Update (replyCount & updatedAt) for ADMIN
+				const patchRepliesAdmin = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTION.GET_TICKETS_FOR_ADMIN, undefined,
+						(draft) => {
+							const obj = draft[body.ticketItem.tid]
+							Object.assign(obj,
+								{
+									replyCount: obj.replyCount + 1,
+									updatedAt: dayjs().valueOf(),
+									status: STATUS_FILTER.PENDING
+								}
+							)
+						}
+					)
+				)
+
+				try { await queryFulfilled }
+				catch {
+					patchReplies.undo()
+					patchRepliesUser.undo()
+					patchRepliesAdmin.undo()
+				}
+			},
+		}),
+
+		updateTicket: builder.mutation({
+			query: (body) => ({ action: ACTION.UPDATE_TICKET, body }), //body: [{...ticketItem1}, {...ticketItem2}]
+			invalidatesTags: (result, error, body) => {
+				return [
+					...body.map(({ ticketItem }) => ({ type: TYPE.TICKETS, id: ticketItem.tid })),
+					{ type: TYPE.DOCS, id: "LIST" }
+				]
+			},
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				//Update cache tickets for User
+				const patchResultForUser = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_USER, body.username,
+						(draft) => {
+							const updatedAt = dayjs().valueOf()
+							body.forEach((ticket) => {
+								let obj = draft.find(e => e.tid === ticket.tid)
+								Object.assign(obj, { updatedAt })
+							})
+						}
+					)
+				)
+				//Update cache tickets for Admin
+				const patchResultForAdmin = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_ADMIN, undefined,
+						(draft) => {
+							const updatedAt = dayjs().valueOf()
+							body.forEach((ticket) => {
+								let obj = draft[ticket.tid]
+								Object.assign(obj, { updatedAt })
 							})
 						}
 					)
@@ -690,26 +800,9 @@ export const firestoreApi = createApi({
 
 				try { await queryFulfilled }
 				catch {
-					patchResult_replies.undo()
-					patchResult_ticket.undo()
+					patchResultForUser.undo()
+					patchResultForAdmin.undo()
 				}
-			},
-		}),
-
-		updateTicket: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_TICKET, body }), //body: {...ticketItem}
-			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.tid }],
-			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.username,
-						(draft) => {
-							let obj = draft.find(e => e.tid === body.tid)
-							Object.assign(obj, body)
-						}
-					)
-				)
-				try { await queryFulfilled }
-				catch { patchResult.undo() }
 			},
 		}),
 
@@ -726,7 +819,7 @@ export const firestoreApi = createApi({
 						},
 						(draft) => {
 							let obj = draft.find(e => e.trid === body.replyItem.trid) //trid, for we're updating replyItem
-							Object.assign(obj, body)
+							Object.assign(obj, body.replyItem)
 						}
 					)
 				)
@@ -735,22 +828,70 @@ export const firestoreApi = createApi({
 			},
 		}),
 
+		//Only admin can use this function
+		//for user, they just need to close the ticket, then done
 		deleteTicket: builder.mutation({
-			query: (body) => ({ action: ACTION.DELETE_TICKET, body }), //body: {username, tid}
-			invalidatesTags: [{ type: TYPE.TICKETS, id: "LIST" }],
+			query: (body) => ({ action: ACTION.DELETE_TICKET, body }), //body: [{username, tid},{username, tid}]
+			// invalidatesTags: [{ type: TYPE.TICKETS, id: "ADMIN" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS, body.username,
-						(draft) => draft.filter(e => e.tid !== body.tid)
+				const tids = body.map(i => i.tid)
+				//Update ticket cache for User
+				const patchTicketsForUser = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_USER, body.username,
+						(draft) => {
+							draft.filter(e => tids.includes(e.tid) === false)
+						}
 					)
 				)
+				//Update ticket cache for Admin
+				const patchTicketsForAdmin = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_ADMIN, undefined,
+						(draft) => {
+							omit(draft, tids)
+						}
+					)
+				)
+
 				try { await queryFulfilled }
 				catch {
-					patchResult.undo()
+					patchTicketsForUser.undo()
+					patchTicketsForAdmin.undo()
 				}
 			},
 		}),
 
+		//Mark ticket as deleted
+		deleteTicketTemp: builder.mutation({
+			query: (body) => ({ action: ACTION.DELETE_TICKET_TEMP, body }), //body: [{username, tid},{username, tid}]
+			// invalidatesTags: [{ type: TYPE.TICKETS, id: "ADMIN" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const tids = body.map(i => i.tid)
+				//Update ticket cache for User
+				const patchTicketsForUser = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_USER, body.username,
+						(draft) => {
+							draft.filter(e => tids.includes(e.tid) === false)
+						}
+					)
+				)
+				//Update ticket cache for Admin
+				const patchTicketsForAdmin = dispatch(
+					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_ADMIN, undefined,
+						(draft) => {
+							omit(draft, tids)
+						}
+					)
+				)
+
+				try { await queryFulfilled }
+				catch {
+					patchTicketsForUser.undo()
+					patchTicketsForAdmin.undo()
+				}
+			},
+		}),
+
+		//Only admin can use this function
 		deleteTicketReply: builder.mutation({
 			query: (body) => ({ action: ACTION.DELETE_TICKET_REPLY, body }),  //body: {username, tid, trid}
 			invalidatesTags: (result, error, body) => [{ type: TYPE.TICKETS, id: body.trid }],
@@ -970,6 +1111,10 @@ export const {
 	useGetAppSettingsQuery,
 	useUpdateAppSettingsMutation,
 
+	/* USER SETTINGS */
+	useGetUserSettingsQuery,
+	useUpdateUserSettingsMutation,
+
 	/* PROFILES */
 	useGetProfilesQuery,
 	useGetProfileQuery,
@@ -1009,8 +1154,8 @@ export const {
 	useDeleteCategoryMutation,
 
 	/* TICKETS */
+	useGetTicketsForUserQuery,
 	useGetTicketsForAdminQuery,
-	useGetTicketsQuery,
 	useGetTicketRepliesQuery,
 	useAddTicketMutation,
 	useAddTicketReplyMutation,

@@ -99,7 +99,7 @@ TopLine.propTypes = {
 	right: PropTypes.any
 }
 
-export const RegContainer = ({ children }) => {
+export const RegContainer = ({ maxWidth = "400px", children }) => {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -111,7 +111,7 @@ export const RegContainer = ({ children }) => {
 				flexDirection: "column",
 				justifyContent: { xs: "flex-start", lg: "center" },
 				flexGrow: 1,
-				maxWidth: "400px",
+				maxWidth: { maxWidth },
 				mb: 4
 			}}>
 				{children}
@@ -119,7 +119,10 @@ export const RegContainer = ({ children }) => {
 		</Box>
 	)
 }
-RegContainer.propTypes = { children: PropTypes.node }
+RegContainer.propTypes = {
+	maxWidth: PropTypes.string,
+	children: PropTypes.node
+}
 
 export const RegHeader = ({ icon, title }) => {
 	return (

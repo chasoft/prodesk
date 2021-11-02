@@ -25,7 +25,7 @@
 //CORE SYSTEM
 import React from "react"
 import PropTypes from "prop-types"
-import { useRouter } from "next/router"
+// import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Button, Typography, Grid, TextField } from "@mui/material"
@@ -38,10 +38,11 @@ import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { Logo } from "./../../components/common"
-import { useCreateAdminAccountMutation } from "./../../redux/slices/firestoreApi"
 import { REDIRECT_URL } from "./../../helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
 import { loginTemp } from "../../redux/slices/auth"
+import { setRedirect } from "../../redux/slices/redirect"
+import { useCreateAdminAccountMutation } from "./../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -70,7 +71,7 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 function CreateSuperAdmin() {
-	const router = useRouter()
+	// const router = useRouter()
 	const dispatch = useDispatch()
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 	const [createAdminAccount] = useCreateAdminAccountMutation()
@@ -97,11 +98,20 @@ function CreateSuperAdmin() {
 				enqueueSnackbar(res.error.data.message, { variant: "error" })
 			}
 
-			dispatch(loginTemp({ uid: res.data.uid })) //keep uid for next step
+			dispatch(loginTemp({
+				uid: res.data.uid,
+				email: values.email,
+				displayName: values.name,
+				group: "superadmin",
+				photoURL: "/avatar/admin-default.png",
+				username: "superadmin"
+			})) //keep uid for next step
 
 			closeSnackbar()
 			enqueueSnackbar("Account created", { variant: "success" })
-			router.push(REDIRECT_URL.INSTALL_COMPLETED)
+
+			dispatch(setRedirect(REDIRECT_URL.INSTALL_COMPLETED))
+			// router.push(REDIRECT_URL.INSTALL_COMPLETED)
 		},
 	})
 

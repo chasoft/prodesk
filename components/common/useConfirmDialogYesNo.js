@@ -1,4 +1,3 @@
-
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
  * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
@@ -23,95 +22,65 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore"
-import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth"
+import React, { useState } from "react"
+import PropTypes from "prop-types"
+
+// MATERIAL-UI
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { auth, db } from "."
-import { COLLECTION } from "../../redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const changePassword = async ({ email, password, newPassword }) => {
-	try {
-		const credential = EmailAuthProvider.credential(email, password)
-		await reauthenticateWithCredential(auth.currentUser, credential)
-		await updatePassword(auth.currentUser, newPassword)
-		return { data: "Password changed successfully." }
-	} catch (e) {
-		return { error: e.message }
+function ConfirmDialogYesNo({ title, open, setOpen, setAgreed, children }) {
+
+	const handleCancel = () => {
+		setOpen(false)
+		setAgreed(false)
 	}
+
+	const handleOk = () => {
+		setOpen(false)
+		setAgreed(true)
+	}
+
+	return (
+		<Dialog maxWidth="xs" open={open}>
+			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>{title}</DialogTitle>
+			<DialogContent>
+				{children}
+			</DialogContent>
+			<DialogActions sx={{ mr: 2 }}>
+				<Button onClick={handleOk}>Ok</Button>
+				<Button onClick={handleCancel}>Cancel</Button>
+			</DialogActions>
+		</Dialog>
+	)
+}
+ConfirmDialogYesNo.propTypes = {
+	title: PropTypes.string.isRequired,
+	open: PropTypes.bool.isRequired,
+	setOpen: PropTypes.func.isRequired,
+	setAgreed: PropTypes.func.isRequired,
+	children: PropTypes.node.isRequired,
 }
 
-export const getUserProfile = async (uid) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("uid", "==", uid)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
-		//---
-		return { error: "User not existed." }
-	} catch (e) {
-		return { error: e.message }
-	}
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+//This is used for ask for YES or NO (no input request to user)
+//If you want to request any input, please use `useConfirmDialog` instead
+
+const useConfirmDialogYesNo = () => {
+	const [open, setOpen] = useState(false)
+	const [agreed, setAgreed] = useState(false)
+
+	return { ConfirmDialogYesNo, open, setOpen, agreed, setAgreed }
 }
 
-export const getUserProfileByUsername = async (username) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("username", "==", username)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
-		//---
-		return { error: "User not existed." }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
-
-export const isUsernameAvailable = async (username) => {
-	try {
-		let res = []
-		const q = query(
-			collection(db, COLLECTION.USERS),
-			where("username", "==", username)
-		)
-		const querySnapshot = await getDocs(q)
-		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { isUsernameAvailable: false, data: res[0] }
-		//---
-		return { isUsernameAvailable: true }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
-
-export const setUsername = async (uid, username) => {
-	const res = await isUsernameAvailable(username)
-
-	if (res.error) return res.error
-	if (res.isUsernameAvailable === false) return { error: "Username existed." }
-
-	try {
-		const batch = writeBatch(db)
-		batch.set(doc(db, COLLECTION.USERS, uid), { username }, { merge: true })
-		batch.set(doc(db, COLLECTION.USERNAMES, username), { uid }, { merge: true })
-		await batch.commit()
-		//---
-		return { data: "Username created successfully" }
-	} catch (e) {
-		return { error: e.message }
-	}
-}
+export default useConfirmDialogYesNo

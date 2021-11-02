@@ -56,7 +56,7 @@ function Reply({ isFirst = false }) {
 			}}>
 
 				<Box sx={{ display: "flex", alignItems: "center" }}>
-					<Avatar alt="Remy Sharp" src="/default-avatar/1.png" />
+					<Avatar alt="Remy Sharp" src="/avatar/1.png" />
 
 					<Typography variant="caption" sx={{
 						whiteSpace: "nowrap",

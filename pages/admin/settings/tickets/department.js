@@ -66,7 +66,6 @@ function TicketSettingsDepartment() {
 		activeTab: TICKET_SETTINGS_NAMES.DEPARTMENT,
 		activePanel: DEPARTMENT_PAGES.OVERVIEW,
 		background: {
-			height: "132px",
 			backgroundImage: ""
 		}
 	})

@@ -22,102 +22,125 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 
-//ASSETS
-import FingerprintIcon from "@mui/icons-material/Fingerprint"
-import MoreVertIcon from "@mui/icons-material/MoreVert"
-import LinkIcon from "@mui/icons-material/Link"
-
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+function ConfirmDialog({
+	title,
+	onClose,
+	defaultValue,
+	value,
+	setValue,
+	open,
+	nodeRef,
+	children,
+	...other
+}) {
+	useEffect(() => {
+		if (!open) {
+			setValue(defaultValue)
+		}
+	}, [defaultValue, open, setValue])
+
+	const handleEntering = () => {
+		if (nodeRef.current != null) {
+			nodeRef.current.focus()
+		}
+	}
+
+	const handleCancel = () => { onClose() }
+	const handleOk = () => { onClose(value) }
+
+	return (
+		<Dialog
+			sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 435 } }}
+			maxWidth="xs"
+			TransitionProps={{ onEntering: handleEntering }}
+			open={open}
+			{...other}
+		>
+			<DialogTitle>{title}</DialogTitle>
+			<DialogContent dividers>
+				{/* <RadioGroup
+					ref={nodeRef}
+					aria-label="ringtone"
+					name="ringtone"
+					value={value}
+					onChange={handleChange}
+				>
+					{options.map((option) => (
+						<FormControlLabel
+							value={option}
+							key={option}
+							control={<Radio />}
+							label={option}
+						/>
+					))}
+				</RadioGroup> */}
+				{children}
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={handleCancel}>Cancel</Button>
+				<Button onClick={handleOk}>Ok</Button>
+			</DialogActions>
+		</Dialog>
+	)
+}
+ConfirmDialog.propTypes = {
+	title: PropTypes.string.isRequired,
+	onClose: PropTypes.func.isRequired,
+	defaultValue: PropTypes.string.isRequired,
+	value: PropTypes.string.isRequired,
+	setValue: PropTypes.func.isRequired,
+	open: PropTypes.bool.isRequired,
+	nodeRef: PropTypes.node,
+	children: PropTypes.node.isRequired,
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThreadMessageHeader = () => {
-	const [anchorEl, setAnchorEl] = React.useState(null)
-	const open = Boolean(anchorEl)
+//This is used for Confirmation with input value,
+//for yes/no, (no need to request any input from user), please use useConfirmDialogYesNo
 
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget)
-	}
+const useConfirmDialog = (defaultValue) => {
+	const nodeRef = useRef(null)
+	const [open, setOpen] = useState(false)
+	const [value, setValue] = useState(defaultValue)
 
-	const handleClose = () => {
-		setAnchorEl(null)
-	}
-
-
-	return (
-		<Grid container
-			sx={{
-				m: 1, mb: 2,
-				display: "flex",
-				flexDirection: "row",
-				alignItems: "center"
-			}}
-		>
-			<Grid item>
-				{/* <div className={classes.logoContainer}> */}
-				<Avatar alt="Remy Sharp" src="/avatar/1.png" />
-				{/* </div> */}
-			</Grid>
-			<Grid item
-				sx={{
-					display: "flex",
-					alignItems: "center",
-					flexGrow: 1,
-					pl: 3,
-					"& > *": {
-						mr: 1
-					}
-				}}
-			>
-				<Typography variant="caption">Camille V.</Typography>
-				<div style={{ marginTop: "0.3rem" }}><FingerprintIcon style={{ fontSize: "1.2rem" }} /></div>
-				<Typography variant="caption">Community Manager</Typography>
-			</Grid>
-			<Grid item
-				sx={{
-					display: "flex",
-					alignItems: "center"
-				}}
-			>
-				<Typography variant="caption">28/08/2021</Typography>
-				<IconButton
-					aria-label="more"
-					aria-controls="long-menu"
-					aria-haspopup="true"
-					onClick={handleClick}
-					size="large">
-					<MoreVertIcon />
-				</IconButton>
-				<Menu
-					id="long-menu"
-					anchorEl={anchorEl}
-					// keepMounted
-					open={open}
-					onClose={handleClose}
-					anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-					transformOrigin={{ horizontal: "right" }}
-				>
-					<MenuItem onClick={handleClose}>
-						<LinkIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />
-						<Typography variant="inherit" style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>Get Link</Typography>
-					</MenuItem>
-				</Menu>
-			</Grid>
-		</Grid >
+	const handlers = useMemo(
+		() => ({
+			handleOpen: () => { setOpen(true) },
+			handleClose: (newValue) => {
+				setOpen(false)
+				if (newValue) {
+					setValue(newValue)
+				}
+			},
+			handleChange: (e) => { setValue(e.target.value) }
+		}),
+		[]
 	)
+
+	useEffect(() => {
+		if (!open) {
+			setValue(defaultValue)
+		}
+	}, [defaultValue, open])
+
+	return [ConfirmDialog, nodeRef, value, setValue, handlers]
 }
 
-export default ThreadMessageHeader
+export default useConfirmDialog

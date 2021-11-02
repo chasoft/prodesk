@@ -55,8 +55,8 @@ import useAdmin from "../../../helpers/useAdmin"
 const steps = ["Create your question", "Select details", "Describe & post"]
 
 export const useGetTicketDetails = () => {
-	const { data: categories, isLoadingCategories } = useGetCategoriesQuery()
-	const { data: departments, isLoadingDepartments } = useGetDepartmentsQuery()
+	const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery()
+	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery()
 
 	const { selectedDepartment, selectedCategory, selectedSubCategory, selectedPriority } = useSelector(getNewTicket)
 	const defaultCategory = categories?.find(i => i.default === true)?.name ?? ""
@@ -76,7 +76,7 @@ export const useGetTicketDetails = () => {
 		selectedSubCategory: selectedSubCategory ?? defaultSubCategory,
 		defaultSubCategory,
 		//
-		isLoading: Boolean(isLoadingCategories) || Boolean(isLoadingDepartments)
+		isLoading: isLoadingCategories || isLoadingDepartments
 	}
 
 	return res
@@ -130,10 +130,6 @@ const StepperControlButtons = () => {
 				category: raw.selectedCategory,
 				subCatgory: raw.selectedSubCategory,
 				status: STATUS_FILTER.OPEN,
-				assignee: "",
-				assignor: "",
-				note: "",
-				label: [],
 				slug,
 				content: editorData
 			})

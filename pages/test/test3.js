@@ -28,41 +28,44 @@ import PropTypes from "prop-types"
 // import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { LinearProgress, Typography } from "@mui/material"
+import { Typography } from "@mui/material"
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 //THIRD-PARTY
 import { once } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
+// import { getAuth } from "../../redux/selectors"
 import { Logo } from "./../../components/common"
-import { getInstallLayout } from "./InstallLayout"
-import { loginSuccess } from "../../redux/slices/auth"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
-import { useFinalizeInstallationMutation } from "./../../redux/slices/firestoreApi"
+import { getInstallLayout } from "./../install/InstallLayout"
+// import { loginSuccess } from "../../redux/slices/auth"
+// import { REDIRECT_URL } from "./../../helpers/constants"
+// import { setRedirect } from "../../redux/slices/redirect"
+// import { useFinalizeInstallationMutation } from "./../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function InstallCompleted() {
-	const dispatch = useDispatch()
+function Test3() {
+	// const dispatch = useDispatch()
 	//
 	const [buffer, setBuffer] = useState(10)
 	const [progress, setProgress] = useState(0)
 	const progressRef = useRef(() => { })
 	//
-	const { currentUser } = useSelector(getAuth)	//we have uid from previus step which kept here!
-	const [finalizeInstallation] = useFinalizeInstallationMutation()
+	// const { currentUser } = useSelector(getAuth)	//we have uid from previus step which kept here!
+	// const [finalizeInstallation] = useFinalizeInstallationMutation()
 
 	const redirectAdmin = once(async () => {
-		await finalizeInstallation({ uid: currentUser.uid })
-		reduxBatch(() => {
-			dispatch(loginSuccess({ justInstalled: true }))
-			dispatch(setRedirect(REDIRECT_URL.ADMIN))
-		})
+		console.log("redirectAdmin")
+		// await finalizeInstallation({ uid: currentUser.uid })
+		// reduxBatch(() => {
+		// 	dispatch(loginSuccess({ justInstalled: true }))
+		// 	dispatch(setRedirect(REDIRECT_URL.ADMIN))
+		// })
 	})
 
 	useEffect(() => {
@@ -79,7 +82,7 @@ function InstallCompleted() {
 	})
 
 	useEffect(() => {
-		const timer = setInterval(() => { progressRef.current() }, 500)
+		const timer = setInterval(() => { progressRef.current() }, 300)
 		return () => { clearInterval(timer) }
 	}, [])
 
@@ -98,8 +101,9 @@ function InstallCompleted() {
 				paddingTop: "2rem"
 			}}>
 				<Typography variant="body1" sx={{ textAlign: "justify" }}>
-					Superadmin account has been created successfully. Please wait a moment, you will be redirected to admin dashboard.
+					Superadmin account has been created successfully. Click the button below to finalize the installation! Then, you will be redirected to admin dashboard.
 				</Typography>
+
 				<div style={{ marginTop: "4rem", width: "100%" }}>
 					<LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />
 					{/* <Button
@@ -128,8 +132,8 @@ function InstallCompleted() {
 		</div >
 	)
 }
-InstallCompleted.propTypes = { children: PropTypes.any }
+Test3.propTypes = { children: PropTypes.any }
 
-InstallCompleted.getLayout = getInstallLayout
+Test3.getLayout = getInstallLayout
 
-export default InstallCompleted
+export default Test3
