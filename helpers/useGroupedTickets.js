@@ -61,7 +61,7 @@ export default function useGroupedTickets() {
 
 		//filter by priority
 		let filtered = tickets
-		if (selectedPriority !== PRIORITY.ALL) {
+		if (selectedPriority !== PRIORITY.ANY) {
 			filtered = filter(tickets, { priority: selectedPriority })
 		}
 

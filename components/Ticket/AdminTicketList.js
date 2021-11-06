@@ -25,24 +25,27 @@
 import Link from "next/link"
 import PropTypes from "prop-types"
 import React, { useState } from "react"
-import { Box, Button, CircularProgress, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemText, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography, ListItemButton } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import AskNow from "../Docs/AskNow"
+import useProfiles from "../../helpers/useProfiles"
+import ConfirmDialog from "../common/ConfirmDialog"
 import AdminTicketListItem from "./AdminTicketListItem"
 import useMenuContainer from "../common/useMenuContainer"
 import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
 import useGroupedTickets from "../../helpers/useGroupedTickets"
-import { resetTicketsFilter } from "../../redux/slices/uiSettings"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
-import { REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
-import { useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { resetTicketsFilter, setSelectedTickets } from "../../redux/slices/uiSettings"
+import { DATE_FORMAT, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
+import { useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -50,6 +53,7 @@ import HomeIcon from "@mui/icons-material/Home"
 import FlagIcon from "@mui/icons-material/Flag"
 import LabelIcon from "@mui/icons-material/Label"
 import DeleteIcon from "@mui/icons-material/Delete"
+import ClearAllIcon from "@mui/icons-material/ClearAll"
 import FilterListIcon from "@mui/icons-material/FilterList"
 import AssignmentIcon from "@mui/icons-material/Assignment"
 
@@ -75,12 +79,13 @@ const AdminFilterDrawer = ({ isOpen, handleClose }) => {
 	)
 }
 AdminFilterDrawer.propTypes = {
-	isOpen: PropTypes.bool,
-	handleClose: PropTypes.func
+	isOpen: PropTypes.bool.isRequired,
+	handleClose: PropTypes.func.isRequired
 }
 
 const AssignButton = () => {
 	const { selectedInbox } = useSelector(getUiSettings)
+	const { staffList, isLoadingStaffList } = useProfiles()
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
 	return (
 		<>
@@ -104,11 +109,20 @@ const AssignButton = () => {
 					[
 						<MenuItem key="assign-to-myself">Assign to myself</MenuItem>,
 						<Divider key="divider" />
-					]
-				}
+					]}
 
-				<MenuItem>...</MenuItem>
-				<MenuItem>...</MenuItem>
+				{ /*
+					Liệt kê các user có thẩm quyền xử lý ticket
+					chứ ko phải staff nào cũng assign được!
+					 */}
+
+				{isLoadingStaffList &&
+					<MenuItem>Loading staffs... <CircularProgress size={20} /></MenuItem>}
+
+				{(!isLoadingStaffList && staffList.length === 0) &&
+					<MenuItem disabled={true}>{"You don't have any staff"}</MenuItem>}
+
+
 			</MenuContainer>
 		</>
 	)
@@ -116,6 +130,24 @@ const AssignButton = () => {
 
 const StatusButton = () => {
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+	const { selectedTickets } = useSelector(getUiSettings)
+	const [updateTicket] = useUpdateTicketMutation()
+	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+
+	console.log("StatusButton => group-tickets", tickets)
+
+	const handleChangeTicketStatus = async (newStatus) => {
+		let affectedTickets = []
+		selectedTickets.forEach((tid) => {
+			affectedTickets.push({
+				username: tickets[tid].username,
+				tid: tid,
+				status: newStatus
+			})
+		})
+		await updateTicket(affectedTickets)
+	}
+
 	return (
 		<>
 			<Tooltip arrow title="Change status" placement="top">
@@ -134,16 +166,23 @@ const StatusButton = () => {
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				{[STATUS_FILTER.OPEN, STATUS_FILTER.PENDING, STATUS_FILTER.REPLIED, STATUS_FILTER.CLOSED].map((item) => (
-					<MenuItem
-						key={item}
-						onClick={() => {
+				{isLoadingTickets && <MenuItem>Loading...</MenuItem>}
 
-						}}
-					>
-						{item}
-					</MenuItem>
-				))}
+				{(size(tickets) && !isLoadingTickets) &&
+					[
+						STATUS_FILTER.OPEN,
+						STATUS_FILTER.PENDING,
+						STATUS_FILTER.REPLIED,
+						STATUS_FILTER.CLOSED
+					]
+						.map((newStatus) => (
+							<MenuItem
+								key={newStatus}
+								onClick={() => handleChangeTicketStatus(newStatus)}
+							>
+								{newStatus}
+							</MenuItem>
+						))}
 			</MenuContainer>
 		</>
 	)
@@ -157,12 +196,15 @@ const LabelButton = () => {
 	const { selectedTickets } = useSelector(getUiSettings)
 	const [updateTicket] = useUpdateTicketMutation()
 
+	console.log("LabelButton => tickets", tickets)
+
 	const handleApplyLabel = async (labelId) => {
 		let affectedTickets = []
 		selectedTickets.forEach((tid) => {
-			const isLabelExisted = tickets.labels.indexOf(tid) !== -1
-			if (isLabelExisted) return
-
+			if (tickets[tid].labels.indexOf(tid) !== -1) {
+				//by pass this ticket
+				return
+			}
 			affectedTickets.push({
 				username: tickets[tid].username,
 				tid: tid,
@@ -171,6 +213,9 @@ const LabelButton = () => {
 		})
 		await updateTicket(affectedTickets)
 	}
+
+	//hide this button if admin not yet created any label
+	if (size(labels) === 0) return null
 
 	return (
 		<>
@@ -191,13 +236,18 @@ const LabelButton = () => {
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				{(isLoadingLabels && isLoadingTickets) && <MenuItem>Loading... <CircularProgress size="14" /></MenuItem>}
+				{(isLoadingLabels && isLoadingTickets) && <MenuItem>Loading...</MenuItem>}
+
+				{size(labels) &&
+					<MenuItem disabled={true}>
+						Select one of labels below
+					</MenuItem>}
 
 				{size(labels) &&
 					labels.map((label) => (
 						<MenuItem
 							key={label.lid}
-							onClick={handleApplyLabel(label.lid)}
+							onClick={() => handleApplyLabel(label.lid)}
 						>
 							<LabelIcon sx={{ color: label.color }} />&nbsp;<span style={{ color: label.color }}>{label.name}</span>
 						</MenuItem>
@@ -225,11 +275,158 @@ const LabelButton = () => {
 	)
 }
 
-const DeleteButton = () => {
+const DeleteTicketsButton = () => {
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+	const { selectedTickets, isSmallScreen } = useSelector(getUiSettings)
+	const { userList, isLoading: isLoadingUserList } = useProfiles()
+	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+	const [deleteTicketTemp] = useDeleteTicketTempMutation()
+
+	dayjs.extend(relativeTime)
+
+	const handleDeleteTicket = async (confirmed) => {
+		if (confirmed) {
+			const affectedTickets = []
+			selectedTickets.forEach((tid) => {
+				affectedTickets.push({
+					username: tickets[tid].username,
+					tid
+				})
+			})
+			await deleteTicketTemp(affectedTickets)
+			console.log("delete tickets clicked")
+		}
+	}
+
+	const selectedTicketsFullDetails = selectedTickets.map(tid => tickets[tid])
+
 	return (
-		<Tooltip arrow title="Delete tickets" placement="top">
-			<IconButton>
-				<DeleteIcon />
+		<>
+			<Tooltip arrow title="Delete tickets" placement="top">
+				<IconButton onClick={() => setOpenConfirmDialog(true)}>
+					<DeleteIcon />
+				</IconButton>
+			</Tooltip>
+
+			<ConfirmDialog
+				okButtonText="Delete"
+				color="warning"
+				open={openConfirmDialog}
+				setOpen={setOpenConfirmDialog}
+				callback={handleDeleteTicket}
+				maxWidth="md"
+			>
+				<Box sx={{
+					display: "flex",
+				}}>
+					<DeleteIcon color="warning" sx={{
+						width: 60,
+						height: 60,
+						mr: 2,
+						display: { xs: "none", sm: "block" }
+					}} />
+
+					<Box sx={{
+						display: "flex",
+						flexDirection: "column",
+					}}>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							mb: 2
+						}}>
+							<DeleteIcon color="warning" sx={{
+								width: 60,
+								height: 60,
+								mr: 2,
+								display: { xs: "block", sm: "none" }
+							}} />
+							<Typography variant="body2" sx={{ lineHeight: isSmallScreen ? 1.5 : 2 }}>
+								Are you sure you want to delete following Tickets?
+							</Typography>
+						</Box>
+
+						{(isLoadingTickets || isLoadingUserList) &&
+							<Box sx={{
+								display: "flex",
+								height: "100px",
+								width: "100%",
+								alignItems: "center",
+								justifyContent: "center"
+							}}>
+								<CircularProgress />
+							</Box>}
+
+						{(!isLoadingTickets || !isLoadingUserList) &&
+
+							<List sx={{
+								width: "100%",
+								bgcolor: "background.paper",
+								borderLeft: "3px solid transparent",
+								borderColor: "warning.main"
+							}}>
+								{selectedTicketsFullDetails.map((ticket) => {
+									const userProfile = userList.find(i => i.username === ticket.username)
+									return (
+										<ListItemButton
+											key={ticket.tid}
+											alignItems="flex-start"
+										>
+											<ListItemAvatar>
+												<Avatar alt={userProfile.displayName} src={userProfile.photoURL} />
+											</ListItemAvatar>
+											<ListItemText
+												primary={
+													<>
+														<Typography variant="h2" sx={{
+															mb: 0,
+															fontWeight: 500,
+															lineHeight: "1.25rem",
+															color: "grey.800"
+														}}>
+															{ticket.subject}
+														</Typography>
+														<Typography sx={{
+															mb: 1.5,
+															fontWeight: 500,
+															color: "grey.700"
+														}}>
+															By {userProfile.displayName} at {dayjs(ticket.createdAt).format(DATE_FORMAT.LONG)} ({dayjs(ticket.createdAt).fromNow()})
+														</Typography>
+													</>
+												}
+												secondary={
+													<Typography
+														component="span"
+														variant="body2"
+														color="text.primary"
+														sx={{ display: "inline" }}
+													>
+														{ticket.content.substring(0, 100)}
+													</Typography>
+												}
+											/>
+										</ListItemButton>
+									)
+								})}
+							</List>}
+					</Box>
+				</Box>
+			</ConfirmDialog>
+		</>
+	)
+}
+
+const ClearSelectedTicketsButton = () => {
+	const dispatch = useDispatch()
+	return (
+		<Tooltip arrow title="Unselect all tickets" placement="top">
+			<IconButton
+				onClick={() => {
+					dispatch(setSelectedTickets([]))
+				}}
+			>
+				<ClearAllIcon />
 			</IconButton>
 		</Tooltip>
 	)
@@ -244,10 +441,14 @@ function AdminTicketList() {
 	const [showFilter, setShowFilter] = useState(false)
 	const { currentUser } = useSelector(getAuth)
 	const { selectedTickets, selectedInbox } = useSelector(getUiSettings)
+
 	const { data: tickets, isLoading } = useGroupedTickets()
+
 	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
 
 	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === selectedInbox)
+
+	console.log("AdminTicketList rendering")
 
 	if (isLoading) {
 		return (
@@ -308,20 +509,21 @@ function AdminTicketList() {
 						</Typography>
 					</Box>
 
-					{size(selectedTickets)
+					{(selectedTickets.length > 0)
 						? <Box sx={{
 							display: "flex",
 							flexDirection: { xs: "column", sm: "row" },
 							alignItems: "center",
 							maxHeight: "40px"
 						}}>
-							<Typography sx={{ mr: { xs: 0, sm: 1 } }}><b>{size(selectedTickets)}</b> items selected</Typography>
+							<Typography sx={{ mr: { xs: 0, sm: 1 } }}><b>{selectedTickets.length}</b> items selected</Typography>
 							<div>
 								<AssignButton />
 								<StatusButton />
 								<LabelButton />
 								{(currentUser.username === "superadmin" || currentUser.permission.deleteTicket) &&
-									<DeleteButton />}
+									<DeleteTicketsButton />}
+								<ClearSelectedTicketsButton />
 							</div>
 						</Box>
 						: <Link href={REDIRECT_URL.ADMIN_NEW_TICKETS} passHref>
@@ -391,8 +593,6 @@ function AdminTicketList() {
 						</Paper>
 					</Box>
 				))}
-
-			<AskNow />
 		</Box>
 	)
 }

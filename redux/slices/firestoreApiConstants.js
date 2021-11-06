@@ -109,6 +109,7 @@ export const ACTION = {
 	DELETE_TICKET: "deleteTicket",
 	DELETE_TICKET_TEMP: "deleteTicketTemp",
 	DELETE_TICKET_REPLY: "deleteTicketReply",
+	REFETCH_TICKET: "refetchTicket",
 
 	/* MEMBERS */
 	//members is a sub-set of users (aka Profiles),

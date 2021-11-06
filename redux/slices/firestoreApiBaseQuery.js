@@ -33,7 +33,7 @@ import dayjs from "dayjs"
 //PROJECT IMPORT
 import { auth, db } from "./../../helpers/firebase"
 import { ACTION, COLLECTION, GROUP } from "./firestoreApiConstants"
-import { DOC_TYPE, USERGROUP, REDIRECT_URL, STATUS_FILTER } from "./../../helpers/constants"
+import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
 /*****************************************************************
@@ -1179,6 +1179,7 @@ async function fireStoreBaseQuery(args) {
 						COLLECTION.USERNAMES, args.body.ticketItem.username,
 						"tickets", args.body.ticketItem.tid),
 					{
+						...args.body.ticketItem,
 						replyCount: increment(1),
 						updatedAt: serverTimestamp(),
 					}
@@ -1194,9 +1195,9 @@ async function fireStoreBaseQuery(args) {
 						{
 							[args.body.ticketItem.tid]: {
 								...ticketX[args.body.ticketItem.tid],
+								...args.body.ticketItem,
 								replyCount: ticketX[args.body.ticketItem.tid].replyCount + 1,
-								updatedAt: dayjs().valueOf(),
-								status: STATUS_FILTER.PENDING,
+								updatedAt: dayjs().valueOf()
 							}
 						}
 					)
@@ -1235,9 +1236,13 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 
 				//Update GROUP
+
+				console.log("starting update Group")
+
 				await runTransaction(db, async (transaction) => {
 					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 					const ticketX = ticketXRef.data()
+					console.log({ ticketX })
 					//prepare the data
 					const updatedTime = dayjs().valueOf()
 					let newObject = {}
@@ -1256,15 +1261,13 @@ async function fireStoreBaseQuery(args) {
 				return {
 					data: {
 						action: ACTION.UPDATE_TICKET,
-						username: args.body.username,
-						tid: args.body.tid,
-						message: "Ticket updated successfully"
+						tickets: args.body,
+						message: "Ticket(s) updated successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.UPDATE_TICKET, e, {
-					username: args.body.username,
-					tid: args.body.tid,
+					tickets: args.body
 				})
 			}
 
@@ -1312,6 +1315,7 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
+		//!For safety reason, just allow to delete ticket one by one
 		case ACTION.DELETE_TICKET:	//body: {username, tid}
 			try {
 				const batch = writeBatch(db)
@@ -1355,19 +1359,69 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		case ACTION.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
+		//!THIS IS A SIMPLIFIED VERSION OF UPDATE_TICKET
+		case ACTION.DELETE_TICKET_TEMP:	//body: [{username, tid},{username, tid}]
 			try {
 				const batch = writeBatch(db)
-				batch.delete(doc(db,
-					COLLECTION.USERNAMES, args.body.username,
-					"tickets", args.body.tid,
-					"replies", args.body.trid
-				))
-				//update reply's counter and updatedAt for Ticket & Group
+				args.body.forEach((ticketItem) => {
+					batch.update(
+						doc(db,
+							COLLECTION.USERNAMES, ticketItem.username,
+							"tickets", ticketItem.tid
+						),
+						{
+							removed: true,
+							updatedAt: serverTimestamp()
+						}
+					)
+				})
+				await batch.commit()
+
+				await runTransaction(db, async (transaction) => {
+					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
+					const ticketX = ticketXRef.data()
+					console.log({ ticketX })
+					//prepare the data
+					const updatedTime = dayjs().valueOf()
+					let newObject = {}
+					args.body.forEach((item) => {
+						newObject[item.tid] =
+						{
+							...ticketX[item.tid],
+							removed: true,
+							updatedAt: updatedTime,
+						}
+					})
+					//do the update
+					transaction.update(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP), newObject)
+				})
+
+				return {
+					data: {
+						action: ACTION.DELETE_TICKET_TEMP,
+						tickets: args.body,
+						message: "Ticket temporarily deleted successfully"
+					}
+				}
+			} catch (e) {
+				return throwError(200, ACTION.UPDATE_TICKET, e, { tickets: args.body })
+			}
+
+		case ACTION.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
+			try {
+				console.log("DELETE_TICKET_REPLY", args.body)
+				const batch = writeBatch(db)
+				batch.delete(
+					doc(db,
+						COLLECTION.USERNAMES, args.body.username,
+						"tickets", args.body.tid,
+						"replies", args.body.trid
+					))
+				//update reply's counter and updatedAt for Ticket
 				batch.update(
 					doc(db,
-						COLLECTION.USERNAMES, args.body.ticketItem.username,
-						"tickets", args.body.ticketItem.tid),
+						COLLECTION.USERNAMES, args.body.username,
+						"tickets", args.body.tid),
 					{
 						replyCount: increment(-1),
 						updatedAt: serverTimestamp()
@@ -1379,13 +1433,12 @@ async function fireStoreBaseQuery(args) {
 				await runTransaction(db, async (transaction) => {
 					const ticketXRef = await transaction.get(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 					const ticketX = ticketXRef.data()
-					const ticketId = args.body.ticketItem.tid
 					transaction.update(
 						doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP),
 						{
-							[ticketId]: {
-								...ticketX[ticketId],
-								replyCount: ticketX[ticketId].replyCount - 1,
+							[args.body.tid]: {
+								...ticketX[args.body.tid],
+								replyCount: ticketX[args.body.tid].replyCount - 1,
 								updatedAt: dayjs().valueOf()
 							}
 						}
@@ -1408,6 +1461,15 @@ async function fireStoreBaseQuery(args) {
 					trid: args.body.trid,
 				})
 			}
+
+		case ACTION.REFETCH_TICKET:
+			return {
+				data: {
+					action: ACTION.REFETCH_TICKET,
+					message: "Nothing todo! Just a request to refetch the tickets"
+				}
+			}
+
 
 		/*****************************************************************
 		 * PAGES => pid                                                  *

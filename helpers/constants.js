@@ -49,6 +49,8 @@ export const REDIRECT_URL = {
 	//
 	ADMIN_TICKETS: "/admin/tickets",
 	ADMIN_NEW_TICKETS: "/admin/tickets/new-ticket",
+	//
+	ADMIN_USERS: "/admin/users",
 
 }
 
@@ -78,6 +80,7 @@ export const STATUS_FILTER = {
 	READ: "Read",
 	SAVED: "Saved",
 	ALL: "All",
+	ANY: "Any",
 	PENDING: "Pending",
 	OPEN: "Open",
 	REPLIED: "Replied",
@@ -94,7 +97,7 @@ export const STATUS_FILTER = {
 }
 
 export const PRIORITY = {
-	ALL: "All",
+	ANY: STATUS_FILTER.ANY,
 	LOW: "Low",
 	NORMAL: "Normal",
 	HIGH: "High"

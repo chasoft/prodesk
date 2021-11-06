@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { PRIORITY, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
+import { PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
 
 const defaultBackground = {
 	top: 0,
@@ -60,7 +60,9 @@ export const initialState = {
 		[TICKET_STATUS.REPLIED]: true,
 		[TICKET_STATUS.CLOSED]: false
 	},
-	selectedPriority: PRIORITY.ALL,
+	selectedDepartment: STATUS_FILTER.ANY,
+	selectedPriority: PRIORITY.ANY,
+	selectedLabel: STATUS_FILTER.ANY,
 	ticketSearchTerm: "",
 	selectedInbox: TICKET_INBOXES.IN_PROGRESS,
 	//used for admins in filtering tickets
@@ -113,8 +115,14 @@ const uiSettingsSlice = createSlice({
 		setScrolled: (state, { payload }) => {
 			state.scrolled = payload
 		},
+		setSelectedDepartment: (state, { payload }) => {
+			state.selectedDepartment = payload
+		},
 		setSelectedPriority: (state, { payload }) => {
 			state.selectedPriority = payload
+		},
+		setSelectedLabel: (state, { payload }) => {
+			state.selectedLabel = payload
 		},
 		setTicketSearchTerm: (state, { payload }) => {
 			state.ticketSearchTerm = payload
@@ -135,10 +143,12 @@ const uiSettingsSlice = createSlice({
 				[TICKET_STATUS.REPLIED]: true,
 				[TICKET_STATUS.CLOSED]: false
 			}
-			state.selectedPriority = PRIORITY.ALL
+			state.selectedDepartment = PRIORITY.ANY
+			state.selectedPriority = PRIORITY.ANY
 			state.ticketSearchTerm = ""
 			state.selectedInbox = TICKET_INBOXES.IN_PROGRESS
 			state.selectedTickets = []
+			state.selectedLabel = STATUS_FILTER.ANY
 		},
 		/* */
 		setActiveSettingTab: (state, { payload }) => {
@@ -172,7 +182,7 @@ export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrolled,
-	setTicketSearchTerm, setSelectedStatus, setSelectedPriority, resetTicketsFilter, setSelectedInbox,
+	setTicketSearchTerm, setSelectedStatus, setSelectedDepartment, setSelectedPriority, setSelectedLabel, resetTicketsFilter, setSelectedInbox,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
 	setSideBarLeft, setShowTocSideBarDetails,
 	setSelectedTickets

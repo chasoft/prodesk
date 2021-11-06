@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Chip, Popper, IconButton, MenuList, ClickAwayListener, Grow, MenuItem, Paper, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, IconButton, MenuItem, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -37,8 +37,10 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import TextEditor from "../common/TextEditor"
 import { getAuth } from "../../redux/selectors"
-import ReplyDialog from "../Post/Replies/ReplyDialog"
+import { TicketCategory, TicketDepartment, TicketLabels, TicketPriority, TicketReplyCount, TicketStatus } from "./AdminTicketListItem"
+import useMenuContainer from "../common/useMenuContainer"
 import { setRedirect } from "../../redux/slices/redirect"
+import ReplyDialog from "../Ticket/TicketReplies/ReplyDialog"
 import { DATE_FORMAT, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
 import { useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
@@ -46,7 +48,8 @@ import { useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 import CloseIcon from "@mui/icons-material/Close"
 import ReplyIcon from "@mui/icons-material/Reply"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import ApartmentIcon from "@mui/icons-material/Apartment"
+import AccessTimeIcon from "@mui/icons-material/AccessTime"
+import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
 
 /*****************************************************************
  * INIT                                                          *
@@ -68,40 +71,23 @@ MenuItemStyled.propTypes = {
 }
 
 const PopupMenu = ({ ticket }) => {
+	const [showReplyDialog, setShowReplyDialog] = useState(false)
+	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+
 	const dispatch = useDispatch()
-	const anchorRef = useRef(null)
+	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
-	const [open, setOpen] = useState(false)
 	const { enqueueSnackbar } = useSnackbar()
 
-	const [updateTicket] = useUpdateTicketMutation()
-
-	const handleToggle = () => { setOpen((prevOpen) => !prevOpen) }
-
-	const handleClose = (event) => {
-		if (anchorRef.current && anchorRef.current.contains(event.target)) {
-			return
-		}
-		setOpen(false)
+	const handleCloseTicket = async () => {
+		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
+		await updateTicket([{
+			username: currentUser.username,
+			tid: ticket.tid,
+			status: STATUS_FILTER.CLOSED
+		}])
+		dispatch(setRedirect(REDIRECT_URL.TICKETS))
 	}
-
-	function handleListKeyDown(event) {
-		if (event.key === "Tab") {
-			event.preventDefault()
-			setOpen(false)
-		} else if (event.key === "Escape") {
-			setOpen(false)
-		}
-	}
-
-	// return focus to the button when we transitioned from !open -> open
-	const prevOpen = useRef(open)
-	useEffect(() => {
-		if (prevOpen.current === true && open === false) {
-			anchorRef.current.focus()
-		}
-		prevOpen.current = open
-	}, [open])
 
 	return (
 		<>
@@ -117,60 +103,41 @@ const PopupMenu = ({ ticket }) => {
 				<MoreVertIcon />
 			</IconButton>
 
-			<Popper
+			<MenuContainer
 				open={open}
-				anchorEl={anchorRef.current}
-				role={undefined}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={handleListKeyDown}
 				placement="bottom-end"
-				transition
-				disablePortal
-				style={{ zIndex: 1 }}
+				transformOrigin="right top"
 			>
-				{({ TransitionProps }) => (
-					<Grow {...TransitionProps} style={{ transformOrigin: "right top" }}>
-						<Paper elevation={4}>
-							<ClickAwayListener onClickAway={handleClose}>
-								<MenuList
-									autoFocusItem={open}
-									id="composition-menu"
-									aria-labelledby="composition-button"
-									onKeyDown={handleListKeyDown}
-								>
-									<ReplyDialog
-										ticketId={ticket.tid}
-										ticketStatus={ticket.status}
-										ticketUsername={ticket.username}
-									>
-										<MenuItem onClick={handleClose}>
-											{<ReplyIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
-											<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
-												Reply
-											</Typography>
-										</MenuItem>
-									</ReplyDialog>
-									<MenuItem
-										disabled={ticket.status === STATUS_FILTER.CLOSED}
-										onClick={async () => {
-											enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-											await updateTicket([{
-												username: currentUser.username,
-												tid: ticket.tid,
-												status: STATUS_FILTER.CLOSED
-											}])
-											dispatch(setRedirect(REDIRECT_URL.TICKETS))
-										}}
-									>
-										{<CloseIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
-										<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
-											Close
-										</Typography>
-									</MenuItem>
-								</MenuList>
-							</ClickAwayListener>
-						</Paper>
-					</Grow>
-				)}
-			</Popper>
+				<MenuItem
+					disabled={(ticket.username !== currentUser.username) && (ticket.status === STATUS_FILTER.CLOSED)}
+					onClick={() => { setShowReplyDialog(true) }}
+				>
+					{<ReplyIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
+					<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+						Reply
+					</Typography>
+				</MenuItem>
+				<MenuItem
+					disabled={ticket.status === STATUS_FILTER.CLOSED}
+					onClick={handleCloseTicket}
+				>
+					{<CloseIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
+					<Typography style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+						Close
+					</Typography>
+				</MenuItem>
+			</MenuContainer>
+
+			<ReplyDialog
+				ticketId={ticket.tid}
+				ticketStatus={ticket.status}
+				ticketUsername={ticket.username}
+				open={showReplyDialog}
+				setOpen={setShowReplyDialog}
+			/>
 		</>
 	)
 }
@@ -179,23 +146,34 @@ PopupMenu.propTypes = {
 	ticket: PropTypes.object
 }
 
-export const StatusChip = ({ status }) => {
-	const chipColor = {
-		[STATUS_FILTER.OPEN]: "primary",
-		[STATUS_FILTER.PENDING]: "warning",
-		[STATUS_FILTER.REPLIED]: "success",
-		[STATUS_FILTER.CLOSED]: "secondary",
-	}
-
-	return <Chip
-		size="small"
-		color={chipColor[status]}
-		label={status}
-		sx={{ mr: 1, mb: 1 }}
-	/>
+const TicketCreatedAt = ({ createdAt, dateTimeFormat, sx }) => {
+	return (
+		<Box sx={{
+			display: "flex",
+			flexDirection: { xs: "row", sm: "column", md: "row" },
+			alignItems: { xs: "center", sm: "flex-end", md: "center" },
+			justifyContent: "flex-end",
+			flexWrap: "wrap",
+			...sx
+		}}>
+			<Typography noWrap sx={{
+				display: "flex",
+				alignItems: "center"
+			}}>
+				&nbsp;<AccessTimeIcon sx={{ fontSize: 18 }} />&nbsp;
+				{dayjs(createdAt).format(dateTimeFormat ?? DATE_FORMAT.LONG)}
+			</Typography>
+			<Typography noWrap sx={{ fontStyle: "italic", mr: 1 }} color="textSecondary">
+				&nbsp;({dayjs(createdAt).fromNow()})
+			</Typography>
+		</Box>
+	)
 }
-StatusChip.propTypes = {
-	status: PropTypes.string.isRequired,
+TicketCreatedAt.propTypes = {
+	createdAt: PropTypes.any,
+	prefixText: PropTypes.string,
+	dateTimeFormat: PropTypes.string,
+	sx: PropTypes.object
 }
 
 /*****************************************************************
@@ -203,6 +181,7 @@ StatusChip.propTypes = {
  *****************************************************************/
 
 function TicketContent({ ticket }) {
+	const profile = useGetProfileByUsername(ticket.username)
 	dayjs.extend(relativeTime)
 	return (
 		<Paper component="main" sx={{
@@ -224,29 +203,51 @@ function TicketContent({ ticket }) {
 					display: "flex",
 					alignItems: "center",
 				}}>
-					<StatusChip status={ticket.status} />
-					<Typography variant="h2" sx={{ fontWeight: 500, ml: 1, mb: 0 }} >
-						{ticket.subject}
-					</Typography>
-				</Box>
-
-				<Box sx={{
-					display: { xs: "none", sm: "flex" },
-					alignItems: "center"
-				}}>
+					<Avatar
+						alt={profile?.displayName}
+						src={profile?.photoURL ?? "/avatar/1.png"}
+						sx={{
+							marginLeft: "auto",
+							marginRight: "auto"
+						}}
+					/>
 					<Box sx={{
 						display: "flex",
-						flexDirection: { xs: "column", md: "row" },
-						alignItems: "flex-end"
+						flexDirection: "column",
+						alignItems: "flex-start",
+						ml: 1
 					}}>
-						<Typography noWrap>
-							{dayjs(ticket.createdAt).format(DATE_FORMAT.LONG)} &nbsp;
+						<Typography variant="h2" sx={{
+							fontWeight: 500,
+							lineHeight: "initial",
+							mb: 0
+						}} >
+							{ticket.subject}
 						</Typography>
-						<Typography noWrap sx={{ fontStyle: "italic", mr: 1 }} color="textSecondary">
-							({dayjs(ticket.createdAt).fromNow()})
-						</Typography>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "space-between",
+						}}>
+							<Typography noWrap sx={{
+								fontWeight: 500
+							}}>
+								{profile.displayName}
+							</Typography>
+							<TicketCreatedAt
+								createdAt={ticket.createdAt}
+								dateTimeFormat={DATE_FORMAT.SHORT}
+								sx={{ display: { xs: "flex", sm: "none" } }}
+							/>
+						</Box>
 					</Box>
+				</Box>
 
+				<Box sx={{ display: "flex", alignItems: "center" }}>
+					<TicketCreatedAt
+						createdAt={ticket.createdAt}
+						sx={{ display: { xs: "none", sm: "flex" } }}
+					/>
 					<PopupMenu ticket={ticket} />
 				</Box>
 
@@ -266,29 +267,21 @@ function TicketContent({ ticket }) {
 			<Box sx={{
 				display: "flex",
 				px: { xs: 3, md: 6 },
-				py: { xs: 2, md: 2 },
+				py: 2,
+				alignItems: "center",
 				backgroundColor: "#F8F9FA",
 				borderBottomLeftRadius: "0.5rem",
 				borderBottomRightRadius: "0.5rem",
 				borderTop: "1px solid",
-				borderTopColor: "divider"
+				borderTopColor: "divider",
+				flexWrap: "wrap"
 			}}>
-				<Tooltip arrow title="Department" placement="top">
-					<Chip
-						size="small"
-						label={ticket.department}
-						avatar={<ApartmentIcon />}
-						sx={{ mr: 1 }}
-					/>
-				</Tooltip>
-
-				<Tooltip arrow title="Category" placement="top">
-					{ticket.category &&
-						<Chip
-							size="small"
-							label={ticket.category + (ticket?.subCategory ? ("/" + ticket.subCategory) : "")}
-						/>}
-				</Tooltip>
+				<TicketPriority sx={{ cursor: "pointer" }} priority={ticket.priority} />
+				<TicketStatus status={ticket.status} sx={{ mb: 0.5, ml: 1 }} />
+				<TicketDepartment department={ticket.department} />
+				<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
+				<TicketReplyCount count={ticket.replyCount} />
+				<TicketLabels ticket={ticket} sx={{ ml: 1 }} />
 			</Box>
 
 		</Paper>

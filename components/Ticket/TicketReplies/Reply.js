@@ -22,39 +22,114 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { useGetProfilesQuery } from "../../../redux/slices/firestoreApi"
-import { Avatar, Box, IconButton, Tooltip, Typography } from "@mui/material"
+import { alpha } from "@mui/material/styles"
+import { Avatar, Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
 
-//THIRD-PARTY
-import { size } from "lodash"
+//THIRD-PARTY]
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import { random } from "lodash"
+import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
+import ConfirmDialog from "../../common/ConfirmDialog"
 import { DATE_FORMAT } from "../../../helpers/constants"
+import { getTextEditor } from "./../../../redux/selectors"
+import { setEditorData } from "./../../../redux/slices/textEditor"
+import { useDeleteTicketReplyMutation, useUpdateTicketReplyMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
+import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
-import useConfirmDialogYesNo from "../../common/useConfirmDialogYesNo"
+import AccessTimeIcon from "@mui/icons-material/AccessTime"
+import useGetProfileByUsername from "../../../helpers/useGetProfileByUsername"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+const ReplyCreatedAt = ({ createdAt, sx }) => {
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "flex-end",
+			flexWrap: "wrap",
+			...sx
+		}}>
+			<Typography variant="caption" sx={{
+				display: "flex",
+				alignItems: "center",
+				fontStyle: "italic"
+			}}>
+				<AccessTimeIcon sx={{ fontSize: 18 }} />&nbsp;
+				{dayjs(createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+			</Typography>
+			<Typography color="textSecondary" sx={{ fontStyle: "italic" }}>
+				({dayjs(createdAt).fromNow()})
+			</Typography>
+		</Box>
+	)
+}
+ReplyCreatedAt.propTypes = {
+	createdAt: PropTypes.any,
+	prefixText: PropTypes.string,
+	dateTimeFormat: PropTypes.string,
+	sx: PropTypes.object
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ReplyItem({ isAdmin, replyItem, isFirst = false }) {
+function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 
-	const { profile } = useGetProfilesQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			profile: data?.find((profile) => profile.username === replyItem.username) ?? undefined,
+	const profile = useGetProfileByUsername(replyItem.username)
+
+	const dispatch = useDispatch()
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+	const [editMode, setEditMode] = useState(false)
+	const [replyItemContent, setReplyItemContent] = useState(replyItem.content)
+	const { editorData } = useSelector(getTextEditor)
+	const [deleteTicketReply] = useDeleteTicketReplyMutation()
+	const [updateTicketReply] = useUpdateTicketReplyMutation()
+
+	const handleDeleteReply = async (confirmed) => {
+		if (confirmed) {
+			console.log("processing to delete replyId", replyItem.trid)
+			await deleteTicketReply({
+				username: ticketUsername,
+				tid: replyItem.tid,
+				trid: replyItem.trid
+			})
+		}
+	}
+
+	const handleUpdateReply = async () => {
+		setEditMode(false)
+		setReplyItemContent(editorData)
+		await updateTicketReply({
+			ticketItem: {
+				username: ticketUsername,
+				tid: replyItem.tid,
+			},
+			replyItem: {
+				trid: replyItem.trid,
+				content: editorData
+			}
 		})
-	})
+	}
 
-	const { ConfirmDialogYesNo, open, setOpen, agreed, setAgreed } = useConfirmDialogYesNo()
+	const handleCancelUpdateReply = () => {
+		setReplyItemContent(prev => prev + " ".repeat(random(20)))
+		dispatch(setEditorData(""))
+		setEditMode(false)
+	}
 
 	dayjs.extend(relativeTime)
 
@@ -64,124 +139,159 @@ function ReplyItem({ isAdmin, replyItem, isFirst = false }) {
 			px: 3, py: { xs: 3, md: 4 },
 			flexDirection: { xs: "column", sm: "row" },
 			...(!isFirst && { borderTop: "1px solid", borderColor: "divider" }),
+			...(editMode && { backgroundColor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) }),
 			":hover": {
-				backgroundColor: "action.hover",
+				backgroundColor: editMode
+					? (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+					: "action.hover",
 				transition: "background-color 500ms cubic-bezier(0.4, 0, 0.2, 1)",
-				"& > #delete-reply-button": {
+				"& > #actionButtons": {
 					visibility: "visible"
 				}
 			},
-			"& > #delete-reply-button": {
+			"& > #actionButtons": {
 				visibility: "hidden"
 			}
 		}}>
 
 			<Box sx={{
 				display: "flex",
+				alignItems: "center",
 				flexDirection: { xs: "row", sm: "column" },
 				justifyContent: { xs: "space-between", sm: "flex-start" },
-				alignItems: "center",
+				minWidth: { xs: "initial", sm: "80px" },
+				overflow: "hidden",
+				textOverflow: "ellipsis",
 			}}>
+				<Avatar
+					alt={profile?.displayName}
+					src={profile?.photoURL ?? "/avatar/1.png"}
+					sx={{
+						marginLeft: "auto",
+						marginRight: "auto"
+					}}
+				/>
 
-				<Box sx={{
-					display: { xs: "flex", sm: "block" },
-					flexDirection: { xs: "row", sm: "column" },
-					alignItems: "center",
-					overflow: "hidden",
-					width: { xs: "initial", sm: "80px" },
-					textOverflow: "ellipsis",
-					flexGrow: 1,
+				<Typography noWrap variant="caption" sx={{
+					fontWeight: 500,
+					mx: { xs: 2, sm: 0 },
+					mt: { xs: 0, sm: 2 },
+					flexGrow: { xs: 1, sm: 0 }
+
 				}}>
-					<Avatar
-						alt="Remy Sharp"
-						src={profile ? profile.photoURL : "/avatar/1.png"}
-						sx={{
-							marginLeft: "auto",
-							marginRight: "auto"
-						}}
-					/>
+					{profile?.displayName ?? "..."}
+				</Typography>
 
-					<Typography noWrap variant="caption" sx={{
-						fontWeight: 500,
-						flexGrow: 1,
-						mx: { xs: 2, sm: 0 },
-						mt: { xs: 0, sm: 2 }
-					}}>
-						{size(profile) ? profile.displayName : "Loading..."}
-					</Typography>
-
-					<Box sx={{
+				<ReplyCreatedAt
+					createdAt={replyItem.createdAt}
+					sx={{
 						display: { xs: "flex", sm: "none" },
 						flexDirection: { xs: "column", sm: "row" },
 						alignItems: "flex-end",
-					}}>
-						<Typography>
-							{dayjs(replyItem.createdAt).format(DATE_FORMAT.LONG)}
-						</Typography>
-						<Typography noWrap color="textSecondary" sx={{ fontStyle: "italic", textAlign: "right" }}>
-							({dayjs(replyItem.createdAt).fromNow()})
-						</Typography>
-					</Box>
-				</Box>
+					}}
+				/>
 			</Box>
 
-			<Box sx={{ flexGrow: 1 }}>
+			<Box sx={{
+				flexGrow: 1,
+				pr: { xs: 1, sm: editMode ? 5 : 0 }
+			}}>
+				<ReplyCreatedAt
+					createdAt={replyItem.createdAt}
+					sx={{ display: { xs: "none", sm: "flex" } }}
+				/>
 
 				<Box sx={{
-					display: { xs: "none", sm: "flex" },
-					alignItems: "space-between",
-					ml: { xs: 0, sm: 3 },
-					mb: 1
-				}}>
-					<Typography variant="caption" >
-						<b>{profile?.displayName}</b> replied by {dayjs(replyItem.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
-					</Typography>
-					<Typography variant="caption" color="textSecondary" sx={{ fontStyle: "italic" }}>
-						({dayjs(replyItem.createdAt).fromNow()})
-					</Typography>
-				</Box>
-
-				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
 					my: { xs: 2, sm: 0 },
 					ml: { xs: 0, sm: 3 },
 					"&>p": { lineHeight: "1.5rem" }
 				}}>
 					<TextEditor
-						value={replyItem.content}
-						readOnly={true} >
-					</TextEditor>
+						value={replyItemContent}
+						readOnly={editMode === false}
+					/>
+
+					{editMode &&
+						<Box sx={{
+							display: "flex",
+							justifyContent: "flex-end",
+							pt: 2,
+							mt: 2,
+							borderTop: "1px solid transparent",
+							borderColor: "primary.main"
+						}}>
+							<Button
+								size="small" variant="outlined"
+								onClick={handleCancelUpdateReply}
+								sx={{ px: 3, minWidth: "100px" }}
+							>
+								Cancel
+							</Button>
+
+							<Button
+								size="small" variant="contained"
+								onClick={handleUpdateReply}
+								sx={{ ml: 2, px: 4, minWidth: "100px" }}
+								disabled={editorData.trim() === "" || replyItemContent.trim() === editorData.trim()}
+							>
+								Update
+							</Button>
+						</Box>
+					}
 				</Box>
 
 				{(replyItem.createdAt !== replyItem.updatedAt)
-					? <Typography variant="caption" color="textSecondary" sx={{
-						my: 1,
-						ml: { xs: 0, sm: 3 }
-					}}>
-						<span>last edited {dayjs(replyItem.updatedAt).fromNow()} </span>
-					</Typography>
+					? <Box sx={{ marginTop: editMode ? 0 : 3 }}>
+						<Typography variant="caption" color="textSecondary" sx={{
+							my: 1,
+							ml: { xs: 0, sm: 3 }
+						}}>
+							<span>last edited {dayjs(replyItem.updatedAt).fromNow()} </span>
+						</Typography>
+					</Box>
 					: null}
 			</Box>
 
 			{isAdmin &&
 				<Box
-					id="delete-reply-button"
+					id="actionButtons"
 					sx={{
+						display: "flex",
+						flexDirection: { xs: "row", sm: "column" },
+						justifyContent: { xs: "flex-end", sm: "flex-start" },
 						float: "right",
 						mt: { xs: -2, md: -3 },
-						mr: -2
+						mr: -2,
+						"&>button>#deleteIcon:hover": {
+							fill: (theme) => theme.palette.warning.main
+						},
+						"&>button>#editIcon:hover": {
+							fill: (theme) => theme.palette.primary.main
+						}
 					}}
 				>
-					<Tooltip title="Delete reply..." placement="top" >
-						<IconButton onClick={() => { setOpen(true) }}>
-							<DeleteIcon color="warning" />
-						</IconButton>
-					</Tooltip>
+					{editMode === false &&
+						<>
+							<Tooltip title="Delete reply..." placement="left" >
+								<IconButton onClick={() => { setOpenConfirmDialog(true) }}>
+									<DeleteIcon id="deleteIcon" />
+								</IconButton>
+							</Tooltip>
+							<Tooltip title="Edit reply" placement="left" >
+								<IconButton onClick={() => { setEditMode(true) }}>
+									<EditIcon id="editIcon" />
+								</IconButton>
+							</Tooltip>
+						</>}
 
-					<ConfirmDialogYesNo
-						title="Delete reply confirmation"
-						open={open}
-						setOpen={setOpen}
-						setHasAgreed={setAgreed}
+					<ConfirmDialog
+						okButtonText="Delete"
+						color="warning"
+						open={openConfirmDialog}
+						setOpen={setOpenConfirmDialog}
+						callback={handleDeleteReply}
 					>
 						<Box sx={{
 							display: "flex"
@@ -191,18 +301,15 @@ function ReplyItem({ isAdmin, replyItem, isFirst = false }) {
 								Are you sure you want to delete this reply?<br />Please note that this action can not be undo.
 							</Typography>
 						</Box>
-					</ConfirmDialogYesNo>
+					</ConfirmDialog>
 				</Box>}
-
-			{agreed && "you confirmed to delete"}
-			{console.log({ hasAgreed: agreed, trid: replyItem.trid })}
-
 		</Box >
 	)
 }
 ReplyItem.propTypes = {
 	isAdmin: PropTypes.bool,
-	replyItem: PropTypes.object,
+	replyItem: PropTypes.object.isRequired,
+	ticketUsername: PropTypes.string.isRequired,
 	isFirst: PropTypes.bool
 }
 

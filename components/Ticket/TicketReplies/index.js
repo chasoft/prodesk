@@ -22,14 +22,13 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Fab, Tooltip } from "@mui/material"
+import { Box, Button, Fab, Skeleton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
-import { size } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -48,22 +47,31 @@ import ReplyIcon from "@mui/icons-material/Reply"
  *****************************************************************/
 
 export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
+	const [open, setOpen] = useState(false)
 	return (
 		<Box sx={{
 			display: { xs: "none", sm: "flex" },
 			justifyContent: "flex-end", mb: 4, ...sx
 		}}>
+			<Tooltip arrow title={tooltip} placement="left">
+				<Button
+					disabled={disabled}
+					variant={variant}
+					startIcon={<ReplyIcon />}
+					sx={{ px: 3 }}
+					onClick={() => setOpen(true)}
+				>
+					Reply
+				</Button>
+			</Tooltip>
+
 			<ReplyDialog
 				ticketId={ticket.tid}
 				ticketStatus={ticket.status}
 				ticketUsername={ticket.username}
-			>
-				<Tooltip arrow title={tooltip} placement="left">
-					<Button disabled={disabled} variant={variant} startIcon={<ReplyIcon />} sx={{ px: 3 }}>
-						Reply
-					</Button>
-				</Tooltip>
-			</ReplyDialog>
+				open={open}
+				setOpen={setOpen}
+			/>
 		</Box>
 	)
 }
@@ -75,11 +83,55 @@ ReplyButton.propTypes = {
 	sx: PropTypes.object
 }
 
+const RepliesContainer = ({ ticketId, ticketStatus, ticketUsername, children }) => {
+	const [open, setOpen] = useState(false)
+	return (
+		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
+
+			<Box sx={{
+				border: "1px solid",
+				borderRadius: "0.5rem",
+				borderColor: "divider",
+			}}>
+				{children}
+			</Box>
+
+			<Fab
+				color="primary"
+				sx={{
+					display: { xs: "initial", sm: "none" },
+					position: "fixed",
+					bottom: { xs: 32, md: 64 },
+					right: { xs: 32, md: 128, lg: 152 }
+				}}
+				onClick={() => { setOpen(true) }}
+			>
+				<ReplyIcon />
+			</Fab>
+
+			<ReplyDialog
+				open={open}
+				setOpen={setOpen}
+				ticketId={ticketId}
+				ticketStatus={ticketStatus}
+				ticketUsername={ticketUsername}
+			/>
+
+		</Box >
+	)
+}
+RepliesContainer.propTypes = {
+	ticketId: PropTypes.string,
+	ticketStatus: PropTypes.string,
+	ticketUsername: PropTypes.string,
+	children: PropTypes.node
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
+function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 
 	const { currentUser } = useSelector(getAuth)
 	const hasAdminPermissions = useUserSettings(currentUser.username, USER_SETTINGS_NAME.hasAdminPermissions)
@@ -91,63 +143,116 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername }) {
 
 	const isAdmin = currentUser.username === "superadmin" || hasAdminPermissions
 
-	if (isLoadingReplies) {
+	//We already know the number of replies based on replyCount,
+	//then, show the result immediately when replyCount === 0
+	if (replyCount == 0) {
 		return (
-			<Box sx={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				p: 5
-			}}>
-				<CircularProgress />
-			</Box>
-		)
-	}
-
-	return (
-		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
-
-			<Box sx={{
-				border: "1px solid",
-				borderRadius: "0.5rem",
-				borderColor: "divider",
-			}}>
-
-				{!size(ticketReplies) &&
-					<Box sx={{ p: 4 }}>There is no replies!</Box>}
-
-				{ticketReplies?.map((replyItem, idx) =>
-					<ReplyItem
-						key={replyItem.trid}
-						isAdmin={isAdmin}
-						replyItem={replyItem}
-						isFirst={idx === 0}
-					/>
-				)}
-			</Box>
-
-			<ReplyDialog
+			<RepliesContainer
 				ticketId={ticketId}
 				ticketStatus={ticketStatus}
 				ticketUsername={ticketUsername}
 			>
-				<Fab
-					color="primary" sx={{
-						display: { xs: "initial", sm: "none" },
-						position: "fixed",
-						bottom: { xs: 32, md: 64 },
-						right: { xs: 32, md: 128, lg: 152 }
+				<Box sx={{ p: 4 }}>There is no replies!</Box>
+			</RepliesContainer>
+		)
+	}
+
+	//Skeleton when waiting for replies' content
+	if (isLoadingReplies) {
+		return (
+			<RepliesContainer
+				ticketId={ticketId}
+				ticketStatus={ticketStatus}
+				ticketUsername={ticketUsername}
+			>
+				<Box sx={{
+					display: "flex",
+					px: 3, py: { xs: 3, md: 4 },
+					flexDirection: { xs: "column", sm: "row" }
+				}}>
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						flexDirection: { xs: "row", sm: "column" },
+						justifyContent: { xs: "space-between", sm: "flex-start" },
+						minWidth: { xs: "initial", sm: "80px" },
+						overflow: "hidden",
+						textOverflow: "ellipsis",
 					}}>
-					<ReplyIcon />
-				</Fab>
-			</ReplyDialog>
-		</Box >
+						<Skeleton animation="wave" variant="circular" width={40} height={40} />
+
+						<Skeleton
+							animation="wave"
+							height={15}
+							width="80%"
+							sx={{
+								mx: { xs: 2, sm: 0 },
+								mt: { xs: 0, sm: 2 },
+								flexGrow: { xs: 1, sm: 0 }
+							}}
+						/>
+
+						<Skeleton
+							sx={{
+								display: { xs: "flex", sm: "none" },
+								flexDirection: { xs: "column", sm: "row" },
+								alignItems: "flex-end",
+							}}
+						/>
+					</Box>
+
+					<Box sx={{
+						flexGrow: 1,
+						pr: { xs: 1, sm: 0 }
+					}}>
+						<Skeleton
+							sx={{
+								display: { xs: "none", sm: "flex" },
+								ml: { xs: 0, sm: 3 },
+							}}
+						/>
+
+						<Box sx={{
+							display: "flex",
+							flexDirection: "column",
+							my: { xs: 2, sm: 0 },
+							ml: { xs: 0, sm: 3 },
+						}}>
+
+							<Skeleton sx={{ height: 90 }} animation="wave" variant="rectangular" />
+
+						</Box>
+					</Box>
+
+				</Box >
+			</RepliesContainer >
+		)
+	}
+
+	//Replies
+	return (
+		<RepliesContainer
+			ticketId={ticketId}
+			ticketStatus={ticketStatus}
+			ticketUsername={ticketUsername}
+		>
+			{ticketReplies?.map((replyItem, idx) =>
+				<ReplyItem
+					key={replyItem.trid}
+					isAdmin={isAdmin}
+					replyItem={replyItem}
+					ticketUsername={ticketUsername}
+					isFirst={idx === 0}
+				/>
+			)}
+		</RepliesContainer>
 	)
 }
 TicketReplies.propTypes = {
 	ticketId: PropTypes.string,
 	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string
+	ticketUsername: PropTypes.string,
+	replyCount: PropTypes.number
 }
 
 export default TicketReplies

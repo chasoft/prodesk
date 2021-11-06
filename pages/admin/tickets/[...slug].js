@@ -24,96 +24,31 @@
 
 import React from "react"
 import Link from "next/link"
-import PropTypes from "prop-types"
 import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Box, Button, CircularProgress, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { filter, size } from "lodash"
-import { useSnackbar } from "notistack"
-import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../../redux/selectors"
 import { getLayout } from "../../../layout/AdminLayout"
 import useUiSettings from "../../../helpers/useUiSettings"
-import { setRedirect } from "../../../redux/slices/redirect"
 import TicketContent from "../../../components/Ticket/TicketContent"
-import { REDIRECT_URL, STATUS_FILTER } from "../../../helpers/constants"
-import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
-import TicketReplies, { ReplyButton } from "../../../components/Ticket/TicketReplies"
-import { useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
+import { REDIRECT_URL } from "../../../helpers/constants"
+import TicketReplies from "../../../components/Ticket/TicketReplies"
+import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
+import { useGetTicketsForAdminQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import ErrorIcon from "@mui/icons-material/Error"
-import CloseIcon from "@mui/icons-material/Close"
+import TicketActionButtons from "../../../components/Ticket/TicketCloseReplyButtons"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const BreadcrumbsBox = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "flex-start",
-		pl: { xs: 0, sm: 3 },
-		pt: { xs: 3, sm: 4, md: 6, lg: 8 },
-		pb: 2
-	}}>
-		{children}
-	</Box>
-)
-BreadcrumbsBox.propTypes = { children: PropTypes.node }
-
-//TODO: Customer's satisfaction
-//When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
-const ActionButtons = ({ ticket }) => {
-	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
-	const [updateTicket] = useUpdateTicketMutation()
-
-	return (
-		<Box sx={{
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "space-between",
-		}}>
-			<Button
-				disabled={ticket.status === STATUS_FILTER.CLOSED}
-				variant="outlined"
-				sx={{ px: 4, visibility: { xs: "hidden", sm: "visible" } }}
-				startIcon={<CloseIcon />}
-				onClick={async () => {
-					enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-					await updateTicket([{
-						username: currentUser.username,
-						tid: ticket.tid,
-						status: STATUS_FILTER.CLOSED
-					}])
-					dispatch(setRedirect(REDIRECT_URL.TICKETS))
-				}}
-			>
-				Close
-			</Button>
-
-			<ReplyButton
-				ticket={ticket}
-				disabled={currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED}
-				tooltip=""
-				variant={(ticket.status === STATUS_FILTER.CLOSED) ? "outlined" : "contained"}
-				sx={{ mt: 3 }}
-			/>
-
-		</Box>
-	)
-}
-ActionButtons.propTypes = { ticket: PropTypes.object }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -122,8 +57,9 @@ ActionButtons.propTypes = { ticket: PropTypes.object }
 function AdminSingleTicket() {
 	const router = useRouter()
 	const { slug } = router.query
+	console.log({ slug })
 	//
-	const { data: tickets, isLoading } = useGetTicketsForAdminQuery(undefined)
+	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
 
 	useUiSettings({
 		title: "Title",
@@ -132,13 +68,17 @@ function AdminSingleTicket() {
 		}
 	})
 
-	//fix bug when nagivate to other page
+	/*[bug] When nagivate to other page,
+	useRouter would return undefined,
+	just before getting out, we would have error,
+	then, solution is to return null
+	(render nothing in this case) */
 	if (!slug) return null
 
-	//Note: ticket is array of object => [{}]
-	const ticket = filter(tickets ?? [], { tid: slug[1] })
+	//tickets = {tid: {}, tid: {}}
+	const ticket = tickets ? tickets[slug[1]] : undefined
 
-	if (isLoading) {
+	if (isLoadingTickets) {
 		return (
 			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 				<Box sx={{
@@ -159,7 +99,7 @@ function AdminSingleTicket() {
 			<BreadcrumbsBox>
 				<IconBreadcrumbs
 					icon={null}
-					title={size(ticket) ? ticket[0].subject : "Ticket not existed"}
+					title={ticket?.subject ?? "Ticket not existed"}
 					items={[
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
@@ -175,8 +115,8 @@ function AdminSingleTicket() {
 				/>
 			</BreadcrumbsBox>
 
-			{(!isLoading && !size(ticket)) ?
-				<Box sx={{
+			{(isLoadingTickets === false && ticket === undefined)
+				? <Box sx={{
 					display: "flex",
 					alignItems: "center",
 					flexDirection: "column",
@@ -184,24 +124,29 @@ function AdminSingleTicket() {
 					height: "70%"
 				}}>
 					<ErrorIcon color="warning" sx={{ fontSize: 80 }} />
-					<Typography variant="caption" sx={{ p: 3 }}>Ticket is not existed!</Typography>
+					<Typography variant="caption" sx={{ p: 3 }}>
+						Ticket is not existed!
+					</Typography>
 					<Link href={REDIRECT_URL.ADMIN_TICKETS} passHref>
 						<Button variant="outlined">Go back to All tickets</Button>
 					</Link>
-				</Box> : null}
+				</Box>
+				: null}
 
-			{(!isLoading && size(ticket)) ?
-				<>
-					<TicketContent ticket={ticket[0]} />
+			{(isLoadingTickets === false && ticket !== undefined)
+				? <>
+					<TicketContent ticket={ticket} />
 					<TicketReplies
-						ticketId={ticket[0].tid}
-						ticketStatus={ticket[0].status}
-						ticketUsername={ticket[0].username}
+						ticketId={ticket.tid}
+						ticketStatus={ticket.status}
+						ticketUsername={ticket.username}
+						replyCount={ticket.replyCount}
 					/>
-					<ActionButtons ticket={ticket[0]} />
-				</> : null}
+					<TicketActionButtons ticket={ticket} />
+				</>
+				: null}
 
-		</Container >
+		</Container>
 	)
 }
 

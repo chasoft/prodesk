@@ -24,99 +24,33 @@
 
 import React from "react"
 import Link from "next/link"
-import PropTypes from "prop-types"
 import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Box, Button, CircularProgress, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { filter, size } from "lodash"
-import { useSnackbar } from "notistack"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getAuth } from "../../../redux/selectors"
 import { getLayout } from "../../../layout/ClientLayout"
 import useUiSettings from "../../../helpers/useUiSettings"
-import { setRedirect } from "../../../redux/slices/redirect"
+import { REDIRECT_URL } from "../../../helpers/constants"
+import TicketReplies from "../../../components/Ticket/TicketReplies"
 import TicketContent from "../../../components/Ticket/TicketContent"
-import { REDIRECT_URL, STATUS_FILTER } from "../../../helpers/constants"
-import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
-import TicketReplies, { ReplyButton } from "../../../components/Ticket/TicketReplies"
-import { useGetTicketsForUserQuery, useUpdateTicketMutation } from "../../../redux/slices/firestoreApi"
+import { useGetTicketsForUserQuery } from "../../../redux/slices/firestoreApi"
+import TicketActionButtons from "../../../components/Ticket/TicketCloseReplyButtons"
+import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import ErrorIcon from "@mui/icons-material/Error"
-import CloseIcon from "@mui/icons-material/Close"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const BreadcrumbsBox = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "flex-start",
-		pl: { xs: 0, sm: 3 },
-		pt: { xs: 3, sm: 4, md: 6, lg: 8 },
-		pb: 2
-	}}>
-		{children}
-	</Box>
-)
-BreadcrumbsBox.propTypes = { children: PropTypes.node }
-
-//TODO: Customer's satisfaction
-//When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
-const ActionButtons = ({ ticket }) => {
-	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
-	const [updateTicket] = useUpdateTicketMutation()
-
-	return (
-		<Box sx={{
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "space-between",
-		}}>
-			<Button
-				disabled={ticket.status === STATUS_FILTER.CLOSED}
-				variant="outlined"
-				sx={{ px: 4, visibility: { xs: "hidden", sm: "visible" } }}
-				startIcon={<CloseIcon />}
-				onClick={async () => {
-					enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-					await updateTicket([{
-						username: currentUser.username,
-						tid: ticket.tid,
-						status: STATUS_FILTER.CLOSED
-					}])
-					dispatch(setRedirect(REDIRECT_URL.TICKETS))
-				}}
-			>
-				Close
-			</Button>
-
-			<ReplyButton
-				ticket={ticket}
-				tooltip={
-					(ticket.status === STATUS_FILTER.CLOSED)
-						? "The ticket would be re-open if you reply"
-						: ""
-				}
-				variant={(ticket.status === STATUS_FILTER.CLOSED) ? "outlined" : "contained"}
-				sx={{ mt: 3 }}
-			/>
-
-		</Box>
-	)
-}
-ActionButtons.propTypes = { ticket: PropTypes.object }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -136,11 +70,15 @@ function SingleTicket() {
 		}
 	})
 
-	//fix bug when nagivate to other page
+	/*[bug] When nagivate to other page,
+	useRouter would return undefined,
+	just before getting out, we would have error,
+	then, solution is to return null
+	(render nothing in this case) */
 	if (!slug) return null
 
-	//Note: ticket is array of object => [{}]
-	const ticket = filter(tickets ?? [], { tid: slug[1] })
+	//Note: `tickets` is array of object => [{}]
+	const ticket = tickets?.find(i => i.tid === slug[1]) ?? undefined
 
 	if (isLoading) {
 		return (
@@ -163,7 +101,7 @@ function SingleTicket() {
 			<BreadcrumbsBox>
 				<IconBreadcrumbs
 					icon={null}
-					title={size(ticket) ? ticket[0].subject : "Ticket not existed"}
+					title={ticket?.subject ?? "Ticket not existed"}
 					items={[
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
@@ -179,7 +117,7 @@ function SingleTicket() {
 				/>
 			</BreadcrumbsBox>
 
-			{(!isLoading && !size(ticket)) ?
+			{(!isLoading && ticket === undefined) ?
 				<Box sx={{
 					display: "flex",
 					alignItems: "center",
@@ -195,15 +133,16 @@ function SingleTicket() {
 
 				</Box> : null}
 
-			{(!isLoading && size(ticket)) ?
+			{(!isLoading && ticket !== undefined) ?
 				<>
-					<TicketContent ticket={ticket[0]} />
+					<TicketContent ticket={ticket} />
 					<TicketReplies
-						ticketId={ticket[0].tid}
-						ticketStatus={ticket[0].status}
-						ticketUsername={ticket[0].username}
+						ticketId={ticket.tid}
+						ticketStatus={ticket.status}
+						ticketUsername={ticket.username}
+						replyCount={ticket.replyCount}
 					/>
-					<ActionButtons ticket={ticket[0]} />
+					<TicketActionButtons ticket={ticket} />
 				</> : null}
 
 		</Container >

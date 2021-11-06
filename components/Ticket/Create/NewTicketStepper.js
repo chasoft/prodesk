@@ -22,10 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 
 // MATERIAL-UI
-import { Box, Button, Paper, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Paper, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { size } from "lodash"
@@ -105,6 +105,7 @@ export const useGetNewTicketData = () => {
 
 const StepperControlButtons = () => {
 	const dispatch = useDispatch()
+	const [isProcessingNewTicket, setIsProcessingNewTicket] = useState(false)
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const { currentStep, subject, onBehalf } = useSelector(getNewTicket)
@@ -113,14 +114,15 @@ const StepperControlButtons = () => {
 	const raw = useGetTicketDetails()
 
 	const handleGoBack = () => { dispatch(setCurrentStep(currentStep - 1)) }
-	const handleGoNext = () => {
+	const handleGoNext = async () => {
 		let slug
 		if (currentStep === steps.length - 1) {
-			console.log("Submit new ticket")
+			setIsProcessingNewTicket(true)
+			console.log("start...")
 			//
 			const tid = nanoid()
 			slug = slugify(subject) + "/" + tid
-			addTicket({
+			await addTicket({
 				tid,
 				username: onBehalf ?? currentUser.username,	//owner of the ticket
 				createdBy: currentUser.username, // who create the ticket, sometimes, admin will create ticket on behalf of customer
@@ -133,7 +135,11 @@ const StepperControlButtons = () => {
 				slug,
 				content: editorData
 			})
+			//
+			setIsProcessingNewTicket(false)
+			console.log("end...")
 		}
+
 		reduxBatch(() => {
 			dispatch(setNewlyAddedTicketSlug(slug))
 			dispatch(setCurrentStep(currentStep + 1))
@@ -168,7 +174,12 @@ const StepperControlButtons = () => {
 					sx={{ px: { xs: 4, sm: 2 } }}
 				>
 					{currentStep === steps.length - 1
-						? "Submit"
+						? <span>
+							Submit
+							{isProcessingNewTicket
+								? <CircularProgress size="14" />
+								: null}
+						</span>
 						: "Continue"}
 				</Button>
 			</div>
@@ -236,8 +247,11 @@ export default function TicketStepper() {
 
 					<Button
 						onClick={() => dispatch(
-							setRedirect(
-								(isAdminURL ? REDIRECT_URL.ADMIN_TICKETS : REDIRECT_URL.TICKETS) + "/" + newlyAddedTicketSlug
+							setRedirect((
+								isAdminURL
+									? REDIRECT_URL.ADMIN_TICKETS
+									: REDIRECT_URL.TICKETS)
+								+ "/" + newlyAddedTicketSlug
 							)
 						)}
 						variant="outlined"

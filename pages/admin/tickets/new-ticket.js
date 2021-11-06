@@ -29,12 +29,13 @@ import useUiSettings from "./../../../helpers/useUiSettings"
 import { Box, Container, FormControl, Avatar, Select, Typography, ListItemText, MenuItem } from "@mui/material"
 
 //THIRD-PARTY
+import { isMobile } from "react-device-detect"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 import TicketStepper from "../../../components/Ticket/Create/NewTicketStepper"
 
 //PROJECT IMPORT
 import useProfiles from "../../../helpers/useProfiles"
-import { getNewTicket } from "../../../redux/selectors"
+import { getNewTicket, getUiSettings } from "../../../redux/selectors"
 import { REDIRECT_URL } from "../../../helpers/constants"
 import { getLayout } from "./../../../layout/ClientLayout"
 import { setEditorData } from "../../../redux/slices/textEditor"
@@ -60,6 +61,7 @@ function AdminNewTicket() {
 	const { userList, isLoading } = useProfiles()
 	const { onBehalf } = useSelector(getNewTicket)
 	const { currentStep } = useSelector(getNewTicket)
+	const { isSmallScreen } = useSelector(getUiSettings)
 
 	useUiSettings({
 		title: "Open New Ticket",
@@ -86,7 +88,7 @@ function AdminNewTicket() {
 						display: "flex",
 						flexDirection: "column",
 						alignItems: "flex-start",
-						px: { xs: 2, md: 4 },
+						px: { xs: isMobile ? 0 : 2, md: 4 },
 						pt: { xs: 3, sm: 6, md: 8, lg: 10 },
 						pb: { xs: 2, sm: 4 }
 					}}>
@@ -113,15 +115,20 @@ function AdminNewTicket() {
 						{(currentStep === 0) &&
 							<Box sx={{
 								display: "flex",
+								width: "100%",
 								alignItems: { xs: "flex-start", sm: "center" },
 								flexDirection: { xs: "column", sm: "row" }
 							}}>
-								<Typography variant="body2">
+								<Typography variant="body2" sx={{ my: isMobile ? 1 : 0 }}>
 									Post a question on behalf of
 								</Typography>
 
 								{!isLoading &&
-									<FormControl variant="standard" sx={{ ml: { xs: 0, sm: 1 } }}>
+									<FormControl
+										variant="standard"
+										sx={{ ml: { xs: 0, sm: 1 } }}
+										fullWidth={isMobile || isSmallScreen}
+									>
 										<Select
 											labelId="on-behalf-of"
 											id="on-behalf-of"

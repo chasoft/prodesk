@@ -65,17 +65,17 @@ function Tickets() {
 					<TicketList />
 				</Box>
 
-				<div> {/* this `div` is a placeholder for sticky feature works */}
+				<div>
 					<TicketFilters sx={{
+						position: "sticky",
 						display: { xs: "none", md: "flex" },
 						flexDirection: "column",
-						mt: "124px",
-						ml: 3, px: 3,
+						top: "80px",
+						width: "250px",
 						backgroundColor: "#FFF",
 						borderRadius: "0.5rem",
-						width: "250px",
-						position: "sticky",
-						top: "80px"
+						ml: 3, px: 3,
+						mt: "124px",
 					}} />
 				</div>
 

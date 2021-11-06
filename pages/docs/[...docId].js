@@ -1,7 +1,7 @@
 import React from "react"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import Doc from "../../components/Doc"
@@ -22,7 +22,7 @@ import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
 function ADoc() {
 	// const router = useRouter()
 	// const { docId } = router.query
-	const dispatch = useDispatch()
+	// const dispatch = useDispatch()
 	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.DOCS + "@note:" + "a single article",
 	})

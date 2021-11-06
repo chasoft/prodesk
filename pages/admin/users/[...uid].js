@@ -22,103 +22,80 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
-import PropTypes from "prop-types"
+import React from "react"
+import DefaultErrorPage from "next/error"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { ClickAwayListener, Grow, MenuList, Paper, Popper } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import { getLayout } from "../../../layout/AdminLayout"
+import useUiSettings from "../../../helpers/useUiSettings"
+import { REDIRECT_URL } from "../../../helpers/constants"
+import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
+import useGetProfileByUsername from "../../../helpers/useGetProfileByUsername"
+
+//ASSETS
+import HomeIcon from "@mui/icons-material/Home"
+import PersonIcon from "@mui/icons-material/Person"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, children }) => {
-	return (
-		<Popper
-			open={open}
-			anchorEl={anchorRef.current}
-			role={undefined}
-			placement={placement}
-			transition
-			disablePortal
-			style={{ zIndex: 1 }}
-		>
-			{({ TransitionProps }) => (
-				<Grow {...TransitionProps} style={{ transformOrigin: transformOrigin }}>
-					<Paper elevation={elevation} sx={{ minWidth: "120px" }}>
-						<ClickAwayListener onClickAway={handleClose}>
-							<MenuList
-								autoFocusItem={open}
-								id="composition-menu"
-								aria-labelledby="composition-button"
-								onKeyDown={handleListKeyDown}
-								onClick={handleClose}
-							>
-								{children}
-							</MenuList>
-						</ClickAwayListener>
-					</Paper>
-				</Grow>
-			)}
-		</Popper>
-	)
-}
-MenuContainer.propTypes = {
-	open: PropTypes.bool,
-	anchorRef: PropTypes.any,
-	elevation: PropTypes.number,
-	handleClose: PropTypes.func,
-	handleListKeyDown: PropTypes.func,
-	placement: PropTypes.string,
-	transformOrigin: PropTypes.string,
-	children: PropTypes.node
-}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const useMenuContainer = () => {
-	const anchorRef = useRef(null)
-	const [open, setOpen] = useState(false)
+function AdminViewUser() {
+	const router = useRouter()
+	const { uid } = router.query
+	console.log({ uid })
+	const profile = useGetProfileByUsername(uid ? uid[0] : "")
 
-	const handlers = React.useMemo(
-		() => ({
-			handleToggle: () => {
-				setOpen((prevOpen) => !prevOpen)
-			},
-			handleClose: (e) => {
-				if (anchorRef.current && anchorRef.current.contains(e.target)) {
-					return
-				}
-				setOpen(false)
-			},
-			handleListKeyDown: (e) => {
-				if (e.key === "Tab") {
-					e.preventDefault()
-					setOpen(false)
-				} else if (e.key === "Escape") {
-					setOpen(false)
-				}
-			},
-		}),
-		[]
-	)
-
-	// return focus to the button when we transitioned from !open -> open
-	const prevOpen = useRef(open)
-	useEffect(() => {
-		if (prevOpen.current === true && open === false) {
-			anchorRef.current.focus()
+	useUiSettings({
+		title: "View User Profile",
+		background: {
+			backgroundImage: ""
 		}
-		prevOpen.current = open
-	}, [open])
+	})
 
-	return [MenuContainer, open, anchorRef, handlers]
+	/*[bug] When nagivate to other page,
+	useRouter would return undefined,
+	just before getting out, we would have error,
+	then, solution is to return null
+	(render nothing in this case) */
+	if (!uid) return null
+
+	if (profile === undefined) return <DefaultErrorPage statusCode={404} />
+
+	return (
+		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+
+			<BreadcrumbsBox>
+				<IconBreadcrumbs
+					icon={<PersonIcon sx={{ fontSize: 18 }} />}
+					title="Users"
+					items={[
+						{
+							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Home",
+							url: REDIRECT_URL.ADMIN
+						}
+					]}
+				/>
+			</BreadcrumbsBox>
+
+			{JSON.stringify(profile)}
+
+		</Container >
+	)
 }
 
-export default useMenuContainer
+AdminViewUser.getLayout = getLayout
+
+export default AdminViewUser

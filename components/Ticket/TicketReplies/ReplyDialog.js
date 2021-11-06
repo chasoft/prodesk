@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
@@ -52,8 +52,15 @@ import { getAuth, getTextEditor } from "../../../redux/selectors"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ReplyDialog = ({ ticketId, ticketStatus, ticketUsername, children }) => {
-	const [open, setOpen] = useState(false)
+const ReplyDialog = ({
+	ticketId,
+	ticketStatus,
+	ticketUsername,
+	//
+	open,
+	setOpen
+}) => {
+
 	const theme = useTheme()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
@@ -61,22 +68,12 @@ const ReplyDialog = ({ ticketId, ticketStatus, ticketUsername, children }) => {
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
 
-	const handleClose = useCallback(() => { setOpen(false) }, [])
-	const handleClickOpen = useCallback(() => { setOpen(true) }, [])
-	const loadLocalStorage = useCallback(() => { return localStorage.getItem("NewReply") ?? "" }, [])
-
-	const handleGetEditorData = useCallback((data) => {
-		localStorage.setItem("NewReply", data)
-	}, [])
-
-	const handleCancelReply = () => {
-		setOpen(false)
-		localStorage.removeItem("NewReply")
-	}
+	const loadLocalStorage = () => localStorage.getItem("NewReply") ?? ""
+	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
+	const handleCancelReply = () => { setOpen(false); localStorage.removeItem("NewReply") }
 
 	const handleSubmitReply = async () => {
 		setOpen(false)
-
 		//prevent non-owner to reply a closed ticket
 		if (currentUser.username !== ticketUsername && ticketStatus === STATUS_FILTER.CLOSED) return
 
@@ -101,91 +98,80 @@ const ReplyDialog = ({ ticketId, ticketStatus, ticketUsername, children }) => {
 		localStorage.removeItem("NewReply")
 	}
 
-	const descriptionElementRef = useRef(null)
-	useEffect(() => {
-		if (open) {
-			const { current: descriptionElement } = descriptionElementRef
-			if (descriptionElement !== null) {
-				descriptionElement.focus()
-			}
-		}
-	}, [open])
-
 	return (
-		<>
-			<span onClick={handleClickOpen}>{children}</span>
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				fullScreen={fullScreen}
-				maxWidth="md"
-				scroll="paper"
-			>
+		<Dialog
+			open={open}
+			onClose={() => { setOpen(false) }}
+			fullScreen={fullScreen}
+			maxWidth="md"
+			scroll="paper"
+		>
 
-				<DialogTitle sx={{
-					bgcolor: "primary.dark",
-					color: "#FFF",
-					typography: "h3",
-					mt: 0,
+			<DialogTitle sx={{
+				bgcolor: "primary.dark",
+				color: "#FFF",
+				typography: "h3",
+				mt: 0,
+			}}>
+				Create Reply
+			</DialogTitle>
+
+			<DialogContent sx={{ mt: 2 }}>
+				<Box sx={{
+					pl: 4, py: 3, border: "1px solid #FAFAFA",
+					width: { sm: "500px", md: "650px", lg: "700px" }
 				}}>
-					Create Reply
-				</DialogTitle>
-
-				<DialogContent sx={{ mt: 2 }}>
-					<Box sx={{
-						pl: 4, py: 3, border: "1px solid #FAFAFA",
-						width: { sm: "500px", md: "650px", lg: "700px" }
-					}}>
-						<TextEditor
-							defaultValue={loadLocalStorage()}
-							placeholder="Provides as many details as possible..."
-							onChange={handleGetEditorData}
-						/>
-					</Box>
-				</DialogContent>
-
-				<DialogActions sx={{ justifyContent: "flex-end", pr: 3, mb: 2 }}>
-					<Button
-						size="small" variant="outlined"
-						onClick={handleCancelReply}
-						sx={{ px: 3, minWidth: "100px" }}
-					>
-						Cancel
-					</Button>
-
-					<Button
-						size="small" variant="contained"
-						onClick={handleSubmitReply}
-						sx={{ px: 4, minWidth: "100px" }}
-						disabled={loadLocalStorage() < 10 || size(editorData) < 10}
-					>
-						Post
-					</Button>
-				</DialogActions>
-
-				<Box
-					sx={{
-						display: "flex",
-						px: 3, py: 2,
-						backgroundColor: "#F8F9FA",
-						borderBottomLeftRadius: "0.5rem",
-						borderBottomRightRadius: "0.5rem",
-						borderTop: "1px solid",
-						borderTopColor: "divider"
-					}}
-				>
-					<LearnMoreAdvancedTextEditor />
+					<TextEditor
+						defaultValue={loadLocalStorage()}
+						placeholder="Provides as many details as possible..."
+						onChange={getEditorData}
+					/>
 				</Box>
+			</DialogContent>
 
-			</Dialog>
-		</>
+			<DialogActions sx={{ justifyContent: "flex-end", pr: 3, mb: 2 }}>
+				<Button
+					size="small" variant="outlined"
+					onClick={handleCancelReply}
+					sx={{ px: 3, minWidth: "100px" }}
+				>
+					Cancel
+				</Button>
+
+				<Button
+					size="small" variant="contained"
+					onClick={handleSubmitReply}
+					sx={{ px: 4, minWidth: "100px" }}
+					disabled={loadLocalStorage() < 10 || size(editorData) < 10}
+				>
+					Post
+				</Button>
+			</DialogActions>
+
+			<Box
+				sx={{
+					display: "flex",
+					px: 3, py: 2,
+					backgroundColor: "#F8F9FA",
+					borderBottomLeftRadius: "0.5rem",
+					borderBottomRightRadius: "0.5rem",
+					borderTop: "1px solid",
+					borderTopColor: "divider"
+				}}
+			>
+				<LearnMoreAdvancedTextEditor />
+			</Box>
+
+		</Dialog>
 	)
 }
 ReplyDialog.propTypes = {
-	ticketId: PropTypes.string,
-	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string,
-	children: PropTypes.node
+	ticketId: PropTypes.string.isRequired,
+	ticketStatus: PropTypes.string.isRequired,
+	ticketUsername: PropTypes.string.isRequired,
+	//
+	open: PropTypes.bool.isRequired,
+	setOpen: PropTypes.func.isRequired,
 }
 
 export default ReplyDialog

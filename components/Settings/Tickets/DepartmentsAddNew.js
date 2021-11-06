@@ -56,9 +56,33 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 	const [members, setMembers] = useState([])
 
 	const [addDepartment] = useAddDepartmentMutation()
-	const { data: departments } = useGetDepartmentsQuery(undefined)
+	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
 	const { enqueueSnackbar } = useSnackbar()
+
+	const handleAddNewDepartment = async () => {
+		const departmentDuplicated = some(departments, { department })
+		if (departmentDuplicated) {
+			enqueueSnackbar("Department name existed", { variant: "error" })
+			return
+		}
+
+		const did = nanoid()
+		const departmentItem = {
+			did,
+			department,
+			description,
+			availableForAll,
+			isPublic,
+			members
+		}
+		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+		await addDepartment(departmentItem)
+	}
+
+	const handleCancelAddNewDepartment = () => {
+		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+	}
 
 	return (
 		<>
@@ -116,27 +140,20 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 			</SettingsContentDetails>
 
 			<SettingsContentActionBar>
-				<Button variant="outlined" onClick={() => { dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW)) }}>Cancel</Button>
-				<Button variant="contained" color="primary" onClick={async () => {
-					const departmentDuplicated = some(departments, { department })
-					if (departmentDuplicated) {
-						enqueueSnackbar("Department name existed", { variant: "error" })
-						return
-					}
-
-					const did = nanoid()
-					const departmentItem = {
-						did,
-						department,
-						description,
-						availableForAll,
-						isPublic,
-						members
-					}
-					dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-					await addDepartment(departmentItem)
-					//
-				}}>Add</Button>
+				<Button
+					variant="outlined"
+					onClick={handleCancelAddNewDepartment}
+				>
+					Cancel
+				</Button>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={handleAddNewDepartment}
+					disabled={isLoadingDepartments}
+				>
+					Add
+				</Button>
 			</SettingsContentActionBar>
 
 		</>

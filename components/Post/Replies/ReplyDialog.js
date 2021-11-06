@@ -84,7 +84,8 @@ const ReplyDialog = ({ children }) => {
 			replyItem: {
 				trid,
 				tid: ticketId,
-				content: editorData
+				content: editorData,
+				username: currentUser.username,
 			}
 		})
 		localStorage.removeItem("NewReply")

@@ -22,11 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
-import PropTypes from "prop-types"
-
-// MATERIAL-UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
 
 //THIRD-PARTY
 
@@ -36,51 +32,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
  * INIT                                                          *
  *****************************************************************/
 
-function ConfirmDialogYesNo({ title, open, setOpen, setAgreed, children }) {
+export default function useGetProfileByUsername(username) {
 
-	const handleCancel = () => {
-		setOpen(false)
-		setAgreed(false)
-	}
+	const { profile } = useGetProfilesQuery(undefined, {
+		selectFromResult: ({ data }) => ({
+			profile: data?.find((profile) => profile.username === username) ?? undefined,
+		})
+	})
 
-	const handleOk = () => {
-		setOpen(false)
-		setAgreed(true)
-	}
-
-	return (
-		<Dialog maxWidth="xs" open={open}>
-			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>{title}</DialogTitle>
-			<DialogContent>
-				{children}
-			</DialogContent>
-			<DialogActions sx={{ mr: 2 }}>
-				<Button onClick={handleOk}>Ok</Button>
-				<Button onClick={handleCancel}>Cancel</Button>
-			</DialogActions>
-		</Dialog>
-	)
+	return profile
 }
-ConfirmDialogYesNo.propTypes = {
-	title: PropTypes.string.isRequired,
-	open: PropTypes.bool.isRequired,
-	setOpen: PropTypes.func.isRequired,
-	setAgreed: PropTypes.func.isRequired,
-	children: PropTypes.node.isRequired,
-}
-
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-//This is used for ask for YES or NO (no input request to user)
-//If you want to request any input, please use `useConfirmDialog` instead
-
-const useConfirmDialogYesNo = () => {
-	const [open, setOpen] = useState(false)
-	const [agreed, setAgreed] = useState(false)
-
-	return { ConfirmDialogYesNo, open, setOpen, agreed, setAgreed }
-}
-
-export default useConfirmDialogYesNo

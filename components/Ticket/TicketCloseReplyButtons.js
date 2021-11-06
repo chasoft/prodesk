@@ -22,103 +22,90 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { ClickAwayListener, Grow, MenuList, Paper, Popper } from "@mui/material"
+import { Box, Button } from "@mui/material"
 
 //THIRD-PARTY
+import { useSnackbar } from "notistack"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getAuth } from "./../../redux/selectors"
+import { STATUS_FILTER } from "./../../helpers/constants"
+import { ReplyButton } from "./../../components/Ticket/TicketReplies"
+import { useUpdateTicketMutation } from "./../../redux/slices/firestoreApi"
+
+//ASSETS
+import CloseIcon from "@mui/icons-material/Close"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, children }) => {
-	return (
-		<Popper
-			open={open}
-			anchorEl={anchorRef.current}
-			role={undefined}
-			placement={placement}
-			transition
-			disablePortal
-			style={{ zIndex: 1 }}
-		>
-			{({ TransitionProps }) => (
-				<Grow {...TransitionProps} style={{ transformOrigin: transformOrigin }}>
-					<Paper elevation={elevation} sx={{ minWidth: "120px" }}>
-						<ClickAwayListener onClickAway={handleClose}>
-							<MenuList
-								autoFocusItem={open}
-								id="composition-menu"
-								aria-labelledby="composition-button"
-								onKeyDown={handleListKeyDown}
-								onClick={handleClose}
-							>
-								{children}
-							</MenuList>
-						</ClickAwayListener>
-					</Paper>
-				</Grow>
-			)}
-		</Popper>
-	)
-}
-MenuContainer.propTypes = {
-	open: PropTypes.bool,
-	anchorRef: PropTypes.any,
-	elevation: PropTypes.number,
-	handleClose: PropTypes.func,
-	handleListKeyDown: PropTypes.func,
-	placement: PropTypes.string,
-	transformOrigin: PropTypes.string,
-	children: PropTypes.node
-}
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const useMenuContainer = () => {
-	const anchorRef = useRef(null)
-	const [open, setOpen] = useState(false)
+//TODO: Customer's satisfaction
+//When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
+const TicketActionButtons = ({ ticket }) => {
+	const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
+	const [updateTicket] = useUpdateTicketMutation()
 
-	const handlers = React.useMemo(
-		() => ({
-			handleToggle: () => {
-				setOpen((prevOpen) => !prevOpen)
-			},
-			handleClose: (e) => {
-				if (anchorRef.current && anchorRef.current.contains(e.target)) {
-					return
+	const handleCloseTicket = async () => {
+		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
+		await updateTicket([{
+			username: ticket.username,
+			tid: ticket.tid,
+			status: STATUS_FILTER.CLOSED
+		}])
+	}
+
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+		}}>
+			<Button
+				disabled={ticket.status === STATUS_FILTER.CLOSED}
+				variant="outlined"
+				sx={{
+					px: 4,
+					visibility: { xs: "hidden", sm: "visible" }
+				}}
+				startIcon={<CloseIcon />}
+				onClick={handleCloseTicket}
+			>
+				Close
+			</Button>
+
+			<ReplyButton
+				ticket={ticket}
+				disabled={
+					currentUser.username !== ticket.username
+					&& ticket.status === STATUS_FILTER.CLOSED
 				}
-				setOpen(false)
-			},
-			handleListKeyDown: (e) => {
-				if (e.key === "Tab") {
-					e.preventDefault()
-					setOpen(false)
-				} else if (e.key === "Escape") {
-					setOpen(false)
+				tooltip={
+					(ticket.status === STATUS_FILTER.CLOSED)
+						? "The ticket would be re-open if you reply"
+						: ""
 				}
-			},
-		}),
-		[]
+				variant={
+					(ticket.status === STATUS_FILTER.CLOSED)
+						? "outlined"
+						: "contained"
+				}
+				sx={{ mt: 3 }}
+			/>
+
+		</Box>
 	)
-
-	// return focus to the button when we transitioned from !open -> open
-	const prevOpen = useRef(open)
-	useEffect(() => {
-		if (prevOpen.current === true && open === false) {
-			anchorRef.current.focus()
-		}
-		prevOpen.current = open
-	}, [open])
-
-	return [MenuContainer, open, anchorRef, handlers]
 }
+TicketActionButtons.propTypes = { ticket: PropTypes.object }
 
-export default useMenuContainer
+export default TicketActionButtons

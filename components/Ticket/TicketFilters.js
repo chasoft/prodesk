@@ -24,46 +24,23 @@
 
 import PropTypes from "prop-types"
 import React, { useMemo } from "react"
-import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography, Checkbox, SvgIcon } from "@mui/material"
+import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getUiSettings } from "../../redux/selectors"
-import { PRIORITY, TICKET_STATUS } from "../../helpers/constants"
+import { PRIORITY, STATUS_FILTER, TICKET_STATUS } from "../../helpers/constants"
 
 //ASSETS
-// import SearchIcon from "@mui/icons-material/Search"
-import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
 import { resetTicketsFilter, setSelectedPriority, setSelectedStatus } from "../../redux/slices/uiSettings"
+import CustomCheckbox from "../common/CustomCheckbox"
+import { useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-function CheckBoxNewIcon(props) {
-	return (
-		<SvgIcon {...props}>
-			<path d="M3,3v18h18V3H3z M19,8v11H5v-7V5h14V8z" />
-			<polygon points="10,14.2 6.4,10.6 5,12 10,17 19,8 17.6,6.6 " />
-		</SvgIcon>
-	)
-}
-
-const FilterCheckbox = (props) => (
-	<Checkbox
-		sx={{
-			padding: "0.25rem",
-			marginLeft: "0.25rem"
-		}}
-		color="primary"
-		icon={<CheckBoxOutlineBlankSharpIcon />}
-		checkedIcon={<CheckBoxNewIcon />}
-		{...props}
-	/>
-)
-
-
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -71,10 +48,17 @@ const FilterCheckbox = (props) => (
 
 function TicketFilters({ sx }) {
 	const dispatch = useDispatch()
+	const [refetchTicket] = useRefetchTicketMutation()
 	const { /*ticketSearchTerm,*/ selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
 	const handleSelectTicketStatus = (e) => {
 		dispatch(setSelectedStatus({ [e.target.name]: e.target.checked }))
+	}
+
+	const handleResetAndRefresh = async (e) => {
+		e.stopPropagation()
+		await refetchTicket()
+		dispatch(resetTicketsFilter())
 	}
 
 	const statusCount = useMemo(() => Object.entries(selectedStatus).reduce(
@@ -91,10 +75,7 @@ function TicketFilters({ sx }) {
 				<Button
 					size="small"
 					variant="outlined"
-					onClick={(e) => {
-						e.stopPropagation()
-						dispatch(resetTicketsFilter())
-					}}
+					onClick={handleResetAndRefresh}
 				>
 					Reset
 				</Button>
@@ -105,7 +86,7 @@ function TicketFilters({ sx }) {
 				<FormGroup>
 					<FormControlLabel
 						control={
-							<FilterCheckbox
+							<CustomCheckbox
 								checked={statusCount === 4}
 								indeterminate={(statusCount > 0) && (statusCount < 4)}
 								onChange={(e) => {
@@ -127,11 +108,11 @@ function TicketFilters({ sx }) {
 								}}
 							/>
 						}
-						label="All"
+						label={STATUS_FILTER.ANY}
 					/>
 					<FormControlLabel
 						control={
-							<FilterCheckbox
+							<CustomCheckbox
 								checked={selectedStatus[TICKET_STATUS.OPEN]}
 								onChange={(e) => {
 									e.stopPropagation()
@@ -144,7 +125,7 @@ function TicketFilters({ sx }) {
 					/>
 					<FormControlLabel
 						control={
-							<FilterCheckbox
+							<CustomCheckbox
 								name={TICKET_STATUS.PENDING}
 								onChange={(e) => {
 									e.stopPropagation()
@@ -157,7 +138,7 @@ function TicketFilters({ sx }) {
 					/>
 					<FormControlLabel
 						control={
-							<FilterCheckbox
+							<CustomCheckbox
 								name={TICKET_STATUS.REPLIED}
 								onChange={(e) => {
 									e.stopPropagation()
@@ -170,7 +151,7 @@ function TicketFilters({ sx }) {
 					/>
 					<FormControlLabel
 						control={
-							<FilterCheckbox
+							<CustomCheckbox
 								name={TICKET_STATUS.CLOSED}
 								onChange={(e) => {
 									e.stopPropagation()

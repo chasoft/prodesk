@@ -33,15 +33,15 @@ import { uniqueId, random } from "lodash"
 
 //PROJECT IMPORT
 import { getUiSettings } from "./../../../redux/selectors"
+import { ColorTable, HUE, SHADE } from "../../common/ColorPicker"
 import { useAddLabelMutation, useDeleteLabelMutation, useGetLabelsQuery, useUpdateLabelMutation } from "./../../../redux/slices/firestoreApi"
 import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
-import LabelIcon from "@mui/icons-material/Label"
-import { ColorTable, HUE, SHADE } from "../../common/ColorPicker"
 import AddIcon from "@mui/icons-material/Add"
-import DeleteIcon from "@mui/icons-material/Delete"
 import SaveIcon from "@mui/icons-material/Save"
+import LabelIcon from "@mui/icons-material/Label"
+import DeleteIcon from "@mui/icons-material/Delete"
 
 /*****************************************************************
  * INIT                                                          *
@@ -57,10 +57,13 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 			onClose={handleClose}
 			fullWidth={isSmallScreen}
 		>
-			<DialogTitle>Add New Label</DialogTitle>
+			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>Add New Label</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
 					Label is advanced feature to manage your tickets in case you have so many tickets and types of tickets which Department, Category/Subcategory still not enough.
+				</DialogContentText>
+				<DialogContentText sx={{ mt: 1 }}>
+					Please note that if you delete a label which is used, then the label will be still remained with the ticket.
 				</DialogContentText>
 
 				<Box sx={{
@@ -240,9 +243,11 @@ const PageLabels = ({ backBtnClick }) => {
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
-
 				<SettingsContentHelperText>
 					Support tickets are categorized by Department, Category &amp; Sub-Category and now you can have deeper categorization by creating labels.
+				</SettingsContentHelperText>
+				<SettingsContentHelperText>
+					Please note that if you delete a label which is used, then the label will be still remained with the ticket.
 					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 

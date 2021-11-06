@@ -22,32 +22,37 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useMemo } from "react"
+import React, { useMemo } from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { alpha } from "@mui/material/styles"
-import { Avatar, Checkbox, Box, Chip, Tooltip, Typography } from "@mui/material"
+import { Avatar, Checkbox, Box, Chip, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { keyBy, size, isFunction } from "lodash"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { StatusChip } from "./TicketContent"
-import { getUiSettings } from "../../redux/selectors"
+import { getAuth, getUiSettings } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
-import { setSelectedTickets } from "../../redux/slices/uiSettings"
-import { DATE_FORMAT, PRIORITY, REDIRECT_URL } from "../../helpers/constants"
+import { useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
+import { setSelectedTickets, setSelectedLabel, setSelectedPriority, setSelectedDepartment } from "../../redux/slices/uiSettings"
 
 //ASSETS
+import { CheckBoxNewIcon } from "../svgIcon"
+import LabelIcon from "@mui/icons-material/Label"
+import CloseIcon from "@mui/icons-material/Close"
+import PersonIcon from "@mui/icons-material/Person"
 import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import { CheckBoxNewIcon } from "../svgIcon"
+import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
 
 /*****************************************************************
  * INIT                                                          *
@@ -97,11 +102,11 @@ export const UserTicketListItemShorten = ({ subject, link }) => {
 UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
 
 const TicketDateTimeSmallScreen = ({ ticket }) => {
+
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
-	//Hide at bigScreen
-	if (!isSmallScreen) return null
+	if (isSmallScreen === false) return null
 
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -137,10 +142,10 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
 
 const TicketDateTime = ({ ticket }) => {
+
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
-	//Hide at smallScreen
 	if (isSmallScreen) return null
 
 	return (
@@ -151,7 +156,6 @@ const TicketDateTime = ({ ticket }) => {
 				flexDirection: "column",
 				alignItems: "flex-end",
 				justifyContent: "center",
-				mr: 2
 			}}
 		>
 			<Box sx={{ display: "flex" }}>
@@ -181,6 +185,266 @@ const TicketDateTime = ({ ticket }) => {
 }
 TicketDateTime.propTypes = { ticket: PropTypes.object }
 
+export const TicketLabels = ({ ticket, callback, sx }) => {
+	const { currentUser } = useSelector(getAuth)
+	const { data, isLoading } = useGetLabelsQuery()
+	const [updateTicket] = useUpdateTicketMutation()
+
+	//Do not show lables for ticket's owner
+	//Ticket feature is used for admin to manage ticket only, not used for user
+	if (currentUser.username === ticket.username) return null
+
+	//Nothing to show
+	if (size(ticket.labels) === 0 || isLoading) return null
+
+	const labelSettings = keyBy(data, "lid")
+
+	const removeLabelFromTicket = async (labelId) => {
+		const newLabelArray = ticket.labels.filter(i => i !== labelId)
+		await updateTicket([{
+			username: ticket.username,
+			tid: ticket.tid,
+			labels: newLabelArray
+		}])
+	}
+
+	return (
+		<Box sx={{ display: "flex", mr: 1, mb: 0.5, ...sx }} >
+			{ticket.labels.map((labelId) => (
+				<Box
+					component="span"
+					key={labelId}
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						pl: 0.5, mr: 0.5,
+						borderRadius: "6px",
+						"&>#removeLabel": {
+							display: "none",
+							fontSize: "1.2em",
+							cursor: "pointer",
+							mx: 1,
+							fill: (theme) => alpha("#000", theme.palette.action.activatedOpacity),
+							":hover": {
+								fill: (theme) => theme.palette.warning.main,
+								fontSize: "1.5em",
+							}
+						},
+						":hover": {
+							backgroundColor: (theme) => alpha(labelSettings[labelId].color, theme.palette.action.activatedOpacity),
+							"&>#removeLabel": {
+								display: "inline-block",
+
+							}
+						}
+					}}
+					onClick={(e) => { if (isFunction(callback)) callback(e, labelId) }}
+				>
+					<LabelIcon sx={{ color: labelSettings[labelId].color, mr: 0.5 }} />
+					<Typography sx={{ color: labelSettings[labelId].color }}>
+						{labelSettings[labelId].name}
+					</Typography>
+					<Tooltip arrow title="Remove this label" placement="top">
+						<CloseIcon
+							id="removeLabel"
+							onClick={() => removeLabelFromTicket(labelId)}
+						/>
+					</Tooltip>
+				</Box>
+			))}
+		</Box>
+	)
+}
+TicketLabels.propTypes = {
+	ticket: PropTypes.object,
+	callback: PropTypes.func,
+	sx: PropTypes.object
+}
+
+export const TicketStatus = ({ status, sx }) => {
+	const chipColor = {
+		[STATUS_FILTER.OPEN]: {
+			color: "primary",
+			description: "Newly created ticket"
+		},
+		[STATUS_FILTER.PENDING]: {
+			color: "warning",
+			description: "Waiting for support"
+		},
+		[STATUS_FILTER.REPLIED]: {
+			color: "success",
+			description: "Waiting for ticket's owner feedback"
+		},
+		[STATUS_FILTER.CLOSED]: {
+			color: "secondary",
+			description: "Done"
+		}
+	}
+	return (
+		<Tooltip arrow title={chipColor[status].description} placement="top">
+			<Chip
+				size="small"
+				label={status}
+				color={chipColor[status].color}
+				sx={{ mr: 1, mb: 0.5, ...sx }}
+				onClick={(e) => e.stopPropagation()}
+			/>
+		</Tooltip>
+	)
+}
+TicketStatus.propTypes = {
+	status: PropTypes.string.isRequired,
+	sx: PropTypes.object,
+}
+
+export const TicketPriority = ({ priority, sx, callback }) => {
+	if (priority === PRIORITY.NORMAL) return null
+	return (
+		<Box
+			sx={{ mr: 0.5, mb: 0.5, ...sx }}
+			onClick={(e) => {
+				e.stopPropagation()
+				if (isFunction(callback)) callback()
+			}}
+		>
+			{priority === PRIORITY.LOW &&
+				<Tooltip arrow title="Low priority" placement="top">
+					<IconButton size="small" sx={{ cursor: isFunction(callback) ? "pointer" : "default" }}>
+						<LowPriorityIcon color="disabled" />
+					</IconButton>
+				</Tooltip>}
+
+			{priority === PRIORITY.HIGH &&
+				<Tooltip arrow title="High priority" placement="top">
+					<IconButton size="small" sx={{ cursor: isFunction(callback) ? "pointer" : "default" }}>
+						<PriorityHighIcon color="warning" />
+					</IconButton>
+				</Tooltip>}
+		</Box>
+	)
+}
+TicketPriority.propTypes = {
+	priority: PropTypes.string.isRequired,
+	sx: PropTypes.object,
+	callback: PropTypes.func
+}
+
+export const TicketDepartment = ({ department }) => {
+	const dispatch = useDispatch()
+	return (
+		<Tooltip arrow title="Department" placement="top">
+			<Chip
+				size="small"
+				label={department}
+				avatar={<ApartmentIcon />}
+				sx={{ mr: 1, mb: 0.5 }}
+				onClick={(e) => {
+					e.stopPropagation()
+					dispatch(setSelectedDepartment(department))
+				}}
+			/>
+		</Tooltip>
+	)
+}
+TicketDepartment.propTypes = {
+	department: PropTypes.string.isRequired,
+}
+
+export const TicketCategory = ({ category, subCategory }) => {
+	if (!category) return null
+	const subText = subCategory
+		? ("/" + subCategory)
+		: ""
+	return (
+		<Tooltip arrow title="Category" placement="top">
+			<Chip
+				size="small"
+				label={category + subText}
+				sx={{ mr: 1, mb: 0.5 }}
+				onClick={(e) => e.stopPropagation()}
+			/>
+		</Tooltip>
+	)
+}
+TicketCategory.propTypes = {
+	category: PropTypes.string.isRequired,
+	subCategory: PropTypes.string,
+}
+
+export const TicketReplyCount = ({ count }) => {
+	return (
+		<Chip
+			size="small"
+			avatar={<Avatar sx={{ bgcolor: "primary.light" }}>{count}</Avatar>}
+			label="replies"
+			variant="outlined"
+			sx={{
+				mb: 0.5,
+				".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
+			}}
+			onClick={(e) => e.stopPropagation()}
+		/>
+	)
+}
+TicketReplyCount.propTypes = {
+	count: PropTypes.number
+}
+
+export const TicketOwner = ({ username }) => {
+	const profile = useGetProfileByUsername(username)
+	return (
+		<Link href={REDIRECT_URL.ADMIN_USERS + "/" + username} passHref>
+			<a href="just-a-placeholder">
+				<Tooltip
+					arrow
+					placement="top"
+					title={<>Ticket&apos;s Owner <br /> {profile.email}</>}
+				>
+					<Chip
+						size="small"
+						avatar={<Avatar src={profile.photoURL}></Avatar>}
+						label={profile.displayName}
+						variant="outlined"
+						sx={{
+							mb: 0.5,
+							mx: 0.5,
+							".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
+						}}
+						onClick={(e) =>
+							e.stopPropagation()
+						}
+					/>
+				</Tooltip>
+			</a>
+		</Link>
+	)
+}
+TicketOwner.propTypes = {
+	username: PropTypes.string
+}
+
+export const TicketCreatedBy = ({ createdBy }) => {
+	return (
+		<Tooltip
+			arrow
+			title={<span>This ticket is created<br /> by {createdBy}</span>}
+			placement="top"
+		>
+			<Chip
+				size="small"
+				avatar={<PersonIcon color="success" />}
+				label={createdBy}
+				variant="outlined"
+				color="success"
+				sx={{ mr: 1, mb: 0.5 }}
+				onClick={(e) => e.stopPropagation()}
+			/>
+		</Tooltip>
+	)
+}
+TicketCreatedBy.propTypes = {
+	createdBy: PropTypes.string.isRequired
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -190,7 +454,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
 	const { selectedTickets } = useSelector(getUiSettings)
 
-	const handleSelectTicket = useCallback((event, ticketId) => {
+	const handleSelectTicket = (event, ticketId) => {
 		const selectedIndex = selectedTickets.indexOf(ticketId)
 		let newSelected = []
 
@@ -206,14 +470,14 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 				selectedTickets.slice(selectedIndex + 1),
 			)
 		}
-
 		dispatch(setSelectedTickets(newSelected))
-	}, [dispatch, selectedTickets])
+	}
 
 	const isSelected = useMemo(() => {
-		console.log("executed isSelected " + ticket.tid)
 		return selectedTickets.indexOf(ticket.tid) !== -1
 	}, [selectedTickets, ticket.tid])
+
+	console.log("AdminTicketListItem", ticket.tid)
 
 	return (
 		<Box
@@ -229,7 +493,8 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 				}}
 				sx={{
 					display: "flex",
-					"&>#ticket-selector": { display: { xs: "block", sm: "none" } },
+					"&>#ticket-selector": { display: { xs: "block", sm: isSelected ? "block" : "none" } },
+					"&>#date-time": { marginRight: isSelected ? "-16px" : "30px" },
 					"&:hover": {
 						cursor: "pointer",
 						backgroundColor: isSelected
@@ -238,7 +503,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							: "action.hover",
 						transition: "background-color 200ms cubic-bezier(0.4, 0, 0.2, 1)",
 						"&>#ticket-selector": { display: "block" },
-						"&>#date-time": { marginRight: "-1.875rem" }
+						"&>#date-time": { marginRight: "-16px" }
 					},
 					borderTopLeftRadius: isFirst ? "0.5rem" : 0,
 					borderTopRightRadius: isFirst ? "0.5rem" : 0,
@@ -259,23 +524,28 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 					mr: -4
 				}}>
 					<Typography
-						variant="subtitle2"
+						variant="h2"
 						sx={{
 							display: "flex",
 							alignItems: "center",
+							fontWeight: 500,
+							mb: 0,
 							pt: 3, px: { xs: 1, sm: 3 }
 						}}
 					>
-						{ticket.priority === PRIORITY.LOW &&
-							<Tooltip arrow title="Low priority" placement="left">
-								<LowPriorityIcon color="disabled" sx={{ mr: 0.5 }} />
-							</Tooltip>
-						}
-						{ticket.priority === PRIORITY.HIGH &&
-							<Tooltip arrow title="High priority" placement="left">
-								<PriorityHighIcon color="warning" />
-							</Tooltip>
-						}
+						<TicketPriority
+							priority={ticket.priority}
+							callback={() => {
+								dispatch(setSelectedPriority(ticket.priority))
+							}}
+						/>
+						<TicketLabels
+							ticket={ticket}
+							callback={(e, labelId) => {
+								e.stopPropagation()
+								dispatch(setSelectedLabel(labelId))
+							}}
+						/>
 						{ticket.subject}
 					</Typography>
 
@@ -292,37 +562,16 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 						}
 					}}>
 
-						<Box>
-							<StatusChip status={ticket.status} />
-
-							<Tooltip arrow title="Department" placement="bottom">
-								<Chip
-									size="small"
-									label={ticket.department}
-									avatar={<ApartmentIcon />}
-									sx={{ mr: 1, mb: 1 }}
-								/>
-							</Tooltip>
-
-							<Tooltip arrow title="Category" placement="bottom">
-								{ticket.category &&
-									<Chip
-										size="small"
-										sx={{ mr: 1, mb: 1 }}
-										label={ticket.category + (ticket?.subCategory ? ("/" + ticket.subCategory) : "")}
-									/>}
-							</Tooltip>
-
-							<Chip
-								size="small"
-								avatar={<Avatar sx={{ bgcolor: "primary.light" }}>{ticket.replyCount}</Avatar>}
-								label="replies"
-								variant="outlined"
-								sx={{
-									mb: 1,
-									".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
-								}}
-							/>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							flexWrap: "wrap"
+						}}>
+							<TicketStatus status={ticket.status} />
+							<TicketDepartment department={ticket.department} />
+							<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
+							<TicketReplyCount count={ticket.replyCount} />
+							<TicketOwner username={ticket.username} />
 						</Box>
 
 						<TicketDateTimeSmallScreen ticket={ticket} />
@@ -332,15 +581,17 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 
 				<TicketDateTime ticket={ticket} />
 
-
 				<Box
 					id="ticket-selector"
-					onClick={(e) => e.stopPropagation()}
 					sx={{ float: "right" }}
+					onClick={(e) => e.stopPropagation()}
 				>
 					<Checkbox
 						checked={isSelected}
-						onChange={(e) => handleSelectTicket(e, ticket.tid)}
+						onChange={(e) => {
+							e.stopPropagation()
+							handleSelectTicket(e, ticket.tid)
+						}}
 						icon={<CheckBoxOutlineBlankSharpIcon />}
 						checkedIcon={<CheckBoxNewIcon />}
 					/>

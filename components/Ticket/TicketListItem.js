@@ -27,7 +27,7 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
+import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -35,14 +35,12 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { StatusChip } from "./TicketContent"
 import { getUiSettings } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
 import { DATE_FORMAT, PRIORITY, REDIRECT_URL } from "../../helpers/constants"
+import { TicketCategory, TicketDepartment, TicketReplyCount, TicketStatus, TicketCreatedBy } from "./AdminTicketListItem"
 
 //ASSETS
-import PersonIcon from '@mui/icons-material/Person'
-import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 
@@ -254,48 +252,13 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 					}}>
 
 						<Box>
-							<StatusChip status={ticket.status} />
-
-							<Tooltip arrow title="Department" placement="top">
-								<Chip
-									size="small"
-									label={ticket.department}
-									avatar={<ApartmentIcon />}
-									sx={{ mr: 1, mb: 1 }}
-								/>
-							</Tooltip>
-
-							<Tooltip arrow title="Category" placement="top">
-								{ticket.category &&
-									<Chip
-										size="small"
-										sx={{ mr: 1, mb: 1 }}
-										label={ticket.category + (ticket?.subCategory ? ("/" + ticket.subCategory) : "")}
-									/>}
-							</Tooltip>
-
+							<TicketStatus status={ticket.status} />
+							<TicketDepartment department={ticket.department} />
+							<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
 							{(ticket.createdBy !== ticket.username && isSmallScreen) &&
-								<Tooltip arrow title={`This ticket is created by ${ticket.createdBy}`} placement="top">
-									<Chip
-										size="small"
-										avatar={<PersonIcon color="success" />}
-										label={ticket.createdBy}
-										variant="outlined"
-										color="success"
-										sx={{ mr: 1, mb: 1 }}
-									/>
-								</Tooltip>}
+								<TicketCreatedBy createdBy={ticket.createdBy} />}
+							<TicketReplyCount count={ticket.replyCount} />
 
-							<Chip
-								size="small"
-								avatar={<Avatar sx={{ bgcolor: "primary.light" }}>{ticket.replyCount}</Avatar>}
-								label="replies"
-								variant="outlined"
-								sx={{
-									mb: 1,
-									".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
-								}}
-							/>
 						</Box>
 
 						<TicketDateTimeSmallScreen ticket={ticket} />

@@ -79,7 +79,7 @@ function Tickets() {
 
 			</Box>
 
-		</Container >
+		</Container>
 	)
 }
 

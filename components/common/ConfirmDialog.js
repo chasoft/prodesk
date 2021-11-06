@@ -22,13 +22,14 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
 
 //THIRD-PARTY
+import { isMobile } from "react-device-detect"
 
 //PROJECT IMPORT
 
@@ -36,111 +37,73 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
  * INIT                                                          *
  *****************************************************************/
 
-function ConfirmDialog({
-	title,
-	onClose,
-	defaultValue,
-	value,
-	setValue,
-	open,
-	nodeRef,
-	children,
-	...other
-}) {
-	useEffect(() => {
-		if (!open) {
-			setValue(defaultValue)
-		}
-	}, [defaultValue, open, setValue])
-
-	const handleEntering = () => {
-		if (nodeRef.current != null) {
-			nodeRef.current.focus()
-		}
-	}
-
-	const handleCancel = () => { onClose() }
-	const handleOk = () => { onClose(value) }
-
-	return (
-		<Dialog
-			sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 435 } }}
-			maxWidth="xs"
-			TransitionProps={{ onEntering: handleEntering }}
-			open={open}
-			{...other}
-		>
-			<DialogTitle>{title}</DialogTitle>
-			<DialogContent dividers>
-				{/* <RadioGroup
-					ref={nodeRef}
-					aria-label="ringtone"
-					name="ringtone"
-					value={value}
-					onChange={handleChange}
-				>
-					{options.map((option) => (
-						<FormControlLabel
-							value={option}
-							key={option}
-							control={<Radio />}
-							label={option}
-						/>
-					))}
-				</RadioGroup> */}
-				{children}
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleCancel}>Cancel</Button>
-				<Button onClick={handleOk}>Ok</Button>
-			</DialogActions>
-		</Dialog>
-	)
-}
-ConfirmDialog.propTypes = {
-	title: PropTypes.string.isRequired,
-	onClose: PropTypes.func.isRequired,
-	defaultValue: PropTypes.string.isRequired,
-	value: PropTypes.string.isRequired,
-	setValue: PropTypes.func.isRequired,
-	open: PropTypes.bool.isRequired,
-	nodeRef: PropTypes.node,
-	children: PropTypes.node.isRequired,
-}
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-//This is used for Confirmation with input value,
-//for yes/no, (no need to request any input from user), please use useConfirmDialogYesNo
+function ConfirmDialog({
+	title,
+	okButtonText,
+	color,
+	open,
+	setOpen,
+	callback,
+	maxWidth,
+	children
+}) {
 
-const useConfirmDialog = (defaultValue) => {
-	const nodeRef = useRef(null)
-	const [open, setOpen] = useState(false)
-	const [value, setValue] = useState(defaultValue)
+	const handleCancel = () => {
+		setOpen(false)
+		callback(false)
+	}
 
-	const handlers = useMemo(
-		() => ({
-			handleOpen: () => { setOpen(true) },
-			handleClose: (newValue) => {
-				setOpen(false)
-				if (newValue) {
-					setValue(newValue)
-				}
-			},
-			handleChange: (e) => { setValue(e.target.value) }
-		}),
-		[]
+	const handleOk = () => {
+		setOpen(false)
+		callback(true)
+	}
+
+	return (
+		<Dialog
+			maxWidth={maxWidth ?? "xs"}
+			open={open}
+			fullScreen={isMobile}
+		>
+
+			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>
+				{title ?? "Confirmation"}
+			</DialogTitle>
+
+			<DialogContent>
+				{children}
+			</DialogContent>
+
+			<DialogActions sx={{ mr: 2, mb: 2 }}>
+				<Button onClick={handleCancel} sx={{ mr: 1, px: 2 }}>
+					Cancel
+				</Button>
+				<Button
+					onClick={handleOk}
+					variant="contained"
+					color={color ?? "primary"}
+					sx={{ px: 2 }}
+				>
+					{okButtonText ?? "OK"}
+				</Button>
+			</DialogActions>
+
+		</Dialog >
 	)
-
-	useEffect(() => {
-		if (!open) {
-			setValue(defaultValue)
-		}
-	}, [defaultValue, open])
-
-	return [ConfirmDialog, nodeRef, value, setValue, handlers]
+}
+ConfirmDialog.propTypes = {
+	title: PropTypes.string,
+	okButtonText: PropTypes.string,
+	color: PropTypes.string,
+	open: PropTypes.bool.isRequired,
+	setOpen: PropTypes.func.isRequired,
+	callback: PropTypes.func.isRequired,
+	maxWidth: PropTypes.string,
+	fullScreen: PropTypes.bool,
+	children: PropTypes.node.isRequired,
 }
 
-export default useConfirmDialog
+export default ConfirmDialog

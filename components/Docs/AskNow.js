@@ -28,9 +28,11 @@ import React from "react"
 import { Box, Button, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getUiSettings } from "./../../redux/selectors"
+import { REDIRECT_URL } from "./../../helpers/constants"
 import { setRedirect } from "./../../redux/slices/redirect"
 
 //ASSETS
@@ -47,6 +49,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 const AskNow = () => {
 	const dispatch = useDispatch()
+	const { isSmallScreen } = useSelector(getUiSettings)
 	return (
 		<Box sx={{ my: { xs: 2, md: 4 } }}>
 			<Paper elevation={2}
@@ -61,15 +64,13 @@ const AskNow = () => {
 
 				<ForumIcon color="primary" />
 
-				<Box
-					sx={{
-						display: "flex",
-						flexGrow: 1,
-						alignItems: { xs: "flex-start", md: "center" },
-						flexDirection: { xs: "column", md: "row" },
-						"& > *": { mr: 2 },
-					}}
-				>
+				<Box sx={{
+					display: "flex",
+					flexGrow: 1,
+					alignItems: { xs: "flex-start", sm: "center" },
+					flexDirection: { xs: "column", sm: "row" },
+					"& > *": { mr: 2 },
+				}} >
 
 					<Typography>
 						<span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.
@@ -78,9 +79,14 @@ const AskNow = () => {
 					<Button
 						size="small"
 						color="primary"
+						variant={isSmallScreen ? "text" : "outlined"}
 						endIcon={<ArrowForwardIcon />}
-						sx={{ whiteSpace: "nowrap", px: 2, ml: { xs: -2, sm: 0 } }}
-						onClick={() => dispatch(setRedirect("/client/tickets/new-ticket"))}
+						sx={{
+							whiteSpace: "nowrap",
+							px: 2,
+							ml: { xs: -2, sm: 0 }
+						}}
+						onClick={() => dispatch(setRedirect(REDIRECT_URL.NEW_TICKETS))}
 					>
 						Ask now
 					</Button>
