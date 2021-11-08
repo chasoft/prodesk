@@ -86,7 +86,7 @@ const AskNow = () => {
 							px: 2,
 							ml: { xs: -2, sm: 0 }
 						}}
-						onClick={() => dispatch(setRedirect(REDIRECT_URL.NEW_TICKETS))}
+						onClick={() => dispatch(setRedirect(REDIRECT_URL.CLIENT.NEW_TICKETS))}
 					>
 						Ask now
 					</Button>

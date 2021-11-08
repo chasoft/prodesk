@@ -31,10 +31,10 @@ import { CircularProgress } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth, getRedirect } from "./../redux/selectors"
-import { REDIRECT_URL, USERGROUP } from "./../helpers/constants"
-import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "./../redux/slices/redirect"
 import { regAdminURL } from "./../helpers/regex"
+import { getAuth, getRedirect } from "./../redux/selectors"
+import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "./../redux/slices/redirect"
+import { PRIORITY_URLS, REDIRECT_URL, USERGROUP } from "./../helpers/constants"
 
 //ASSETS
 
@@ -68,18 +68,14 @@ export function ReduxRedirect(props) {
 	const { currentUser, isAuthenticated } = useSelector(getAuth)
 	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 
-	console.log("ReduxRedirect::redirectURL", redirectURL)
+	console.log("ReduxRedirect", { redirectURL })
 
 	if (redirectURL === "" || (redirectURL === "" && currentUser.justInstalled === true)) {
 		return props.children
 	}
 
 	//More priority
-	if (redirectURL === REDIRECT_URL.LOGIN ||
-		redirectURL === REDIRECT_URL.SURVEY ||
-		redirectURL === REDIRECT_URL.CREATE_PROFILE ||
-		redirectURL === REDIRECT_URL.SOCIAL_CREATE_ACCOUNT ||
-		redirectURL === REDIRECT_URL.CREATE_COMPLETED) {
+	if (PRIORITY_URLS.includes(redirectURL)) {
 		dispatch(clearRedirect())
 		router.push(redirectURL)
 		return null
@@ -117,6 +113,7 @@ export default function AuthCheck(props) {
 		// 2. user not loggin
 		// that means that... user truly not Login!
 		if (isAuthenticated !== true && loading === false) {
+			console.log("AuthCheck - useEffect")
 			reduxBatch(() => {
 				dispatch(setRedirectAfterLoginURL(router.pathname))
 				dispatch(setRedirect(REDIRECT_URL.LOGIN))
@@ -187,15 +184,15 @@ export function GuestOnly(props) {
 
 	if (isAuthenticated === true
 		//the user logged-in and account created
-		&& currentUser?.nextStep === REDIRECT_URL.DONE) {
+		&& currentUser?.nextStep === REDIRECT_URL.SIGNUP.DONE) {
 		if (currentUser.group === USERGROUP.USER) {
 			// dispatch(setRedirect(REDIRECT_URL.CLIENT))
-			router.push(REDIRECT_URL.CLIENT)
+			router.push(REDIRECT_URL.CLIENT.INDEX)
 			return null
 		}
 
 		// dispatch(setRedirect(REDIRECT_URL.ADMIN))
-		router.push(REDIRECT_URL.ADMIN)
+		router.push(REDIRECT_URL.ADMIN.INDEX)
 		return null
 	}
 

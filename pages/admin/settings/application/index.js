@@ -40,6 +40,7 @@ import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsConten
 //ASSETS
 import InfoIcon from "@mui/icons-material/Info"
 import BusinessIcon from "@mui/icons-material/Business"
+import { REDIRECT_URL } from "../../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -114,7 +115,7 @@ function ApplicationSettings() {
 
 						<SettingsContentHelperText>
 							Department Overview Department Overview Department Overview Department Overview Department Overview
-							<SettingsContentHelperLearnMore target="/admin" />
+							<SettingsContentHelperLearnMore target={REDIRECT_URL.ADMIN.INDEX} />
 						</SettingsContentHelperText>
 
 					</SettingsContentHelper>

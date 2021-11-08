@@ -58,6 +58,7 @@ function TicketFilters({ sx }) {
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
 		await refetchTicket()
+		//TODO: Remove this force refetch when finished implementing Notification system
 		dispatch(resetTicketsFilter())
 	}
 
@@ -81,7 +82,7 @@ function TicketFilters({ sx }) {
 				</Button>
 			</Box>
 
-			<Box>
+			<Box onClick={(e) => e.stopPropagation()}>
 				<Typography sx={{ fontWeight: 500, my: 1 }}>Status</Typography>
 				<FormGroup>
 					<FormControlLabel
@@ -166,7 +167,7 @@ function TicketFilters({ sx }) {
 
 			</Box>
 
-			<Box>
+			<Box onClick={(e) => e.stopPropagation()}>
 				<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
 				<FormControl fullWidth
 					sx={{

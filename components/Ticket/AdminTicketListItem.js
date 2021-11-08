@@ -22,23 +22,24 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useMemo } from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
+import React, { useCallback, useMemo } from "react"
 
 // MATERIAL-UI
 import { alpha } from "@mui/material/styles"
 import { Avatar, Checkbox, Box, Chip, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { keyBy, size, isFunction } from "lodash"
 import dayjs from "dayjs"
+import { find, keyBy, size, isFunction } from "lodash"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth, getUiSettings } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
+import { getAuth, getUiSettings } from "../../redux/selectors"
+import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
 import { useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
 import { setSelectedTickets, setSelectedLabel, setSelectedPriority, setSelectedDepartment } from "../../redux/slices/uiSettings"
@@ -52,7 +53,6 @@ import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
 
 /*****************************************************************
  * INIT                                                          *
@@ -391,32 +391,30 @@ TicketReplyCount.propTypes = {
 }
 
 export const TicketOwner = ({ username }) => {
+	const dispatch = useDispatch()
 	const profile = useGetProfileByUsername(username)
 	return (
-		<Link href={REDIRECT_URL.ADMIN_USERS + "/" + username} passHref>
-			<a href="just-a-placeholder">
-				<Tooltip
-					arrow
-					placement="top"
-					title={<>Ticket&apos;s Owner <br /> {profile.email}</>}
-				>
-					<Chip
-						size="small"
-						avatar={<Avatar src={profile.photoURL}></Avatar>}
-						label={profile.displayName}
-						variant="outlined"
-						sx={{
-							mb: 0.5,
-							mx: 0.5,
-							".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
-						}}
-						onClick={(e) =>
-							e.stopPropagation()
-						}
-					/>
-				</Tooltip>
-			</a>
-		</Link>
+		<Tooltip
+			arrow
+			placement="top"
+			title={<>Ticket&apos;s Owner <br /> {profile.email}</>}
+		>
+			<Chip
+				size="small"
+				avatar={<Avatar src={profile.photoURL}></Avatar>}
+				label={profile.displayName}
+				variant="outlined"
+				sx={{
+					mb: 0.5,
+					mx: 0.5,
+					".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
+				}}
+				onClick={(e) => {
+					e.stopPropagation()
+					dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + username))
+				}}
+			/>
+		</Tooltip>
 	)
 }
 TicketOwner.propTypes = {
@@ -424,6 +422,7 @@ TicketOwner.propTypes = {
 }
 
 export const TicketCreatedBy = ({ createdBy }) => {
+	const dispatch = useDispatch()
 	return (
 		<Tooltip
 			arrow
@@ -437,7 +436,10 @@ export const TicketCreatedBy = ({ createdBy }) => {
 				variant="outlined"
 				color="success"
 				sx={{ mr: 1, mb: 0.5 }}
-				onClick={(e) => e.stopPropagation()}
+				onClick={(e) => {
+					e.stopPropagation()
+					dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + createdBy))
+				}}
 			/>
 		</Tooltip>
 	)
@@ -454,12 +456,14 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
 	const { selectedTickets } = useSelector(getUiSettings)
 
-	const handleSelectTicket = (event, ticketId) => {
-		const selectedIndex = selectedTickets.indexOf(ticketId)
+	const handleSelectTicket = useCallback((event, ticketItem) => {	//ticketItem = {ticketId, department...}
+		const idArray = selectedTickets.map(i => i.tid)
+		const selectedIndex = idArray.indexOf(ticketItem.tid)
+
 		let newSelected = []
 
 		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selectedTickets, ticketId)
+			newSelected = newSelected.concat(selectedTickets, ticketItem)
 		} else if (selectedIndex === 0) {
 			newSelected = newSelected.concat(selectedTickets.slice(1))
 		} else if (selectedIndex === selectedTickets.length - 1) {
@@ -471,10 +475,10 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 			)
 		}
 		dispatch(setSelectedTickets(newSelected))
-	}
+	}, [dispatch, selectedTickets])
 
 	const isSelected = useMemo(() => {
-		return selectedTickets.indexOf(ticket.tid) !== -1
+		return find(selectedTickets, { tid: ticket.tid }) ? true : false
 	}, [selectedTickets, ticket.tid])
 
 	console.log("AdminTicketListItem", ticket.tid)
@@ -489,7 +493,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 		>
 			<Box
 				onClick={() => {
-					dispatch(setRedirect(`${REDIRECT_URL.ADMIN_TICKETS}/${ticket.slug}`))
+					dispatch(setRedirect(`${REDIRECT_URL.ADMIN.TICKETS}/${ticket.slug}`))
 				}}
 				sx={{
 					display: "flex",
@@ -529,6 +533,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							display: "flex",
 							alignItems: "center",
 							fontWeight: 500,
+							fontSize: "1.15rem",
 							mb: 0,
 							pt: 3, px: { xs: 1, sm: 3 }
 						}}
@@ -572,6 +577,8 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
 							<TicketReplyCount count={ticket.replyCount} />
 							<TicketOwner username={ticket.username} />
+							{(ticket.createdBy !== ticket.username) &&
+								<TicketCreatedBy createdBy={ticket.createdBy} />}
 						</Box>
 
 						<TicketDateTimeSmallScreen ticket={ticket} />
@@ -588,10 +595,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 				>
 					<Checkbox
 						checked={isSelected}
-						onChange={(e) => {
-							e.stopPropagation()
-							handleSelectTicket(e, ticket.tid)
-						}}
+						onChange={(e) => { handleSelectTicket(e, ticket) }}
 						icon={<CheckBoxOutlineBlankSharpIcon />}
 						checkedIcon={<CheckBoxNewIcon />}
 					/>
@@ -608,4 +612,6 @@ AdminTicketListItem.propTypes = {
 	isLast: PropTypes.bool,
 }
 
-export default React.memo(AdminTicketListItem)
+const MemoizedAdminTicketListItem = React.memo(AdminTicketListItem)
+
+export default MemoizedAdminTicketListItem

@@ -72,7 +72,7 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((user) => { res.push(user.data()) })
 				return {
 					data: {
-						isInstalled: (res[0]?.nextStep) === REDIRECT_URL.DONE,
+						isInstalled: (res[0]?.nextStep) === REDIRECT_URL.SIGNUP.DONE,
 						profile: res[0] ?? {}
 					}
 				}
@@ -93,7 +93,7 @@ async function fireStoreBaseQuery(args) {
 					displayName: args.body.name,
 					photoURL: "/avatar/admin-default.png",
 					group: "superadmin", //default usergroup
-					nextStep: REDIRECT_URL.INSTALL_COMPLETED
+					nextStep: REDIRECT_URL.INSTALL.COMPLETED
 				})
 
 				batch.set(doc(db, COLLECTION.USERNAMES, "superadmin"), {
@@ -108,7 +108,7 @@ async function fireStoreBaseQuery(args) {
 					data: {
 						uid: userCredential.user.uid,
 						message: "SuperAdmin account created successfully",
-						redirect: REDIRECT_URL.INSTALL_COMPLETED
+						redirect: REDIRECT_URL.INSTALL.COMPLETED
 					}
 				}
 
@@ -122,11 +122,11 @@ async function fireStoreBaseQuery(args) {
 				const batch = writeBatch(db)
 
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
-					nextStep: REDIRECT_URL.DONE
+					nextStep: REDIRECT_URL.SIGNUP.DONE
 				}, { merge: true })
 
 				batch.set(doc(db, COLLECTION.USERNAMES, "superadmin"), {
-					nextStep: REDIRECT_URL.DONE
+					nextStep: REDIRECT_URL.SIGNUP.DONE
 				}, { merge: true })
 
 				//popular default settings
@@ -152,6 +152,8 @@ async function fireStoreBaseQuery(args) {
 					const loggedin = await signInWithEmailAndPassword(auth, args.body.username, args.body.password)
 
 					const userProfile = await getUserProfile(loggedin.user.uid)
+
+					console.log("ACTION.SIGN_IN_WITH_EMAIL", { userProfile })
 
 					return {
 						data: {
@@ -237,8 +239,8 @@ async function fireStoreBaseQuery(args) {
 					displayName: args.body.name,
 					photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
 					group: USERGROUP.USER, //default usergroup
-					permission: [],
-					nextStep: REDIRECT_URL.CREATE_PROFILE
+					permissions: {},
+					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERS, userCredential.user.uid), publicProfile)
 
@@ -247,7 +249,7 @@ async function fireStoreBaseQuery(args) {
 					username: args.body.username,
 					email: userCredential.user.email,
 					group: USERGROUP.USER, //default usergroup
-					nextStep: REDIRECT_URL.CREATE_PROFILE
+					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
 
@@ -258,7 +260,7 @@ async function fireStoreBaseQuery(args) {
 				return {
 					data: {
 						message: "Account created successfully!",
-						redirect: REDIRECT_URL.CREATE_PROFILE,
+						redirect: REDIRECT_URL.SIGNUP.CREATE_PROFILE,
 						uid: userCredential.user.uid,
 						username: args.body.username,
 						email: userCredential.user.email,
@@ -282,9 +284,9 @@ async function fireStoreBaseQuery(args) {
 					username: args.body.username,
 					displayName: args.body.name,
 					photoURL: args.body.photoURL,
-					permission: [],
+					permissions: {},
 					group: USERGROUP.USER, //default usergroup
-					nextStep: REDIRECT_URL.CREATE_PROFILE
+					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
 
@@ -301,7 +303,7 @@ async function fireStoreBaseQuery(args) {
 				return {
 					data: {
 						message: "Account created successfully",
-						redirect: REDIRECT_URL.CREATE_PROFILE
+						redirect: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 					}
 				}
 
@@ -314,14 +316,14 @@ async function fireStoreBaseQuery(args) {
 				const publicProfile = {
 					photoURL: args.body.avatar,
 					location: args.body.location,
-					nextStep: REDIRECT_URL.SURVEY
+					nextStep: REDIRECT_URL.SIGNUP.SURVEY
 				}
 				await updateDoc(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
 
 				return {
 					data: {
 						message: "Profile created successfully",
-						redirect: REDIRECT_URL.SURVEY
+						redirect: REDIRECT_URL.SIGNUP.SURVEY
 					}
 				}
 			}
@@ -334,11 +336,11 @@ async function fireStoreBaseQuery(args) {
 				const batch = writeBatch(db)
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
 					survey: JSON.stringify(args.body.payload),
-					nextStep: REDIRECT_URL.DONE
+					nextStep: REDIRECT_URL.SIGNUP.DONE
 				}, { merge: true })
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), {
 					survey: JSON.stringify(args.body.payload),
-					nextStep: REDIRECT_URL.DONE
+					nextStep: REDIRECT_URL.SIGNUP.DONE
 				}, { merge: true })
 				await batch.commit()
 
@@ -361,10 +363,10 @@ async function fireStoreBaseQuery(args) {
 				//Update redux
 				return {
 					data: {
-						redirect: REDIRECT_URL.CREATE_COMPLETED
+						redirect: REDIRECT_URL.SIGNUP.CREATE_COMPLETED
 					}
 				}
-				// dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))
+				// dispatch(setRedirect(REDIRECT_URL.SIGNUP.CREATE_COMPLETED))
 			} catch (e) {
 				return throwError(200, ACTION.SIGN_UP_SURVEY, e, null)
 			}
@@ -1116,8 +1118,16 @@ async function fireStoreBaseQuery(args) {
 				const newTicket = {
 					...args.body,
 					replyCount: 0,
-					assignee: "",
-					assignor: "",
+					/*
+						staffInCharge = [
+							{
+								assignee: string,
+								assignor: string,
+								assignedDate: serverTimestamp()
+							}
+						]
+					 */
+					staffInCharge: [],
 					note: "",
 					labels: [],
 					removed: false, //used for temporarily delete feature

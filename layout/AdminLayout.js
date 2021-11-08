@@ -144,7 +144,7 @@ function AdminLayout({ children }) {
 			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
 				<SideBar
-					homeUrl={REDIRECT_URL.ADMIN}
+					homeUrl={REDIRECT_URL.ADMIN.INDEX}
 					settingsUrl=""
 					settingsTooltip=""
 					data={ADMIN_MENUS}

@@ -84,7 +84,7 @@ function AdminViewUser() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.ADMIN
+							url: REDIRECT_URL.ADMIN.INDEX
 						}
 					]}
 				/>

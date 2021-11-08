@@ -32,7 +32,7 @@ import { Box, Button, Checkbox, CircularProgress, FormControlLabel, Grid, IconBu
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
-import { useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getRedirect } from "./../../redux/selectors"
@@ -45,6 +45,7 @@ import { useSignInWithEmailMutation, useSignInWithGoogleMutation } from "./../..
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { GithubIcon, GoogleIcon, TwitterIcon } from "../svgIcon"
+import { loginSuccess } from "../../redux/slices/auth"
 
 /*****************************************************************
  * INIT                                                          *
@@ -65,9 +66,9 @@ const validationSchema = yup.object({
 
 const LoginForm = () => {
 	useFlexDirection({ payload: "row" })
+	const dispatch = useDispatch()
 	const [isLoading, setIsLoading] = useState(false)
 	//
-	const dispatch = useDispatch()
 	const { redirectAfterLoginURL } = useSelector(getRedirect)
 	//
 	const [signInWithEmail] = useSignInWithEmailMutation()
@@ -85,14 +86,23 @@ const LoginForm = () => {
 				setIsLoading(false)
 				return
 			}
+
 			//redirect after login if necessary
 			if (redirectAfterLoginURL === "") {
-				dispatch(setRedirect((res.data.group === USERGROUP.USER)
-					? REDIRECT_URL.CLIENT
-					: REDIRECT_URL.ADMIN)
-				)
+				//By this step, we already get all user data,
+				//then, dispatch loginSuccess, else, next step,
+				//AuthCheck will have wrong behavior
+				reduxBatch(() => {
+					dispatch(loginSuccess(res.data.userProfile))
+					dispatch(setRedirect((res.data.userProfile.group === USERGROUP.USER)
+						? REDIRECT_URL.CLIENT.INDEX
+						: REDIRECT_URL.ADMIN.INDEX))
+				})
 			}
-			setIsLoading(false)
+
+			//We don't need to set this variable to false,
+			//at this moment, the page is redirecting
+			//setIsLoading(false)
 		},
 	})
 

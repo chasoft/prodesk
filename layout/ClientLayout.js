@@ -22,9 +22,9 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import PropTypes from "prop-types"
 import React, { useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, useMediaQuery } from "@mui/material"
@@ -33,14 +33,14 @@ import { Box, useMediaQuery } from "@mui/material"
 
 //PROJECT IMPORT
 import { getRootLayout } from "./RootLayout"
+import AuthCheck from "./../components/AuthCheck"
 import Footer from "./../components/common/Footer"
 import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
-import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
-import AuthCheck from "./../components/AuthCheck"
 import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
+import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -108,8 +108,8 @@ function ClientLayout({ children }) {
 			<Box style={{ display: "flex", minHeight: "100vh" }}>
 
 				<SideBar
-					homeUrl={REDIRECT_URL.CLIENT}
-					settingsUrl={REDIRECT_URL.CLIENT_EDIT_PROFILE}
+					homeUrl={REDIRECT_URL.CLIENT.INDEX}
+					settingsUrl={REDIRECT_URL.CLIENT.EDIT_PROFILE}
 					settingsTooltip="Account settings"
 					data={CLIENT_MENU}
 				/>
@@ -127,6 +127,7 @@ function ClientLayout({ children }) {
 					<Footer />
 				</Box>
 			</Box>
+
 		</AuthCheck>
 	)
 }

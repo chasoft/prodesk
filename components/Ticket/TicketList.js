@@ -161,7 +161,7 @@ function TicketList() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.CLIENT
+							url: REDIRECT_URL.CLIENT.INDEX
 						}
 					]}
 				/>
@@ -175,7 +175,7 @@ function TicketList() {
 						All tickets
 					</Typography>
 
-					<Link href={REDIRECT_URL.NEW_TICKETS} passHref>
+					<Link href={REDIRECT_URL.CLIENT.NEW_TICKETS} passHref>
 						<Button variant="contained" sx={{ mb: 1 }}>
 							New ticket
 						</Button>

@@ -195,7 +195,7 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 		>
 			<Box
 				onClick={() => {
-					dispatch(setRedirect(`${REDIRECT_URL.TICKETS}/${ticket.slug}`))
+					dispatch(setRedirect(`${REDIRECT_URL.CLIENT.TICKETS}/${ticket.slug}`))
 				}}
 				sx={{
 					display: "flex",
@@ -222,6 +222,7 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 						sx={{
 							display: "flex",
 							alignItems: "center",
+							fontSize: "1.15rem",
 							pt: 3, px: { xs: 1, sm: 3 }
 						}}
 					>

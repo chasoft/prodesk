@@ -53,8 +53,6 @@ function RootLayout({ children }) {
 			if (user) {
 				const userProfile = await getUserProfile(user.uid)
 
-				console.log("userProfile", { userProfile })
-
 				dispatch(loginSuccess({
 					emailVerified: user.emailVerified,
 					creationTime: user.metadata.creationTime,
@@ -76,15 +74,15 @@ function RootLayout({ children }) {
 
 					//go to setup new account
 					if (userProfile?.error) {
-						dispatch(setRedirect(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT))
-						// router.push(REDIRECT_URL.SOCIAL_CREATE_ACCOUNT)
+						dispatch(setRedirect(REDIRECT_URL.SIGNUP.SOCIAL_CREATE_ACCOUNT))
+						// router.push(REDIRECT_URL.SIGNUP.SOCIAL_CREATE_ACCOUNT)
 						return
 					}
 				}
 
 				//redirect to any uncompleted steps
 				if (userProfile?.data?.nextStep)
-					if (userProfile?.data?.nextStep !== REDIRECT_URL.DONE) {
+					if (userProfile?.data?.nextStep !== REDIRECT_URL.SIGNUP.DONE) {
 						if (router.pathname !== userProfile?.data?.nextStep) {
 
 							console.log("RootLayout::nextStep", userProfile?.data?.nextStep)
@@ -97,8 +95,8 @@ function RootLayout({ children }) {
 
 				// if user is not admin but loggin at / admin, then redirect to / client
 				if (regAdminURL.test(router.pathname) && (userProfile.data.group === USERGROUP.USER)) {
-					// router.push(REDIRECT_URL.CLIENT)
-					dispatch(setRedirect(REDIRECT_URL.CLIENT))
+					// router.push(REDIRECT_URL.CLIENT.INDEX)
+					dispatch(setRedirect(REDIRECT_URL.CLIENT.INDEX))
 					return
 				}
 

@@ -36,6 +36,7 @@ import { Avatar, Box, Collapse, Grid, Typography } from "@mui/material"
 //ASSETS
 import ExpandLessIcon from "@mui/icons-material/ExpandLess"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * CONTENT                                                       *
@@ -80,7 +81,7 @@ export const ForgotPasswordLink = () => {
 }
 
 export const LoginLink = () => {
-	return <Typography>Already a member? <Link href="/login">Log in</Link></Typography>
+	return <Typography>Already a member? <Link href={REDIRECT_URL.LOGIN}>Log in</Link></Typography>
 }
 
 export const SignUpLink = () => {

@@ -92,12 +92,12 @@ function NewTicket() {
 								{
 									icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 									title: "Home",
-									url: REDIRECT_URL.CLIENT
+									url: REDIRECT_URL.CLIENT.INDEX
 								},
 								{
 									icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 									title: "All tickets",
-									url: REDIRECT_URL.TICKETS
+									url: REDIRECT_URL.CLIENT.TICKETS
 								}
 							]}
 						/>

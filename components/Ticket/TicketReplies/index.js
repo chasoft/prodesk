@@ -36,7 +36,7 @@ import ReplyItem from "./Reply"
 import ReplyDialog from "./ReplyDialog"
 import { getAuth } from "../../../redux/selectors"
 import useUserSettings from "../../../helpers/useUserSettings"
-import { USER_SETTINGS_NAME } from "../../../helpers/constants"
+import { SETTINGS_NAME } from "../../../helpers/constants"
 import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
@@ -134,7 +134,7 @@ RepliesContainer.propTypes = {
 function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 
 	const { currentUser } = useSelector(getAuth)
-	const hasAdminPermissions = useUserSettings(currentUser.username, USER_SETTINGS_NAME.hasAdminPermissions)
+	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
 	const { data: ticketReplies, isLoading: isLoadingReplies } = useGetTicketRepliesQuery({
 		username: ticketUsername,

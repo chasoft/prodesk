@@ -106,12 +106,12 @@ function SingleTicket() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.CLIENT
+							url: REDIRECT_URL.CLIENT.INDEX
 						},
 						{
 							icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "All tickets",
-							url: REDIRECT_URL.TICKETS
+							url: REDIRECT_URL.CLIENT.TICKETS
 						}
 					]}
 				/>
@@ -127,7 +127,7 @@ function SingleTicket() {
 				}}>
 					<ErrorIcon color="warning" sx={{ fontSize: 80 }} />
 					<Typography variant="caption" sx={{ p: 3 }}>Ticket is not existed!</Typography>
-					<Link href={REDIRECT_URL.TICKETS} passHref>
+					<Link href={REDIRECT_URL.CLIENT.TICKETS} passHref>
 						<Button variant="outlined">Go back to All tickets</Button>
 					</Link>
 

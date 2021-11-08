@@ -104,12 +104,12 @@ function AdminSingleTicket() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.ADMIN
+							url: REDIRECT_URL.ADMIN.INDEX
 						},
 						{
 							icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Tickets management",
-							url: REDIRECT_URL.ADMIN_TICKETS
+							url: REDIRECT_URL.ADMIN.TICKETS
 						}
 					]}
 				/>
@@ -127,7 +127,7 @@ function AdminSingleTicket() {
 					<Typography variant="caption" sx={{ p: 3 }}>
 						Ticket is not existed!
 					</Typography>
-					<Link href={REDIRECT_URL.ADMIN_TICKETS} passHref>
+					<Link href={REDIRECT_URL.ADMIN.TICKETS} passHref>
 						<Button variant="outlined">Go back to All tickets</Button>
 					</Link>
 				</Box>

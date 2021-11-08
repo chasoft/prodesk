@@ -28,7 +28,6 @@ import React, { useState } from "react"
 import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
-// import { useSnackbar } from "notistack"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -112,7 +111,7 @@ const CreateProfileForm = () => {
 								photoURL: avatar,
 								location
 							}))
-							dispatch(setRedirect(REDIRECT_URL.SURVEY))
+							dispatch(setRedirect(REDIRECT_URL.SIGNUP.SURVEY))
 						})
 					}}
 					disabled={(location === "")}

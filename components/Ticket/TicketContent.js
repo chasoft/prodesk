@@ -86,7 +86,7 @@ const PopupMenu = ({ ticket }) => {
 			tid: ticket.tid,
 			status: STATUS_FILTER.CLOSED
 		}])
-		dispatch(setRedirect(REDIRECT_URL.TICKETS))
+		dispatch(setRedirect(REDIRECT_URL.CLIENT.TICKETS))
 	}
 
 	return (

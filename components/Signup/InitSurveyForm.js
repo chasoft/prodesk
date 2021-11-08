@@ -73,7 +73,7 @@ const InitSurveyForm = () => {
 				uid: currentUser.uid,
 				payload: values
 			})
-			dispatch(setRedirect(REDIRECT_URL.CREATE_COMPLETED))
+			dispatch(setRedirect(REDIRECT_URL.SIGNUP.CREATE_COMPLETED))
 		}
 	})
 

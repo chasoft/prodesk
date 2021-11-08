@@ -62,8 +62,8 @@ function Install() {
 				<Button
 					variant="contained" color="primary" style={{ paddingLeft: "3rem", paddingRight: "3rem" }}
 					onClick={() => {
-						dispatch(setRedirect(REDIRECT_URL.INSTALL_CREATE))
-						// router.push(REDIRECT_URL.INSTALL_CREATE)
+						dispatch(setRedirect(REDIRECT_URL.SIGNUP.INSTALL_CREATE))
+						// router.push(REDIRECT_URL.SIGNUP.INSTALL_CREATE)
 					}}
 				>
 					Start

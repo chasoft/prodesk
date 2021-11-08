@@ -27,7 +27,7 @@ import { useCallback, useRef } from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { USER_SETTINGS_NAME } from "./constants"
+import { DEFAULT_USER_SETTINGS } from "./constants"
 import { useGetUserSettingsQuery } from "../redux/slices/firestoreApi"
 
 /*****************************************************************
@@ -39,9 +39,7 @@ export default function useUserSettings(username, settingName) {
 
 	const { data, isLoading } = useGetUserSettingsQuery(username)
 
-	const defaultUserSettings = useRef({
-		[USER_SETTINGS_NAME.hasAdminPermissions]: false
-	})
+	const defaultUserSettings = useRef(DEFAULT_USER_SETTINGS)
 
 	//get a setting or all if no query provided
 	const getUserSettings = useCallback((settingName) => {

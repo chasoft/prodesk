@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useRef } from "react"
+import { useMemo, useRef } from "react"
 
 //THIRD-PARTY
 import { usePrevious } from "react-use"
@@ -42,7 +42,7 @@ export default function useGroupedTickets() {
 	const { data: tickets, isLoading } = useGetTicketsForAdminQuery(undefined)
 	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
 
-	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])
+	const _Status = useMemo(() => Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0]), [selectedStatus])
 
 	const prevTickets = usePrevious(tickets)
 	const prevSearchTerm = usePrevious(ticketSearchTerm)

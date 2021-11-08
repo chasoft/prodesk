@@ -30,29 +30,44 @@ export const MENU_ITEM_TYPE = {
 }
 
 export const REDIRECT_URL = {
-	ADMIN: "/admin",
-	CLIENT: "/client",
-	LOGIN: "/login",
-	SURVEY: "/signup/survey",
-	SOCIAL_CREATE_ACCOUNT: "/signup/account",
-	CREATE_PROFILE: "/signup/create-profile",
-	CREATE_COMPLETED: "/signup/completed",
-	INSTALL_COMPLETED: "/install/completed",
-	INSTALL_CREATE: "/install/create",
-	DONE: "DONE",
-	//
-	TICKETS: "/client/tickets",
-	NEW_TICKETS: "/client/tickets/new-ticket",
-	//
-	CLIENT_EDIT_PROFILE: "/client/edit-profile",
-	ADMIN_EDIT_PROFILE: "/admin/edit-profile",
-	//
-	ADMIN_TICKETS: "/admin/tickets",
-	ADMIN_NEW_TICKETS: "/admin/tickets/new-ticket",
-	//
-	ADMIN_USERS: "/admin/users",
+	INSTALL: {
+		CREATE: "/install/create",
+		COMPLETED: "/install/completed",
+	},
 
+	SIGNUP: {
+		SOCIAL_CREATE_ACCOUNT: "/signup/account",
+		CREATE_PROFILE: "/signup/create-profile",
+		SURVEY: "/signup/survey",
+		CREATE_COMPLETED: "/signup/completed",
+		DONE: "DONE",
+	},
+
+	LOGIN: "/login",
+
+	ADMIN: {
+		INDEX: "/admin",
+		EDIT_PROFILE: "/admin/edit-profile",
+		TICKETS: "/admin/tickets",
+		NEW_TICKETS: "/admin/tickets/new-ticket",
+		USERS: "/admin/users",
+	},
+
+	CLIENT: {
+		INDEX: "/client",
+		TICKETS: "/client/tickets",
+		NEW_TICKETS: "/client/tickets/new-ticket",
+		EDIT_PROFILE: "/client/edit-profile",
+	},
 }
+
+export const PRIORITY_URLS = [
+	REDIRECT_URL.LOGIN,
+	REDIRECT_URL.SIGNUP.SURVEY,
+	REDIRECT_URL.SIGNUP.CREATE_PROFILE,
+	REDIRECT_URL.SIGNUP.SOCIAL_CREATE_ACCOUNT,
+	REDIRECT_URL.SIGNUP.CREATE_COMPLETED
+]
 
 export const DATE_FORMAT = {
 	SHORT: "DD-MMM-YY",
@@ -152,10 +167,30 @@ export const TICKET_INBOXES = {
 
 //DO NOT CHANGE `value of "code"`
 export const DOCS_ADD = {
-	DOC: { code: "add_document", icon: AddIcon, title: "New document", description: "Create a new plain text page" },
-	CATEGORY: { code: "add_category", icon: PlaylistAddIcon, title: "New category", description: "Group pages around key topics" },
-	SUB_CATEGORY: { code: "add_subCategory", icon: PlaylistAddIcon, title: "New sub-category", description: "Group pages around key topics" },
-	EXTERNAL: { code: "add_externalLink", icon: LaunchIcon, title: "New external link", description: "Link to external websites" },
+	DOC: {
+		code: "add_document",
+		icon: AddIcon,
+		title: "New document",
+		description: "Create a new plain text page"
+	},
+	CATEGORY: {
+		code: "add_category",
+		icon: PlaylistAddIcon,
+		title: "New category",
+		description: "Group pages around key topics"
+	},
+	SUB_CATEGORY: {
+		code: "add_subCategory",
+		icon: PlaylistAddIcon,
+		title: "New sub-category",
+		description: "Group pages around key topics"
+	},
+	EXTERNAL: {
+		code: "add_externalLink",
+		icon: LaunchIcon,
+		title: "New external link",
+		description: "Link to external websites"
+	},
 }
 
 //DO NOT CHANGE ANY VALUE BELOW
@@ -211,24 +246,49 @@ export const APP_SETTINGS_NAME = {
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
 }
 
-export const USER_SETTINGS_NAME = {
+export const SETTINGS_NAME = {
+	/* GENERAL */
 	hasAdminPermissions: "hasAdminPermissions",
-	/* TICKETS */
+	departments: "departments",
+
+	/* TICKET */
 	createTicket: "createTicket",
 	updateTicket: "updateTicket",
 	deleteTicket: "deleteTicket",
-	//
 
-
-	/* USERS */
-
-
+	/* USER */
 
 	/* DOCUMENTATION */
 
-
 	/* BLOG */
 
+}
 
+export const DEFAULT_USER_SETTINGS = {
+	[SETTINGS_NAME.createTicket]: false,
+	[SETTINGS_NAME.updateTicket]: false,
+	[SETTINGS_NAME.deleteTicket]: false,
+}
+
+export const DEFAULT_MEMBER_SETTINGS = {
+	...DEFAULT_USER_SETTINGS,
+	//Member's permissions
+	[SETTINGS_NAME.createTicket]: true,
+
+}
+
+export const DEFAULT_AGENT_SETTINGS = {
+	...DEFAULT_MEMBER_SETTINGS,
+	//Agent's permissions
+	[SETTINGS_NAME.updateTicket]: true,
+	//
+	[SETTINGS_NAME.departments]: {}
+
+}
+
+export const DEFAULT_ADMIN_SETTINGS = {
+	...DEFAULT_AGENT_SETTINGS,
+	//Admin's permissions
+	[SETTINGS_NAME.deleteTicket]: true,
 
 }

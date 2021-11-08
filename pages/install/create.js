@@ -110,8 +110,8 @@ function CreateSuperAdmin() {
 			closeSnackbar()
 			enqueueSnackbar("Account created", { variant: "success" })
 
-			dispatch(setRedirect(REDIRECT_URL.INSTALL_COMPLETED))
-			// router.push(REDIRECT_URL.INSTALL_COMPLETED)
+			dispatch(setRedirect(REDIRECT_URL.SIGNUP.INSTALL_COMPLETED))
+			// router.push(REDIRECT_URL.SIGNUP.INSTALL_COMPLETED)
 		},
 	})
 

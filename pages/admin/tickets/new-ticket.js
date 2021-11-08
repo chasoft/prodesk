@@ -99,12 +99,12 @@ function AdminNewTicket() {
 								{
 									icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 									title: "Home",
-									url: REDIRECT_URL.ADMIN
+									url: REDIRECT_URL.ADMIN.INDEX
 								},
 								{
 									icon: <AirplaneTicketIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 									title: "Tickets management",
-									url: REDIRECT_URL.ADMIN_TICKETS
+									url: REDIRECT_URL.ADMIN.TICKETS
 								}
 							]}
 						/>

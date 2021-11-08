@@ -64,7 +64,7 @@ function Test3() {
 		// await finalizeInstallation({ uid: currentUser.uid })
 		// reduxBatch(() => {
 		// 	dispatch(loginSuccess({ justInstalled: true }))
-		// 	dispatch(setRedirect(REDIRECT_URL.ADMIN))
+		// 	dispatch(setRedirect(REDIRECT_URL.ADMIN.INDEX))
 		// })
 	})
 
@@ -120,7 +120,7 @@ function Test3() {
 								//Update local Redux to indicate that use logged-in
 								//with extra param: justInstalled = true
 								dispatch(loginSuccess({ justInstalled: true }))
-								router.push(REDIRECT_URL.ADMIN)
+								router.push(REDIRECT_URL.ADMIN.INDEX)
 							}
 						}
 					>

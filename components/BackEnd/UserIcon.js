@@ -132,18 +132,18 @@ const UserIcon = () => {
 				onClick={handleClose}
 			>
 				<AuthAdminTrue>
-					<Link href={REDIRECT_URL.ADMIN} passHref>
+					<Link href={REDIRECT_URL.ADMIN.INDEX} passHref>
 						<li><SettingsIcon />Admin Dashboard</li>
 					</Link>
 				</AuthAdminTrue>
 
 				<AuthUserTrue>
-					<Link href={REDIRECT_URL.CLIENT} passHref>
+					<Link href={REDIRECT_URL.CLIENT.INDEX} passHref>
 						<li><SettingsIcon />Client Dashboard</li>
 					</Link>
 				</AuthUserTrue>
 
-				<Link href={isAdminURL ? REDIRECT_URL.ADMIN_EDIT_PROFILE : REDIRECT_URL.CLIENT_EDIT_PROFILE} passHref>
+				<Link href={isAdminURL ? REDIRECT_URL.ADMIN.EDIT_PROFILE : REDIRECT_URL.CLIENT.EDIT_PROFILE} passHref>
 					<li><SettingsIcon />Profile Settings</li>
 				</Link>
 

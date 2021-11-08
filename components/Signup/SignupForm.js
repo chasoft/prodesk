@@ -117,9 +117,11 @@ const SignupForm = () => {
 				return
 			}
 
-			dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
+			dispatch(setRedirect(REDIRECT_URL.SIGNUP.CREATE_PROFILE))
 
-			setIsProcessing(false)
+			//We don't need to set this variable to false,
+			//at this moment, the page is redirecting
+			// setIsProcessing(false)
 		}
 	})
 

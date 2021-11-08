@@ -36,7 +36,7 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import useProfiles from "../../helpers/useProfiles"
 import ConfirmDialog from "../common/ConfirmDialog"
-import AdminTicketListItem from "./AdminTicketListItem"
+import MemoizedAdminTicketListItem from "./AdminTicketListItem"
 import useMenuContainer from "../common/useMenuContainer"
 import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
@@ -87,6 +87,11 @@ const AssignButton = () => {
 	const { selectedInbox } = useSelector(getUiSettings)
 	const { staffList, isLoadingStaffList } = useProfiles()
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+
+	//Only use this button when in UNASSIGNED INBOX
+	//If assigned, then, admin must handle directly in a specific ticket
+	if (selectedInbox !== TICKET_INBOXES.UNASSIGNED) return null
+
 	return (
 		<>
 			<Tooltip arrow title="Assign" placement="top">
@@ -132,16 +137,13 @@ const StatusButton = () => {
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
 	const { selectedTickets } = useSelector(getUiSettings)
 	const [updateTicket] = useUpdateTicketMutation()
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
-
-	console.log("StatusButton => group-tickets", tickets)
 
 	const handleChangeTicketStatus = async (newStatus) => {
 		let affectedTickets = []
-		selectedTickets.forEach((tid) => {
+		selectedTickets.forEach((selectedTicket) => {
 			affectedTickets.push({
-				username: tickets[tid].username,
-				tid: tid,
+				username: selectedTicket.username,
+				tid: selectedTicket.tid,
 				status: newStatus
 			})
 		})
@@ -166,23 +168,20 @@ const StatusButton = () => {
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				{isLoadingTickets && <MenuItem>Loading...</MenuItem>}
-
-				{(size(tickets) && !isLoadingTickets) &&
-					[
-						STATUS_FILTER.OPEN,
-						STATUS_FILTER.PENDING,
-						STATUS_FILTER.REPLIED,
-						STATUS_FILTER.CLOSED
-					]
-						.map((newStatus) => (
-							<MenuItem
-								key={newStatus}
-								onClick={() => handleChangeTicketStatus(newStatus)}
-							>
-								{newStatus}
-							</MenuItem>
-						))}
+				{[
+					STATUS_FILTER.OPEN,
+					STATUS_FILTER.PENDING,
+					STATUS_FILTER.REPLIED,
+					STATUS_FILTER.CLOSED
+				]
+					.map((newStatus) => (
+						<MenuItem
+							key={newStatus}
+							onClick={() => handleChangeTicketStatus(newStatus)}
+						>
+							{newStatus}
+						</MenuItem>
+					))}
 			</MenuContainer>
 		</>
 	)
@@ -200,17 +199,18 @@ const LabelButton = () => {
 
 	const handleApplyLabel = async (labelId) => {
 		let affectedTickets = []
-		selectedTickets.forEach((tid) => {
-			if (tickets[tid].labels.indexOf(tid) !== -1) {
+		selectedTickets.forEach((selectedTicket) => {
+			if (selectedTicket.labels.indexOf(labelId) !== -1) {
 				//by pass this ticket
 				return
 			}
 			affectedTickets.push({
-				username: tickets[tid].username,
-				tid: tid,
-				labels: [...tickets[tid].labels, labelId].sort()
+				username: selectedTicket.username,
+				tid: selectedTicket.tid,
+				labels: [...selectedTicket.labels, labelId].sort()
 			})
 		})
+		if (affectedTickets.length === 0) return
 		await updateTicket(affectedTickets)
 	}
 
@@ -279,7 +279,6 @@ const DeleteTicketsButton = () => {
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const { selectedTickets, isSmallScreen } = useSelector(getUiSettings)
 	const { userList, isLoading: isLoadingUserList } = useProfiles()
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
 	const [deleteTicketTemp] = useDeleteTicketTempMutation()
 
 	dayjs.extend(relativeTime)
@@ -287,18 +286,16 @@ const DeleteTicketsButton = () => {
 	const handleDeleteTicket = async (confirmed) => {
 		if (confirmed) {
 			const affectedTickets = []
-			selectedTickets.forEach((tid) => {
+			selectedTickets.forEach((selectedTicket) => {
 				affectedTickets.push({
-					username: tickets[tid].username,
-					tid
+					username: selectedTicket.username,
+					tid: selectedTicket.tid
 				})
 			})
 			await deleteTicketTemp(affectedTickets)
 			console.log("delete tickets clicked")
 		}
 	}
-
-	const selectedTicketsFullDetails = selectedTickets.map(tid => tickets[tid])
 
 	return (
 		<>
@@ -346,7 +343,7 @@ const DeleteTicketsButton = () => {
 							</Typography>
 						</Box>
 
-						{(isLoadingTickets || isLoadingUserList) &&
+						{(isLoadingUserList) &&
 							<Box sx={{
 								display: "flex",
 								height: "100px",
@@ -357,7 +354,7 @@ const DeleteTicketsButton = () => {
 								<CircularProgress />
 							</Box>}
 
-						{(!isLoadingTickets || !isLoadingUserList) &&
+						{(!isLoadingUserList) &&
 
 							<List sx={{
 								width: "100%",
@@ -365,11 +362,11 @@ const DeleteTicketsButton = () => {
 								borderLeft: "3px solid transparent",
 								borderColor: "warning.main"
 							}}>
-								{selectedTicketsFullDetails.map((ticket) => {
-									const userProfile = userList.find(i => i.username === ticket.username)
+								{selectedTickets.map((selectedTicket) => {
+									const userProfile = userList.find(i => i.username === selectedTicket.username)
 									return (
 										<ListItemButton
-											key={ticket.tid}
+											key={selectedTicket.tid}
 											alignItems="flex-start"
 										>
 											<ListItemAvatar>
@@ -384,14 +381,14 @@ const DeleteTicketsButton = () => {
 															lineHeight: "1.25rem",
 															color: "grey.800"
 														}}>
-															{ticket.subject}
+															{selectedTicket.subject}
 														</Typography>
 														<Typography sx={{
 															mb: 1.5,
 															fontWeight: 500,
 															color: "grey.700"
 														}}>
-															By {userProfile.displayName} at {dayjs(ticket.createdAt).format(DATE_FORMAT.LONG)} ({dayjs(ticket.createdAt).fromNow()})
+															By {userProfile.displayName} at {dayjs(selectedTicket.createdAt).format(DATE_FORMAT.LONG)} ({dayjs(selectedTicket.createdAt).fromNow()})
 														</Typography>
 													</>
 												}
@@ -402,7 +399,7 @@ const DeleteTicketsButton = () => {
 														color="text.primary"
 														sx={{ display: "inline" }}
 													>
-														{ticket.content.substring(0, 100)}
+														{selectedTicket.content.substring(0, 100)}
 													</Typography>
 												}
 											/>
@@ -444,8 +441,6 @@ function AdminTicketList() {
 
 	const { data: tickets, isLoading } = useGroupedTickets()
 
-	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
-
 	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === selectedInbox)
 
 	console.log("AdminTicketList rendering")
@@ -485,7 +480,7 @@ function AdminTicketList() {
 						{
 							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
 							title: "Home",
-							url: REDIRECT_URL.ADMIN
+							url: REDIRECT_URL.ADMIN.INDEX
 						}
 					]}
 				/>
@@ -521,12 +516,12 @@ function AdminTicketList() {
 								<AssignButton />
 								<StatusButton />
 								<LabelButton />
-								{(currentUser.username === "superadmin" || currentUser.permission.deleteTicket) &&
+								{(currentUser.username === "superadmin" || currentUser.permissions.deleteTicket) &&
 									<DeleteTicketsButton />}
 								<ClearSelectedTicketsButton />
 							</div>
 						</Box>
-						: <Link href={REDIRECT_URL.ADMIN_NEW_TICKETS} passHref>
+						: <Link href={REDIRECT_URL.ADMIN.NEW_TICKETS} passHref>
 							<span>
 								<Button variant="outlined" sx={{ display: { xs: "none", sm: "block" } }}>
 									New ticket
@@ -566,7 +561,7 @@ function AdminTicketList() {
 
 					<Typography variant="body">
 						Try again by using other search criteria or click &quot;
-						<Box component="span" onClick={handleResetSearchCriteria} sx={{
+						<Box component="span" onClick={() => { dispatch(resetTicketsFilter()) }} sx={{
 							cursor: "pointer",
 							fontWeight: 500,
 							"&:hover": { textDecoration: "underline" }
@@ -583,7 +578,7 @@ function AdminTicketList() {
 
 						<Paper elevation={2} >
 							{group[1].map((ticket, idx) => (
-								<AdminTicketListItem
+								<MemoizedAdminTicketListItem
 									key={ticket.tid}
 									ticket={ticket}
 									isFirst={idx === 0}

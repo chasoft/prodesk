@@ -118,7 +118,7 @@ const FilterTicketDepartments = () => {
 	const { selectedDepartment } = useSelector(getUiSettings)
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 	return (
-		<Box>
+		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Department</Typography>
 			<FormControl fullWidth sx={{
 				border: "1px solid #ced4da",
@@ -160,7 +160,7 @@ const FilterTicketPriorities = () => {
 	const dispatch = useDispatch()
 	const { selectedPriority } = useSelector(getUiSettings)
 	return (
-		<Box>
+		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
 			<FormControl fullWidth sx={{
 				border: "1px solid #ced4da",
@@ -197,7 +197,7 @@ const FilterTicketLabels = () => {
 	// const labelSettings = keyBy(labels, "lid")
 
 	return (
-		<Box>
+		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Labels</Typography>
 			<FormControl fullWidth sx={{
 				border: "1px solid #ced4da",
@@ -240,7 +240,7 @@ const FilterTicketHasWord = () => {
 	const dispatch = useDispatch()
 	const { ticketSearchTerm } = useSelector(getUiSettings)
 	return (
-		<Box>
+		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Has word</Typography>
 			<FormControl variant="outlined">
 				<OutlinedInput
@@ -295,6 +295,7 @@ function AdminTicketFilters({ sx }) {
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
 		await refetchTicket()
+		//TODO: Remove this force refetch when finished implementing Notification system
 		dispatch(resetTicketsFilter())
 	}
 
@@ -401,7 +402,7 @@ function AdminTicketFilters({ sx }) {
 
 				{/* <FilterTicketHasWord /> */}
 
-			</Box >
+			</Box>
 		</PerfectScrollbar>
 	)
 }

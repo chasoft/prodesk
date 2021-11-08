@@ -116,7 +116,7 @@ const SocialLoginForm = () => {
 				})
 
 				//Go to next step -> /signup/create-profile  (to update avatar & location)
-				dispatch(setRedirect(REDIRECT_URL.CREATE_PROFILE))
+				dispatch(setRedirect(REDIRECT_URL.SIGNUP.CREATE_PROFILE))
 			}
 			catch (e) {
 				console.log(e.message)

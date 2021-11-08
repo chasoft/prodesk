@@ -249,8 +249,8 @@ export default function TicketStepper() {
 						onClick={() => dispatch(
 							setRedirect((
 								isAdminURL
-									? REDIRECT_URL.ADMIN_TICKETS
-									: REDIRECT_URL.TICKETS)
+									? REDIRECT_URL.ADMIN.TICKETS
+									: REDIRECT_URL.CLIENT.TICKETS)
 								+ "/" + newlyAddedTicketSlug
 							)
 						)}
@@ -266,7 +266,7 @@ export default function TicketStepper() {
 
 					<Button
 						onClick={() => dispatch(setRedirect(
-							isAdminURL ? REDIRECT_URL.ADMIN_TICKETS : REDIRECT_URL.TICKETS
+							isAdminURL ? REDIRECT_URL.ADMIN.TICKETS : REDIRECT_URL.CLIENT.TICKETS
 						))}
 						variant="contained" color="primary"
 						sx={{

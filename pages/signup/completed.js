@@ -59,7 +59,7 @@ function SignUpCompleted() {
 	useEffect(() => {
 		progressRef.current = () => {
 			if (progress > 95) {
-				onceDispatch(setRedirect(REDIRECT_URL.CLIENT))
+				onceDispatch(setRedirect(REDIRECT_URL.CLIENT.INDEX))
 			} else {
 				const diff = Math.random() * 10
 				const diff2 = Math.random() * 10
