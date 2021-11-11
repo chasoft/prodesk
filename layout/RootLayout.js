@@ -94,7 +94,7 @@ function RootLayout({ children }) {
 					}
 
 				// if user is not admin but loggin at / admin, then redirect to / client
-				if (regAdminURL.test(router.pathname) && (userProfile.data.group === USERGROUP.USER)) {
+				if (regAdminURL.test(router.pathname) && (userProfile.data.group === USERGROUP.USER.code)) {
 					// router.push(REDIRECT_URL.CLIENT.INDEX)
 					dispatch(setRedirect(REDIRECT_URL.CLIENT.INDEX))
 					return

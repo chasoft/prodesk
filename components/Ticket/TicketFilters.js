@@ -23,20 +23,19 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useMemo } from "react"
-import { Box, Button, FormControl, FormControlLabel, FormGroup, MenuItem, Select, Typography } from "@mui/material"
+import React from "react"
+import { Box, Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../redux/selectors"
-import { PRIORITY, STATUS_FILTER, TICKET_STATUS } from "../../helpers/constants"
+import { GROUPBY } from "../../helpers/constants"
+import { resetTicketFilters } from "../../redux/slices/uiSettings"
+import { useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
+import { FilterTicketStatus, FilterTicketPriorities, FilterTicketDepartments, FilterTicketGroupBy } from "./AdminTicketFilters"
 
 //ASSETS
-import { resetTicketsFilter, setSelectedPriority, setSelectedStatus } from "../../redux/slices/uiSettings"
-import CustomCheckbox from "../common/CustomCheckbox"
-import { useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,22 +48,13 @@ import { useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
 function TicketFilters({ sx }) {
 	const dispatch = useDispatch()
 	const [refetchTicket] = useRefetchTicketMutation()
-	const { /*ticketSearchTerm,*/ selectedPriority, selectedStatus } = useSelector(getUiSettings)
-
-	const handleSelectTicketStatus = (e) => {
-		dispatch(setSelectedStatus({ [e.target.name]: e.target.checked }))
-	}
 
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
 		await refetchTicket()
 		//TODO: Remove this force refetch when finished implementing Notification system
-		dispatch(resetTicketsFilter())
+		dispatch(resetTicketFilters())
 	}
-
-	const statusCount = useMemo(() => Object.entries(selectedStatus).reduce(
-		(count, current) => count + (current[1] ? 1 : 0), 0
-	), [selectedStatus])
 
 	return (
 		<Box sx={sx}>
@@ -82,155 +72,21 @@ function TicketFilters({ sx }) {
 				</Button>
 			</Box>
 
-			<Box onClick={(e) => e.stopPropagation()}>
-				<Typography sx={{ fontWeight: 500, my: 1 }}>Status</Typography>
-				<FormGroup>
-					<FormControlLabel
-						control={
-							<CustomCheckbox
-								checked={statusCount === 4}
-								indeterminate={(statusCount > 0) && (statusCount < 4)}
-								onChange={(e) => {
-									e.stopPropagation()
-									if (statusCount < 4)
-										dispatch(setSelectedStatus({
-											[TICKET_STATUS.OPEN]: true,
-											[TICKET_STATUS.PENDING]: true,
-											[TICKET_STATUS.REPLIED]: true,
-											[TICKET_STATUS.CLOSED]: true
-										}))
-									else
-										dispatch(setSelectedStatus({
-											[TICKET_STATUS.OPEN]: false,
-											[TICKET_STATUS.PENDING]: false,
-											[TICKET_STATUS.REPLIED]: false,
-											[TICKET_STATUS.CLOSED]: false
-										}))
-								}}
-							/>
-						}
-						label={STATUS_FILTER.ANY}
-					/>
-					<FormControlLabel
-						control={
-							<CustomCheckbox
-								checked={selectedStatus[TICKET_STATUS.OPEN]}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
-								name={TICKET_STATUS.OPEN}
-							/>
-						}
-						label="Open"
-					/>
-					<FormControlLabel
-						control={
-							<CustomCheckbox
-								name={TICKET_STATUS.PENDING}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
-								checked={selectedStatus[TICKET_STATUS.PENDING]}
-							/>
-						}
-						label="Pending"
-					/>
-					<FormControlLabel
-						control={
-							<CustomCheckbox
-								name={TICKET_STATUS.REPLIED}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
-								checked={selectedStatus[TICKET_STATUS.REPLIED]}
-							/>
-						}
-						label="Replied"
-					/>
-					<FormControlLabel
-						control={
-							<CustomCheckbox
-								name={TICKET_STATUS.CLOSED}
-								onChange={(e) => {
-									e.stopPropagation()
-									handleSelectTicketStatus(e)
-								}}
-								checked={selectedStatus[TICKET_STATUS.CLOSED]}
-							/>
-						}
-						label="Closed"
-					/>
-				</FormGroup>
-
-			</Box>
+			<FilterTicketGroupBy groupBy={[
+				GROUPBY.DEPARTMENT,
+				GROUPBY.STATUS,
+				GROUPBY.PRIORITY
+			]} />
 
 			<Box onClick={(e) => e.stopPropagation()}>
-				<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
-				<FormControl fullWidth
-					sx={{
-						border: "1px solid #ced4da",
-						borderRadius: "0.25rem"
-					}}
-				>
-					<Select
-						sx={{
-							"&&": {
-								pl: 1,
-								color: "primary.main"
-							}
-						}}
-						value={selectedPriority}
-						onChange={(e) => {
-							e.stopPropagation()
-							dispatch(setSelectedPriority(e.target.value))
-						}}
-					>
-						{
-							Object.entries(PRIORITY).map((item) => {
-								return <MenuItem key={item[1]} value={item[1]}>{item[1]}</MenuItem>
-							})
-						}
-					</Select>
-				</FormControl>
+				<FilterTicketStatus />
 			</Box>
 
-			{/* <Box>
-				<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Has word</Typography>
-				<FormControl variant="outlined">
-					<OutlinedInput
-						placeholder="Type keywords"
-						endAdornment={
-							<InputAdornment position="end">
-								<SearchIcon fontSize="small" />
-							</InputAdornment>
-						}
-						aria-describedby="ticket-search-term"
-						margin="dense"
-						value={ticketSearchTerm}
-						onChange={(e) => { dispatch(setTicketSearchTerm(e.target.value)) }}
+			<FilterTicketPriorities />
 
-						sx={{
-							root: {
-								input: {
-									padding: "8px 14px"
-								}
-							},
-							"&.MuiInputAdornment-root .MuiSvgIcon-root": {
-								color: "text.secondary"
-							},
-							"&:hover .MuiInputAdornment-root .MuiSvgIcon-root": {
-								color: "text.primary"
-							},
-							"&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root": {
-								color: "primary.main"
-							}
-						}}
-					/>
-				</FormControl>
-			</Box> */}
+			<FilterTicketDepartments />
+
+			{/* <FilterTicketHasWord /> */}
 
 		</Box >
 	)

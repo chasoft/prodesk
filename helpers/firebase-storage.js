@@ -12,6 +12,7 @@ export const useGetAllFiles = () => {
 	const [fileList, setFileList] = useState([])
 
 	useEffect(() => {
+		let didCancel = false
 		async function fetchData() {
 			try {
 				if (isAuthenticated === false) {
@@ -39,13 +40,15 @@ export const useGetAllFiles = () => {
 					return { filename: item, thumb: _fileListThumbs[idx] ?? _fileList[idx], original: _fileList[idx] }
 				})
 
-				setFileList(combined)
+				if (!didCancel) setFileList(combined)
 			}
 			catch (e) {
 				throw new Error(e.message)
 			}
 		}
 		fetchData()
+
+		return () => { didCancel = true }
 	}, [currentUser.username, isAuthenticated])
 
 	return { fileList }

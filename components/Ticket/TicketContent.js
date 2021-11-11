@@ -132,9 +132,10 @@ const PopupMenu = ({ ticket }) => {
 			</MenuContainer>
 
 			<ReplyDialog
-				ticketId={ticket.tid}
-				ticketStatus={ticket.status}
-				ticketUsername={ticket.username}
+				tid={ticket.tid}
+				status={ticket.status}
+				username={ticket.username}
+				staffInCharge={ticket.staffInCharge}
 				open={showReplyDialog}
 				setOpen={setShowReplyDialog}
 			/>
@@ -279,7 +280,11 @@ function TicketContent({ ticket }) {
 				<TicketPriority sx={{ cursor: "pointer" }} priority={ticket.priority} />
 				<TicketStatus status={ticket.status} sx={{ mb: 0.5, ml: 1 }} />
 				<TicketDepartment department={ticket.department} />
-				<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
+				<TicketCategory
+					department={ticket.department}
+					category={ticket.category}
+					subCategory={ticket.subCategory}
+				/>
 				<TicketReplyCount count={ticket.replyCount} />
 				<TicketLabels ticket={ticket} sx={{ ml: 1 }} />
 			</Box>

@@ -57,7 +57,7 @@
 // const Redirect = (usernameDoc, dispatch, redirectAfterLoginURL) => {
 // 	if (redirectAfterLoginURL === "") {
 // 		//Check usergroup and redirect after logged in
-// 		if (usernameDoc.group === USERGROUP.USER)
+// 		if (usernameDoc.group === USERGROUP.USER.code)
 // 			// router.push(REDIRECT_URL.CLIENT)
 // 			dispatch(setRedirect(REDIRECT_URL.CLIENT))
 // 		else

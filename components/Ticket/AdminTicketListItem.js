@@ -41,8 +41,8 @@ import { setRedirect } from "../../redux/slices/redirect"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
 import { useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
-import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
-import { setSelectedTickets, setSelectedLabel, setSelectedPriority, setSelectedDepartment } from "../../redux/slices/uiSettings"
+import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER, TICKET_STATUS } from "../../helpers/constants"
+import { setSelectedTickets, setSelectedStatusRaw, setFilteredByLabel, setFilteredByPriority, setFilteredByDepartment } from "../../redux/slices/uiSettings"
 
 //ASSETS
 import { CheckBoxNewIcon } from "../svgIcon"
@@ -231,7 +231,7 @@ export const TicketLabels = ({ ticket, callback, sx }) => {
 							}
 						},
 						":hover": {
-							backgroundColor: (theme) => alpha(labelSettings[labelId].color, theme.palette.action.activatedOpacity),
+							backgroundColor: (theme) => alpha(labelSettings[labelId]?.color ?? "#FF7F7F", theme.palette.action.activatedOpacity),
 							"&>#removeLabel": {
 								display: "inline-block",
 
@@ -240,14 +240,17 @@ export const TicketLabels = ({ ticket, callback, sx }) => {
 					}}
 					onClick={(e) => { if (isFunction(callback)) callback(e, labelId) }}
 				>
-					<LabelIcon sx={{ color: labelSettings[labelId].color, mr: 0.5 }} />
-					<Typography sx={{ color: labelSettings[labelId].color }}>
-						{labelSettings[labelId].name}
+					<LabelIcon sx={{ color: labelSettings[labelId]?.color ?? "#FF7F7F", mr: 0.5 }} />
+					<Typography sx={{ color: labelSettings[labelId]?.color ?? "#FF7F7F" }}>
+						{labelSettings[labelId]?.name ?? "label deleted"}
 					</Typography>
 					<Tooltip arrow title="Remove this label" placement="top">
 						<CloseIcon
 							id="removeLabel"
-							onClick={() => removeLabelFromTicket(labelId)}
+							onClick={(e) => {
+								e.stopPropagation()
+								removeLabelFromTicket(labelId)
+							}}
 						/>
 					</Tooltip>
 				</Box>
@@ -262,6 +265,7 @@ TicketLabels.propTypes = {
 }
 
 export const TicketStatus = ({ status, sx }) => {
+	const dispatch = useDispatch()
 	const chipColor = {
 		[STATUS_FILTER.OPEN]: {
 			color: "primary",
@@ -287,7 +291,16 @@ export const TicketStatus = ({ status, sx }) => {
 				label={status}
 				color={chipColor[status].color}
 				sx={{ mr: 1, mb: 0.5, ...sx }}
-				onClick={(e) => e.stopPropagation()}
+				onClick={(e) => {
+					e.stopPropagation()
+					dispatch(setSelectedStatusRaw({
+						[TICKET_STATUS.OPEN]: false,
+						[TICKET_STATUS.PENDING]: false,
+						[TICKET_STATUS.REPLIED]: false,
+						[TICKET_STATUS.CLOSED]: false,
+						[status]: true
+					}))
+				}}
 			/>
 		</Tooltip>
 	)
@@ -340,7 +353,7 @@ export const TicketDepartment = ({ department }) => {
 				sx={{ mr: 1, mb: 0.5 }}
 				onClick={(e) => {
 					e.stopPropagation()
-					dispatch(setSelectedDepartment(department))
+					dispatch(setFilteredByDepartment(department))
 				}}
 			/>
 		</Tooltip>
@@ -350,7 +363,8 @@ TicketDepartment.propTypes = {
 	department: PropTypes.string.isRequired,
 }
 
-export const TicketCategory = ({ category, subCategory }) => {
+export const TicketCategory = ({ department, category, subCategory }) => {
+	const dispatch = useDispatch()
 	if (!category) return null
 	const subText = subCategory
 		? ("/" + subCategory)
@@ -361,12 +375,16 @@ export const TicketCategory = ({ category, subCategory }) => {
 				size="small"
 				label={category + subText}
 				sx={{ mr: 1, mb: 0.5 }}
-				onClick={(e) => e.stopPropagation()}
+				onClick={(e) => {
+					e.stopPropagation()
+					dispatch(setFilteredByDepartment(department))
+				}}
 			/>
 		</Tooltip>
 	)
 }
 TicketCategory.propTypes = {
+	department: PropTypes.string.isRequired,
 	category: PropTypes.string.isRequired,
 	subCategory: PropTypes.string,
 }
@@ -390,14 +408,16 @@ TicketReplyCount.propTypes = {
 	count: PropTypes.number
 }
 
-export const TicketOwner = ({ username }) => {
+export const TicketOwner = ({ username, customTooltip = "" }) => {
 	const dispatch = useDispatch()
 	const profile = useGetProfileByUsername(username)
 	return (
 		<Tooltip
 			arrow
 			placement="top"
-			title={<>Ticket&apos;s Owner <br /> {profile.email}</>}
+			title={customTooltip
+				? customTooltip
+				: <>Ticket&apos;s Owner <br /> {profile.email}</>}
 		>
 			<Chip
 				size="small"
@@ -407,7 +427,7 @@ export const TicketOwner = ({ username }) => {
 				sx={{
 					mb: 0.5,
 					mx: 0.5,
-					".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
+					".MuiChip-avatar": { color: "#FFF", fontWeight: 700 }
 				}}
 				onClick={(e) => {
 					e.stopPropagation()
@@ -418,7 +438,8 @@ export const TicketOwner = ({ username }) => {
 	)
 }
 TicketOwner.propTypes = {
-	username: PropTypes.string
+	username: PropTypes.string,
+	customTooltip: PropTypes.node,
 }
 
 export const TicketCreatedBy = ({ createdBy }) => {
@@ -426,8 +447,8 @@ export const TicketCreatedBy = ({ createdBy }) => {
 	return (
 		<Tooltip
 			arrow
-			title={<span>This ticket is created<br /> by {createdBy}</span>}
 			placement="top"
+			title={<span>This ticket is created<br /> by {createdBy}</span>}
 		>
 			<Chip
 				size="small"
@@ -541,14 +562,14 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 						<TicketPriority
 							priority={ticket.priority}
 							callback={() => {
-								dispatch(setSelectedPriority(ticket.priority))
+								dispatch(setFilteredByPriority(ticket.priority))
 							}}
 						/>
 						<TicketLabels
 							ticket={ticket}
 							callback={(e, labelId) => {
 								e.stopPropagation()
-								dispatch(setSelectedLabel(labelId))
+								dispatch(setFilteredByLabel(labelId))
 							}}
 						/>
 						{ticket.subject}
@@ -574,9 +595,16 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 						}}>
 							<TicketStatus status={ticket.status} />
 							<TicketDepartment department={ticket.department} />
-							<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
+
+							<TicketCategory
+								department={ticket.department}
+								category={ticket.category}
+								subCategory={ticket.subCategory}
+							/>
+
 							<TicketReplyCount count={ticket.replyCount} />
 							<TicketOwner username={ticket.username} />
+
 							{(ticket.createdBy !== ticket.username) &&
 								<TicketCreatedBy createdBy={ticket.createdBy} />}
 						</Box>

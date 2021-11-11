@@ -22,32 +22,50 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useCallback, useRef } from "react"
-
-//THIRD-PARTY
-
 //PROJECT IMPORT
-import { DEFAULT_USER_SETTINGS } from "./constants"
-import { useGetUserSettingsQuery } from "../redux/slices/firestoreApi"
+import useGetProfileByUsername from "./useGetProfileByUsername"
+import {
+	USERGROUP,
+	DEFAULT_USER_SETTINGS,
+	DEFAULT_MEMBER_SETTINGS,
+	DEFAULT_AGENT_SETTINGS,
+	DEFAULT_STAFF_SETTINGS,
+	DEFAULT_ADMIN_SETTINGS,
+	DEFAULT_SUPERADMIN_SETTINGS,
+} from "./constants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-//TODO: add default settings for each usergroup
 export default function useUserSettings(username, settingName) {
+	const { permissions, group } = useGetProfileByUsername(username)
 
-	const { data, isLoading } = useGetUserSettingsQuery(username)
+	let defaultPermissions
+	switch (group) {
+		case USERGROUP.SUPERADMIN.code:
+			defaultPermissions = DEFAULT_SUPERADMIN_SETTINGS
+			break
+		case USERGROUP.ADMIN.code:
+			defaultPermissions = DEFAULT_ADMIN_SETTINGS
+			break
+		case USERGROUP.STAFF.code:
+			defaultPermissions = DEFAULT_STAFF_SETTINGS
+			break
+		case USERGROUP.AGENT.code:
+			defaultPermissions = DEFAULT_AGENT_SETTINGS
+			break
+		case USERGROUP.MEMBER.code:
+			defaultPermissions = DEFAULT_MEMBER_SETTINGS
+			break
+		default:
+			defaultPermissions = DEFAULT_USER_SETTINGS
+	}
 
-	const defaultUserSettings = useRef(DEFAULT_USER_SETTINGS)
+	const finalPermissions = { ...defaultPermissions, ...permissions }
 
-	//get a setting or all if no query provided
-	const getUserSettings = useCallback((settingName) => {
-		const warehouse = isLoading
-			? defaultUserSettings.current
-			: { ...defaultUserSettings.current, ...data }
-		return settingName ? warehouse[settingName] : warehouse
-	}, [data, isLoading])
+	if (settingName)
+		return finalPermissions[settingName] ?? false
 
-	return getUserSettings(settingName)
+	return finalPermissions
 }

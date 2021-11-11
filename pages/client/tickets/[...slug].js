@@ -137,9 +137,10 @@ function SingleTicket() {
 				<>
 					<TicketContent ticket={ticket} />
 					<TicketReplies
-						ticketId={ticket.tid}
-						ticketStatus={ticket.status}
-						ticketUsername={ticket.username}
+						tid={ticket.tid}
+						status={ticket.status}
+						username={ticket.username}
+						staffInCharge={ticket.staffInCharge}
 						replyCount={ticket.replyCount}
 					/>
 					<TicketActionButtons ticket={ticket} />

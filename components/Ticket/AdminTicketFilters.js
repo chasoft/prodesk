@@ -35,8 +35,8 @@ import { useDispatch, useSelector } from "react-redux"
 import CustomCheckbox from "../common/CustomCheckbox"
 import { getUiSettings } from "../../redux/selectors"
 import { useGetDepartmentsQuery, useGetLabelsQuery, useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
-import { PRIORITY, TICKET_STATUS, TICKET_INBOXES, STATUS_FILTER } from "../../helpers/constants"
-import { setSelectedPriority, setSelectedStatus, setSelectedInbox, resetTicketsFilter, setTicketSearchTerm, setSelectedLabel, setSelectedDepartment } from "../../redux/slices/uiSettings"
+import { PRIORITY, TICKET_STATUS, TICKET_INBOXES, STATUS_FILTER, GROUPBY } from "../../helpers/constants"
+import { setFilteredByPriority, setSelectedStatusRaw, setFilteredByInbox, resetTicketFilters, setFilteredByWord, setFilteredByLabel, setFilteredByDepartment, setFilteredGroupBy } from "../../redux/slices/uiSettings"
 
 //ASSETS
 import LabelIcon from "@mui/icons-material/Label"
@@ -52,20 +52,20 @@ import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn"
 
 export const TICKET_INBOXES_LIST = [
 	{
-		name: TICKET_INBOXES.IN_PROGRESS,
-		title: "Tickets in progress",
+		name: TICKET_INBOXES.STARTED,
+		title: "My Started Tickets",
 		icon: <WhatshotIcon />,
 		color: "primary"
 	},
 	{
 		name: TICKET_INBOXES.MINE,
-		title: "My assigned tickets",
+		title: "My Assigned Tickets",
 		icon: <AssignmentTurnedInIcon />,
 		color: "warning"
 	},
 	{
 		name: TICKET_INBOXES.ASSIGNED,
-		title: "Assigned tickets",
+		title: "Assigned Tickets",
 		icon: <AssignmentIcon />,
 		color: "secondary"
 	},
@@ -78,11 +78,11 @@ export const TICKET_INBOXES_LIST = [
 ]
 
 const FilterTicketInbox = () => {
-	const { selectedInbox } = useSelector(getUiSettings)
+	const { filteredByInbox } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
-	const handleChangeInbox = (e, selectedInbox) => {
-		if (selectedInbox) {
-			dispatch(setSelectedInbox(selectedInbox))
+	const handleChangeInbox = (e, filteredByInbox) => {
+		if (filteredByInbox) {
+			dispatch(setFilteredByInbox(filteredByInbox))
 		}
 	}
 	return (
@@ -90,7 +90,7 @@ const FilterTicketInbox = () => {
 			exclusive
 			size="small"
 			color="primary"
-			value={selectedInbox}
+			value={filteredByInbox}
 			onChange={handleChangeInbox}
 			sx={{ display: "flex", mt: 2, mb: 3 }}
 		>
@@ -113,9 +113,9 @@ const FilterTicketInbox = () => {
 	)
 }
 
-const FilterTicketDepartments = () => {
+export const FilterTicketDepartments = () => {
 	const dispatch = useDispatch()
-	const { selectedDepartment } = useSelector(getUiSettings)
+	const { filteredByDepartment } = useSelector(getUiSettings)
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
@@ -128,9 +128,9 @@ const FilterTicketDepartments = () => {
 					sx={{
 						"&&": { pl: 1, color: "primary.main" }
 					}}
-					value={selectedDepartment}
+					value={filteredByDepartment}
 					onChange={(e) => {
-						dispatch(setSelectedDepartment(e.target.value))
+						dispatch(setFilteredByDepartment(e.target.value))
 					}}
 				>
 
@@ -144,9 +144,9 @@ const FilterTicketDepartments = () => {
 							{STATUS_FILTER.ANY}
 						</MenuItem>}
 
-					{(isLoadingDepartments === false) &&
+					{size(departments) &&
 						departments.map((department) => (
-							<MenuItem key={department.did} value={department.did}>
+							<MenuItem key={department.did} value={department.department}>
 								{department.department}
 							</MenuItem>
 						))}
@@ -156,9 +156,123 @@ const FilterTicketDepartments = () => {
 	)
 }
 
-const FilterTicketPriorities = () => {
+export const FilterTicketGroupBy = ({ groupBy, sx }) => {
 	const dispatch = useDispatch()
-	const { selectedPriority } = useSelector(getUiSettings)
+	const { filteredGroupBy } = useSelector(getUiSettings)
+	return (
+		<Box onClick={(e) => e.stopPropagation()}>
+			<Typography sx={{ fontWeight: 500, mt: 1, mb: 1, ...sx }}>Group by</Typography>
+			<FormControl fullWidth sx={{
+				border: "1px solid #ced4da",
+				borderRadius: "0.25rem"
+			}}>
+				<Select
+					sx={{ "&&": { pl: 1, color: "primary.main" } }}
+					value={filteredGroupBy}
+					onChange={(e) => { dispatch(setFilteredGroupBy(e.target.value)) }}
+				>
+					{groupBy.map((group) => (
+						<MenuItem key={group.fieldname} value={group.fieldname}>
+							{group.title}
+						</MenuItem>
+					))}
+				</Select>
+			</FormControl>
+		</Box>
+	)
+}
+FilterTicketGroupBy.propTypes = {
+	groupBy: PropTypes.array.isRequired,
+	sx: PropTypes.object
+}
+
+export const FilterTicketStatus = () => {
+	const dispatch = useDispatch()
+	const { filteredByStatusRaw } = useSelector(getUiSettings)
+	const handleSelectTicketStatus = (e) => {
+		dispatch(setSelectedStatusRaw({ [e.target.name]: e.target.checked }))
+	}
+	const statusCount = useMemo(() => Object.entries(filteredByStatusRaw).reduce(
+		(count, current) => count + (current[1] ? 1 : 0), 0
+	), [filteredByStatusRaw])
+
+	return (
+		<>
+			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Status</Typography>
+			<FormGroup>
+				<FormControlLabel
+					control={
+						<CustomCheckbox
+							checked={statusCount === 4}
+							indeterminate={(statusCount > 0) && (statusCount < 4)}
+							onChange={() => {
+								if (statusCount < 4)
+									dispatch(setSelectedStatusRaw({
+										[TICKET_STATUS.OPEN]: true,
+										[TICKET_STATUS.PENDING]: true,
+										[TICKET_STATUS.REPLIED]: true,
+										[TICKET_STATUS.CLOSED]: true
+									}))
+								else
+									dispatch(setSelectedStatusRaw({
+										[TICKET_STATUS.OPEN]: false,
+										[TICKET_STATUS.PENDING]: false,
+										[TICKET_STATUS.REPLIED]: false,
+										[TICKET_STATUS.CLOSED]: false
+									}))
+							}}
+						/>
+					}
+					label={STATUS_FILTER.ANY}
+				/>
+				<FormControlLabel
+					control={
+						<CustomCheckbox
+							checked={filteredByStatusRaw[TICKET_STATUS.OPEN]}
+							onChange={handleSelectTicketStatus}
+							name={TICKET_STATUS.OPEN}
+						/>
+					}
+					label={STATUS_FILTER.OPEN}
+				/>
+				<FormControlLabel
+					control={
+						<CustomCheckbox
+							name={TICKET_STATUS.PENDING}
+							onChange={handleSelectTicketStatus}
+							checked={filteredByStatusRaw[TICKET_STATUS.PENDING]}
+						/>
+					}
+					label={STATUS_FILTER.PENDING}
+				/>
+				<FormControlLabel
+					control={
+						<CustomCheckbox
+							name={TICKET_STATUS.REPLIED}
+							onChange={handleSelectTicketStatus}
+							checked={filteredByStatusRaw[TICKET_STATUS.REPLIED]}
+						/>
+					}
+					label={STATUS_FILTER.REPLIED}
+				/>
+				<FormControlLabel
+					control={
+						<CustomCheckbox
+							name={TICKET_STATUS.CLOSED}
+							onChange={handleSelectTicketStatus}
+							checked={filteredByStatusRaw[TICKET_STATUS.CLOSED]}
+						/>
+					}
+					label={STATUS_FILTER.CLOSED}
+				/>
+			</FormGroup>
+		</>
+	)
+}
+
+export const FilterTicketPriorities = () => {
+	const dispatch = useDispatch()
+	const { filteredByPriority } = useSelector(getUiSettings)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
@@ -173,9 +287,9 @@ const FilterTicketPriorities = () => {
 							color: "primary.main"
 						}
 					}}
-					value={selectedPriority}
+					value={filteredByPriority}
 					onChange={(e) => {
-						dispatch(setSelectedPriority(e.target.value))
+						dispatch(setFilteredByPriority(e.target.value))
 					}}
 				>
 					{Object.entries(PRIORITY).map((item) => {
@@ -189,10 +303,10 @@ const FilterTicketPriorities = () => {
 
 const FilterTicketLabels = () => {
 	const dispatch = useDispatch()
-	const { selectedLabel } = useSelector(getUiSettings)
-	const { data: labels, isLoading: isLoadingTickets } = useGetLabelsQuery()
+	const { filteredByLabel } = useSelector(getUiSettings)
+	const { data: labels, isLoading: isLoadingLabels } = useGetLabelsQuery()
 
-	if (size(labels) === 0 || isLoadingTickets) return null
+	if (size(labels) === 0 || isLoadingLabels) return null
 
 	// const labelSettings = keyBy(labels, "lid")
 
@@ -210,9 +324,9 @@ const FilterTicketLabels = () => {
 							display: "flex", alignItems: "center"
 						}
 					}}
-					value={selectedLabel}
+					value={filteredByLabel}
 					onChange={(e) => {
-						dispatch(setSelectedLabel(e.target.value))
+						dispatch(setFilteredByLabel(e.target.value))
 					}}
 				>
 					{size(labels) &&
@@ -238,7 +352,7 @@ const FilterTicketLabels = () => {
 
 const FilterTicketHasWord = () => {
 	const dispatch = useDispatch()
-	const { ticketSearchTerm } = useSelector(getUiSettings)
+	const { filteredByWord } = useSelector(getUiSettings)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Has word</Typography>
@@ -252,9 +366,9 @@ const FilterTicketHasWord = () => {
 					}
 					aria-describedby="ticket-search-term"
 					margin="dense"
-					value={ticketSearchTerm}
+					value={filteredByWord}
 					onChange={(e) => {
-						dispatch(setTicketSearchTerm(e.target.value))
+						dispatch(setFilteredByWord(e.target.value))
 					}}
 
 					sx={{
@@ -285,23 +399,18 @@ const FilterTicketHasWord = () => {
 
 function AdminTicketFilters({ sx }) {
 	const dispatch = useDispatch()
-	const { selectedStatus } = useSelector(getUiSettings)
+
 	const [refetchTicket] = useRefetchTicketMutation()
 
-	const handleSelectTicketStatus = (e) => {
-		dispatch(setSelectedStatus({ [e.target.name]: e.target.checked }))
-	}
+
 
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
 		await refetchTicket()
 		//TODO: Remove this force refetch when finished implementing Notification system
-		dispatch(resetTicketsFilter())
+		dispatch(resetTicketFilters())
 	}
 
-	const statusCount = useMemo(() => Object.entries(selectedStatus).reduce(
-		(count, current) => count + (current[1] ? 1 : 0), 0
-	), [selectedStatus])
 
 	return (
 		<PerfectScrollbar component="div">
@@ -323,74 +432,7 @@ function AdminTicketFilters({ sx }) {
 
 					<FilterTicketInbox />
 
-					<Typography sx={{ fontWeight: 500, my: 1 }}>Status</Typography>
-					<FormGroup>
-						<FormControlLabel
-							control={
-								<CustomCheckbox
-									checked={statusCount === 4}
-									indeterminate={(statusCount > 0) && (statusCount < 4)}
-									onChange={() => {
-										if (statusCount < 4)
-											dispatch(setSelectedStatus({
-												[TICKET_STATUS.OPEN]: true,
-												[TICKET_STATUS.PENDING]: true,
-												[TICKET_STATUS.REPLIED]: true,
-												[TICKET_STATUS.CLOSED]: true
-											}))
-										else
-											dispatch(setSelectedStatus({
-												[TICKET_STATUS.OPEN]: false,
-												[TICKET_STATUS.PENDING]: false,
-												[TICKET_STATUS.REPLIED]: false,
-												[TICKET_STATUS.CLOSED]: false
-											}))
-									}}
-								/>
-							}
-							label={STATUS_FILTER.ANY}
-						/>
-						<FormControlLabel
-							control={
-								<CustomCheckbox
-									checked={selectedStatus[TICKET_STATUS.OPEN]}
-									onChange={handleSelectTicketStatus}
-									name={TICKET_STATUS.OPEN}
-								/>
-							}
-							label={STATUS_FILTER.OPEN}
-						/>
-						<FormControlLabel
-							control={
-								<CustomCheckbox
-									name={TICKET_STATUS.PENDING}
-									onChange={handleSelectTicketStatus}
-									checked={selectedStatus[TICKET_STATUS.PENDING]}
-								/>
-							}
-							label={STATUS_FILTER.PENDING}
-						/>
-						<FormControlLabel
-							control={
-								<CustomCheckbox
-									name={TICKET_STATUS.REPLIED}
-									onChange={handleSelectTicketStatus}
-									checked={selectedStatus[TICKET_STATUS.REPLIED]}
-								/>
-							}
-							label={STATUS_FILTER.REPLIED}
-						/>
-						<FormControlLabel
-							control={
-								<CustomCheckbox
-									name={TICKET_STATUS.CLOSED}
-									onChange={handleSelectTicketStatus}
-									checked={selectedStatus[TICKET_STATUS.CLOSED]}
-								/>
-							}
-							label={STATUS_FILTER.CLOSED}
-						/>
-					</FormGroup>
+					<FilterTicketStatus />
 
 				</Box>
 
@@ -399,6 +441,12 @@ function AdminTicketFilters({ sx }) {
 				<FilterTicketPriorities />
 
 				<FilterTicketLabels />
+
+				<FilterTicketGroupBy sx={{ mt: 3 }} groupBy={[
+					GROUPBY.DEPARTMENT,
+					GROUPBY.STATUS,
+					GROUPBY.PRIORITY
+				]} />
 
 				{/* <FilterTicketHasWord /> */}
 

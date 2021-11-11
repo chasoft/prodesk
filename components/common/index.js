@@ -47,6 +47,8 @@ export function LearnMoreAdvancedTextEditor({ text, linkText }) {
 	const innerLinkText = linkText ?? "here"
 	return (
 		<Typography variant="caption" sx={{
+			mr: 2,
+			fontStyle: "italic",
 			"&>a": {
 				color: "primary.main"
 			}

@@ -22,60 +22,56 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useMemo, useRef } from "react"
+import { useState } from "react"
 
 //THIRD-PARTY
-import { usePrevious } from "react-use"
-import { groupBy, isEqual, sortBy, filter, reverse } from "lodash"
+import { useDeepCompareEffect } from "react-use"
+import { useSelector } from "react-redux"
+import { filter, groupBy, orderBy, pickBy, size } from "lodash"
 
 //PROJECT IMPORT
-import { useGetTicketsForAdminQuery } from "../redux/slices/firestoreApi"
-import { useSelector } from "react-redux"
-import { getUiSettings } from "../redux/selectors"
-import { PRIORITY } from "./constants"
+import { STATUS_FILTER } from "./constants"
+import { getAuth, getUiSettings } from "./../redux/selectors"
+import { useGetTicketsForUserQuery } from "./../redux/slices/firestoreApi"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGroupedTickets() {
-	const { data: tickets, isLoading } = useGetTicketsForAdminQuery(undefined)
-	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
+const useFilteredTicketsForUser = () => {
+	const { currentUser } = useSelector(getAuth)
+	const [res, setRes] = useState([])
+	const { filteredGroupBy, filteredByStatusRaw, filteredByPriority, filteredByDepartment } = useSelector(getUiSettings)
+	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForUserQuery(currentUser.username)
 
-	const _Status = useMemo(() => Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0]), [selectedStatus])
-
-	const prevTickets = usePrevious(tickets)
-	const prevSearchTerm = usePrevious(ticketSearchTerm)
-	const prevPriority = usePrevious(selectedPriority)
-	const prevStatus = usePrevious(_Status)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const filteredTickets = useRef()
-
-	if (isLoading) { return ({ data: [], isLoading: true }) }
-
-	if (!isEqual(prevTickets, tickets) ||
-		!isEqual(prevSearchTerm, ticketSearchTerm) ||
-		!isEqual(prevPriority, selectedPriority) ||
-		!isEqual(prevStatus, selectedStatus)) {
-
-		//filter by priority
-		let filtered = tickets
-		if (selectedPriority !== PRIORITY.ANY) {
-			filtered = filter(tickets, { priority: selectedPriority })
-		}
+	useDeepCompareEffect(() => {
+		console.log("useFilteredTicketsForUser - useDeepCompareEffect")
+		//filter #1 by priority & department
+		let filtered_1 = tickets
+		let f = {}
+		if (filteredByPriority !== STATUS_FILTER.ANY) f.priority = filteredByPriority
+		if (filteredByDepartment !== STATUS_FILTER.ANY) f.department = filteredByDepartment
+		if (size(f) > 0) filtered_1 = filter(tickets, f)
 
 		//filter by status
-		filtered = filter(filtered, (i) => _Status.includes(i.status))
+		const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
+		const filteredStatus = filter(filtered_1, i => selectedStatus.includes(i.status))
+
 		//sort the list - descensing by `createdAt`
-		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
-		//group by status
-		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
+		const filteredSorted = orderBy(filteredStatus, ["updatedAt"])
 
-		filteredTickets.current = Object.entries(groupByStatus)
+		//group by department | status (default) | priority
+		const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])
 
-		console.log({ filteredTickets: filteredTickets.current })
-	}
+		setRes(Object.entries(filteredGroupedByStatus))
 
-	return ({ data: filteredTickets.current, isLoading: false })
+	}, [filteredByDepartment, filteredByPriority, filteredByStatusRaw, filteredGroupBy, tickets])
+
+	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
+
+	return ({ data: res, isLoading: false })
 }
+
+export default useFilteredTicketsForUser

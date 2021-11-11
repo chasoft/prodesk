@@ -41,6 +41,7 @@ import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, S
 import AddIcon from "@mui/icons-material/Add"
 import SaveIcon from "@mui/icons-material/Save"
 import LabelIcon from "@mui/icons-material/Label"
+import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
 
 /*****************************************************************
@@ -126,6 +127,18 @@ export const SubCatItem = ({ currentItem }) => {
 
 	const isModified = currentItem.color !== color || currentItem.name !== name
 
+	const handleDeleteLabel = async () => {
+		await deleteLabel({ lid: currentItem.lid })
+	}
+
+	const handleUpdateLabel = async () => {
+		await updateLabel({
+			...currentItem,
+			name,
+			color
+		})
+	}
+
 	return (
 		<Box sx={{
 			display: "flex",
@@ -138,7 +151,9 @@ export const SubCatItem = ({ currentItem }) => {
 			<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
 
 
-				<Collapse in={!showColorTable} sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+				<Collapse timeout={{ enter: 600 }} in={!showColorTable} sx={{
+					display: "flex", alignItems: "center", flexGrow: 1
+				}}>
 					<Box sx={{ display: "flex" }}>
 						<LabelIcon
 							sx={{ color: color, mr: 0.5, cursor: "pointer" }}
@@ -160,9 +175,19 @@ export const SubCatItem = ({ currentItem }) => {
 					</Box>
 				</Collapse>
 
-				<Collapse in={showColorTable} sx={{ py: 2, justifyItems: "center", width: showColorTable ? "initial" : "0px" }}>
-
-					<Typography sx={{ pb: 1 }}>Select color for label <b>&quot;{name}&quot;</b></Typography>
+				<Collapse timeout={{ enter: 600 }} in={showColorTable} sx={{
+					py: 2, justifyItems: "center", width: showColorTable ? "initial" : "0px"
+				}}>
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}>
+						<Typography>Select color for label <b>&quot;{name}&quot;</b></Typography>
+						<IconButton onClick={() => { setShowColorTable(false) }}>
+							<CloseIcon />
+						</IconButton>
+					</Box>
 					<ColorTable getSelectedColor={(color) => {
 						setColor(color)
 						setShowColorTable(false)
@@ -181,13 +206,7 @@ export const SubCatItem = ({ currentItem }) => {
 						<Tooltip title="Save changes" placement="left">
 							<IconButton
 								sx={{ ":hover": { color: "primary.main" } }}
-								onClick={async () => {
-									await updateLabel({
-										lid: currentItem.lid,
-										name,
-										color
-									})
-								}}
+								onClick={handleUpdateLabel}
 							>
 								<SaveIcon fontSize="small" color="warning" />
 							</IconButton>
@@ -196,7 +215,7 @@ export const SubCatItem = ({ currentItem }) => {
 					<Tooltip title="Delete" placement="right">
 						<IconButton
 							sx={{ ":hover": { color: "warning.main" } }}
-							onClick={async () => { await deleteLabel({ lid: currentItem.lid }) }}
+							onClick={handleDeleteLabel}
 						>
 							<DeleteIcon fontSize="small" />
 						</IconButton>

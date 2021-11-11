@@ -94,7 +94,7 @@ const LoginForm = () => {
 				//AuthCheck will have wrong behavior
 				reduxBatch(() => {
 					dispatch(loginSuccess(res.data.userProfile))
-					dispatch(setRedirect((res.data.userProfile.group === USERGROUP.USER)
+					dispatch(setRedirect((res.data.userProfile.group === USERGROUP.USER.code)
 						? REDIRECT_URL.CLIENT.INDEX
 						: REDIRECT_URL.ADMIN.INDEX))
 				})

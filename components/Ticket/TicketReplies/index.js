@@ -66,9 +66,10 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 			</Tooltip>
 
 			<ReplyDialog
-				ticketId={ticket.tid}
-				ticketStatus={ticket.status}
-				ticketUsername={ticket.username}
+				tid={ticket.tid}
+				status={ticket.status}
+				username={ticket.username}
+				staffInCharge={ticket.staffInCharge}
 				open={open}
 				setOpen={setOpen}
 			/>
@@ -83,7 +84,7 @@ ReplyButton.propTypes = {
 	sx: PropTypes.object
 }
 
-const RepliesContainer = ({ ticketId, ticketStatus, ticketUsername, children }) => {
+const RepliesContainer = ({ tid, status, username, staffInCharge, children }) => {
 	const [open, setOpen] = useState(false)
 	return (
 		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
@@ -112,18 +113,20 @@ const RepliesContainer = ({ ticketId, ticketStatus, ticketUsername, children }) 
 			<ReplyDialog
 				open={open}
 				setOpen={setOpen}
-				ticketId={ticketId}
-				ticketStatus={ticketStatus}
-				ticketUsername={ticketUsername}
+				tid={tid}
+				status={status}
+				username={username}
+				staffInCharge={staffInCharge}
 			/>
 
 		</Box >
 	)
 }
 RepliesContainer.propTypes = {
-	ticketId: PropTypes.string,
-	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string,
+	tid: PropTypes.string,
+	status: PropTypes.string,
+	username: PropTypes.string,
+	staffInCharge: PropTypes.array,
 	children: PropTypes.node
 }
 
@@ -131,14 +134,14 @@ RepliesContainer.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
+function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
 
 	const { currentUser } = useSelector(getAuth)
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
 	const { data: ticketReplies, isLoading: isLoadingReplies } = useGetTicketRepliesQuery({
-		username: ticketUsername,
-		tid: ticketId
+		username: username,
+		tid: tid
 	})
 
 	const isAdmin = currentUser.username === "superadmin" || hasAdminPermissions
@@ -148,9 +151,10 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 	if (replyCount == 0) {
 		return (
 			<RepliesContainer
-				ticketId={ticketId}
-				ticketStatus={ticketStatus}
-				ticketUsername={ticketUsername}
+				tid={tid}
+				status={status}
+				username={username}
+				staffInCharge={staffInCharge}
 			>
 				<Box sx={{ p: 4 }}>There is no replies!</Box>
 			</RepliesContainer>
@@ -161,9 +165,10 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 	if (isLoadingReplies) {
 		return (
 			<RepliesContainer
-				ticketId={ticketId}
-				ticketStatus={ticketStatus}
-				ticketUsername={ticketUsername}
+				tid={tid}
+				status={status}
+				username={username}
+				staffInCharge={staffInCharge}
 			>
 				<Box sx={{
 					display: "flex",
@@ -232,16 +237,17 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 	//Replies
 	return (
 		<RepliesContainer
-			ticketId={ticketId}
-			ticketStatus={ticketStatus}
-			ticketUsername={ticketUsername}
+			tid={tid}
+			status={status}
+			username={username}
+			staffInCharge={staffInCharge}
 		>
 			{ticketReplies?.map((replyItem, idx) =>
 				<ReplyItem
 					key={replyItem.trid}
 					isAdmin={isAdmin}
 					replyItem={replyItem}
-					ticketUsername={ticketUsername}
+					ticketUsername={username}
 					isFirst={idx === 0}
 				/>
 			)}
@@ -249,9 +255,10 @@ function TicketReplies({ ticketId, ticketStatus, ticketUsername, replyCount }) {
 	)
 }
 TicketReplies.propTypes = {
-	ticketId: PropTypes.string,
-	ticketStatus: PropTypes.string,
-	ticketUsername: PropTypes.string,
+	tid: PropTypes.string,
+	status: PropTypes.string,
+	username: PropTypes.string,
+	staffInCharge: PropTypes.array,
 	replyCount: PropTypes.number
 }
 

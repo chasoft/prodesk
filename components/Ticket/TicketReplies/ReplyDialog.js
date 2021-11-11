@@ -28,19 +28,21 @@ import React from "react"
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { size } from "lodash"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
-import { STATUS_FILTER } from "./../../../helpers/constants"
-import { LearnMoreAdvancedTextEditor } from "./../../common"
-import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import useAdmin from "./../../../helpers/useAdmin"
 import { getAuth, getTextEditor } from "../../../redux/selectors"
+import { STATUS_FILTER, DATE_FORMAT } from "./../../../helpers/constants"
+import { TicketOwner } from "./../../../components/Ticket/AdminTicketListItem"
+import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 
@@ -53,9 +55,10 @@ import { getAuth, getTextEditor } from "../../../redux/selectors"
  *****************************************************************/
 
 const ReplyDialog = ({
-	ticketId,
-	ticketStatus,
-	ticketUsername,
+	tid,
+	status,
+	username,
+	staffInCharge,
 	//
 	open,
 	setOpen
@@ -64,6 +67,7 @@ const ReplyDialog = ({
 	const theme = useTheme()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
+	const { isAdminURL } = useAdmin()
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
@@ -72,24 +76,35 @@ const ReplyDialog = ({
 	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
 	const handleCancelReply = () => { setOpen(false); localStorage.removeItem("NewReply") }
 
+	const latestStaffInCharge = (staffInCharge.length > 0)
+		? staffInCharge[staffInCharge.length - 1]
+		: null
+
 	const handleSubmitReply = async () => {
 		setOpen(false)
 		//prevent non-owner to reply a closed ticket
-		if (currentUser.username !== ticketUsername && ticketStatus === STATUS_FILTER.CLOSED) return
+		if (currentUser.username !== username && status === STATUS_FILTER.CLOSED) return
 
 		const trid = nanoid()
 		const newReplyItem = {
 			ticketItem: {
-				username: ticketUsername,
-				tid: ticketId,
-				...((currentUser.username === ticketUsername)
-					? ((ticketStatus !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
-					: { status: STATUS_FILTER.REPLIED }
-				)
+				username: username,
+				tid: tid,
+				...((currentUser.username === username)
+					? ((status !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
+					: { status: STATUS_FILTER.REPLIED }),
+				...((staffInCharge?.length === 0)
+					? {
+						staffInCharge: [{
+							assignor: currentUser.username,
+							assignee: currentUser.username,
+							assignedDate: dayjs().valueOf()
+						}]
+					} : {})
 			},
 			replyItem: {
 				trid,
-				tid: ticketId,
+				tid: tid,
 				content: editorData,
 				username: currentUser.username,
 			}
@@ -148,27 +163,69 @@ const ReplyDialog = ({
 				</Button>
 			</DialogActions>
 
-			<Box
-				sx={{
+			{(isAdminURL && staffInCharge?.length === 0) &&
+				<Box sx={{
 					display: "flex",
+					alignItems: "center",
 					px: 3, py: 2,
 					backgroundColor: "#F8F9FA",
 					borderBottomLeftRadius: "0.5rem",
 					borderBottomRightRadius: "0.5rem",
 					borderTop: "1px solid",
 					borderTopColor: "divider"
-				}}
-			>
-				<LearnMoreAdvancedTextEditor />
-			</Box>
+				}} >
+					<Chip
+						size="small"
+						label="Note"
+						color="warning"
+						sx={{ mr: 2 }}
+					/>
+					<Typography sx={{ flexGrow: 1 }}>
+						This ticket has not been assigned to any staff.<br />If you do the very first reply, this ticket would be assigned to you automatically.
+					</Typography>
+				</Box>}
+
+			{(isAdminURL && staffInCharge?.length > 0) &&
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+					px: 3, py: 2,
+					backgroundColor: "#F8F9FA",
+					borderBottomLeftRadius: "0.5rem",
+					borderBottomRightRadius: "0.5rem",
+					borderTop: "1px solid",
+					borderTopColor: "divider"
+				}} >
+					<Chip
+						size="small"
+						label="Note"
+						color="info"
+						sx={{ mr: 2 }}
+					/>
+
+					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+						{(latestStaffInCharge.assignee === currentUser.username)
+							? <>
+								This ticket has been assigned to you by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)}
+							</>
+							: <>
+								This ticket has been assigned to {<TicketOwner username={latestStaffInCharge.assignee} />} by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)}
+							</>}
+
+						{(latestStaffInCharge.assignee !== currentUser.username)
+							? "You are not in charge of this ticket. Are you sure you want to do a reply?"
+							: null}
+					</Box>
+				</Box>}
 
 		</Dialog>
 	)
 }
 ReplyDialog.propTypes = {
-	ticketId: PropTypes.string.isRequired,
-	ticketStatus: PropTypes.string.isRequired,
-	ticketUsername: PropTypes.string.isRequired,
+	tid: PropTypes.string.isRequired,
+	status: PropTypes.string.isRequired,
+	username: PropTypes.string.isRequired,
+	staffInCharge: PropTypes.array.isRequired,
 	//
 	open: PropTypes.bool.isRequired,
 	setOpen: PropTypes.func.isRequired,

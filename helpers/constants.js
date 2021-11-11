@@ -118,6 +118,12 @@ export const PRIORITY = {
 	HIGH: "High"
 }
 
+export const GROUPBY = {
+	STATUS: { title: "Status", fieldname: "status" },
+	DEPARTMENT: { title: "Department", fieldname: "department" },
+	PRIORITY: { title: "Priority", fieldname: "priority" },
+}
+
 export const TICKET_STATUS = {
 	OPEN: "Open",		//Newly created ticket
 	REPLIED: "Replied",	//Ticket is replied by staff and waiting for feedback from customer
@@ -125,16 +131,18 @@ export const TICKET_STATUS = {
 	CLOSED: "Closed",	//Ticket is set to be closed
 }
 
+/*	I add rank for easier comparison if needed */
 export const USERGROUP = {
-	SUPERADMIN: "superadmin",
-	ADMIN: "admin",
-	STAFF: "staff",		//staff is your labor worker
-	MEMBER: "member",	//member is validated user
-	USER: "user"		//freely register account
+	SUPERADMIN: { code: "superadmin", rank: 10000 },
+	ADMIN: { code: "admin", rank: 1000 },
+	STAFF: { code: "staff", rank: 100 },		//staff is your labor worker
+	AGENT: { code: "agent", rank: 50 },		//staff is your labor worker
+	MEMBER: { code: "member", rank: 1 },	//member is validated user
+	USER: { code: "user", rank: 0 }		//freely register account
 }
 
 export const TICKET_INBOXES = {
-	IN_PROGRESS: "In progress",
+	STARTED: "Started",
 	MINE: "Mine",
 	ASSIGNED: "Assigned",
 	UNASSIGNED: "Unassigned",
@@ -246,6 +254,15 @@ export const APP_SETTINGS_NAME = {
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
 }
 
+export const PERMISSIONS_LEVELS = {
+	FALSE: false,
+	TRUE: true,
+	NONE: 0,
+	VIEWER: 1,
+	AGENT: 2,
+	ADMIN: 3,
+}
+
 export const SETTINGS_NAME = {
 	/* GENERAL */
 	hasAdminPermissions: "hasAdminPermissions",
@@ -269,26 +286,32 @@ export const DEFAULT_USER_SETTINGS = {
 	[SETTINGS_NAME.updateTicket]: false,
 	[SETTINGS_NAME.deleteTicket]: false,
 }
-
 export const DEFAULT_MEMBER_SETTINGS = {
 	...DEFAULT_USER_SETTINGS,
 	//Member's permissions
 	[SETTINGS_NAME.createTicket]: true,
 
 }
-
 export const DEFAULT_AGENT_SETTINGS = {
 	...DEFAULT_MEMBER_SETTINGS,
 	//Agent's permissions
 	[SETTINGS_NAME.updateTicket]: true,
 	//
-	[SETTINGS_NAME.departments]: {}
-
 }
-
-export const DEFAULT_ADMIN_SETTINGS = {
+export const DEFAULT_STAFF_SETTINGS = {
 	...DEFAULT_AGENT_SETTINGS,
+	//Agent's permissions
+	[SETTINGS_NAME.updateTicket]: true,
+	//
+}
+export const DEFAULT_ADMIN_SETTINGS = {
+	...DEFAULT_STAFF_SETTINGS,
 	//Admin's permissions
 	[SETTINGS_NAME.deleteTicket]: true,
+}
+
+export const DEFAULT_SUPERADMIN_SETTINGS = {
+	...DEFAULT_ADMIN_SETTINGS,
+	//Superadmin's permissions
 
 }

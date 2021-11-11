@@ -24,7 +24,7 @@
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { forEach, omit, orderBy } from "lodash"
+import { forEach, omit, orderBy, size } from "lodash"
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
@@ -480,27 +480,31 @@ export const firestoreApi = createApi({
 
 		getLabels: builder.query({
 			query: () => ({ action: ACTION.GET_LABELS }),
-			providesTags: (result) => {
-				return result
-					? [
-						...result.map(({ lid }) => ({ type: TYPE.LABELS, id: lid })),
-						{ type: TYPE.LABELS, id: "LIST" }
-					]
-					: [{ type: TYPE.LABELS, id: "LIST" }]
-			},
+			providesTags: () => [{ type: TYPE.LABELS, id: "LIST" }],
 			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response),
+			transformResponse: (response) => {
+				const res = []
+				forEach(response, v => {
+					if (size(v) > 0) res.push(v)
+				})
+				return orderBy(res, ["updatedAt"])
+			},
 		}),
 
 		addLabel: builder.mutation({
 			query: (body) => ({ action: ACTION.ADD_LABEL, body }),
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.LABELS, id: body.lid }]
-			},
+			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				console.log("Optimistic update - addLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_LABELS, undefined,
-						(draft) => { draft.push(body) }
+						(draft) => {
+							draft.push({
+								...body,
+								createdAt: dayjs().valueOf(),
+								updatedAt: dayjs().valueOf()
+							})
+						}
 					)
 				)
 				try { await queryFulfilled }
@@ -510,14 +514,18 @@ export const firestoreApi = createApi({
 
 		updateLabel: builder.mutation({
 			query: (body) => ({ action: ACTION.UPDATE_LABEL, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.LABELS, id: arg.lid }]),
-			async onQueryStarted(label, { dispatch, queryFulfilled }) {
+			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				console.log("Optimistic update - updateLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,
 						(draft) => {
-							let obj = draft.find(e => e.lid === label.lid)
-							Object.assign(obj, label)
+							const obj = draft.find(i => i.lid === body.lid)
+							Object.assign(obj, {
+								...body,
+								updatedAt: dayjs().valueOf()
+							})
 						})
 				)
 				try { await queryFulfilled }
@@ -530,12 +538,13 @@ export const firestoreApi = createApi({
 
 		deleteLabel: builder.mutation({
 			query: (body) => ({ action: ACTION.DELETE_LABEL, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.LABELS, id: arg.lid }]),
-			async onQueryStarted({ lid }, { dispatch, queryFulfilled }) {
+			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				console.log("Optimistic update - deleteLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,
-						(draft) => draft.filter(e => e.lid !== lid)
+						(draft) => draft.filter(e => e.lid !== body.lid)
 					)
 				)
 				try { await queryFulfilled }
@@ -554,11 +563,11 @@ export const firestoreApi = createApi({
 			query: () => ({ action: ACTION.GET_CATEGORIES }),
 			providesTags: (result) => {
 				return result
-					? [
+					?
+					[
 						...result.map(({ catId }) => ({ type: TYPE.CATEGORIES, id: catId })),
 						{ type: TYPE.CATEGORIES, id: "LIST" }
-					]
-					: [{ type: TYPE.CATEGORIES, id: "LIST" }]
+					] : [{ type: TYPE.CATEGORIES, id: "LIST" }]
 			},
 			keepUnusedDataFor: 60 * 60,
 			transformResponse: (response) => fix_datetime_list(response)

@@ -255,7 +255,11 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 						<Box>
 							<TicketStatus status={ticket.status} />
 							<TicketDepartment department={ticket.department} />
-							<TicketCategory category={ticket.category} subCategory={ticket.subCategory} />
+							<TicketCategory
+								department={ticket.department}
+								category={ticket.category}
+								subCategory={ticket.subCategory}
+							/>
 							{(ticket.createdBy !== ticket.username && isSmallScreen) &&
 								<TicketCreatedBy createdBy={ticket.createdBy} />}
 							<TicketReplyCount count={ticket.replyCount} />

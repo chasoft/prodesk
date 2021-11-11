@@ -161,7 +161,7 @@
 // 			uid: userCredential.user.uid,
 // 			username: username,
 // 			email: userCredential.user.email,
-// 			group: USERGROUP.USER, //default usergroup
+// 			group: USERGROUP.USER.code, //default usergroup
 // 			nextStep: REDIRECT_URL.CREATE_PROFILE
 // 		})
 // 		await batch.commit()

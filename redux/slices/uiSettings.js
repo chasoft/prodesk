@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
+import { GROUPBY, PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
 
 const defaultBackground = {
 	top: 0,
@@ -54,20 +54,21 @@ export const initialState = {
 	/*
 		Settings for ListTicketsFilter
 	*/
-	selectedStatus: {
+	filteredByStatusRaw: {
 		[TICKET_STATUS.OPEN]: true,
 		[TICKET_STATUS.PENDING]: true,
 		[TICKET_STATUS.REPLIED]: true,
 		[TICKET_STATUS.CLOSED]: false
 	},
-	selectedDepartment: STATUS_FILTER.ANY,
-	selectedPriority: PRIORITY.ANY,
-	selectedLabel: STATUS_FILTER.ANY,
-	ticketSearchTerm: "",
-	selectedInbox: TICKET_INBOXES.IN_PROGRESS,
+	filteredByDepartment: STATUS_FILTER.ANY,
+	filteredByPriority: PRIORITY.ANY,
+	filteredByLabel: STATUS_FILTER.ANY,
+	filteredByWord: "",
+	filteredByInbox: TICKET_INBOXES.STARTED,
+	filteredGroupBy: GROUPBY.STATUS.fieldname,
 	//used for admins in filtering tickets
 	ticketAssignee: "",
-	ticketAssigner: "",
+	ticketAssignor: "",
 
 	/*
 		Active Tabs for Settings Page in Admin view
@@ -115,40 +116,44 @@ const uiSettingsSlice = createSlice({
 		setScrolled: (state, { payload }) => {
 			state.scrolled = payload
 		},
-		setSelectedDepartment: (state, { payload }) => {
-			state.selectedDepartment = payload
+		setFilteredByDepartment: (state, { payload }) => {
+			state.filteredByDepartment = payload
 		},
-		setSelectedPriority: (state, { payload }) => {
-			state.selectedPriority = payload
+		setFilteredByPriority: (state, { payload }) => {
+			state.filteredByPriority = payload
 		},
-		setSelectedLabel: (state, { payload }) => {
-			state.selectedLabel = payload
+		setFilteredByLabel: (state, { payload }) => {
+			state.filteredByLabel = payload
 		},
-		setTicketSearchTerm: (state, { payload }) => {
-			state.ticketSearchTerm = payload
+		setFilteredByWord: (state, { payload }) => {
+			state.filteredByWord = payload
 		},
-		setSelectedStatus: (state, { payload }) => {
-			state.selectedStatus = {
-				...state.selectedStatus,
+		setSelectedStatusRaw: (state, { payload }) => {
+			state.filteredByStatusRaw = {
+				...state.filteredByStatusRaw,
 				...payload
 			}
 		},
-		setSelectedInbox: (state, { payload }) => {
-			state.selectedInbox = payload
+		setFilteredByInbox: (state, { payload }) => {
+			state.filteredByInbox = payload
 		},
-		resetTicketsFilter: (state) => {
-			state.selectedStatus = {
+		setFilteredGroupBy: (state, { payload }) => {
+			state.filteredGroupBy = payload
+		},
+		resetTicketFilters: (state) => {
+			state.filteredByStatusRaw = {
 				[TICKET_STATUS.OPEN]: true,
 				[TICKET_STATUS.PENDING]: true,
 				[TICKET_STATUS.REPLIED]: true,
 				[TICKET_STATUS.CLOSED]: false
 			}
-			state.selectedDepartment = PRIORITY.ANY
-			state.selectedPriority = PRIORITY.ANY
-			state.ticketSearchTerm = ""
-			state.selectedInbox = TICKET_INBOXES.IN_PROGRESS
+			state.filteredByDepartment = PRIORITY.ANY
+			state.filteredByPriority = PRIORITY.ANY
+			state.filteredByWord = ""
+			state.filteredByInbox = TICKET_INBOXES.STARTED
 			state.selectedTickets = []
-			state.selectedLabel = STATUS_FILTER.ANY
+			state.filteredByLabel = STATUS_FILTER.ANY
+			state.filteredGroupBy = GROUPBY.STATUS.fieldname
 		},
 		/* */
 		setActiveSettingTab: (state, { payload }) => {
@@ -182,7 +187,7 @@ export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrolled,
-	setTicketSearchTerm, setSelectedStatus, setSelectedDepartment, setSelectedPriority, setSelectedLabel, resetTicketsFilter, setSelectedInbox,
+	setFilteredByWord, setSelectedStatusRaw, setFilteredByDepartment, setFilteredByPriority, setFilteredByLabel, resetTicketFilters, setFilteredByInbox, setFilteredGroupBy,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
 	setSideBarLeft, setShowTocSideBarDetails,
 	setSelectedTickets

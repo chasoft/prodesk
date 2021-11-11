@@ -124,7 +124,7 @@ export default function AuthCheck(props) {
 	if (loading) return <LoadingIndicator />
 
 	//A logged-in user but try to access `/admin`
-	if (currentUser.group === USERGROUP.USER
+	if (currentUser.group === USERGROUP.USER.code
 		&& regAdminURL.test(router.pathname)) return <DefaultErrorPage statusCode={404} />
 
 	return (
@@ -150,7 +150,7 @@ export function AuthTrue(props) {
  */
 export function AuthStaffTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group !== USERGROUP.USER) ? props.children : null
+	return (currentUser.group !== USERGROUP.USER.code) ? props.children : null
 }
 
 /**
@@ -158,7 +158,7 @@ export function AuthStaffTrue(props) {
  */
 export function AuthUserTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group === USERGROUP.USER)
+	return (currentUser.group === USERGROUP.USER.code)
 		? props.children
 		: null
 }
@@ -168,7 +168,7 @@ export function AuthUserTrue(props) {
  */
 export function AuthAdminTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group === USERGROUP.ADMIN || currentUser.group === USERGROUP.SUPERADMIN)
+	return (currentUser.group === USERGROUP.ADMIN.code || currentUser.group === USERGROUP.SUPERADMIN.code)
 		? props.children
 		: null
 }
@@ -185,7 +185,7 @@ export function GuestOnly(props) {
 	if (isAuthenticated === true
 		//the user logged-in and account created
 		&& currentUser?.nextStep === REDIRECT_URL.SIGNUP.DONE) {
-		if (currentUser.group === USERGROUP.USER) {
+		if (currentUser.group === USERGROUP.USER.code) {
 			// dispatch(setRedirect(REDIRECT_URL.CLIENT))
 			router.push(REDIRECT_URL.CLIENT.INDEX)
 			return null

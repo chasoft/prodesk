@@ -24,75 +24,28 @@
 
 import Link from "next/link"
 import PropTypes from "prop-types"
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import { Box, Button, CircularProgress, Drawer, IconButton, Paper, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { usePrevious } from "react-use"
-import { useDispatch, useSelector } from "react-redux"
-import { isEqual, sortBy, reverse, groupBy, filter } from "lodash"
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import AskNow from "../Docs/AskNow"
 import TicketFilters from "./TicketFilters"
 import TicketListItem from "./TicketListItem"
-import { getAuth, getUiSettings } from "../../redux/selectors"
-import { PRIORITY, REDIRECT_URL } from "../../helpers/constants"
-import { resetTicketsFilter } from "../../redux/slices/uiSettings"
-import { useGetTicketsForUserQuery } from "../../redux/slices/firestoreApi"
+import { REDIRECT_URL } from "../../helpers/constants"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import FilterListIcon from "@mui/icons-material/FilterList"
+import { resetTicketFilters } from "../../redux/slices/uiSettings"
+import useFilteredTicketsForUser from "../../helpers/useFilteredTicketsForUser"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const useGetTickets = () => {
-	const { currentUser } = useSelector(getAuth)
-	const { data: tickets, isLoading } = useGetTicketsForUserQuery(currentUser.username)
-	const { ticketSearchTerm, selectedPriority, selectedStatus } = useSelector(getUiSettings)
-
-	const _Status = Object.entries(selectedStatus).filter(i => i[1] === true).map(i => i[0])
-
-	const prevTickets = usePrevious(tickets)
-	const prevSearchTerm = usePrevious(ticketSearchTerm)
-	const prevPriority = usePrevious(selectedPriority)
-	const prevStatus = usePrevious(_Status)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const filteredTickets = useRef()
-
-	if (isLoading) { return ({ data: [], isLoading: true }) }
-
-
-	console.log("tickets", tickets)
-
-	if (!isEqual(prevTickets, tickets) ||
-		!isEqual(prevSearchTerm, ticketSearchTerm) ||
-		!isEqual(prevPriority, selectedPriority) ||
-		!isEqual(prevStatus, selectedStatus)) {
-
-		//filter by priority
-		let filtered = tickets
-		if (selectedPriority !== PRIORITY.ANY) {
-			filtered = filter(tickets, { priority: selectedPriority })
-		}
-
-		//filter by status
-		filtered = filter(filtered, (i) => _Status.includes(i.status))
-		//sort the list - descensing by `createdAt`
-		const sortedDocs = reverse(sortBy(filtered, ["updatedAt"]))
-		//group by status
-		const groupByStatus = groupBy(sortedDocs, (i) => i.status)
-
-		filteredTickets.current = Object.entries(groupByStatus)
-	}
-
-	return ({ data: filteredTickets.current, isLoading: false })
-}
 
 const FilterDrawer = ({ isOpen, handleClose }) => {
 	return (
@@ -123,8 +76,8 @@ FilterDrawer.propTypes = {
 function TicketList() {
 	const dispatch = useDispatch()
 	const [showFilter, setShowFilter] = useState(false)
-	const { data: tickets, isLoading } = useGetTickets()
-	const handleResetSearchCriteria = () => { dispatch(resetTicketsFilter()) }
+	const { data: tickets, isLoading } = useFilteredTicketsForUser()
+	const handleResetSearchCriteria = () => { dispatch(resetTicketFilters()) }
 
 	if (isLoading) {
 		return (

@@ -25,12 +25,12 @@
 import Link from "next/link"
 import PropTypes from "prop-types"
 import React, { useState } from "react"
-import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemText, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography, ListItemButton } from "@mui/material"
+import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemText, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography, ListItemButton, ListItemIcon } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { size } from "lodash"
+import { every, filter, size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -40,11 +40,11 @@ import MemoizedAdminTicketListItem from "./AdminTicketListItem"
 import useMenuContainer from "../common/useMenuContainer"
 import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
-import useGroupedTickets from "../../helpers/useGroupedTickets"
+import useFilteredTicketsForAdmin from "../../helpers/useFilteredTicketsForAdmin"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
-import { resetTicketsFilter, setSelectedTickets } from "../../redux/slices/uiSettings"
-import { DATE_FORMAT, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
+import { resetTicketFilters, setSelectedTickets } from "../../redux/slices/uiSettings"
+import { DATE_FORMAT, PERMISSIONS_LEVELS, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
 import { useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
 //ASSETS
@@ -83,14 +83,49 @@ AdminFilterDrawer.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
-const AssignButton = () => {
-	const { selectedInbox } = useSelector(getUiSettings)
+const AssignButton = ({ assignor }) => {
+	const { filteredByInbox, selectedTickets } = useSelector(getUiSettings)
 	const { staffList, isLoadingStaffList } = useProfiles()
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+	const [updateTicket] = useUpdateTicketMutation()
 
 	//Only use this button when in UNASSIGNED INBOX
 	//If assigned, then, admin must handle directly in a specific ticket
-	if (selectedInbox !== TICKET_INBOXES.UNASSIGNED) return null
+	if (filteredByInbox !== TICKET_INBOXES.UNASSIGNED) return null
+	const selectedDepartment = selectedTickets[0].department
+	if (every(selectedTickets, { department: selectedDepartment }) === false) return null
+
+	const availableStaffs = filter(staffList, (i) => i.departments[selectedDepartment] > PERMISSIONS_LEVELS.VIEWER) ?? []
+
+	const handleAssignTicket = async (selectedUsername) => {
+		//this is new assignment,
+		//for modification, admin/staff must handle directly in a specific ticket
+		const affectedTickets = selectedTickets.map(i => ({
+			username: i.username,
+			tid: i.tid,
+			//we keep track of assignments history
+			//that's why we use an array here!
+			staffInCharge: [{
+				assignor: assignor,
+				assignee: selectedUsername,
+				assignedDate: dayjs().valueOf()
+			}]
+		}))
+		await updateTicket(affectedTickets)
+	}
+
+	const handleAssignToMyself = async () => {
+		const affectedTickets = selectedTickets.map(i => ({
+			username: i.username,
+			tid: i.tid,
+			staffInCharge: [{
+				assignor: assignor,
+				assignee: assignor,
+				assignedDate: dayjs().valueOf()
+			}]
+		}))
+		await updateTicket(affectedTickets)
+	}
 
 	return (
 		<>
@@ -110,12 +145,10 @@ const AssignButton = () => {
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				{(selectedInbox !== TICKET_INBOXES.IN_PROGRESS && selectedInbox !== TICKET_INBOXES.MINE) &&
-					[
-						<MenuItem key="assign-to-myself">Assign to myself</MenuItem>,
-						<Divider key="divider" />
-					]}
-
+				<MenuItem onClick={handleAssignToMyself}>
+					Assign to myself
+				</MenuItem>,
+				<Divider key="divider" />
 				{ /*
 					Liệt kê các user có thẩm quyền xử lý ticket
 					chứ ko phải staff nào cũng assign được!
@@ -124,14 +157,26 @@ const AssignButton = () => {
 				{isLoadingStaffList &&
 					<MenuItem>Loading staffs... <CircularProgress size={20} /></MenuItem>}
 
-				{(!isLoadingStaffList && staffList.length === 0) &&
+				{(!isLoadingStaffList && availableStaffs.length === 0) &&
 					<MenuItem disabled={true}>{"You don't have any staff"}</MenuItem>}
 
-
+				{(!isLoadingStaffList && availableStaffs.length > 0) &&
+					availableStaffs.map((staff) =>
+						<MenuItem key={staff.username} onClick={() => handleAssignTicket(staff.username)}>
+							<ListItemIcon>
+								<Avatar src={staff.photoURL} />
+							</ListItemIcon>
+							<ListItemText>{staff.displayName}</ListItemText>
+							<Typography variant="body2" color="text.secondary">
+								{staff.username} - {staff.email}
+							</Typography>
+						</MenuItem>
+					)}
 			</MenuContainer>
 		</>
 	)
 }
+AssignButton.propTypes = { assignor: PropTypes.string }
 
 const StatusButton = () => {
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
@@ -260,7 +305,7 @@ const LabelButton = () => {
 							key="open-add-new-label-dialog"
 							onClick={() => { setOpenNewLableDialog(true) }}
 						>
-							Add new label...
+							Add/Edit labels...
 						</MenuItem>
 					]
 					: <MenuItem>No pre-defined label</MenuItem>}
@@ -437,11 +482,11 @@ function AdminTicketList() {
 	const dispatch = useDispatch()
 	const [showFilter, setShowFilter] = useState(false)
 	const { currentUser } = useSelector(getAuth)
-	const { selectedTickets, selectedInbox } = useSelector(getUiSettings)
+	const { selectedTickets, filteredByInbox } = useSelector(getUiSettings)
 
-	const { data: tickets, isLoading } = useGroupedTickets()
+	const { data: tickets, isLoading } = useFilteredTicketsForAdmin()
 
-	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === selectedInbox)
+	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === filteredByInbox)
 
 	console.log("AdminTicketList rendering")
 
@@ -513,7 +558,7 @@ function AdminTicketList() {
 						}}>
 							<Typography sx={{ mr: { xs: 0, sm: 1 } }}><b>{selectedTickets.length}</b> items selected</Typography>
 							<div>
-								<AssignButton />
+								<AssignButton assignor={currentUser.username} />
 								<StatusButton />
 								<LabelButton />
 								{(currentUser.username === "superadmin" || currentUser.permissions.deleteTicket) &&
@@ -561,7 +606,7 @@ function AdminTicketList() {
 
 					<Typography variant="body">
 						Try again by using other search criteria or click &quot;
-						<Box component="span" onClick={() => { dispatch(resetTicketsFilter()) }} sx={{
+						<Box component="span" onClick={() => { dispatch(resetTicketFilters()) }} sx={{
 							cursor: "pointer",
 							fontWeight: 500,
 							"&:hover": { textDecoration: "underline" }

@@ -238,7 +238,7 @@ async function fireStoreBaseQuery(args) {
 					email: userCredential.user.email,
 					displayName: args.body.name,
 					photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
-					group: USERGROUP.USER, //default usergroup
+					group: USERGROUP.USER.code, //default usergroup
 					permissions: {},
 					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
@@ -248,7 +248,7 @@ async function fireStoreBaseQuery(args) {
 					uid: userCredential.user.uid,
 					username: args.body.username,
 					email: userCredential.user.email,
-					group: USERGROUP.USER, //default usergroup
+					group: USERGROUP.USER.code, //default usergroup
 					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
@@ -266,7 +266,7 @@ async function fireStoreBaseQuery(args) {
 						email: userCredential.user.email,
 						displayName: args.body.name,
 						photoURL: userCredential.user.providerData[0].photoURL ?? "/avatar/default.png",
-						group: USERGROUP.USER, //default usergroup
+						group: USERGROUP.USER.code, //default usergroup
 					}
 				}
 			} catch (e) {
@@ -285,7 +285,7 @@ async function fireStoreBaseQuery(args) {
 					displayName: args.body.name,
 					photoURL: args.body.photoURL,
 					permissions: {},
-					group: USERGROUP.USER, //default usergroup
+					group: USERGROUP.USER.code, //default usergroup
 					nextStep: REDIRECT_URL.SIGNUP.CREATE_PROFILE
 				}
 				batch.set(doc(db, COLLECTION.USERS, args.body.uid), publicProfile)
@@ -294,7 +294,7 @@ async function fireStoreBaseQuery(args) {
 					uid: args.body.uid,
 					username: args.body.username,
 					email: args.body.email,
-					group: USERGROUP.USER, //default usergroup
+					group: USERGROUP.USER.code, //default usergroup
 				}
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), privateProfile)
 
@@ -929,22 +929,25 @@ async function fireStoreBaseQuery(args) {
 		 *****************************************************************/
 		case ACTION.GET_LABELS:
 			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.SETTINGS, "settings", "labels"))
-				querySnapshot.forEach((label) => { all.push(label.data()) })
-				return { data: all }
+				let labels = {}
+				const docSnap = await getDoc(doc(db, COLLECTION.SETTINGS, "labels"))
+				if (docSnap.exists()) labels = docSnap.data()
+				return { data: labels }
 			} catch (e) {
 				return throwError(200, ACTION.GET_LABELS, e, null)
 			}
 		case ACTION.ADD_LABEL:
 			try {
 				await setDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "labels", args.body.lid),
+					doc(db, COLLECTION.SETTINGS, "labels"),
 					{
-						...args.body,
-						createdAt: serverTimestamp(),
-						updatedAt: serverTimestamp()
-					}
+						[args.body.lid]: {
+							...args.body,
+							createdAt: dayjs().valueOf(),
+							updatedAt: dayjs().valueOf()
+						}
+					},
+					{ merge: true }
 				)
 				return {
 					data: {
@@ -961,8 +964,13 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.UPDATE_LABEL:
 			try {
 				updateDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "labels", args.body.lid),
-					args.body
+					doc(db, COLLECTION.SETTINGS, "labels"),
+					{
+						[args.body.lid]: {
+							...args.body,
+							updatedAt: dayjs().valueOf()
+						}
+					},
 				)
 				return {
 					data: {
@@ -978,7 +986,14 @@ async function fireStoreBaseQuery(args) {
 			}
 		case ACTION.DELETE_LABEL:
 			try {
-				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "labels", args.body.lid))
+				await updateDoc(
+					doc(db, COLLECTION.SETTINGS, "labels"),
+					{
+						//just clear the content of selected labelId
+						//cleanup will be assigned for CleanUp module
+						[args.body.lid]: {}
+					}
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_LABEL,

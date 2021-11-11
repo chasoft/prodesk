@@ -44,8 +44,8 @@ export default function useProfiles() {
 	const staffListRef = useRef()
 
 	if (isEqual(prevData, data) === false) {
-		userListRef.current = filter(data ?? [], { group: USERGROUP.USER })
-		staffListRef.current = filter(data ?? [], { group: USERGROUP.STAFF })
+		userListRef.current = filter(data ?? [], { group: USERGROUP.USER.code })
+		staffListRef.current = filter(data ?? [], { group: USERGROUP.STAFF.code })
 	}
 
 	return {
