@@ -54,6 +54,12 @@ export const initialState = {
 	/*
 		Settings for ListTicketsFilter
 	*/
+	ticketCounter: {
+		[TICKET_INBOXES.STARTED]: 0,
+		[TICKET_INBOXES.MINE]: 0,
+		[TICKET_INBOXES.ASSIGNED]: 0,
+		[TICKET_INBOXES.UNASSIGNED]: 0,
+	},
 	filteredByStatusRaw: {
 		[TICKET_STATUS.OPEN]: true,
 		[TICKET_STATUS.PENDING]: true,
@@ -115,6 +121,9 @@ const uiSettingsSlice = createSlice({
 		},
 		setScrolled: (state, { payload }) => {
 			state.scrolled = payload
+		},
+		setTicketCounter: (state, { payload }) => {
+			state.ticketCounter = payload
 		},
 		setFilteredByDepartment: (state, { payload }) => {
 			state.filteredByDepartment = payload
@@ -187,7 +196,7 @@ export const {
 	setflexDirection,
 	setBackgroundForLoggedinPage,
 	setScrolled,
-	setFilteredByWord, setSelectedStatusRaw, setFilteredByDepartment, setFilteredByPriority, setFilteredByLabel, resetTicketFilters, setFilteredByInbox, setFilteredGroupBy,
+	setTicketCounter, setFilteredByWord, setSelectedStatusRaw, setFilteredByDepartment, setFilteredByPriority, setFilteredByLabel, resetTicketFilters, setFilteredByInbox, setFilteredGroupBy,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
 	setSideBarLeft, setShowTocSideBarDetails,
 	setSelectedTickets

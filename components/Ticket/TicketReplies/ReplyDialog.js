@@ -32,6 +32,7 @@ import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, T
 
 //THIRD-PARTY
 import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { size } from "lodash"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
@@ -43,6 +44,7 @@ import { getAuth, getTextEditor } from "../../../redux/selectors"
 import { STATUS_FILTER, DATE_FORMAT } from "./../../../helpers/constants"
 import { TicketOwner } from "./../../../components/Ticket/AdminTicketListItem"
 import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import { getStaffInCharge } from "../../../helpers/utils"
 
 //ASSETS
 
@@ -65,6 +67,7 @@ const ReplyDialog = ({
 }) => {
 
 	const theme = useTheme()
+	dayjs.extend(relativeTime)
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { isAdminURL } = useAdmin()
@@ -76,9 +79,7 @@ const ReplyDialog = ({
 	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
 	const handleCancelReply = () => { setOpen(false); localStorage.removeItem("NewReply") }
 
-	const latestStaffInCharge = (staffInCharge.length > 0)
-		? staffInCharge[staffInCharge.length - 1]
-		: null
+	const latestStaffInCharge = getStaffInCharge(staffInCharge)
 
 	const handleSubmitReply = async () => {
 		setOpen(false)
@@ -185,7 +186,7 @@ const ReplyDialog = ({
 					</Typography>
 				</Box>}
 
-			{(isAdminURL && staffInCharge?.length > 0) &&
+			{(isAdminURL && size(staffInCharge) > 0) &&
 				<Box sx={{
 					display: "flex",
 					alignItems: "center",
@@ -206,10 +207,10 @@ const ReplyDialog = ({
 					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
 						{(latestStaffInCharge.assignee === currentUser.username)
 							? <>
-								This ticket has been assigned to you by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)}
+								This ticket has been assigned to you by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})
 							</>
 							: <>
-								This ticket has been assigned to {<TicketOwner username={latestStaffInCharge.assignee} />} by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)}
+								This ticket has been assigned to {<TicketOwner username={latestStaffInCharge.assignee} />} by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})
 							</>}
 
 						{(latestStaffInCharge.assignee !== currentUser.username)

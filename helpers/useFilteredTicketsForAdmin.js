@@ -22,29 +22,33 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useRef } from "react"
+import { useState } from "react"
 
 //THIRD-PARTY
-import { usePrevious } from "react-use"
-import { filter, groupBy, isEqual, orderBy, pickBy, size } from "lodash"
+import { useDispatch, useSelector } from "react-redux"
+import { useDeepCompareEffect } from "react-use"
+import { filter, groupBy, orderBy, pickBy } from "lodash"
 
 //PROJECT IMPORT
-import { useGetTicketsForAdminQuery } from "../redux/slices/firestoreApi"
-import { useSelector } from "react-redux"
-import { getAuth, getUiSettings } from "../redux/selectors"
-import { SETTINGS_NAME, STATUS_FILTER } from "./constants"
 import useUserSettings from "./useUserSettings"
+import { getAuth, getUiSettings } from "../redux/selectors"
+import { useGetTicketsForAdminQuery } from "../redux/slices/firestoreApi"
+import { SETTINGS_NAME, STATUS_FILTER, TICKET_INBOXES } from "./constants"
+import { setTicketCounter } from "../redux/slices/uiSettings"
+import { getStaffInCharge } from "./utils"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 export default function useFilteredTicketsForAdmin() {
+	const dispatch = useDispatch()
+	const [res, setRes] = useState([])
 	const { currentUser } = useSelector(getAuth)
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+	const [availableTicketsByInbox, setAvailableTicketsByInbox] = useState({})
+	const { data: tickets = {}, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 	const {
-		filteredByWord,
 		filteredGroupBy,
 		filteredByInbox,
 		filteredByLabel,
@@ -53,77 +57,116 @@ export default function useFilteredTicketsForAdmin() {
 		filteredByDepartment
 	} = useSelector(getUiSettings)
 
-	const prevInbox = usePrevious(filteredByInbox)
-	const prevLabel = usePrevious(filteredByLabel)
-	const prevStatus = usePrevious(filteredByStatusRaw)
-	const prevTickets = usePrevious(tickets)
-	const prevGroupBy = usePrevious(filteredGroupBy)
-	const prevPriority = usePrevious(filteredByPriority)
-	const prevSearchTerm = usePrevious(filteredByWord)
-	const prevDepartment = usePrevious(filteredByDepartment)
+	console.log("hasAdminPermissions", hasAdminPermissions)
 
+	/* filter all available tickets for current user 
+		and pre-filter for inboxes
+	*/
+	useDeepCompareEffect(() => {
 
+		/* Get available tickets for current user
+			admin => all tickets
+			others
+				-> based on user.permissions.department
+				-> based on ticket.staffInCharge.assignee
+		*/
 
-
-
-	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
-
-	if (isEqual(prevTickets, tickets) === false
-		|| isEqual(prevStatus, filteredByStatusRaw) === false
-		|| prevInbox !== filteredByInbox
-		|| prevLabel !== filteredByLabel
-		|| prevGroupBy !== filteredGroupBy
-		|| prevSearchTerm !== filteredByWord
-		|| prevPriority !== filteredByPriority
-		|| prevDepartment !== filteredByDepartment) {
-
-
-
-
-
-		//filter #0 by User (this is for Admin only)
-		let filtered_0 = tickets
+		let availableTickets = tickets
 		if (hasAdminPermissions === false) {
-			filtered_0 = filter(tickets, (ticket) => {
-				if (!ticket?.staffInCharge) return false
-
-				const latestStaffInCharge = (ticket.staffInCharge.length > 0)
-					? ticket.staffInCharge[ticket.staffInCharge.length - 1]
-					: null
-
-				return ((latestStaffInCharge === null) ||
-					(latestStaffInCharge.assignee !== currentUser.username))
-			})
+			const _departments = Object.keys(currentUser?.departments ?? [])
+			availableTickets = filter(
+				tickets,
+				t => {
+					const latestStaffInCharge = getStaffInCharge(t.staffInCharge)
+					return latestStaffInCharge.assignee === currentUser.username
+						|| (_departments.includes(t.department))
+				}
+			)
 		}
 
-		//filter #1 by Inbox (this is for all except members & user)
-		let filtered_1 = filtered_0
+		/* Filters for each Inbox */
 
+		const started = filter(
+			availableTickets,
+			t => {
+				const latestStaffInCharge = getStaffInCharge(t.staffInCharge)
+				return t.replyCount > 0
+					&& latestStaffInCharge.assignee === currentUser.username
+			}
+		)
+		const mine = filter(
+			availableTickets,
+			t => {
+				const latestStaffInCharge = getStaffInCharge(t.staffInCharge)
+				return t.replyCount === 0
+					&& latestStaffInCharge.assignee === currentUser.username
+			}
+		)
+		const assigned = filter(
+			availableTickets,
+			t => {
+				const latestStaffInCharge = getStaffInCharge(t.staffInCharge)
+				return !!t.staffInCharge.assignee
+					&& latestStaffInCharge.assignee !== currentUser.username
+			}
+		)
+		const unassigned = filter(
+			availableTickets,
+			t => {
+				const latestStaffInCharge = getStaffInCharge(t.staffInCharge)
+				return !latestStaffInCharge.assignee
+			}
+		)
 
-		//filter #2 by priority & department
-		let filtered_2 = filtered_1
-		let f = {}
-		if (filteredByPriority !== STATUS_FILTER.ANY) f.priority = filteredByPriority
-		if (filteredByDepartment !== STATUS_FILTER.ANY) f.department = filteredByDepartment
-		if (size(f) > 0) filtered_2 = filter(tickets, f)
-
-		//filter #3 by label & status
-		const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
-		const filteredStatus = filter(filtered_2, (i) => {
-			return selectedStatus.includes(i.status) &&
-				(i.labels.includes(filteredByLabel) || filteredByLabel === STATUS_FILTER.ANY)
+		setAvailableTicketsByInbox({
+			[TICKET_INBOXES.STARTED]: started,
+			[TICKET_INBOXES.MINE]: mine,
+			[TICKET_INBOXES.ASSIGNED]: assigned,
+			[TICKET_INBOXES.UNASSIGNED]: unassigned,
 		})
 
-		//sort the list - descensing by `createdAt`
+		//for AdminTicketFilters
+		dispatch(setTicketCounter({
+			[TICKET_INBOXES.STARTED]: started.length,
+			[TICKET_INBOXES.MINE]: mine.length,
+			[TICKET_INBOXES.ASSIGNED]: assigned.length,
+			[TICKET_INBOXES.UNASSIGNED]: unassigned.length,
+		}))
+	}, [dispatch, tickets, currentUser.username, hasAdminPermissions])
+
+	/* filter by other settings and groupBy */
+	useDeepCompareEffect(() => {
+		//filter
+		const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
+		const filteredStatus = filter(availableTicketsByInbox[filteredByInbox], (i) => {
+			const isPassed =
+				selectedStatus.includes(i.status)
+				&& (i.labels.includes(filteredByLabel) || filteredByLabel === STATUS_FILTER.ANY)
+				&& (i.priority === filteredByPriority || filteredByPriority === STATUS_FILTER.ANY)
+				&& (i.department === filteredByDepartment || filteredByDepartment === STATUS_FILTER.ANY)
+			return isPassed
+		})
+
+		//sort - descensing by `createdAt`
 		const filteredSorted = orderBy(filteredStatus, ["updatedAt"])
 
 		//group by department | status (default) | priority
-		console.log({ filteredGroupBy })
-
 		const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])
 
-		filteredTickets.current = Object.entries(filteredGroupedByStatus)
-	}
+		setRes(Object.entries(filteredGroupedByStatus))
+	}, [
+		availableTicketsByInbox,
+		filteredByInbox,
+		filteredByLabel,
+		filteredGroupBy,
+		filteredByPriority,
+		filteredByStatusRaw,
+		filteredByDepartment,
+		hasAdminPermissions,
+		currentUser.username,
+	])
 
-	return ({ data: filteredTickets.current, isLoading: false })
+	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
+
+	return ({ data: res, isLoading: false })
 }

@@ -26,7 +26,7 @@ export const initialState = {
 	//Step 1
 	subject: "",
 	//Step 2
-	selectedDepartment: null,
+	selectedDepartmentId: null,
 	selectedPriority: PRIORITY.NORMAL,
 	selectedCategory: null,
 	selectedSubCategory: null,
@@ -49,7 +49,7 @@ const newTicketSlice = createSlice({
 		},
 		//--step2
 		setSelectedDepartment: (state, { payload }) => {
-			state.selectedDepartment = payload
+			state.selectedDepartmentId = payload
 		},
 		setSelectedPriority: (state, { payload }) => {
 			state.selectedPriority = payload
@@ -65,7 +65,7 @@ const newTicketSlice = createSlice({
 			state.currentStep = 0
 			//---
 			state.subject = ""
-			state.selectedDepartment = null
+			state.selectedDepartmentId = null
 			state.selectedPriority = PRIORITY.NORMAL
 			state.selectedCategory = null
 			state.selectedSubCategory = null

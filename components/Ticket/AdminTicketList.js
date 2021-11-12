@@ -92,10 +92,10 @@ const AssignButton = ({ assignor }) => {
 	//Only use this button when in UNASSIGNED INBOX
 	//If assigned, then, admin must handle directly in a specific ticket
 	if (filteredByInbox !== TICKET_INBOXES.UNASSIGNED) return null
-	const selectedDepartment = selectedTickets[0].department
-	if (every(selectedTickets, { department: selectedDepartment }) === false) return null
+	const selectedDepartmentId = selectedTickets[0].department
+	if (every(selectedTickets, { department: selectedDepartmentId }) === false) return null
 
-	const availableStaffs = filter(staffList, (i) => i.departments[selectedDepartment] > PERMISSIONS_LEVELS.VIEWER) ?? []
+	const availableStaffs = filter(staffList, (i) => i.departments[selectedDepartmentId] > PERMISSIONS_LEVELS.VIEWER) ?? []
 
 	const handleAssignTicket = async (selectedUsername) => {
 		//this is new assignment,
@@ -480,15 +480,15 @@ const ClearSelectedTicketsButton = () => {
 
 function AdminTicketList() {
 	const dispatch = useDispatch()
-	const [showFilter, setShowFilter] = useState(false)
 	const { currentUser } = useSelector(getAuth)
+	const [showFilter, setShowFilter] = useState(false)
 	const { selectedTickets, filteredByInbox } = useSelector(getUiSettings)
 
 	const { data: tickets, isLoading } = useFilteredTicketsForAdmin()
 
 	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === filteredByInbox)
 
-	console.log("AdminTicketList rendering")
+	console.log("AdminTicketList rendering", tickets)
 
 	if (isLoading) {
 		return (

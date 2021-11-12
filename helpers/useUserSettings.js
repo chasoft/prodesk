@@ -64,8 +64,10 @@ export default function useUserSettings(username, settingName) {
 
 	const finalPermissions = { ...defaultPermissions, ...permissions }
 
-	if (settingName)
+	if (settingName) {
+		if (username === "superadmin") return true
 		return finalPermissions[settingName] ?? false
+	}
 
 	return finalPermissions
 }

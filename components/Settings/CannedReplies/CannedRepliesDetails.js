@@ -30,16 +30,16 @@ import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Selec
 
 //THIRD-PARTY
 import { find } from "lodash"
+import { useSnackbar } from "notistack"
+import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import TextEditor from "./../../common/TextEditor"
+import { setEditorData } from "../../../redux/slices/textEditor"
 import { getAuth, getTextEditor } from "./../../../redux/selectors"
 import { SettingsContentActionBar, SettingsContentDetails } from "./../../Settings/SettingsPanel"
-import TextEditor from "./../../common/TextEditor"
 import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateCannedReplyMutation } from "../../../redux/slices/firestoreApi"
-import { useDeepCompareEffect } from "react-use"
-import { setEditorData } from "../../../redux/slices/textEditor"
-import { useSnackbar } from "notistack"
 
 
 //PROJECT IMPORT

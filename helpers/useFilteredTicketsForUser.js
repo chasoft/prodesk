@@ -67,7 +67,13 @@ const useFilteredTicketsForUser = () => {
 
 		setRes(Object.entries(filteredGroupedByStatus))
 
-	}, [filteredByDepartment, filteredByPriority, filteredByStatusRaw, filteredGroupBy, tickets])
+	}, [
+		tickets,
+		filteredGroupBy,
+		filteredByDepartment,
+		filteredByPriority,
+		filteredByStatusRaw,
+	])
 
 	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
 

@@ -31,6 +31,7 @@ import { Box, Button, CircularProgress, Paper, Step, StepContent, StepLabel, Ste
 import { size } from "lodash"
 import { nanoid } from "nanoid"
 import slugify from "react-slugify"
+import { useDeepCompareEffect } from "react-use"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -58,13 +59,13 @@ export const useGetTicketDetails = () => {
 	const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery()
 
-	const { selectedDepartment, selectedCategory, selectedSubCategory, selectedPriority } = useSelector(getNewTicket)
+	const { selectedDepartmentId, selectedCategory, selectedSubCategory, selectedPriority } = useSelector(getNewTicket)
 	const defaultCategory = categories?.find(i => i.default === true)?.name ?? ""
 	const subCategories = categories?.find(i => i.name === (selectedCategory ?? defaultCategory))?.subCategories ?? []
 	const defaultSubCategory = subCategories?.find(i => i.default === true)?.name ?? ""
 
 	const res = {
-		selectedDepartment: (size(departments) > 0) ? selectedDepartment ?? departments[0].department : "",
+		selectedDepartmentId: (size(departments) > 0) ? selectedDepartmentId ?? departments[0].did : "",
 		//
 		selectedPriority: selectedPriority,
 		//
@@ -86,15 +87,23 @@ export const useGetNewTicketData = () => {
 	const res = useRef([])
 	const { editorData } = useSelector(getTextEditor)
 	const { subject, selectedPriority } = useSelector(getNewTicket)
-	const { selectedDepartment, selectedCategory, selectedSubCategory } = useGetTicketDetails()
+	const { selectedDepartmentId, selectedCategory, selectedSubCategory } = useGetTicketDetails()
+	const { data: departments } = useGetDepartmentsQuery()
 
 	useEffect(() => {
 		res.current[0] = `Your question: ${subject}`
 	}, [subject])
 
-	useEffect(() => {
-		res.current[1] = `Department: ${selectedDepartment} | Priority: ${selectedPriority} | Category: ${selectedCategory} ${selectedSubCategory}`
-	}, [selectedCategory, selectedDepartment, selectedPriority, selectedSubCategory])
+	useDeepCompareEffect(() => {
+		const department = departments?.find(i => i.did === selectedDepartmentId)?.department ?? "<Empty>"
+		res.current[1] = `Department: ${department} | Priority: ${selectedPriority} | Category: ${selectedCategory} ${selectedSubCategory}`
+	}, [
+		departments,
+		selectedCategory,
+		selectedPriority,
+		selectedSubCategory,
+		selectedDepartmentId,
+	])
 
 	useEffect(() => {
 		res.current[2] = `📝 ${getPlainTextFromMarkDown(editorData)}`
@@ -127,7 +136,7 @@ const StepperControlButtons = () => {
 				username: onBehalf ?? currentUser.username,	//owner of the ticket
 				createdBy: currentUser.username, // who create the ticket, sometimes, admin will create ticket on behalf of customer
 				subject: subject,
-				department: raw.selectedDepartment,
+				department: raw.selectedDepartmentId,
 				priority: raw.selectedPriority,
 				category: raw.selectedCategory,
 				subCatgory: raw.selectedSubCategory,

@@ -40,7 +40,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { setRedirect } from "../../redux/slices/redirect"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
-import { useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { useGetDepartmentsQuery, useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER, TICKET_STATUS } from "../../helpers/constants"
 import { setSelectedTickets, setSelectedStatusRaw, setFilteredByLabel, setFilteredByPriority, setFilteredByDepartment } from "../../redux/slices/uiSettings"
 
@@ -342,8 +342,14 @@ TicketPriority.propTypes = {
 	callback: PropTypes.func
 }
 
-export const TicketDepartment = ({ department }) => {
+export const TicketDepartment = ({ department: departmentId }) => {
 	const dispatch = useDispatch()
+	const { data: departments, isLoading } = useGetDepartmentsQuery()
+
+	if (isLoading || size(departments) === 0) return null
+
+	const department = departments.find(i => i.did === departmentId)?.department ?? "<Empty>"
+
 	return (
 		<Tooltip arrow title="Department" placement="top">
 			<Chip
@@ -353,7 +359,7 @@ export const TicketDepartment = ({ department }) => {
 				sx={{ mr: 1, mb: 0.5 }}
 				onClick={(e) => {
 					e.stopPropagation()
-					dispatch(setFilteredByDepartment(department))
+					dispatch(setFilteredByDepartment(departmentId))
 				}}
 			/>
 		</Tooltip>

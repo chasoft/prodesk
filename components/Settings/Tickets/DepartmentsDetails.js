@@ -66,7 +66,6 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	const [description, setDescription] = useState("")
 	const [availableForAll, setAvailableForAll] = useState(true)
 	const [isPublic, setIsPublic] = useState(true)
-	const [members, setMembers] = useState([])
 
 	//Re-render
 	useDeepCompareEffect(() => {
@@ -74,7 +73,6 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 		setDescription(selectedDepartment.description)
 		setAvailableForAll(selectedDepartment.availableForAll)
 		setIsPublic(selectedDepartment.isPublic)
-		setMembers(selectedDepartment.members)
 	}, [selectedDepartment])
 
 	const isModified = (selectedDepartment.department !== department
@@ -83,6 +81,37 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 		|| selectedDepartment.isPublic !== isPublic)
 
 	console.log("Department Details")
+
+	const handleDeleteCurrentDepartment = async () => {
+		//User must delete all related canned-reply before they can delete department
+		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
+		if (affectedCannedReplies.length > 0) {
+			enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
+			return
+		}
+		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+		await deleteDepartment(selectedDepartment)
+	}
+
+	const handleUpdateDepartment = async () => {
+		//Do not allow departments have the same name
+		const isDuplicatedName = some(departments, { department: department })
+		if (isDuplicatedName) {
+			enqueueSnackbar(`Department with name "${department}" existed."`, { variant: "error" })
+			return
+		}
+		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
+		const departmentItem = {
+			did: selectedDepartment.did,
+			department,
+			description,
+			availableForAll,
+			isPublic,
+		}
+		await updateDepartment({ departmentItem, affectedCannedReplies }).unwrap()
+		//
+		dispatch(setActiveSettingPanel(department))
+	}
 
 	return (
 		<>
@@ -94,16 +123,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 							<Tooltip title="Delete current department" placement="left">
 								<IconButton
 									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={async () => {
-										//User must delete all related canned-reply before they can delete department
-										const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-										if (affectedCannedReplies.length > 0) {
-											enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
-											return
-										}
-										dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-										await deleteDepartment(selectedDepartment)
-									}}
+									onClick={handleDeleteCurrentDepartment}
 								>
 									<DeleteIcon fontSize="small" />
 								</IconButton>
@@ -166,26 +186,14 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 					</SettingsContentDetails>
 
 					<SettingsContentActionBar>
-						<Button variant="contained" color="primary" disabled={!isModified} onClick={async () => {
-							//Do not allow departments have the same name
-							const isDuplicatedName = some(departments, { department: department })
-							if (isDuplicatedName) {
-								enqueueSnackbar(`Department with name "${department}" existed."`, { variant: "error" })
-								return
-							}
-							const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-							const departmentItem = {
-								did: selectedDepartment.did,
-								department,
-								description,
-								availableForAll,
-								isPublic,
-								members
-							}
-							await updateDepartment({ departmentItem, affectedCannedReplies }).unwrap()
-							//
-							dispatch(setActiveSettingPanel(department))
-						}}>Save</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							disabled={!isModified}
+							onClick={handleUpdateDepartment}
+						>
+							Save
+						</Button>
 					</SettingsContentActionBar>
 				</>}
 		</>

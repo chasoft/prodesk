@@ -214,7 +214,7 @@ function TicketSettingsCannedReply() {
 
 			<SettingsContainer>
 
-				<SettingsList showContent={showContent}>
+				<SettingsList showContent={showContent} sx={{ pb: 3 }}>
 
 					<ListItem
 						selected={activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW}

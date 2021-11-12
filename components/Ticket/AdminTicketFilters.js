@@ -78,8 +78,9 @@ export const TICKET_INBOXES_LIST = [
 ]
 
 const FilterTicketInbox = () => {
-	const { filteredByInbox } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
+	const { ticketCounter, filteredByInbox } = useSelector(getUiSettings)
+
 	const handleChangeInbox = (e, filteredByInbox) => {
 		if (filteredByInbox) {
 			dispatch(setFilteredByInbox(filteredByInbox))
@@ -101,7 +102,7 @@ const FilterTicketInbox = () => {
 						value={item.name}
 						sx={{ flexGrow: 1 }}
 					>
-						<Badge badgeContent={4} color={item.color}>
+						<Badge badgeContent={ticketCounter[item.name]} color={item.color}>
 							<Tooltip arrow title={item.title} placement="top">
 								{item.icon}
 							</Tooltip>
@@ -146,7 +147,7 @@ export const FilterTicketDepartments = () => {
 
 					{size(departments) &&
 						departments.map((department) => (
-							<MenuItem key={department.did} value={department.department}>
+							<MenuItem key={department.did} value={department.did}>
 								{department.department}
 							</MenuItem>
 						))}
@@ -402,15 +403,12 @@ function AdminTicketFilters({ sx }) {
 
 	const [refetchTicket] = useRefetchTicketMutation()
 
-
-
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
 		await refetchTicket()
 		//TODO: Remove this force refetch when finished implementing Notification system
 		dispatch(resetTicketFilters())
 	}
-
 
 	return (
 		<PerfectScrollbar component="div">

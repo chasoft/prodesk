@@ -55,7 +55,7 @@ import { useGetTicketDetails } from "./NewTicketStepper"
 const DepartmentBlock = () => {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery()
-	const { selectedDepartment } = useSelector(getNewTicket)
+	const { selectedDepartmentId } = useSelector(getNewTicket)
 
 	if (isLoading)
 		return (
@@ -69,7 +69,7 @@ const DepartmentBlock = () => {
 			</div>
 		)
 
-	console.log("selectedDepartment", selectedDepartment)
+	console.log("selectedDepartmentId", selectedDepartmentId ?? departments[0].did)
 
 	return (
 
@@ -79,14 +79,14 @@ const DepartmentBlock = () => {
 				labelId="department"
 				label="Department"
 				id="department"
-				value={selectedDepartment ?? departments[0].department}
+				value={selectedDepartmentId ?? departments[0].did}
 				onChange={(e) => {
 					dispatch(setSelectedDepartment(e.target.value))
 				}}
 			>
 
 				{departments.map((item) => (
-					<MenuItem key={item.department} value={item.department}>
+					<MenuItem key={item.did} value={item.did}>
 						{item.department}
 					</MenuItem>))}
 

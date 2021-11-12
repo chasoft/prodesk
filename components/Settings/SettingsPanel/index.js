@@ -102,7 +102,7 @@ export const SettingsContainer = ({ children }) => (
 	>{children}</Paper>
 ); SettingsContainer.propTypes = { children: PropTypes.node }
 
-export const SettingsList = ({ showContent, children }) => (
+export const SettingsList = ({ showContent, sx, children }) => (
 	<Box
 		sx={{
 			backgroundColor: "#FAFAFA",
@@ -127,12 +127,18 @@ export const SettingsList = ({ showContent, children }) => (
 			display: {
 				xs: showContent ? "none" : "initial",
 				sm: "initial",
-			}
+			},
+			...sx
 		}}
 	>
 		{children}
 	</Box>
-); SettingsList.propTypes = { showContent: PropTypes.bool, children: PropTypes.node }
+)
+SettingsList.propTypes = {
+	showContent: PropTypes.bool,
+	sx: PropTypes.object,
+	children: PropTypes.node
+}
 
 export const SettingsContent = ({ showContent = true, children }) => {
 	// const theme = useTheme()

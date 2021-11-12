@@ -55,3 +55,14 @@ export function getPlainTextFromMarkDown(md) {
 	}
 	return output
 }
+
+
+export const getStaffInCharge = (staffInCharge) => {
+	return (staffInCharge.length > 0)
+		? staffInCharge[staffInCharge.length - 1]
+		: {
+			assignee: undefined,
+			assignor: undefined,
+			assignedDate: undefined
+		}
+}

@@ -158,7 +158,7 @@ function TicketSettingsOthers() {
 
 			<SettingsContainer>
 
-				<SettingsList showContent={showContent}>
+				<SettingsList showContent={showContent} sx={{ pb: 3 }}>
 
 					<ListTitle>Other settings</ListTitle>
 
