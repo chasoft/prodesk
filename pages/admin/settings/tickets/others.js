@@ -43,6 +43,8 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import LabelIcon from "@mui/icons-material/Label"
 import DoneAllIcon from "@mui/icons-material/DoneAll"
 import PageLabels from "../../../../components/Settings/Tickets/Labels"
+import { STATUS_FILTER } from "../../../../helpers/constants"
+import { TicketStatus } from "../../../../components/Ticket/AdminTicketListItem"
 
 /*****************************************************************
  * INIT                                                          *
@@ -113,10 +115,10 @@ const PageStatuses = ({ backBtnClick }) => {
 
 				<SettingsContentHelperText>
 					<p>Prodesk only support 4 default ticket statuses:</p>
-					<p>1. <b>Open</b>: newly created ticket</p>
-					<p>2. <b>Pending</b>: ticket is waiting reply from supporter</p>
-					<p>3. <b>Replied</b>: ticket is replied, many be waiting for responding from customer</p>
-					<p>4. <b>Closed</b>: solved ticket</p>
+					<p>1. {<TicketStatus status={STATUS_FILTER.OPEN} />} newly created ticket</p>
+					<p>2. {<TicketStatus status={STATUS_FILTER.PENDING} />} ticket is waiting reply from supporter</p>
+					<p>3. {<TicketStatus status={STATUS_FILTER.REPLIED} />} ticket is replied, may be waiting for responding from customer</p>
+					<p>4. {<TicketStatus status={STATUS_FILTER.CLOSED} />} solved ticket</p>
 					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
 
 				</SettingsContentHelperText>

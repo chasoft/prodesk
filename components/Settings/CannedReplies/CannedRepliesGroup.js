@@ -23,10 +23,10 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
@@ -41,6 +41,7 @@ import { useDeleteCannedReplyMutation, useGetCannedRepliesQuery } from "../../..
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
+import ConfirmDialog from "../../common/ConfirmDialog"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -48,6 +49,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 
 const CannedRepliesGroup = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const { selectedCrid, activeSettingPanel } = useSelector(getUiSettings)
 	const { cannedReplies } = useGetCannedRepliesQuery(undefined, {
 		selectFromResult: ({ data }) => ({
@@ -56,6 +58,13 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 	})
 
 	const [deleteCannedReply] = useDeleteCannedReplyMutation()
+
+	const handleDeleteCannedReply = async (confirmed) => {
+		if (confirmed) {
+			dispatch(setSelectedCrid(""))
+			await deleteCannedReply({ crid: selectedCrid })
+		}
+	}
 
 	if (cannedReplies.length === 0) {
 		return (
@@ -84,19 +93,33 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 				}}
 
 				rightButton={selectedCrid
-					&& <Tooltip title="Delete current canned-reply" placement="left">
-						<IconButton
-							sx={{ ":hover": { color: "warning.main" } }}
-							onClick={async () => {
-								dispatch(setSelectedCrid(""))
-								await deleteCannedReply({ crid: selectedCrid })
-							}}
-						>
-							<DeleteIcon fontSize="small" />
-						</IconButton>
-					</Tooltip>}
+					&& <div>
+						<Tooltip arrow title="Delete current canned-reply" placement="left">
+							<IconButton
+								sx={{ ":hover": { color: "warning.main" } }}
+								onClick={() => setOpenConfirmDialog(true)}
+							>
+								<DeleteIcon fontSize="small" />
+							</IconButton>
+						</Tooltip>
+					</div>}
 			>
 				{activeSettingPanel}
+
+				<ConfirmDialog
+					okButtonText="Delete"
+					color="warning"
+					open={openConfirmDialog}
+					setOpen={setOpenConfirmDialog}
+					callback={handleDeleteCannedReply}
+				>
+					<Box sx={{ display: "flex" }}>
+						<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
+						<Typography sx={{ lineHeight: 2 }}>
+							Are you sure you want to delete this canned-reply? <br />Please note that this action can not be undo.
+						</Typography>
+					</Box>
+				</ConfirmDialog>
 			</SettingsContentHeader>
 
 			{(selectedCrid === "")

@@ -120,7 +120,7 @@ export const firestoreApi = createApi({
 			providesTags: [{ type: TYPE.PROFILES, id: "LIST" }],
 			transformResponse: (response) => {
 				const converted = Object.entries(response).map(i => i[1])
-				return fix_datetime_list(converted)
+				return orderBy(fix_datetime_list(converted), ["displayName"])
 			}
 		}),
 
@@ -323,27 +323,31 @@ export const firestoreApi = createApi({
 
 		getDepartments: builder.query({
 			query: () => ({ action: ACTION.GET_DEPARTMENTS }),
-			providesTags: (result) => {
-				return result
-					? [
-						...result.map(({ did }) => ({ type: TYPE.DEPARTMENTS, id: did })),
-						{ type: TYPE.DEPARTMENTS, id: "LIST" }
-					]
-					: [{ type: TYPE.DEPARTMENTS, id: "LIST" }]
-			},
+			providesTags: () => [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response),
+			transformResponse: (response) => {
+				const res = []
+				forEach(response, v => {
+					if (size(v) > 0) res.push(v)
+				})
+				return orderBy(res, ["department"])
+			},
 		}),
 
 		addDepartment: builder.mutation({
 			query: (body) => ({ action: ACTION.ADD_DEPARTMENT, body }), // body: {...}>}
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.DEPARTMENTS, id: body.did }]
-			},
+			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				console.log("Optimistic addDepartment")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_DEPARTMENTS, undefined,
-						(draft) => { draft.push(body) }
+						(draft) => {
+							draft.push({
+								...body,
+								createdAt: dayjs().valueOf(),
+								updatedAt: dayjs().valueOf()
+							})
+						}
 					)
 				)
 				try { await queryFulfilled }
@@ -353,15 +357,19 @@ export const firestoreApi = createApi({
 
 		updateDepartment: builder.mutation({
 			query: (body) => ({ action: ACTION.UPDATE_DEPARTMENT, body }), //body: {departmentItem, affectedCannedReplies}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.DEPARTMENTS, id: arg.departmentItem.did }]),
+			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }, { type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			async onQueryStarted({ departmentItem, affectedCannedReplies }, { dispatch, queryFulfilled }) {
+				console.log("Optimistic updateDepartment")
 				//Update cache of modified department
 				const patchDepartment = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_DEPARTMENTS, undefined,
 						(draft) => {
 							let obj = draft.find(e => e.did === departmentItem.did)
-							Object.assign(obj, departmentItem)
+							Object.assign(obj, {
+								...departmentItem,
+								updatedAt: dayjs().valueOf()
+							})
 						})
 				)
 				//Update cache of related canned-replies
@@ -385,8 +393,9 @@ export const firestoreApi = createApi({
 
 		deleteDepartment: builder.mutation({
 			query: (body) => ({ action: ACTION.DELETE_DEPARTMENT, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.DEPARTMENTS, id: arg.did }]),
+			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			async onQueryStarted({ did }, { dispatch, queryFulfilled }) {
+				console.log("Optimistic deleteDepartment")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_DEPARTMENTS, undefined,
@@ -487,7 +496,7 @@ export const firestoreApi = createApi({
 				forEach(response, v => {
 					if (size(v) > 0) res.push(v)
 				})
-				return orderBy(res, ["updatedAt"])
+				return orderBy(res, ["createdAt"])
 			},
 		}),
 
@@ -495,7 +504,7 @@ export const firestoreApi = createApi({
 			query: (body) => ({ action: ACTION.ADD_LABEL, body }),
 			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				console.log("Optimistic update - addLabel")
+				console.log("Optimistic addLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_LABELS, undefined,
 						(draft) => {
@@ -516,7 +525,7 @@ export const firestoreApi = createApi({
 			query: (body) => ({ action: ACTION.UPDATE_LABEL, body }), //body: {...}
 			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				console.log("Optimistic update - updateLabel")
+				console.log("Optimistic updateLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,
@@ -540,7 +549,7 @@ export const firestoreApi = createApi({
 			query: (body) => ({ action: ACTION.DELETE_LABEL, body }), //body: {...}
 			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				console.log("Optimistic update - deleteLabel")
+				console.log("Optimistic deleteLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,

@@ -234,7 +234,7 @@ function TicketSettingsCannedReply() {
 							display: "flex",
 							alignItems: "center",
 							justifyContent: "center",
-							minHheight: "200px"
+							minHeight: "100px"
 						}}>
 							<CircularProgress />
 						</Box>

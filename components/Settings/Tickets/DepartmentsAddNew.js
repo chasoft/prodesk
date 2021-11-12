@@ -26,18 +26,18 @@ import PropTypes from "prop-types"
 import { Button, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
-import { some } from "lodash"
+import { filter } from "lodash"
 import { nanoid } from "nanoid"
+import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
 import SettingsSwitch from "./../../common/SettingsSwitch"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
 import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/department"
 import { useAddDepartmentMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
-import { useSnackbar } from "notistack"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
 
@@ -49,33 +49,43 @@ import { useSnackbar } from "notistack"
 
 const DepartmentsAddNew = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
-	const [department, setDepartment] = useState("")
-	const [description, setDescription] = useState("")
-	const [availableForAll, setAvailableForAll] = useState(true)
-	const [isPublic, setIsPublic] = useState(true)
-	const [members, setMembers] = useState([])
-
+	const { enqueueSnackbar } = useSnackbar()
 	const [addDepartment] = useAddDepartmentMutation()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
-	const { enqueueSnackbar } = useSnackbar()
+	//Local memory
+	const [localCache, setLocalCache] = useState({
+		isPublic: true,
+		department: "",
+		description: "",
+		members: [],
+		availableForAll: false
+	})
+
+	const handleUpdateDetails = (value, key, toggle = false) => {
+		setLocalCache((prevState) => {
+			return {
+				...prevState,
+				[key]: toggle
+					? !prevState[key]
+					: value
+			}
+		})
+	}
 
 	const handleAddNewDepartment = async () => {
-		const departmentDuplicated = some(departments, { department })
-		if (departmentDuplicated) {
-			enqueueSnackbar("Department name existed", { variant: "error" })
+		//Do not allow departments have the same name
+		const existedDepartment = filter(departments, { department: localCache.department })
+		if (existedDepartment[0]?.department === localCache.department) {
+			enqueueSnackbar(`Department with name "${localCache.department}" existed."`, { variant: "error" })
 			return
 		}
 
-		const did = nanoid()
 		const departmentItem = {
-			did,
-			department,
-			description,
-			availableForAll,
-			isPublic,
-			members
+			did: nanoid(),
+			...localCache
 		}
+
 		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
 		await addDepartment(departmentItem)
 	}
@@ -96,8 +106,10 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						<TextField
 							label="Name of the department"
 							placeholder="eg. Sales, Accounting..."
-							value={department}
-							onChange={(e) => setDepartment(e.target.value)}
+							value={localCache.department}
+							onChange={(e) =>
+								handleUpdateDetails(e.target.value, "department")
+							}
 							fullWidth
 						/>
 					</Grid>
@@ -105,35 +117,41 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						<TextField
 							label="Description (optional)"
 							placeholder="eg. For general questions"
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
+							value={localCache.description}
+							onChange={(e) => {
+								handleUpdateDetails(e.target.value, "description")
+							}}
 							fullWidth
 						/>
 					</Grid>
 					<Grid item xs={12}>
 						<SettingsSwitch
-							title="All members"
-							state={availableForAll}
-							setState={() => setAvailableForAll(p => !p)}
-							stateDescription={["Only selected members", "All members"]}
-							description="Allow access to the department to all members, or exclusively to a specified group of members."
+							title="Public"
+							state={localCache.isPublic}
+							setState={() => {
+								handleUpdateDetails(undefined, "isPublic", true)
+							}}
+							stateDescription={["For internal use only", "Available for all users"]}
+							description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
 						/>
 					</Grid>
-
 					<Grid item xs={12}>
 						<SettingsSwitch
-							title="Public"
-							state={isPublic}
-							setState={() => setIsPublic(p => !p)}
-							stateDescription={["For internal use only", "Available for all users"]}
-							description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+							title="All staffs/agents"
+							state={localCache.availableForAll}
+							setState={() => {
+								handleUpdateDetails(undefined, "availableForAll", true)
+							}}
+							stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
+							description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
 						/>
 					</Grid>
-
 					<Grid item xs={12}>
 						<MembersList
-							dataSource={members}
-							addMemberCallback={(newList) => { setMembers(newList) }}
+							members={localCache.members}
+							addMemberCallback={
+								(members) => handleUpdateDetails(members, "members")
+							}
 						/>
 					</Grid>
 				</Grid>

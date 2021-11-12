@@ -63,7 +63,14 @@ const CannedRepliesList = ({ cannedReplies }) => {
 					</ListItemIcon>
 					<ListItemText
 						primary={item.description}
-						secondary="Something to descripte here"
+						secondary={item.content.substring(0, 70)}
+						primaryTypographyProps={{
+							variant: "h4",
+							marginBottom: "0"
+						}}
+						secondaryTypographyProps={{
+							variant: "body1"
+						}}
 					/>
 				</ListItemButton>
 

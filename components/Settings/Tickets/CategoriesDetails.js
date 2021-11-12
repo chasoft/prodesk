@@ -30,7 +30,7 @@ import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, Circular
 
 //THIRD-PARTY
 import { useSnackbar } from "notistack"
-import { find, filter, some, isEqual } from "lodash"
+import { find, some, isEqual } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -45,6 +45,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import { CATEGORY_PAGES } from "../../../pages/admin/settings/tickets/category"
 import { SubCatItem } from "./CategoriesAddNew"
 import useTicketCategories from "../../../helpers/useTicketCategories"
+import ConfirmDialog from "../../common/ConfirmDialog"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -56,6 +57,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 	const { enqueueSnackbar } = useSnackbar()
 	const [deleteCategory] = useDeleteCategoryMutation()
 	const [updateCategory] = useUpdateCategoryMutation()
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	//Original
 	const { data: categories, isLoading } = useTicketCategories()
@@ -85,6 +87,13 @@ const CategoriesDetails = ({ backBtnClick }) => {
 		}
 	}
 
+	const handleDeleteCategory = async (confirmed) => {
+		if (confirmed) {
+			dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+			await deleteCategory(selectedCategory)
+		}
+	}
+
 	console.log("Category Details")
 
 	return (
@@ -97,17 +106,33 @@ const CategoriesDetails = ({ backBtnClick }) => {
 							<Tooltip title="Delete current category" placement="left">
 								<IconButton
 									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={async () => {
-										dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-										await deleteCategory(selectedCategory)
-									}}
+									onClick={() => setOpenConfirmDialog(true)}
 								>
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
 						}
 					>
-						Edit category
+						<Typography variant="button">
+							Edit category
+						</Typography>
+
+						<ConfirmDialog
+							okButtonText="Delete"
+							color="warning"
+							open={openConfirmDialog}
+							setOpen={setOpenConfirmDialog}
+							callback={handleDeleteCategory}
+						>
+							<Box sx={{
+								display: "flex"
+							}}>
+								<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
+								<Typography sx={{ lineHeight: 2 }}>
+									Are you sure you want to delete this category and all its sub-categories?<br />Please note that this action can not be undo.
+								</Typography>
+							</Box>
+						</ConfirmDialog>
 					</SettingsContentHeader>
 
 					<SettingsContentDetails>

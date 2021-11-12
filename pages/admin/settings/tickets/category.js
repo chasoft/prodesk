@@ -121,7 +121,7 @@ function TicketSettingsCategory() {
 							display: "flex",
 							alignItems: "center",
 							justifyContent: "center",
-							minHeight: "200px"
+							minHeight: "100px"
 						}}>
 							<CircularProgress />
 						</Box>

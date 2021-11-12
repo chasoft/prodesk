@@ -110,7 +110,14 @@ function TicketSettingsDepartment() {
 					<ListTitle>{(departments?.length > 0) ? "Available departments" : "No available department"}</ListTitle>
 
 					{isLoading
-						? <div>Loading</div>
+						? <Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: "100px"
+						}}>
+							<CircularProgress />
+						</Box>
 						: departments.map((item) => (
 							<ListItem
 								key={item.did}

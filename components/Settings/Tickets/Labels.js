@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, Collapse, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Collapse, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import { nanoid } from "nanoid"
@@ -52,6 +52,17 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 	const [addLabel] = useAddLabelMutation()
 	const { isSmallScreen } = useSelector(getUiSettings)
 	const { data: labels, isLoading } = useGetLabelsQuery()
+
+	const handleAddNewLabel = async () => {
+		const lid = nanoid()
+		const incNum = uniqueId()
+		addLabel({
+			lid,
+			name: "Label " + incNum,
+			color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]]
+		})
+	}
+
 	return (
 		<Dialog
 			open={open}
@@ -76,15 +87,7 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 						startIcon={<AddIcon />}
 						size="small"
 						variant="contained"
-						onClick={async () => {
-							const lid = nanoid()
-							const incNum = uniqueId()
-							addLabel({
-								lid,
-								name: "Label " + incNum,
-								color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]]
-							})
-						}}
+						onClick={handleAddNewLabel}
 					>
 						Add new
 					</Button>
@@ -183,7 +186,24 @@ export const SubCatItem = ({ currentItem }) => {
 						alignItems: "center",
 						justifyContent: "space-between",
 					}}>
-						<Typography>Select color for label <b>&quot;{name}&quot;</b></Typography>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center"
+						}}>
+							Select color for label
+							<span style={{
+								fontWeight: "bold",
+								color,
+								display: "flex",
+								alignItems: "center",
+								marginLeft: "8px"
+							}}>
+								<LabelIcon
+									sx={{ color: color, mr: 0.5, cursor: "pointer" }}
+								/>
+								{name}
+							</span>
+						</Box>
 						<IconButton onClick={() => { setShowColorTable(false) }}>
 							<CloseIcon />
 						</IconButton>
@@ -195,7 +215,7 @@ export const SubCatItem = ({ currentItem }) => {
 
 				</Collapse>
 
-			</Box>
+			</Box >
 
 			{!showColorTable &&
 				<Box id="buttons" sx={{

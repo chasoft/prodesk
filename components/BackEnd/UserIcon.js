@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { getAuth } from "./../../redux/selectors"
 import { REDIRECT_URL } from "./../../helpers/constants"
 import { signOut } from "./../../helpers/firebase/logout"
-import { setRedirect } from "./../../redux/slices/redirect"
 import { AuthAdminTrue, AuthUserTrue } from "./../AuthCheck"
 import usePopupContainer from "./../../components/common/usePopupContainer"
 

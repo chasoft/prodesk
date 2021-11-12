@@ -75,9 +75,14 @@ const CategoriesOverview = ({ backBtnClick }) => {
 
 			{isLoading ?
 				<SettingsContentDetails>
-					<Typography>
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
 						<CircularProgress />
-					</Typography>
+					</Box>
 				</SettingsContentDetails>
 				: categories.map((category) => (
 					<Box
@@ -110,7 +115,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 									alignItems: "center"
 								}}
 							>
-								<Typography variant="h3" style={{ margin: 0 }}>
+								<Typography variant="h4">
 									{category.name}
 								</Typography>
 							</Box>

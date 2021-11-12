@@ -70,7 +70,14 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <div><CircularProgress /></div>
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
+						<CircularProgress />
+					</Box>
 					: <FormControl variant="standard" fullWidth>
 						<InputLabel id="demo-simple-select-label">Department</InputLabel>
 						<Select

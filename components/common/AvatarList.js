@@ -22,11 +22,13 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, AvatarGroup } from "@mui/material"
+import { Avatar, AvatarGroup, CircularProgress } from "@mui/material"
+import { useDeepCompareEffect } from "react-use"
+import useProfiles from "../../helpers/useProfiles"
 
 //THIRD-PARTY
 
@@ -38,23 +40,33 @@ import { Avatar, AvatarGroup } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function AvatarList({ dataSource }) {
+/* members is just array of usernames */
+function AvatarList({ members }) {
+	const [membersProfile, setMembersProfile] = useState([])
+	const { staffList = [], isLoadingStaffList } = useProfiles()
 
-	if (dataSource.length === 1)
-		return (<Avatar alt={dataSource[0].displayName} src={dataSource[0].photoURL} />)
+	useDeepCompareEffect(() => {
+		const verifiedList = members.map(u => staffList.find(i => i.username === u) ?? undefined).filter(i => i !== undefined)
+		setMembersProfile(verifiedList)
+	}, [staffList, members])
 
-	if (dataSource.length > 1) {
+	if (isLoadingStaffList)
 		return (
-			<AvatarGroup max={3}>
-				{dataSource.map((item) => {
-					return <Avatar key={item.username} alt={item.displayName} src={item.photoURL} />
-				})}
-			</AvatarGroup>
+			<CircularProgress />
 		)
-	}
 
-	return null
+	return (
+		<AvatarGroup max={3}>
+			{membersProfile.map((item) =>
+				<Avatar
+					key={item.username}
+					alt={item.displayName}
+					src={item.photoURL}
+				/>
+			)}
+		</AvatarGroup>
+	)
 }
-AvatarList.propTypes = { dataSource: PropTypes.array }
+AvatarList.propTypes = { members: PropTypes.array }
 
 export default AvatarList

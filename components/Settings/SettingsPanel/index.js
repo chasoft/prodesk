@@ -186,13 +186,16 @@ export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () =
 	if (isSmallScreen && hasBackBtn) {
 		return (
 			<ContentHeader>
-				<Box sx={{ display: "flex", alignItems: "center" }}>
-					<Tooltip title="Go back" placement="top">
-						<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
-							<NavigateBeforeIcon />
-						</IconButton>
-					</Tooltip>
-					<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+					<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+						<Tooltip title="Go back" placement="top">
+							<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
+								<NavigateBeforeIcon />
+							</IconButton>
+						</Tooltip>
+						<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
+					</Box>
+					{rightButton}
 				</Box>
 			</ContentHeader>
 		)

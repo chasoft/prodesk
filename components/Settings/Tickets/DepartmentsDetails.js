@@ -26,11 +26,11 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Button, CircularProgress, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSnackbar } from "notistack"
-import { find, filter, some } from "lodash"
+import { filter, isEqual } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -45,6 +45,7 @@ import { useDeleteDepartmentMutation, useGetCannedRepliesQuery, useGetDepartment
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
 import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
+import ConfirmDialog from "../../common/ConfirmDialog"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -52,85 +53,118 @@ import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/departme
 
 const DepartmentsDetails = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
-	const [deleteDepartment] = useDeleteDepartmentMutation()
 	const { enqueueSnackbar } = useSnackbar()
+	const [deleteDepartment] = useDeleteDepartmentMutation()
 	const [updateDepartment] = useUpdateDepartmentMutation()
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const { data: cannedReplies, isLoading: isLoadingCannedReplies } = useGetCannedRepliesQuery(undefined)
-	//Original
+	//
 	const { activeSettingPanel } = useSelector(getUiSettings)
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
-	const selectedDepartment = find(departments, { department: activeSettingPanel })
-
+	const [selectedDepartment, setSelectedDepartment] = useState()
+	const { data: departments, isLoading: isLoadingDepartment } = useGetDepartmentsQuery(undefined)
 	//Local memory
-	const [department, setDepartment] = useState("")
-	const [description, setDescription] = useState("")
-	const [availableForAll, setAvailableForAll] = useState(true)
-	const [isPublic, setIsPublic] = useState(true)
+	const [localCache, setLocalCache] = useState({
+		isPublic: true,
+		department: "",
+		description: "",
+		members: [],
+		availableForAll: true
+	})
 
 	//Re-render
 	useDeepCompareEffect(() => {
-		setDepartment(selectedDepartment.department)
-		setDescription(selectedDepartment.description)
-		setAvailableForAll(selectedDepartment.availableForAll)
-		setIsPublic(selectedDepartment.isPublic)
-	}, [selectedDepartment])
-
-	const isModified = (selectedDepartment.department !== department
-		|| selectedDepartment.description !== description
-		|| selectedDepartment.availableForAll !== availableForAll
-		|| selectedDepartment.isPublic !== isPublic)
-
-	console.log("Department Details")
-
-	const handleDeleteCurrentDepartment = async () => {
-		//User must delete all related canned-reply before they can delete department
-		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-		if (affectedCannedReplies.length > 0) {
-			enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
-			return
+		if (isLoadingDepartment === false && departments !== undefined) {
+			const _ = departments.find(d => d?.department === activeSettingPanel)
+			setSelectedDepartment(_)
+			setLocalCache(_)
 		}
-		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-		await deleteDepartment(selectedDepartment)
+	}, [departments, activeSettingPanel, isLoadingDepartment])
+
+	console.log("Department Details", { selectedDepartment }, { localCache })
+
+	const handleUpdateDetails = (value, key, toggle = false) => {
+		setLocalCache((prevState) => {
+			return {
+				...prevState,
+				[key]: toggle
+					? !prevState[key]
+					: value
+			}
+		})
+	}
+
+	const handleDeleteDepartment = async (confirmed) => {
+		if (confirmed) {
+			//User must delete all related canned-reply before they can delete department
+			const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
+			if (affectedCannedReplies.length > 0) {
+				enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
+				return
+			}
+			dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+			await deleteDepartment(selectedDepartment)
+		}
 	}
 
 	const handleUpdateDepartment = async () => {
 		//Do not allow departments have the same name
-		const isDuplicatedName = some(departments, { department: department })
-		if (isDuplicatedName) {
-			enqueueSnackbar(`Department with name "${department}" existed."`, { variant: "error" })
+		const existedDepartment = filter(departments, { department: localCache.department })
+
+		console.log({ existedDepartment })
+
+		if (existedDepartment[0].did !== selectedDepartment.did && existedDepartment[0].department === localCache.department) {
+			enqueueSnackbar(`Department with name "${localCache.department}" existed."`, { variant: "error" })
 			return
 		}
 		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-		const departmentItem = {
-			did: selectedDepartment.did,
-			department,
-			description,
-			availableForAll,
-			isPublic,
-		}
-		await updateDepartment({ departmentItem, affectedCannedReplies }).unwrap()
+		await updateDepartment({ departmentItem: localCache, affectedCannedReplies }).unwrap()
 		//
-		dispatch(setActiveSettingPanel(department))
+		dispatch(setActiveSettingPanel(localCache.department))
 	}
 
 	return (
 		<>
-			{(isLoading && isLoadingCannedReplies) ? <div><CircularProgress /></div> :
-				<>
+			{(isLoadingDepartment || isLoadingCannedReplies)
+				? <Box sx={{
+					display: "flex",
+					height: "300px",
+					alignItems: "center",
+					justifyContent: "center",
+				}}>
+					<CircularProgress />
+				</Box>
+				: <>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
 						rightButton={
 							<Tooltip title="Delete current department" placement="left">
 								<IconButton
 									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={handleDeleteCurrentDepartment}
+									onClick={() => setOpenConfirmDialog(true)}
 								>
 									<DeleteIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
 						}
 					>
-						<Typography variant="button">{department}</Typography>
+						<Typography variant="button">{localCache.department}</Typography>
+
+						<ConfirmDialog
+							okButtonText="Delete"
+							color="warning"
+							open={openConfirmDialog}
+							setOpen={setOpenConfirmDialog}
+							callback={handleDeleteDepartment}
+						>
+							<Box sx={{
+								display: "flex"
+							}}>
+								<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
+								<Typography sx={{ lineHeight: 2 }}>
+									Are you sure you want to delete this department?<br />Try to rename instead of deleting if it&apos;s possible. <br />Please note that this action can not be undo.
+								</Typography>
+							</Box>
+						</ConfirmDialog>
 					</SettingsContentHeader>
 
 					<SettingsContentDetails>
@@ -138,8 +172,10 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 							<Grid item xs={12}>
 								<TextField
-									value={department}
-									onChange={(e) => { setDepartment(e.target.value) }}
+									value={localCache.department}
+									onChange={(e) => {
+										handleUpdateDetails(e.target.value, "department")
+									}}
 									label="Name of the department"
 									placeholder="eg. Sales, Accounting..."
 									fullWidth
@@ -148,37 +184,42 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 							<Grid item xs={12}>
 								<TextField
-									value={description}
-									onChange={(e) => { setDescription(e.target.value) }}
+									value={localCache.description}
+									onChange={(e) => {
+										handleUpdateDetails(e.target.value, "description")
+									}}
 									label="Department description (Optional)"
 									fullWidth
 								/>
 							</Grid>
-
-							<Grid item xs={12}>
-								<SettingsSwitch
-									title="All members"
-									state={availableForAll}
-									setState={() => { setAvailableForAll(p => !p) }}
-									stateDescription={["Only selected members", "All members"]}
-									description="Allow access to the department to all members, or exclusively to a specified group of members."
-								/>
-							</Grid>
-
 							<Grid item xs={12}>
 								<SettingsSwitch
 									title="Public"
-									state={isPublic}
-									setState={() => { setIsPublic(p => !p) }}
+									state={localCache.isPublic}
+									setState={() => {
+										handleUpdateDetails(undefined, "isPublic", true)
+									}}
 									stateDescription={["For internal use only", "Available for all users"]}
-									description="If the department is public, it allows users to select this department when creating the ticket, otherwise only members can reassign to this department."
+									description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
 								/>
 							</Grid>
-
+							<Grid item xs={12}>
+								<SettingsSwitch
+									title="All staffs/agents"
+									state={localCache.availableForAll}
+									setState={() => {
+										handleUpdateDetails(undefined, "availableForAll", true)
+									}}
+									stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
+									description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
+								/>
+							</Grid>
 							<Grid item xs={12}>
 								<MembersList
-									dataSource={members}
-									addMemberCallback={() => { }}
+									members={localCache.members}
+									addMemberCallback={
+										(members) => handleUpdateDetails(members, "members")
+									}
 								/>
 								<div style={{ height: "2rem" }}></div>
 							</Grid>
@@ -189,7 +230,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 						<Button
 							variant="contained"
 							color="primary"
-							disabled={!isModified}
+							disabled={isEqual(selectedDepartment, localCache)}
 							onClick={handleUpdateDepartment}
 						>
 							Save

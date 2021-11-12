@@ -774,28 +774,36 @@ async function fireStoreBaseQuery(args) {
 		 *****************************************************************/
 		case ACTION.GET_DEPARTMENTS:
 			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.SETTINGS, "settings", "departments"))
-				querySnapshot.forEach((department) => { all.push(department.data()) })
-				return { data: all }
+				let departments = []
+				const docSnap = await getDoc(
+					doc(
+						db,
+						COLLECTION.SETTINGS, "departments"
+					)
+				)
+				if (docSnap.exists()) departments = docSnap.data()
+				return { data: departments }
 			} catch (e) {
 				return throwError(200, ACTION.GET_DEPARTMENTS, e, null)
 			}
 		case ACTION.ADD_DEPARTMENT:
 			try {
 				await setDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.did),
+					doc(db, COLLECTION.SETTINGS, "departments"),
 					{
-						...args.body,
-						createdAt: serverTimestamp(),
-						updatedAt: serverTimestamp()
-					}
+						[args.body.did]: {
+							...args.body,
+							createdAt: dayjs().valueOf(),
+							updatedAt: dayjs().valueOf()
+						}
+					},
+					{ merge: true }
 				)
 				return {
 					data: {
 						action: ACTION.ADD_DEPARTMENT,
 						id: args.body.did,
-						message: "department added successfully"
+						message: "Department added successfully"
 					}
 				}
 			} catch (e) {
@@ -806,15 +814,15 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.UPDATE_DEPARTMENT:
 			try {
 				const batch = writeBatch(db)
-
 				batch.update(
-					doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.departmentItem.did),
+					doc(db, COLLECTION.SETTINGS, "departments"),
 					{
-						...args.body.departmentItem,
-						updatedAt: serverTimestamp()
+						[args.body.departmentItem.did]: {
+							...args.body.departmentItem,
+							updatedAt: dayjs().valueOf()
+						}
 					}
 				)
-
 				args.body.affectedCannedReplies.forEach((affectedItem) => {
 					batch.update(
 						doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", affectedItem.crid),
@@ -839,7 +847,14 @@ async function fireStoreBaseQuery(args) {
 		//Note: do not allow to delete department if there are related canned-replies existed
 		case ACTION.DELETE_DEPARTMENT:
 			try {
-				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "departments", args.body.did))
+				await updateDoc(
+					doc(db, COLLECTION.SETTINGS, "departments"),
+					{
+						//just clear the content of selected departmentId
+						//cleanup will be assigned for CleanUp module
+						[args.body.did]: {}
+					}
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_DEPARTMENT,
@@ -930,7 +945,12 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_LABELS:
 			try {
 				let labels = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.SETTINGS, "labels"))
+				const docSnap = await getDoc(
+					doc(
+						db,
+						COLLECTION.SETTINGS, "labels"
+					)
+				)
 				if (docSnap.exists()) labels = docSnap.data()
 				return { data: labels }
 			} catch (e) {

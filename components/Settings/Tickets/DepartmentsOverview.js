@@ -24,15 +24,15 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, CircularProgress, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Chip, CircularProgress, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import AvatarList from "./../../common/AvatarList"
-import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
 import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
+import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
 import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
 
 //ASSETS
@@ -43,12 +43,27 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
  * INIT                                                          *
  *****************************************************************/
 
+export const DepartmentMembersCount = ({ count }) => {
+	return (
+		<Chip
+			size="small"
+			avatar={<Avatar sx={{ bgcolor: "primary.light" }}>{count}</Avatar>}
+			label={count > 1 ? "members" : "member"}
+			variant="outlined"
+			sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
+			onClick={(e) => e.stopPropagation()}
+		/>
+	)
+}
+DepartmentMembersCount.propTypes = {
+	count: PropTypes.number
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const DepartmentsOverview = ({ backBtnClick }) => {
-
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
 
@@ -67,7 +82,14 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			{isLoading ?
 				<SettingsContentDetails>
-					<CircularProgress />
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
+						<CircularProgress />
+					</Box>
 				</SettingsContentDetails>
 				: departments.map((item) => (
 					<Box
@@ -96,27 +118,28 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 								{item.availableForAll
 									?
-									<Tooltip title="All members" placement="top">
+									<Tooltip arrow title="All members" placement="top">
 										<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
 									</Tooltip>
 									:
-									<Tooltip title="Only selected members" placement="top">
+									<Tooltip arrow title="Only selected members" placement="top">
 										<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
 									</Tooltip>}
 
 								{item.isPublic
 									?
-									<Tooltip title="Available for all users" placement="top">
+									<Tooltip arrow title="Available for all users" placement="top">
 										<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
 									</Tooltip>
 									:
-									<Tooltip title="For internal use only" placement="top">
+									<Tooltip arrow title="For internal use only" placement="top">
 										<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
 									</Tooltip>}
 
 							</Box>
 							<Box sx={{
 								display: "flex",
+								alignItems: "center",
 								flexDirection: { xs: "column", md: "row" }
 							}}>
 								<Typography variant="caption" sx={{ margin: 0 }}>
@@ -124,14 +147,12 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 									{item.description ? <>&nbsp; | &nbsp; </> : null}
 								</Typography>
 
-								<Typography variant="caption" style={{ margin: 0 }}>
-									{item.members.length} members
-								</Typography>
+								<DepartmentMembersCount count={item.members.length} />
 							</Box>
 						</Box>
 
 						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<AvatarList dataSource={item.members} />
+							<AvatarList members={item.members} />
 						</Box>
 
 					</Box>

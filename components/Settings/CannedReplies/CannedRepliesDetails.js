@@ -78,6 +78,18 @@ const CannedRepliesDetails = ({ crid }) => {
 		setDescription(selectedCannedReply.description)
 	}, [selectedCannedReply])
 
+	const handleUpdateCannedReply = async () => {
+		const updatedContent = {
+			crid: selectedCannedReply.crid,
+			department: department,
+			description: description,
+			content: editorData,
+			updatedBy: currentUser.username
+		}
+		const res = await updateCannedReply(updatedContent)
+		enqueueSnackbar(res?.data.message ?? res.error.data.message, res?.data.message ? "success" : "error")
+	}
+
 	return (
 		<>
 			<SettingsContentDetails sx={{
@@ -86,7 +98,14 @@ const CannedRepliesDetails = ({ crid }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <div><CircularProgress /></div>
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "100px"
+					}}>
+						<CircularProgress />
+					</Box>
 					: <FormControl variant="standard" fullWidth>
 						<InputLabel id="demo-simple-select-label">Department</InputLabel>
 						<Select
@@ -104,7 +123,14 @@ const CannedRepliesDetails = ({ crid }) => {
 					</FormControl>}
 
 				{isLoadingCannedReplies
-					? <div><CircularProgress /></div>
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
+						<CircularProgress />
+					</Box>
 					: <>
 						<Box sx={{ py: 2 }}>
 							<TextField
@@ -131,19 +157,7 @@ const CannedRepliesDetails = ({ crid }) => {
 				<Button
 					variant="contained" color="primary"
 					disabled={!isModified}
-					onClick={async () => {
-						const updatedContent = {
-							crid: selectedCannedReply.crid,
-							department: department,
-							description: description,
-							content: editorData,
-							updatedBy: currentUser.username
-						}
-						// console.log("updatedContent", updatedContent)
-						const res = await updateCannedReply(updatedContent)
-						// console.log(res.data.message)
-						enqueueSnackbar(res?.data.message ?? res.error.data.message, res?.data.message ? "success" : "error")
-					}}
+					onClick={handleUpdateCannedReply}
 				>
 					Save changes
 				</Button>

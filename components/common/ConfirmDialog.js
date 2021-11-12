@@ -30,6 +30,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
 
 //THIRD-PARTY
 import { isMobile } from "react-device-detect"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "../../redux/selectors"
 
 //PROJECT IMPORT
 
@@ -42,15 +44,17 @@ import { isMobile } from "react-device-detect"
  *****************************************************************/
 
 function ConfirmDialog({
-	title,
-	okButtonText,
-	color,
+	title = "Confirmation",
+	okButtonText = "OK",
+	color = "primary",
 	open,
 	setOpen,
 	callback,
-	maxWidth,
+	maxWidth = "sm",
 	children
 }) {
+
+	const { isSmallScreen } = useSelector(getUiSettings)
 
 	const handleCancel = () => {
 		setOpen(false)
@@ -64,13 +68,13 @@ function ConfirmDialog({
 
 	return (
 		<Dialog
-			maxWidth={maxWidth ?? "xs"}
 			open={open}
-			fullScreen={isMobile}
+			maxWidth={maxWidth}
+			fullScreen={isMobile || isSmallScreen}
 		>
 
 			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>
-				{title ?? "Confirmation"}
+				{title}
 			</DialogTitle>
 
 			<DialogContent>
@@ -84,10 +88,10 @@ function ConfirmDialog({
 				<Button
 					onClick={handleOk}
 					variant="contained"
-					color={color ?? "primary"}
+					color={color}
 					sx={{ px: 2 }}
 				>
-					{okButtonText ?? "OK"}
+					{okButtonText}
 				</Button>
 			</DialogActions>
 
