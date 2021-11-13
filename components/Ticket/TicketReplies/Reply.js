@@ -32,7 +32,7 @@ import { Avatar, Box, Button, IconButton, Tooltip, Typography } from "@mui/mater
 //THIRD-PARTY]
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { random } from "lodash"
+import { random, trim } from "lodash"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
@@ -234,7 +234,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 								size="small" variant="contained"
 								onClick={handleUpdateReply}
 								sx={{ ml: 2, px: 4, minWidth: "100px" }}
-								disabled={editorData.trim() === "" || replyItemContent.trim() === editorData.trim()}
+								disabled={trim(editorData) === "" || trim(replyItemContent) === trim(editorData)}
 							>
 								Update
 							</Button>

@@ -568,29 +568,36 @@ export const firestoreApi = createApi({
 		 * CATEGORIES                                                    *
 		 *****************************************************************/
 
+		//return an array of objects
 		getCategories: builder.query({
 			query: () => ({ action: ACTION.GET_CATEGORIES }),
-			providesTags: (result) => {
-				return result
-					?
-					[
-						...result.map(({ catId }) => ({ type: TYPE.CATEGORIES, id: catId })),
-						{ type: TYPE.CATEGORIES, id: "LIST" }
-					] : [{ type: TYPE.CATEGORIES, id: "LIST" }]
-			},
+			providesTags: () => [{ type: TYPE.CATEGORIES, id: "LIST" }],
 			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response)
+			transformResponse: (response) => {
+				const res = []
+				forEach(response, v => {
+					if (size(v) > 0) res.push(v)
+				})
+				return orderBy(res, ["createdAt"])
+			}
 		}),
 
 		addCategory: builder.mutation({
+			//body = {isDefault, categoryItem, fullList}
 			query: (body) => ({ action: ACTION.ADD_CATEGORY, body }),
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.CATEGORIES, id: body.catId }]
-			},
+			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				console.log("Optimistic addCategory")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_CATEGORIES, undefined,
-						(draft) => { draft.push(body) }
+						(draft) => {
+							if (body.isDefault) {
+								draft.forEach((e) => {
+									Object.assign(e, { default: false })
+								})
+							}
+							draft.push(body.categoryItem)
+						}
 					)
 				)
 				try { await queryFulfilled }
@@ -599,26 +606,25 @@ export const firestoreApi = createApi({
 		}),
 
 		updateCategory: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_CATEGORY, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CATEGORIES, id: arg.categoryItem.catId }]),
-			async onQueryStarted({ categoryItem, affectedItems }, { dispatch, queryFulfilled }) {
+			//body = {isDefault, categoryItem, fullList}
+			query: (body) => ({ action: ACTION.UPDATE_CATEGORY, body }),
+			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_CATEGORIES, undefined,
 						(draft) => {
-							if (affectedItems.length === 0) {
-								let obj = draft.find(e => e.catId === categoryItem.catId)
-								Object.assign(obj, categoryItem)
-							}
-							else {
-								affectedItems.forEach((affectedItem) => {
-									let obj = draft.find(e => e.catId === affectedItem.catId)
-									Object.assign(obj, affectedItem)
+							//update default
+							if (body.isDefault) {
+								draft.forEach((e) => {
+									Object.assign(e, { default: false })
 								})
 							}
+							//update modified category
+							const updatedItem = draft.find(c => c.catId === body.categoryItem.catId)
+							Object.assign(updatedItem, body.categoryItem)
 						})
 				)
-
 				try { await queryFulfilled }
 				catch {
 					console.log("error when updating cache of category and undo")
@@ -628,13 +634,14 @@ export const firestoreApi = createApi({
 		}),
 
 		deleteCategory: builder.mutation({
-			query: (body) => ({ action: ACTION.DELETE_CATEGORY, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CATEGORIES, id: arg.catId }]),
-			async onQueryStarted({ catId }, { dispatch, queryFulfilled }) {
+			//body = {categoryItem, fullList}
+			query: (body) => ({ action: ACTION.DELETE_CATEGORY, body }),
+			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_CATEGORIES, undefined,
-						(draft) => draft.filter(e => e.catId !== catId)
+						(draft) => draft.filter(e => e.catId !== body.categoryItem.catId)
 					)
 				)
 				try { await queryFulfilled }

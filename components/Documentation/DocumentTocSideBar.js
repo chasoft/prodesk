@@ -133,7 +133,7 @@ export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
 			onClick={async () => {
 				//Add new document
 				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-				const res = await addDoc({ docItem: docItem }).unwrap()
+				const res = await addDoc({ docItem: docItem })
 				//Open new created document
 				reduxBatch(() => {
 					dispatch(setActiveDocId(res.id))

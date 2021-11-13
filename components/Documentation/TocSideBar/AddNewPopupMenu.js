@@ -113,7 +113,7 @@ const PopupMenuItemAddCategory = ({ actionType, handleClose }) => {
 	const dispatch = useDispatch()
 	const handleAddCategory = async () => {
 		const docItem = docItemNewCategory(currentUser.username)
-		const res = await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem })
 		//Open new created Category
 		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
 		handleClose()
@@ -140,7 +140,7 @@ const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose })
 	const dispatch = useDispatch()
 	const handleAddSubCategory = async () => {
 		const docItem = docItemNewSubCategory(targetDocItem, currentUser.username)
-		const res = await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem })
 		//Open new created Sub-Category
 		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
 		handleClose()
@@ -168,7 +168,7 @@ const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }
 	const dispatch = useDispatch()
 	const handleAddExternalLink = async () => {
 		const docItem = docItemNewExternal(targetDocItem, currentUser.username)
-		const res = await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem })
 		//Open new created External link
 		dispatch(setActiveDocIdOfTocSideBarDetails(res.id))
 		handleClose()
@@ -196,7 +196,7 @@ const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
 	const dispatch = useDispatch()
 	const handleAddDoc = async () => {
 		const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-		const res = await addDoc({ docItem: docItem }).unwrap()
+		const res = await addDoc({ docItem: docItem })
 		//Open new created document
 		reduxBatch(() => {
 			dispatch(setActiveDocId(res.id))

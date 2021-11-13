@@ -88,7 +88,7 @@ const App = React.memo(function App() {
 			<Button onClick={
 				async () => {
 					try {
-						await addDoc({ docItem: { docId: "54444" + nanoid(), category: "BOOK" } }).unwrap()
+						await addDoc({ docItem: { docId: "54444" + nanoid(), category: "BOOK" } })
 						// setPost(initialValue)
 					} catch {
 						console.log("error in addDoc")

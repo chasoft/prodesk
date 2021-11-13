@@ -143,7 +143,7 @@ const DocumentTemplate = () => {
 										updatedBy: currentUser.username
 									},
 									content: { text: template.content }
-								}).unwrap()
+								})
 								console.log(res.data)
 							}}
 							sx={{

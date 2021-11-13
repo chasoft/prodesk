@@ -28,7 +28,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { Box, CircularProgress, InputBase } from "@mui/material"
 
 //THIRD-PARTY
-import { random } from "lodash"
+import { random, trim } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -193,7 +193,7 @@ const DocumentEditor = () => {
 						 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
 						 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
 						 */
-						if (editorData.trim() !== docItemContent.data.text.trim()) {
+						if (trim(editorData) !== trim(docItemContent.data.text)) {
 							const newDocMeta = {
 								docId: docItem.docId,	//must be included
 								updatedBy: currentUser.username,
@@ -208,7 +208,7 @@ const DocumentEditor = () => {
 					}}
 				/>}
 
-			{(!editorData.trim() || editorData.trim() === "\\")
+			{(!trim(editorData) || trim(editorData) === "\\")
 				&& <DocumentTemplate />}
 
 		</Box>

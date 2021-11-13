@@ -117,7 +117,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 			return
 		}
 		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-		await updateDepartment({ departmentItem: localCache, affectedCannedReplies }).unwrap()
+		await updateDepartment({ departmentItem: localCache, affectedCannedReplies })
 		//
 		dispatch(setActiveSettingPanel(localCache.department))
 	}

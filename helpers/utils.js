@@ -66,3 +66,47 @@ export const getStaffInCharge = (staffInCharge) => {
 			assignedDate: undefined
 		}
 }
+
+/*****************************************************************
+ * Utilities functions to deal with
+ * combining many items into 1 firebase document
+ ****************************************************************/
+
+// const F_ACTIONS = {
+// 	ADD: "add",
+// 	UPDATE: "update",
+// 	UPDATE_ALL: "update_all",
+// 	DELETE: "delete",
+// }
+
+/**
+ *
+ * @param {array of objects} items
+ * @param {string} action ["add", "update", "delete"]
+ * @param {object} item
+ * @param {string} key ["", <key>]
+ * @param {string} target ["", <key>]
+ */
+// export function fdoc(items, action, item, key, target) {
+// 	switch (action) {
+// 		case F_ACTIONS.ADD:
+// 			//add new item into the list
+// 			items.push(item)
+
+// 			if 
+
+
+
+// 			break
+// 		case F_ACTIONS.UPDATE:
+
+// 			break
+// 		case F_ACTIONS.UPDATE_ALL:
+
+// 			break
+// 		case F_ACTIONS.DELETE:
+
+// 			break
+// 		default:
+// 	}
+// }

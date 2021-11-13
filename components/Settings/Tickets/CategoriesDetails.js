@@ -26,13 +26,15 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, CircularProgress } from "@mui/material"
+import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, CircularProgress, FormControlLabel, Switch } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { useSnackbar } from "notistack"
-import { find, some, isEqual } from "lodash"
+import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
+import { cloneDeep, find, filter, some, isEqual } from "lodash"
 
 //PROJECT IMPORT
 import { getAuth, getUiSettings } from "../../../redux/selectors"
@@ -55,28 +57,30 @@ const CategoriesDetails = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
+	const { isSmallScreen } = useSelector(getUiSettings)
 	const [deleteCategory] = useDeleteCategoryMutation()
 	const [updateCategory] = useUpdateCategoryMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-
-	//Original
+	//
 	const { data: categories, isLoading } = useTicketCategories()
 	const { activeSettingPanel } = useSelector(getUiSettings)
 	const selectedCategory = find(categories, { name: activeSettingPanel })
 
 	//Local memory
+	const [isDefault, setIsDefault] = useState(false)
 	const [categoryName, setCategoryName] = useState("")
 	const [subCategories, setSubCategories] = useState([])
 	const [subCategoryName, setSubCategoryName] = useState("")
 
-	//Re-render
 	useDeepCompareEffect(() => {
+		setIsDefault(selectedCategory.default)
 		setCategoryName(selectedCategory.name)
 		setSubCategories(selectedCategory.subCategories)
 	}, [selectedCategory])
 
 	const isModified = (selectedCategory.name !== categoryName
 		|| !isEqual(selectedCategory.subCategories, subCategories))
+		|| isDefault !== selectedCategory.default
 
 	const handleAddSubCat = () => {
 		if (some(subCategories, (i) => i.name === subCategoryName))
@@ -89,9 +93,61 @@ const CategoriesDetails = ({ backBtnClick }) => {
 
 	const handleDeleteCategory = async (confirmed) => {
 		if (confirmed) {
+			//redirect to overview tab
 			dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-			await deleteCategory(selectedCategory)
+			//get newList of categories
+			const newList = filter(categories, c => c.catId !== selectedCategory.catId)
+			console.log({ newList })
+			await deleteCategory({
+				categoryItem: { catId: selectedCategory.catId },
+				fullList: newList
+			})
 		}
+	}
+
+	const handleUpdateCategory = async () => {
+
+		console.log({ isDefault })
+
+		const departmentDuplicated =
+			(selectedCategory.name === categoryName)
+				? false
+				: some(categories, { name: categoryName })
+		if (departmentDuplicated) {
+			enqueueSnackbar("Category name existed", { variant: "error" })
+			return
+		}
+
+		/**
+		 * Note: if user set as default === true, then, must update all items
+		 */
+		//prepare the data for current category
+		const updatedData = {
+			name: categoryName,
+			default: isDefault,
+			subCategories: subCategories,
+			updatedAt: dayjs().valueOf(),
+			updatedBy: currentUser.username,
+		}
+		//make a independent copy current category list (deep copy)
+		const fullList = cloneDeep(categories)
+		//set default to false for existing categories (if existed)
+		if (isDefault) {
+			const oldDefaultItem = fullList.find(c => c.default === true)
+			if (oldDefaultItem !== undefined) {
+				Object.assign(oldDefaultItem, { default: false })
+			}
+		}
+		//update current category
+		let updatedItem = fullList.find(c => c.catId === selectedCategory.catId)
+		Object.assign(updatedItem, updatedData)
+
+		dispatch(setActiveSettingPanel(categoryName))
+		await updateCategory({
+			isDefault,
+			categoryItem: updatedItem,
+			fullList
+		})
 	}
 
 	console.log("Category Details")
@@ -103,14 +159,27 @@ const CategoriesDetails = ({ backBtnClick }) => {
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
 						rightButton={
-							<Tooltip title="Delete current category" placement="left">
-								<IconButton
-									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={() => setOpenConfirmDialog(true)}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							</Tooltip>
+							<Box>
+								<FormControlLabel
+									control={
+										<Switch
+											checked={isDefault}
+											onChange={() => setIsDefault(p => !p)}
+											name="checkedB"
+											color="primary"
+										/>
+									}
+									label={(isMobile || isSmallScreen) ? "Default " : "Set as default"}
+								/>
+								<Tooltip title="Delete current category" placement="left">
+									<IconButton
+										sx={{ ":hover": { color: "warning.main" } }}
+										onClick={() => setOpenConfirmDialog(true)}
+									>
+										<DeleteIcon fontSize="small" />
+									</IconButton>
+								</Tooltip>
+							</Box>
 						}
 					>
 						<Typography variant="button">
@@ -206,27 +275,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 							color="primary"
 							variant="contained"
 							disabled={!isModified}
-							onClick={async () => {
-								const departmentDuplicated =
-									(selectedCategory.name === categoryName)
-										? false
-										: some(categories, { name: categoryName })
-								if (departmentDuplicated) {
-									enqueueSnackbar("Category name existed", { variant: "error" })
-									return
-								}
-								await updateCategory({
-									categoryItem: {
-										catId: selectedCategory.catId,
-										name: categoryName,
-										subCategories: subCategories,
-										updatedBy: currentUser.username
-									},
-									affectedItems: []
-								}).unwrap()
-								//Go to overview page
-								dispatch(setActiveSettingPanel(categoryName))
-							}}
+							onClick={handleUpdateCategory}
 						>
 							Update
 						</Button>

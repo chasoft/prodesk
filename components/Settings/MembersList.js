@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import { Avatar, AvatarGroup, Box, Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { isEqual } from "lodash"
+import { isEqual, sortBy } from "lodash"
 import { useSelector } from "react-redux"
 import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
@@ -66,7 +66,7 @@ export const StaffListChooserDialog = ({ open, members, addMemberCallback, handl
 		setSelected(newChecked)
 	}
 
-	const isModified = isEqual([...members].sort(), [...selected].sort()) === false
+	const isModified = isEqual(sortBy(members), sortBy(selected)) === false
 
 	const handleUpdateStaffList = () => {
 		if (isModified) {

@@ -29,6 +29,7 @@ import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, si
 
 //THIRD-PARTY
 import dayjs from "dayjs"
+import { keyBy } from "lodash"
 
 //PROJECT IMPORT
 import { auth, db } from "./../../helpers/firebase"
@@ -41,6 +42,7 @@ import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from ".
  *****************************************************************/
 
 function throwError(statusCode, action, e, data) {
+	console.log(e.message)
 	return {
 		error: {
 			status: statusCode,
@@ -1032,53 +1034,50 @@ async function fireStoreBaseQuery(args) {
 		 *****************************************************************/
 		case ACTION.GET_CATEGORIES:
 			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.SETTINGS, "settings", "categories"))
-				querySnapshot.forEach((category) => { all.push(category.data()) })
-				return { data: all }
+				let categories = []
+				const docSnap = await getDoc(
+					doc(
+						db,
+						COLLECTION.SETTINGS, "categories"
+					)
+				)
+				if (docSnap.exists()) categories = docSnap.data()
+				return { data: categories }
 			} catch (e) {
 				return throwError(200, ACTION.GET_CATEGORIES, e, null)
 			}
 		case ACTION.ADD_CATEGORY:
 			try {
+				const updatedItems = args.body.isDefault
+					? keyBy(args.body.fullList, c => c.catId)
+					: { [args.body.categoryItem.catId]: args.body.categoryItem }
 				await setDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.catId),
-					{
-						...args.body,
-						createdAt: serverTimestamp(),
-						updatedAt: serverTimestamp()
-					}
+					doc(db, COLLECTION.SETTINGS, "categories"), updatedItems,
+					{ merge: true }
 				)
 				return {
 					data: {
 						action: ACTION.ADD_CATEGORY,
-						id: args.body.catId,
+						id: args.body.categoryItem.catId,
 						message: "Category added successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.ADD_CATEGORY, e, {
-					id: args.body.catId
+					id: args.body.categoryItem.catId
 				})
 			}
-		case ACTION.UPDATE_CATEGORY:
+		case ACTION.UPDATE_CATEGORY: //body = {isDefault, categoryItem, fullList}
+			//Note: behavior of update_category & add_category are the same!
+			//the only difference is that add_category use `setDoc`
+			//and update_category uses `updateDoc`
 			try {
-				if (args.body.affectedItems.length === 0) {
-					await updateDoc(
-						doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.categoryItem.catId),
-						{ ...args.body.categoryItem, updatedAt: serverTimestamp() }
-					)
-				} else {
-					const batch = writeBatch(db)
-					args.body.affectedItems.forEach((affectedItem) => {
-						batch.update(
-							doc(db, COLLECTION.SETTINGS, "settings", "categories", affectedItem.catId),
-							{ ...affectedItem }
-						)
-					})
-					await batch.commit()
-				}
+				const updatedItems = args.body.isDefault
+					? keyBy(args.body.fullList, c => c.catId)
+					: { [args.body.categoryItem.catId]: args.body.categoryItem }
 
+				console.log({ updatedItems })
+				await updateDoc(doc(db, COLLECTION.SETTINGS, "categories"), updatedItems)
 				return {
 					data: {
 						action: ACTION.UPDATE_CATEGORY,
@@ -1088,22 +1087,26 @@ async function fireStoreBaseQuery(args) {
 				}
 			} catch (e) {
 				return throwError(200, ACTION.UPDATE_CATEGORY, e, {
-					id: args.body.catId
+					id: args.body.categoryItem.catId
 				})
 			}
 		case ACTION.DELETE_CATEGORY:
+			//body = {categoryItem, fullList}
+			//To remove an item, we use setDoc without merge option,
+			//then, all will be overwritten with provided data
 			try {
-				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "categories", args.body.catId))
+				const newList = keyBy(args.body.fullList, c => c.catId)
+				await setDoc(doc(db, COLLECTION.SETTINGS, "categories"), newList)
 				return {
 					data: {
 						action: ACTION.DELETE_CATEGORY,
-						id: args.body.catId,
+						id: args.body.categoryItem.catId,
 						message: "Category deleted successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.DELETE_CATEGORY, e, {
-					id: args.body.catId
+					id: args.body.categoryItem.catId
 				})
 			}
 

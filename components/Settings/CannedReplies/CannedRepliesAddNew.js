@@ -26,6 +26,7 @@ import PropTypes from "prop-types"
 import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
+import { trim } from "lodash"
 import { nanoid } from "nanoid"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
@@ -128,8 +129,8 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 					disabled={
 						(department === "")
 						|| (description === "")
-						|| (editorData.trim() === "")
-						|| (editorData.trim() === "\\")
+						|| (trim(editorData) === "")
+						|| (trim(editorData) === "\\")
 					}
 					onClick={async () => {
 						const crid = nanoid()

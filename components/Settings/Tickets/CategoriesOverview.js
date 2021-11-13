@@ -27,6 +27,7 @@ import PropTypes from "prop-types"
 import { Box, Chip, Typography, IconButton, Tooltip, CircularProgress } from "@mui/material"
 
 //THIRD-PARTY
+import { cloneDeep } from "lodash"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
@@ -58,6 +59,25 @@ const CategoriesOverview = ({ backBtnClick }) => {
 				<CircularProgress />
 			</div>
 		)
+	}
+
+	const handleSetDefault = async (e, category) => {
+		e.stopPropagation()
+		//make a independent copy current category list (deep copy)
+		const fullList = cloneDeep(categories)
+		//set all items to default false
+		const oldDefaultItem = fullList.find(c => c.default === true)
+		if (oldDefaultItem !== undefined) {
+			Object.assign(oldDefaultItem, { default: false })
+		}
+		let updatedItem = fullList.find(c => c.catId === category.catId)
+		Object.assign(updatedItem, { default: true })
+
+		await updateCategory({
+			isDefault: true,
+			categoryItem: { catId: category.catId },
+			fullList
+		})
 	}
 
 	return (
@@ -130,6 +150,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 							}}>
 								{category.subCategories.map((item) => (
 									<Tooltip
+										arrow
 										key={item.name}
 										placement="top"
 										title={
@@ -152,23 +173,10 @@ const CategoriesOverview = ({ backBtnClick }) => {
 						<Box>
 							{category.default
 								? <Typography color="primary.main" sx={{ fontWeight: "bold" }}>Default</Typography>
-								: <Tooltip title="Set this default Category" placement="left">
+								: <Tooltip arrow title="Set this default Category" placement="left">
 									<IconButton
 										id="set-default-button"
-										onClick={async (e) => {
-											e.stopPropagation()
-											let affectedItems = []
-											categories.forEach(i => {
-												affectedItems.push({
-													catId: i.catId,
-													default: (i.catId === category.catId) ? true : false
-												})
-											})
-											await updateCategory({
-												categoryItem: {},
-												affectedItems: affectedItems
-											})
-										}}
+										onClick={(e) => handleSetDefault(e, category)}
 										sx={{ ":hover": { color: "primary.main" } }}
 									>
 										<CheckBoxIcon />

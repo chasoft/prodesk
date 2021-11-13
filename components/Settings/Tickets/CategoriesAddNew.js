@@ -19,37 +19,52 @@
  ************************************************************************/
 
 
-import React, { useState } from "react"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Box, IconButton, Tooltip, Grid, TextField, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, FormControlLabel, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { some, filter, sortBy } from "lodash"
+import dayjs from "dayjs"
 import { nanoid } from "nanoid"
+import { isMobile } from "react-device-detect"
+import { cloneDeep, some, filter, sortBy, trim } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import { CATEGORY_PAGES } from "./../../../pages/admin/settings/tickets/category"
-import { useAddCategoryMutation } from "../../../redux/slices/firestoreApi"
 import { useSnackbar } from "notistack"
+import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
+import { useAddCategoryMutation } from "../../../redux/slices/firestoreApi"
+import { CATEGORY_PAGES } from "./../../../pages/admin/settings/tickets/category"
+import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 
 //PROJECT IMPORT
+import { getAuth, getUiSettings } from "../../../redux/selectors"
+import useTicketCategories from "../../../helpers/useTicketCategories"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
-import useTicketCategories from "../../../helpers/useTicketCategories"
-import { getAuth } from "../../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 export const SubCatItem = ({ currentItem, list, setList }) => {
+	const handleSetDefault = () => {
+		console.log("change default item")
+		const newArray = Array.from(list)
+		newArray.forEach((_, idx) => {
+			newArray[idx] = { ...newArray[idx], default: _.name === currentItem.name }
+		})
+		setList(newArray)
+	}
+
+	const handleDelete = () => {
+		setList(filter(list, (i) => i.name !== currentItem.name))
+	}
+
 	return (
 		<Box sx={{
 			display: "flex",
@@ -70,7 +85,6 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 				alignItems: "center",
 				flexGrow: 1
 			}}>
-
 				{currentItem.default ?
 					<Box sx={{ display: "flex", alignItems: "center" }}>
 						<Typography color="primary.main" sx={{ fontWeight: "bold" }}>
@@ -93,14 +107,7 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 				{!currentItem.default && <Tooltip title="Set default" placement="left">
 					<IconButton
 						sx={{ ":hover": { color: "primary.main" } }}
-						onClick={() => {
-							console.log("change default item")
-							const newArray = Array.from(list)
-							newArray.forEach((_, idx) => {
-								newArray[idx] = { ...newArray[idx], default: _.name === currentItem.name }
-							})
-							setList(newArray)
-						}}
+						onClick={handleSetDefault}
 					>
 						<CheckBoxIcon fontSize="small" />
 					</IconButton>
@@ -108,9 +115,7 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 				<Tooltip title="Delete" placement="right">
 					<IconButton
 						sx={{ ":hover": { color: "warning.main" } }}
-						onClick={() => {
-							setList(filter(list, (i) => i.name !== currentItem.name))
-						}}
+						onClick={handleDelete}
 					>
 						<DeleteIcon fontSize="small" />
 					</IconButton>
@@ -134,18 +139,20 @@ SubCatItem.propTypes = {
 const CategoriesAddNew = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
+	const { isSmallScreen } = useSelector(getUiSettings)
 	//
+	const [isDefault, setIsDefault] = useState(false)
 	const [categoryName, setCategoryName] = useState("")
 	const [subCategoryName, setSubCategoryName] = useState("")
-
 	const [subCategories, setSubCategories] = useState([])
 
 	const [addCategory] = useAddCategoryMutation()
-	const { data: categories } = useTicketCategories()
+	const { data: categories, isLoading: isLoadingCategories } = useTicketCategories()
 
 	const { enqueueSnackbar } = useSnackbar()
 
-	const handleAddSubCat = () => {
+	const handleAddSubCat = (e) => {
+		e.preventDefault()
 		if (some(subCategories, (i) => i.name === subCategoryName))
 			enqueueSnackbar("Sub-category existed", { variant: "error" })
 		else {
@@ -155,103 +162,147 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 		}
 	}
 
+	const handleAddNewCategory = async () => {
+		const departmentDuplicated = some(categories, { name: categoryName })
+		if (departmentDuplicated) {
+			enqueueSnackbar("Category name existed", { variant: "error" })
+			return
+		}
+
+		/**
+		 * Note: if user set as default === true, then, must update all items
+		 */
+
+		//prepare the data for new category
+		const catId = nanoid()
+		const categoryItem = {
+			catId,
+			name: categoryName,
+			default: isDefault,
+			subCategories: subCategories,
+			createdBy: currentUser.username,
+			updatedBy: currentUser.username,
+			createdAt: dayjs().valueOf(),
+			updatedAt: dayjs().valueOf()
+		}
+
+		let fullList
+		if (isDefault) {
+			//make a independent copy current category list (deep copy)
+			fullList = cloneDeep(categories)
+			//set default to false for existing categories (if existed)
+			let obj = fullList.find(c => c.default === true)
+			if (obj !== undefined) {
+				Object.assign(obj, { default: false })
+			}
+			//append new category
+			fullList.push(categoryItem)
+		}
+
+		dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+		await addCategory(
+			{
+				isDefault,
+				categoryItem,
+				fullList
+			}
+		)
+	}
+
+	const handleCancel = () => {
+		dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+	}
+
 	return (
 		<>
-			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+			<SettingsContentHeader
+				backBtnOnClick={() => backBtnClick(false)}
+				rightButton={
+					<FormControlLabel
+						control={
+							<Switch
+								checked={isDefault}
+								onChange={() => setIsDefault(p => !p)}
+								name="checkedB"
+								color="primary"
+							/>
+						}
+						label={(isMobile || isSmallScreen) ? "Default " : "Set as default"}
+					/>
+				}
+			>
 				Add new category
 			</SettingsContentHeader>
 
 			<SettingsContentDetails>
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
-						<TextField
-							value={categoryName}
-							onChange={(e) => { setCategoryName(e.target.value) }}
-							label="Category name"
-							placeholder="eg. name of your provided product/service group"
-							fullWidth
-						/>
-					</Grid>
-
-					<Grid item xs={12}>
-						<Typography color="grey.600" sx={{ mb: 1 }}>Sub-Categories</Typography>
-						{subCategories.map((subCat) => (
-							<SubCatItem
-								key={subCat.name}
-								currentItem={subCat}
-								list={subCategories}
-								setList={setSubCategories}
+				{isLoadingCategories
+					? <Box sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						minHeight: "200px"
+					}}>
+						<CircularProgress />
+					</Box>
+					: <Grid container spacing={2}>
+						<Grid item xs={12}>
+							<TextField
+								value={categoryName}
+								onChange={(e) => { setCategoryName(e.target.value) }}
+								label="Category name"
+								placeholder="eg. name of your provided product/service group"
+								fullWidth
 							/>
-						))}
+						</Grid>
 
-					</Grid>
+						<Grid item xs={12}>
+							<Typography color="grey.600" sx={{ mb: 1 }}>Sub-Categories</Typography>
+							{subCategories.map((subCat) => (
+								<SubCatItem
+									key={subCat.name}
+									currentItem={subCat}
+									list={subCategories}
+									setList={setSubCategories}
+								/>
+							))}
 
-					<Grid item xs={12}>
-						<form
-							onSubmit={(e) => {
-								e.preventDefault()
-								handleAddSubCat()
-							}}
-							sx={{ display: "flex" }}
-						>
-							<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
-								<div style={{ flexGrow: 1 }}>
-									<TextField
-										value={subCategoryName}
-										onChange={(e) => { setSubCategoryName(e.target.value) }}
-										label="Sub-category name"
-										placeholder="eg. name of your sub-category"
-										fullWidth
-									/>
-								</div>
-								<Button
-									sx={{ ml: { xs: 0, sm: 2 }, px: 2, mt: { xs: 2, sm: 0 } }}
-									variant="outlined"
-									disabled={subCategoryName === ""}
-									size="small"
-									onClick={() => handleAddSubCat()}>
-									Add Sub-category
-								</Button>
-							</Box>
-						</form>
-					</Grid>
+						</Grid>
 
-				</Grid>
+						<Grid item xs={12}>
+							<form sx={{ display: "flex" }} onSubmit={handleAddSubCat}>
+								<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" } }}>
+									<div style={{ flexGrow: 1 }}>
+										<TextField
+											value={subCategoryName}
+											onChange={(e) => { setSubCategoryName(e.target.value) }}
+											label="Sub-category name"
+											placeholder="eg. name of your sub-category"
+											fullWidth
+										/>
+									</div>
+									<Button
+										sx={{ ml: { xs: 0, sm: 2 }, px: 2, mt: { xs: 2, sm: 0 } }}
+										variant="outlined"
+										disabled={trim(subCategoryName) === ""}
+										size="small"
+										onClick={() => handleAddSubCat()}>
+										Add Sub-category
+									</Button>
+								</Box>
+							</form>
+						</Grid>
+					</Grid>}
 			</SettingsContentDetails>
 
 			<SettingsContentActionBar>
-				<Button
-					variant="outlined"
-					onClick={() => {
-						dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-					}}
-				>
+				<Button variant="outlined" onClick={handleCancel}>
 					Cancel
 				</Button>
 				<Button
 					color="primary"
 					variant="contained"
-					onClick={async () => {
-						const departmentDuplicated = some(categories, { name: categoryName })
-						if (departmentDuplicated) {
-							enqueueSnackbar("Category name existed", { variant: "error" })
-							return
-						}
-
-						const catId = nanoid()
-						const categoryItem = {
-							catId,
-							name: categoryName,
-							default: false,
-							subCategories: subCategories,
-							createdBy: currentUser.username,
-							updatedBy: currentUser.username,
-						}
-						//Go to newly created category
-						// dispatch(setActiveSettingPanel(categoryName))
-						dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-						await addCategory(categoryItem).unwrap()
-					}}
+					onClick={handleAddNewCategory}
+					disabled={isLoadingCategories || trim(categoryName) === ""}
 				>
 					Add
 				</Button>
