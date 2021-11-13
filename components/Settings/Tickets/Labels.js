@@ -27,12 +27,13 @@ import PropTypes from "prop-types"
 import { Box, Button, Collapse, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
-import { uniqueId, random } from "lodash"
+import { filter, random, uniqueId } from "lodash"
 
 //PROJECT IMPORT
-import { getUiSettings } from "./../../../redux/selectors"
+import { getAuth, getUiSettings } from "./../../../redux/selectors"
 import { ColorTable, HUE, SHADE } from "../../common/ColorPicker"
 import { useAddLabelMutation, useDeleteLabelMutation, useGetLabelsQuery, useUpdateLabelMutation } from "./../../../redux/slices/firestoreApi"
 import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
@@ -118,7 +119,8 @@ LabelEditorDialog.propTypes = {
 	handleClose: PropTypes.func
 }
 
-export const SubCatItem = ({ currentItem }) => {
+export const SubCatItem = ({ currentItem, labels }) => {
+	const { currentUser } = useSelector(getAuth)
 	const [updateLabel] = useUpdateLabelMutation()
 	const [deleteLabel] = useDeleteLabelMutation()
 
@@ -130,15 +132,25 @@ export const SubCatItem = ({ currentItem }) => {
 
 	const isModified = currentItem.color !== color || currentItem.name !== name
 
-	const handleDeleteLabel = async () => {
-		await deleteLabel({ lid: currentItem.lid })
+	const handleDeleteLabel = async (confirmed) => {
+		if (confirmed) {
+			//get newList of labels
+			const newList = filter(labels, l => l.lid !== currentItem.lid)
+			await deleteLabel({
+				labelItem: { lid: currentItem.lid },
+				fullList: newList
+			})
+		}
 	}
 
 	const handleUpdateLabel = async () => {
 		await updateLabel({
 			...currentItem,
 			name,
-			color
+			color,
+			updatedAt: dayjs().valueOf(),
+			updatedBy: currentUser.username
+
 		})
 	}
 
@@ -246,7 +258,10 @@ export const SubCatItem = ({ currentItem }) => {
 		</Box >
 	)
 }
-SubCatItem.propTypes = { currentItem: PropTypes.object }
+SubCatItem.propTypes = {
+	currentItem: PropTypes.object,
+	labels: PropTypes.array
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -254,7 +269,23 @@ SubCatItem.propTypes = { currentItem: PropTypes.object }
 
 const PageLabels = ({ backBtnClick }) => {
 	const [addLabel] = useAddLabelMutation()
+	const { currentUser } = useSelector(getAuth)
 	const { data: labels, isLoading } = useGetLabelsQuery()
+
+	const handleAddNewLabel = async () => {
+		const lid = nanoid()
+		const incNum = uniqueId()
+		addLabel({
+			lid,
+			name: "Label " + incNum,
+			color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]],
+			createdBy: currentUser.username,
+			updatedBy: currentUser.username,
+			createdAt: dayjs().valueOf(),
+			updatedAt: dayjs().valueOf()
+		})
+	}
+
 	return (
 		<>
 			<SettingsContentHeader
@@ -264,15 +295,7 @@ const PageLabels = ({ backBtnClick }) => {
 						startIcon={<AddIcon />}
 						size="small"
 						variant="contained"
-						onClick={async () => {
-							const lid = nanoid()
-							const incNum = uniqueId()
-							addLabel({
-								lid,
-								name: "Label " + incNum,
-								color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]]
-							})
-						}}
+						onClick={handleAddNewLabel}
 					>
 						Add new
 					</Button>
@@ -304,7 +327,13 @@ const PageLabels = ({ backBtnClick }) => {
 					</Box>
 					: (labels.length === 0)
 						? <div>Label list is empty</div>
-						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
+						: labels.map((label) =>
+							<SubCatItem
+								key={label.lid}
+								currentItem={label}
+								labels={labels}
+							/>
+						)
 				}
 			</SettingsContentDetails>
 		</>

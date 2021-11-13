@@ -26,10 +26,11 @@ import PropTypes from "prop-types"
 import { Button, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
-import { filter } from "lodash"
+import dayjs from "dayjs"
+import { some } from "lodash"
 import { nanoid } from "nanoid"
 import { useSnackbar } from "notistack"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
@@ -38,6 +39,7 @@ import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
 import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/department"
 import { useAddDepartmentMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { getAuth } from "../../../redux/selectors"
 
 //PROJECT IMPORT
 
@@ -50,6 +52,7 @@ import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader
 const DepartmentsAddNew = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
 	const [addDepartment] = useAddDepartmentMutation()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
@@ -62,7 +65,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 		availableForAll: false
 	})
 
-	const handleUpdateDetails = (value, key, toggle = false) => {
+	const handleSetLocalCache = (value, key, toggle = false) => {
 		setLocalCache((prevState) => {
 			return {
 				...prevState,
@@ -75,14 +78,19 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 
 	const handleAddNewDepartment = async () => {
 		//Do not allow departments have the same name
-		const existedDepartment = filter(departments, { department: localCache.department })
-		if (existedDepartment[0]?.department === localCache.department) {
-			enqueueSnackbar(`Department with name "${localCache.department}" existed."`, { variant: "error" })
+		const departmentDuplicated = some(departments, { department: localCache.department })
+		if (departmentDuplicated) {
+			enqueueSnackbar(`Department with name ${localCache.department} existed`, { variant: "error" })
 			return
 		}
 
+		//prepare the data for new category
 		const departmentItem = {
 			did: nanoid(),
+			createdBy: currentUser.username,
+			updatedBy: currentUser.username,
+			createdAt: dayjs().valueOf(),
+			updatedAt: dayjs().valueOf(),
 			...localCache
 		}
 
@@ -108,7 +116,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							placeholder="eg. Sales, Accounting..."
 							value={localCache.department}
 							onChange={(e) =>
-								handleUpdateDetails(e.target.value, "department")
+								handleSetLocalCache(e.target.value, "department")
 							}
 							fullWidth
 						/>
@@ -119,7 +127,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							placeholder="eg. For general questions"
 							value={localCache.description}
 							onChange={(e) => {
-								handleUpdateDetails(e.target.value, "description")
+								handleSetLocalCache(e.target.value, "description")
 							}}
 							fullWidth
 						/>
@@ -129,7 +137,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							title="Public"
 							state={localCache.isPublic}
 							setState={() => {
-								handleUpdateDetails(undefined, "isPublic", true)
+								handleSetLocalCache(undefined, "isPublic", true)
 							}}
 							stateDescription={["For internal use only", "Available for all users"]}
 							description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
@@ -140,7 +148,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							title="All staffs/agents"
 							state={localCache.availableForAll}
 							setState={() => {
-								handleUpdateDetails(undefined, "availableForAll", true)
+								handleSetLocalCache(undefined, "availableForAll", true)
 							}}
 							stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
 							description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
@@ -150,7 +158,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						<MembersList
 							members={localCache.members}
 							addMemberCallback={
-								(members) => handleUpdateDetails(members, "members")
+								(members) => handleSetLocalCache(members, "members")
 							}
 						/>
 					</Grid>

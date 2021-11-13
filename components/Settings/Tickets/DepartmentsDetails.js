@@ -29,14 +29,15 @@ import PropTypes from "prop-types"
 import { Box, Button, CircularProgress, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { useSnackbar } from "notistack"
-import { filter, isEqual } from "lodash"
+import { filter, isEqual, some } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import MembersList from "./../MembersList"
-import { getUiSettings } from "../../../redux/selectors"
+import { getAuth, getUiSettings } from "../../../redux/selectors"
 import SettingsSwitch from "./../../common/SettingsSwitch"
 import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
@@ -54,6 +55,7 @@ import ConfirmDialog from "../../common/ConfirmDialog"
 const DepartmentsDetails = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
 	const [deleteDepartment] = useDeleteDepartmentMutation()
 	const [updateDepartment] = useUpdateDepartmentMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
@@ -95,31 +97,46 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 	const handleDeleteDepartment = async (confirmed) => {
 		if (confirmed) {
-			//User must delete all related canned-reply before they can delete department
-			const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-			if (affectedCannedReplies.length > 0) {
+			//User must delete all related canned-reply
+			//before they can delete department
+			const existedCannedReplies = filter(cannedReplies, { department: selectedDepartment.did })
+			if (existedCannedReplies.length > 0) {
 				enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
 				return
 			}
+
+			//redirect to overview tab
 			dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-			await deleteDepartment(selectedDepartment)
+
+			//get newList of department
+			const newList = filter(departments, d => d.did !== selectedDepartment.did)
+			await deleteDepartment({
+				departmentItem: { did: selectedDepartment.did },
+				fullList: newList
+			})
 		}
 	}
 
 	const handleUpdateDepartment = async () => {
 		//Do not allow departments have the same name
-		const existedDepartment = filter(departments, { department: localCache.department })
-
-		console.log({ existedDepartment })
-
-		if (existedDepartment[0].did !== selectedDepartment.did && existedDepartment[0].department === localCache.department) {
+		const departmentDuplicated =
+			(selectedDepartment.department === localCache.department)
+				? false
+				: some(departments, { department: localCache.department })
+		if (departmentDuplicated) {
 			enqueueSnackbar(`Department with name "${localCache.department}" existed."`, { variant: "error" })
 			return
 		}
-		const affectedCannedReplies = filter(cannedReplies, { department: selectedDepartment.department })
-		await updateDepartment({ departmentItem: localCache, affectedCannedReplies })
-		//
+
+		//prepare the data for current department
+		const departmentItem = {
+			...localCache,
+			updatedAt: dayjs().valueOf(),
+			updatedBy: currentUser.username,
+		}
+
 		dispatch(setActiveSettingPanel(localCache.department))
+		await updateDepartment(departmentItem)
 	}
 
 	return (

@@ -793,11 +793,7 @@ async function fireStoreBaseQuery(args) {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "departments"),
 					{
-						[args.body.did]: {
-							...args.body,
-							createdAt: dayjs().valueOf(),
-							updatedAt: dayjs().valueOf()
-						}
+						[args.body.did]: args.body
 					},
 					{ merge: true }
 				)
@@ -819,54 +815,42 @@ async function fireStoreBaseQuery(args) {
 				batch.update(
 					doc(db, COLLECTION.SETTINGS, "departments"),
 					{
-						[args.body.departmentItem.did]: {
-							...args.body.departmentItem,
-							updatedAt: dayjs().valueOf()
-						}
+						[args.body.did]: args.body
 					}
 				)
-				args.body.affectedCannedReplies.forEach((affectedItem) => {
-					batch.update(
-						doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", affectedItem.crid),
-						{ department: args.body.departmentItem.department }
-					)
-				})
 				await batch.commit()
 
 				return {
 					data: {
 						action: ACTION.UPDATE_DEPARTMENT,
-						id: args.body.departmentItem.did,
+						id: args.body.did,
 						message: "Department updated successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.UPDATE_DEPARTMENT, e, {
-					id: args.body.departmentItem.did
+					id: args.body.did
 				})
 			}
 
 		//Note: do not allow to delete department if there are related canned-replies existed
 		case ACTION.DELETE_DEPARTMENT:
+			//body = {departmentItem, fullList}
+			//To remove an item, we use setDoc without merge option,
+			//then, all will be overwritten with provided data
 			try {
-				await updateDoc(
-					doc(db, COLLECTION.SETTINGS, "departments"),
-					{
-						//just clear the content of selected departmentId
-						//cleanup will be assigned for CleanUp module
-						[args.body.did]: {}
-					}
-				)
+				const newList = keyBy(args.body.fullList, c => c.did)
+				await setDoc(doc(db, COLLECTION.SETTINGS, "departments"), newList)
 				return {
 					data: {
 						action: ACTION.DELETE_DEPARTMENT,
-						id: args.body.did,
+						id: args.body.departmentItem.did,
 						message: "Department deleted successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.DELETE_DEPARTMENT, e, {
-					id: args.body.did
+					id: args.body.departmentItem.did
 				})
 			}
 
@@ -963,11 +947,7 @@ async function fireStoreBaseQuery(args) {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
 					{
-						[args.body.lid]: {
-							...args.body,
-							createdAt: dayjs().valueOf(),
-							updatedAt: dayjs().valueOf()
-						}
+						[args.body.lid]: args.body.label
 					},
 					{ merge: true }
 				)
@@ -988,10 +968,7 @@ async function fireStoreBaseQuery(args) {
 				updateDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
 					{
-						[args.body.lid]: {
-							...args.body,
-							updatedAt: dayjs().valueOf()
-						}
+						[args.body.lid]: args.body
 					},
 				)
 				return {
@@ -1007,25 +984,22 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 		case ACTION.DELETE_LABEL:
+			//body = {labelItem, fullList}
+			//To remove an item, we use setDoc without merge option,
+			//then, all will be overwritten with provided data
 			try {
-				await updateDoc(
-					doc(db, COLLECTION.SETTINGS, "labels"),
-					{
-						//just clear the content of selected labelId
-						//cleanup will be assigned for CleanUp module
-						[args.body.lid]: {}
-					}
-				)
+				const newList = keyBy(args.body.fullList, c => c.lid)
+				await setDoc(doc(db, COLLECTION.SETTINGS, "labels"), newList)
 				return {
 					data: {
 						action: ACTION.DELETE_LABEL,
-						id: args.body.lid,
+						id: args.body.labelItem.lid,
 						message: "Label deleted successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.DELETE_LABEL, e, {
-					id: args.body.lid
+					id: args.body.labelItem.lid
 				})
 			}
 

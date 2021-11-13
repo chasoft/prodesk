@@ -95,9 +95,9 @@ const CategoriesDetails = ({ backBtnClick }) => {
 		if (confirmed) {
 			//redirect to overview tab
 			dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+
 			//get newList of categories
 			const newList = filter(categories, c => c.catId !== selectedCategory.catId)
-			console.log({ newList })
 			await deleteCategory({
 				categoryItem: { catId: selectedCategory.catId },
 				fullList: newList
@@ -106,15 +106,13 @@ const CategoriesDetails = ({ backBtnClick }) => {
 	}
 
 	const handleUpdateCategory = async () => {
-
-		console.log({ isDefault })
-
-		const departmentDuplicated =
+		//Do not allow categories have the same name
+		const categoryDuplicated =
 			(selectedCategory.name === categoryName)
 				? false
 				: some(categories, { name: categoryName })
-		if (departmentDuplicated) {
-			enqueueSnackbar("Category name existed", { variant: "error" })
+		if (categoryDuplicated) {
+			enqueueSnackbar(`Category with name "${categoryName}" existed`, { variant: "error" })
 			return
 		}
 

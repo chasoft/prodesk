@@ -163,6 +163,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 	}
 
 	const handleAddNewCategory = async () => {
+		//Do not allow categories have the same name
 		const departmentDuplicated = some(categories, { name: categoryName })
 		if (departmentDuplicated) {
 			enqueueSnackbar("Category name existed", { variant: "error" })

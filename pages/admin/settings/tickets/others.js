@@ -115,10 +115,10 @@ const PageStatuses = ({ backBtnClick }) => {
 
 				<SettingsContentHelperText>
 					<p>Prodesk only support 4 default ticket statuses:</p>
-					<p>1. {<TicketStatus status={STATUS_FILTER.OPEN} />} newly created ticket</p>
-					<p>2. {<TicketStatus status={STATUS_FILTER.PENDING} />} ticket is waiting reply from supporter</p>
-					<p>3. {<TicketStatus status={STATUS_FILTER.REPLIED} />} ticket is replied, may be waiting for responding from customer</p>
-					<p>4. {<TicketStatus status={STATUS_FILTER.CLOSED} />} solved ticket</p>
+					<div>1. {<TicketStatus status={STATUS_FILTER.OPEN} />} newly created ticket</div>
+					<div>2. {<TicketStatus status={STATUS_FILTER.PENDING} />} ticket is waiting reply from supporter</div>
+					<div>3. {<TicketStatus status={STATUS_FILTER.REPLIED} />} ticket is replied, may be waiting for responding from customer</div>
+					<div>4. {<TicketStatus status={STATUS_FILTER.CLOSED} />} solved ticket</div>
 					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
 
 				</SettingsContentHelperText>
