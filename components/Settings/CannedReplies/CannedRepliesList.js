@@ -31,13 +31,13 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 //PROJECT IMPORT
 
 //THIRD-PARTY
+import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
+import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 
 //ASSETS
 import FlashOnIcon from "@mui/icons-material/FlashOn"
-import { useDispatch } from "react-redux"
-import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

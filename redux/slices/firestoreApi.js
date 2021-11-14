@@ -24,7 +24,7 @@
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { forEach, omit, orderBy, size } from "lodash"
+import { forEach, omit, orderBy } from "lodash"
 import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
@@ -327,9 +327,7 @@ export const firestoreApi = createApi({
 			keepUnusedDataFor: 60 * 60,
 			transformResponse: (response) => {
 				const res = []
-				forEach(response, v => {
-					if (size(v) > 0) res.push(v)
-				})
+				forEach(response, v => { res.push(v) })
 				return orderBy(res, ["department"])
 			},
 		}),
@@ -398,23 +396,18 @@ export const firestoreApi = createApi({
 
 		getCannedReplies: builder.query({
 			query: () => ({ action: ACTION.GET_CANNED_REPLIES }),
-			providesTags: (result) => {
-				return result
-					? [
-						...result.map(({ crid }) => ({ type: TYPE.CANNED_REPLIES, id: crid })),
-						{ type: TYPE.CANNED_REPLIES, id: "LIST" }
-					]
-					: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }]
-			},
+			providesTags: () => [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response),
+			transformResponse: (response) => {
+				const res = []
+				forEach(response, v => { res.push(v) })
+				return orderBy(res, ["description"])
+			},
 		}),
 
 		addCannedReply: builder.mutation({
 			query: (body) => ({ action: ACTION.ADD_CANNED_REPLY, body }),
-			invalidatesTags: (result, error, body) => {
-				return [{ type: TYPE.CANNED_REPLIES, id: body.crid }]
-			},
+			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_CANNED_REPLIES, undefined,
@@ -427,15 +420,16 @@ export const firestoreApi = createApi({
 		}),
 
 		updateCannedReply: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_CANNED_REPLY, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CANNED_REPLIES, id: arg.crid }]),
-			async onQueryStarted(cannedReply, { dispatch, queryFulfilled }) {
+			//body: {...}
+			query: (body) => ({ action: ACTION.UPDATE_CANNED_REPLY, body }),
+			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_CANNED_REPLIES, undefined,
 						(draft) => {
-							let obj = draft.find(e => e.crid === cannedReply.crid)
-							Object.assign(obj, cannedReply)
+							let obj = draft.find(i => i.crid === body.crid)
+							Object.assign(obj, body)
 						})
 				)
 				try { await queryFulfilled }
@@ -447,13 +441,14 @@ export const firestoreApi = createApi({
 		}),
 
 		deleteCannedReply: builder.mutation({
-			query: (body) => ({ action: ACTION.DELETE_CANNED_REPLY, body }), //body: {...}
-			invalidatesTags: (result, error, arg) => ([{ type: TYPE.CANNED_REPLIES, id: arg.crid }]),
-			async onQueryStarted({ crid }, { dispatch, queryFulfilled }) {
+			//body = { cannedReplyItem, fullList }
+			query: (body) => ({ action: ACTION.DELETE_CANNED_REPLY, body }),
+			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_CANNED_REPLIES, undefined,
-						(draft) => draft.filter(e => e.crid !== crid)
+						(draft) => draft.filter(e => e.crid !== body.cannedReplyItem.crid)
 					)
 				)
 				try { await queryFulfilled }
@@ -475,9 +470,7 @@ export const firestoreApi = createApi({
 			keepUnusedDataFor: 60 * 60,
 			transformResponse: (response) => {
 				const res = []
-				forEach(response, v => {
-					if (size(v) > 0) res.push(v)
-				})
+				forEach(response, v => { res.push(v) })
 				return orderBy(res, ["createdAt"])
 			},
 		}),
@@ -489,9 +482,7 @@ export const firestoreApi = createApi({
 				console.log("Optimistic addLabel")
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_LABELS, undefined,
-						(draft) => {
-							draft.push(body)
-						}
+						(draft) => { draft.push(body) }
 					)
 				)
 				try { await queryFulfilled }
@@ -500,7 +491,8 @@ export const firestoreApi = createApi({
 		}),
 
 		updateLabel: builder.mutation({
-			query: (body) => ({ action: ACTION.UPDATE_LABEL, body }), //body: {...}
+			//body: {...}
+			query: (body) => ({ action: ACTION.UPDATE_LABEL, body }),
 			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic updateLabel")
@@ -508,7 +500,7 @@ export const firestoreApi = createApi({
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_LABELS, undefined,
 						(draft) => {
-							const obj = draft.find(i => i.lid === body.lid)
+							let obj = draft.find(i => i.lid === body.lid)
 							Object.assign(obj, body)
 						})
 				)
@@ -551,9 +543,7 @@ export const firestoreApi = createApi({
 			keepUnusedDataFor: 60 * 60,
 			transformResponse: (response) => {
 				const res = []
-				forEach(response, v => {
-					if (size(v) > 0) res.push(v)
-				})
+				forEach(response, v => { res.push(v) })
 				return orderBy(res, ["createdAt"])
 			}
 		}),
@@ -747,7 +737,7 @@ export const firestoreApi = createApi({
 					firestoreApi.util.updateQueryData(
 						ACTION.GET_TICKETS_FOR_ADMIN, undefined,
 						(draft) => {
-							const obj = draft[body.ticketItem.tid]
+							let obj = draft[body.ticketItem.tid]
 							Object.assign(obj,
 								{
 									replyCount: obj.replyCount + 1,
@@ -923,7 +913,7 @@ export const firestoreApi = createApi({
 				const patchTicketsForUser = dispatch(
 					firestoreApi.util.updateQueryData(ACTION.GET_TICKETS_FOR_USER, body.username,
 						(draft) => {
-							const obj = draft.find(ticketItem => ticketItem.tid === body.tid)
+							let obj = draft.find(ticketItem => ticketItem.tid === body.tid)
 							Object.assign(obj, {
 								replyCount: obj.replyCount - 1,
 								updatedAt: dayjs().valueOf()

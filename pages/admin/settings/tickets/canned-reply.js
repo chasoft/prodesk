@@ -35,7 +35,7 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 import { getUiSettings } from "./../../../../redux/selectors"
 import useUiSettings from "./../../../../helpers/useUiSettings"
 import { useGetDepartmentsQuery } from "../../../../redux/slices/firestoreApi"
-import { setActiveSettingPanel, setSelectedCrid } from "./../../../../redux/slices/uiSettings"
+import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "./../../../../redux/slices/uiSettings"
 import CannedRepliesGroup from "./../../../../components/Settings/CannedReplies/CannedRepliesGroup"
 import CannedRepliesAddNew from "./../../../../components/Settings/CannedReplies/CannedRepliesAddNew"
 import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
@@ -44,122 +44,8 @@ import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import QuickreplyIcon from "@mui/icons-material/Quickreply"
 import InfoIcon from "@mui/icons-material/Info"
-
-/*****************************************************************
- * DUMMY DATA                                                    *
- *****************************************************************/
-
-// const CANNED_REPLIES = [
-// 	{
-// 		id: 1,
-// 		departmentId: "df31",
-// 		departmentName: "Sales",
-// 		description: "dfds",
-// 		counter: 5, // number of times which this cannedreply used
-// 		content: "###hello3",
-// 		createdAt: "2021-09-10",
-// 		updatedAt: "2021-09-12",
-// 		createdBy: { username: "brian" },
-// 		updatedBy: { username: "caoanh" },
-// 		history: [
-// 			{
-// 				description: "dfds",
-// 				content: "###hello1",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 			{
-// 				description: "dfds",
-// 				content: "###hello2",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 		]
-// 	},
-// 	{
-// 		id: 2,
-// 		departmentId: "4564e",
-// 		departmentName: "Accounts",
-// 		description: "dfds sds sd sd s",
-// 		counter: 1,
-// 		content: `# how are you today?dfddfdf
-
-// - [ ] this is an item
-// - [ ] next item
-// - [ ] third item
-
-// \
-// `,
-// 		createdAt: "2021-09-10",
-// 		updatedAt: "2021-09-12",
-// 		createdBy: { username: "brian" },
-// 		updatedBy: { username: "caoanh" },
-// 		history: [
-// 			{
-// 				description: "dfds",
-// 				content: "### World 1",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 			{
-// 				description: "dfds",
-// 				content: "### World 2",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 		]
-// 	},
-// 	{
-// 		id: 3,
-// 		departmentId: "3243s",
-// 		departmentName: "Technical",
-// 		description: "dfds sds sd sd s",
-// 		counter: 1,
-// 		content: "### World 3",
-// 		createdAt: "2021-09-10",
-// 		updatedAt: "2021-09-12",
-// 		createdBy: { username: "brian" },
-// 		updatedBy: { username: "demo" },
-// 		history: [
-// 			{
-// 				description: "dfds",
-// 				content: "### World 1",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 			{
-// 				description: "dfds",
-// 				content: "### World 2",
-// 				updatedAt: "2021-09-10",
-// 				updatedBy: { username: "caoanh" },
-// 			},
-// 		]
-// 	},
-// 	{
-// 		id: 4,
-// 		counter: 1,
-// 		departmentId: "General",
-// 		description: "dfds heneral sds sd sd s",
-// 		content: "### Wor General Group hehe ld 3",
-// 		createdAt: "2021-09-10",
-// 		updatedAt: "2021-09-12",
-// 		createdBy: { username: "brian" },
-// 		updatedBy: { username: "caoanh" },
-// 	},
-// 	{
-// 		id: 5,
-// 		counter: 1,
-// 		departmentId: "General",
-// 		description: "dfds heneral sds sd sd s",
-// 		content: "### Wor General Group hehe ld 3",
-// 		createdAt: "2021-09-10",
-// 		updatedAt: "2021-09-12",
-// 		createdBy: { username: "brian" },
-// 		updatedBy: { username: "caoanh" },
-// 	}
-// ]
+import QuickreplyIcon from "@mui/icons-material/Quickreply"
 
 /*****************************************************************
  * INIT                                                          *
@@ -186,27 +72,43 @@ function TicketSettingsCannedReply() {
 	})
 
 	const dispatch = useDispatch()
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
-	const { activeSettingPanel } = useSelector(getUiSettings)	// used to keep selected Group (aka department)
 	const [showContent, setShowContent] = useState(false)
+	const { activeSettingPanel, isAddNewPanel } = useSelector(getUiSettings)	// used to keep selected canned-replies group (aka department)
+	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
 
 	const hasSelectedGroup =
 		(isLoading)
 			? false
-			: some(departments, { department: activeSettingPanel })
+			: some(departments, { did: activeSettingPanel })
 
-	console.log("why? TicketSettingsCannedReply")
+	const handleShowCannedRepliesOverview = () => {
+		dispatch(setActiveSettingPanel(CANNED_REPLY_PAGES.OVERVIEW))
+		setShowContent(true)
+	}
+
+	const handleShowCannedRepliesGroup = (item) => {
+		reduxBatch(() => {
+			dispatch(setSelectedCrid(""))
+			dispatch(setActiveSettingPanel(item.did))
+			dispatch(setIsAddNewPanel(false))
+		})
+		setShowContent(true)
+	}
+
+	const handleAddNewCannedReply = () => {
+		dispatch(setIsAddNewPanel(true))
+		setShowContent(true)
+	}
 
 	return (
 		<>
 			<SettingsHeader>
-				<Typography variant="h2" style={{ margin: 0 }}>Canned Replies</Typography>
+				<Typography variant="h2" style={{ margin: 0 }}>
+					Canned Replies
+				</Typography>
 				<Button
 					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
-					onClick={() => {
-						dispatch(setActiveSettingPanel(CANNED_REPLY_PAGES.ADD_NEW_CANNED_REPLY))
-						setShowContent(true)
-					}}
+					onClick={handleAddNewCannedReply}
 				>
 					Add New
 				</Button>
@@ -217,12 +119,9 @@ function TicketSettingsCannedReply() {
 				<SettingsList showContent={showContent} sx={{ pb: 3 }}>
 
 					<ListItem
-						selected={activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW}
 						icon={<InfoIcon fontSize="small" />}
-						onClick={() => {
-							dispatch(setActiveSettingPanel(CANNED_REPLY_PAGES.OVERVIEW))
-							setShowContent(true)
-						}}
+						onClick={handleShowCannedRepliesOverview}
+						selected={activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW}
 					>
 						{CANNED_REPLY_PAGES.OVERVIEW}
 					</ListItem>
@@ -241,18 +140,17 @@ function TicketSettingsCannedReply() {
 						: departments.map((item) => (
 							<ListItem
 								key={item.did}
-								selected={activeSettingPanel === item.department}
 								icon={<QuickreplyIcon fontSize="small" />}
-								onClick={() => {
-									reduxBatch(() => {
-										dispatch(setActiveSettingPanel(item.department))
-										dispatch(setSelectedCrid(""))
-									})
-									setShowContent(true)
-								}}
+								selected={activeSettingPanel === item.did}
+								onClick={() => handleShowCannedRepliesGroup(item)}
 							>
 								{item.department}
-								<Typography variant="caption" sx={{ display: "block", mt: -1 }}>{item.description}</Typography>
+								<Typography variant="caption" sx={{
+									display: "block",
+									mt: -1
+								}}>
+									{item.description}
+								</Typography>
 							</ListItem>
 						))}
 
@@ -260,14 +158,16 @@ function TicketSettingsCannedReply() {
 
 				<SettingsContent showContent={showContent}>
 
-					{(activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW)
+					{(activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW
+						&& isAddNewPanel === false)
 						&& <CannedRepliesOverview backBtnClick={setShowContent} />}
 
-					{(activeSettingPanel === CANNED_REPLY_PAGES.ADD_NEW_CANNED_REPLY)
-						&& <CannedRepliesAddNew backBtnClick={setShowContent} />}
-
-					{(activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || hasSelectedGroup)
+					{((activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || hasSelectedGroup)
+						&& isAddNewPanel === false)
 						&& <CannedRepliesGroup backBtnClick={setShowContent} />}
+
+					{(isAddNewPanel === true)
+						&& <CannedRepliesAddNew backBtnClick={setShowContent} />}
 
 				</SettingsContent>
 

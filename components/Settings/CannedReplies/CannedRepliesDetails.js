@@ -29,8 +29,8 @@ import React, { useState } from "react"
 import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { find } from "lodash"
-import { useSnackbar } from "notistack"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -40,9 +40,7 @@ import { setEditorData } from "../../../redux/slices/textEditor"
 import { getAuth, getTextEditor } from "./../../../redux/selectors"
 import { SettingsContentActionBar, SettingsContentDetails } from "./../../Settings/SettingsPanel"
 import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateCannedReplyMutation } from "../../../redux/slices/firestoreApi"
-
-
-//PROJECT IMPORT
+import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -69,7 +67,6 @@ const CannedRepliesDetails = ({ crid }) => {
 		|| selectedCannedReply.description !== description)
 
 	const dispatch = useDispatch()
-	const { enqueueSnackbar } = useSnackbar()
 
 	useDeepCompareEffect(() => {
 		dispatch(setEditorData(selectedCannedReply.content))
@@ -80,14 +77,15 @@ const CannedRepliesDetails = ({ crid }) => {
 
 	const handleUpdateCannedReply = async () => {
 		const updatedContent = {
-			crid: selectedCannedReply.crid,
+			...selectedCannedReply,
 			department: department,
 			description: description,
 			content: editorData,
-			updatedBy: currentUser.username
+			updatedBy: currentUser.username,
+			updatedAt: dayjs().valueOf()
 		}
-		const res = await updateCannedReply(updatedContent)
-		enqueueSnackbar(res?.data.message ?? res.error.data.message, res?.data.message ? "success" : "error")
+		dispatch(setActiveSettingPanel(department))
+		await updateCannedReply(updatedContent)
 	}
 
 	return (
@@ -102,7 +100,7 @@ const CannedRepliesDetails = ({ crid }) => {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						minHeight: "100px"
+						minHeight: "50px"
 					}}>
 						<CircularProgress />
 					</Box>
@@ -115,7 +113,7 @@ const CannedRepliesDetails = ({ crid }) => {
 							onChange={(e) => { setDepartment(e.target.value) }}
 						>
 							{departments.map((department) => (
-								<MenuItem key={department.did} value={department.department}>
+								<MenuItem key={department.did} value={department.did}>
 									{department.department}
 								</MenuItem>
 							))}

@@ -19,24 +19,25 @@
  ************************************************************************/
 
 
-import React, { useState } from "react"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { trim } from "lodash"
 import { nanoid } from "nanoid"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
-import { getAuth, getTextEditor } from "../../../redux/selectors"
-import { setActiveSettingPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
+import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
+import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned-reply"
+import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
 import { useAddCannedReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned-reply"
 
 //PROJECT IMPORT
 
@@ -47,9 +48,16 @@ import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned
  *****************************************************************/
 
 const CannedRepliesAddNew = ({ backBtnClick }) => {
+	const { activeSettingPanel } = useSelector(getUiSettings)
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
-	const [department, setDepartment] = useState("")
+	console.log({ activeSettingPanel })
+
+	const [department, setDepartment] = useState(
+		(activeSettingPanel !== CANNED_REPLY_PAGES.ADD_NEW_CANNED_REPLY)
+			? activeSettingPanel
+			: ""
+	)
 	const [description, setDescription] = useState("")
 	const { editorData } = useSelector(getTextEditor)
 
@@ -58,9 +66,34 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 	const dispatch = useDispatch()
 
+	const handleCancel = () => {
+		dispatch(setIsAddNewPanel(false))
+		backBtnClick(false)
+	}
+
+	const handleAddNewCannedReply = async () => {
+		const crid = nanoid()
+		const newCannedReply = {
+			crid,
+			department,
+			description,
+			content: editorData,
+			createdBy: currentUser.username,
+			updatedBy: currentUser.username,
+			createdAt: dayjs().valueOf(),
+			updatedAt: dayjs().valueOf(),
+		}
+		await addCannedReply(newCannedReply)
+		// Go to the group of new canned
+		reduxBatch(() => {
+			dispatch(setIsAddNewPanel(false))
+			dispatch(setSelectedCrid(""))
+			dispatch(setActiveSettingPanel(department))
+		})
+	}
+
 	return (
 		<>
-
 			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
 				New canned reply
 			</SettingsContentHeader>
@@ -80,15 +113,22 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						<CircularProgress />
 					</Box>
 					: <FormControl variant="standard" fullWidth>
-						<InputLabel id="demo-simple-select-label">Department</InputLabel>
+						<InputLabel id="demo-simple-select-label">
+							Department
+						</InputLabel>
 						<Select
 							id="department-select"
 							label="Department"
 							value={department}
-							onChange={(e) => { setDepartment(e.target.value) }}
+							onChange={(e) => {
+								setDepartment(e.target.value)
+							}}
 						>
 							{departments.map((department) => (
-								<MenuItem key={department.did} value={department.department}>
+								<MenuItem
+									key={department.did}
+									value={department.did}
+								>
 									{department.department}
 								</MenuItem>
 							))}
@@ -101,7 +141,9 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						label="Description"
 						variant="standard"
 						value={description}
-						onChange={(e) => { setDescription(e.target.value) }}
+						onChange={(e) => {
+							setDescription(e.target.value)
+						}}
 						fullWidth
 					/>
 				</Box>
@@ -116,10 +158,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 				<Button
 					variant="outlined"
-					onClick={() => {
-						dispatch(setActiveSettingPanel(CANNED_REPLY_PAGES.OVERVIEW))
-						backBtnClick(false)
-					}}
+					onClick={handleCancel}
 				>
 					Cancel
 				</Button>
@@ -132,23 +171,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						|| (trim(editorData) === "")
 						|| (trim(editorData) === "\\")
 					}
-					onClick={async () => {
-						const crid = nanoid()
-						const newCannedReply = {
-							crid,
-							department,
-							description,
-							content: editorData,
-							createdBy: currentUser.username,
-							updatedBy: currentUser.username
-						}
-						await addCannedReply(newCannedReply)
-						// Go to the group of new canned
-						reduxBatch(() => {
-							dispatch(setActiveSettingPanel(department))
-							dispatch(setSelectedCrid(""))
-						})
-					}}
+					onClick={handleAddNewCannedReply}
 				>
 					Add
 				</Button>

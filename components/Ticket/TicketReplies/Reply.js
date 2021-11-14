@@ -100,14 +100,14 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 	const [updateTicketReply] = useUpdateTicketReplyMutation()
 
 	const handleDeleteReply = async (confirmed) => {
-		if (confirmed) {
-			console.log("processing to delete replyId", replyItem.trid)
-			await deleteTicketReply({
-				username: ticketUsername,
-				tid: replyItem.tid,
-				trid: replyItem.trid
-			})
-		}
+		if (confirmed === false) return
+
+		console.log("processing to delete replyId", replyItem.trid)
+		await deleteTicketReply({
+			username: ticketUsername,
+			tid: replyItem.tid,
+			trid: replyItem.trid
+		})
 	}
 
 	const handleUpdateReply = async () => {

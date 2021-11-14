@@ -143,7 +143,15 @@ function TicketSettingsCategory() {
 
 				<SettingsContent showContent={showContent}>
 
-					{isLoading && <div>Loading</div>}
+					{isLoading &&
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							minHeight: "200px"
+						}}>
+							<CircularProgress />
+						</Box>}
 
 					{(!isLoading && activeSettingPanel === CATEGORY_PAGES.OVERVIEW)
 						&& <CategoriesOverview backBtnClick={setShowContent} />}

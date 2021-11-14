@@ -92,17 +92,16 @@ const CategoriesDetails = ({ backBtnClick }) => {
 	}
 
 	const handleDeleteCategory = async (confirmed) => {
-		if (confirmed) {
-			//redirect to overview tab
-			dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+		if (confirmed === false) return
 
-			//get newList of categories
-			const newList = filter(categories, c => c.catId !== selectedCategory.catId)
-			await deleteCategory({
-				categoryItem: { catId: selectedCategory.catId },
-				fullList: newList
-			})
-		}
+		//redirect to overview tab
+		dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
+		//get newList of categories
+		const newList = filter(categories, c => c.catId !== selectedCategory.catId)
+		await deleteCategory({
+			categoryItem: { catId: selectedCategory.catId },
+			fullList: newList
+		})
 	}
 
 	const handleUpdateCategory = async () => {

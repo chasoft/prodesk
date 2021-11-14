@@ -466,7 +466,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_DOCS:
 			try {
 				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.DOCS))
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.DOCS
+				))
 				querySnapshot.forEach((doc) => { all.push(doc.data()) })
 				return { data: all }
 			} catch (e) {
@@ -476,7 +478,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_DOC:
 			try {
 				let docItem = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.DOCS, args.docId))
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.DOCS, args.docId)
+				)
 				if (docSnap.exists()) { docItem = docSnap.data() }
 				return { data: docItem }
 			} catch (e) {
@@ -486,7 +490,12 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_CONTENT:
 			try {
 				let docItemContent = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.DOCS, args.docId, "content", "current"))
+				const docSnap = await getDoc(
+					doc(db,
+						COLLECTION.DOCS, args.docId,
+						"content", "current"
+					)
+				)
 				if (docSnap.exists()) { docItemContent = docSnap.data() }
 				console.log({ docItemContent })
 				return { data: docItemContent }
@@ -719,7 +728,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_APPSETTINGS:
 			try {
 				let settings = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.SETTINGS, "settings"))
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.SETTINGS, "settings")
+				)
 				if (docSnap.exists()) settings = docSnap.data()
 				return { data: settings }
 			} catch (e) {
@@ -748,7 +759,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_USERSETTINGS:	//args.username
 			try {
 				let settings = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.USERNAMES, args.username))
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.USERNAMES, args.username)
+				)
 				if (docSnap.exists()) settings = docSnap.data()
 				return { data: settings }
 			} catch (e) {
@@ -778,10 +791,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let departments = []
 				const docSnap = await getDoc(
-					doc(
-						db,
-						COLLECTION.SETTINGS, "departments"
-					)
+					doc(db, COLLECTION.SETTINGS, "departments")
 				)
 				if (docSnap.exists()) departments = docSnap.data()
 				return { data: departments }
@@ -840,7 +850,10 @@ async function fireStoreBaseQuery(args) {
 			//then, all will be overwritten with provided data
 			try {
 				const newList = keyBy(args.body.fullList, c => c.did)
-				await setDoc(doc(db, COLLECTION.SETTINGS, "departments"), newList)
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, "departments"),
+					newList
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_DEPARTMENT,
@@ -859,21 +872,21 @@ async function fireStoreBaseQuery(args) {
 		 *****************************************************************/
 		case ACTION.GET_CANNED_REPLIES:
 			try {
-				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.SETTINGS, "settings", "canned-replies"))
-				querySnapshot.forEach((cannedreply) => { all.push(cannedreply.data()) })
-				return { data: all }
+				let cannedReplies = []
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.SETTINGS, "canned-replies")
+				)
+				if (docSnap.exists()) cannedReplies = docSnap.data()
+				return { data: cannedReplies }
 			} catch (e) {
 				return throwError(200, ACTION.GET_CANNED_REPLIES, e, null)
 			}
 		case ACTION.ADD_CANNED_REPLY:
 			try {
 				await setDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", args.body.crid),
+					doc(db, COLLECTION.SETTINGS, "canned-replies"),
 					{
-						...args.body,
-						createdAt: serverTimestamp(),
-						updatedAt: serverTimestamp()
+						[args.body.crid]: args.body
 					}
 				)
 				return {
@@ -891,10 +904,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.UPDATE_CANNED_REPLY:
 			try {
 				updateDoc(
-					doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", args.body.crid),
+					doc(db, COLLECTION.SETTINGS, "canned-replies"),
 					{
-						...args.body,
-						updatedAt: serverTimestamp()
+						[args.body.crid]: args.body
 					}
 				)
 				return {
@@ -910,18 +922,25 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 		case ACTION.DELETE_CANNED_REPLY:
+			//body = {cannedReplyItem, fullList}
+			//To remove an item, we use setDoc without merge option,
+			//then, all will be overwritten with provided data
 			try {
-				await deleteDoc(doc(db, COLLECTION.SETTINGS, "settings", "canned-replies", args.body.crid))
+				const newList = keyBy(args.body.fullList, c => c.crid)
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, "canned-replies"),
+					newList
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_CANNED_REPLY,
-						id: args.body.crid,
+						id: args.body.cannedReplyItem.crid,
 						message: "Canned-reply deleted successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(200, ACTION.DELETE_CANNED_REPLY, e, {
-					id: args.body.crid
+					id: args.body.cannedReplyItem.crid
 				})
 			}
 
@@ -932,10 +951,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let labels = {}
 				const docSnap = await getDoc(
-					doc(
-						db,
-						COLLECTION.SETTINGS, "labels"
-					)
+					doc(db, COLLECTION.SETTINGS, "labels")
 				)
 				if (docSnap.exists()) labels = docSnap.data()
 				return { data: labels }
@@ -947,7 +963,7 @@ async function fireStoreBaseQuery(args) {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
 					{
-						[args.body.lid]: args.body.label
+						[args.body.lid]: args.body
 					},
 					{ merge: true }
 				)
@@ -989,7 +1005,10 @@ async function fireStoreBaseQuery(args) {
 			//then, all will be overwritten with provided data
 			try {
 				const newList = keyBy(args.body.fullList, c => c.lid)
-				await setDoc(doc(db, COLLECTION.SETTINGS, "labels"), newList)
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, "labels"),
+					newList
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_LABEL,
@@ -1010,10 +1029,7 @@ async function fireStoreBaseQuery(args) {
 			try {
 				let categories = []
 				const docSnap = await getDoc(
-					doc(
-						db,
-						COLLECTION.SETTINGS, "categories"
-					)
+					doc(db, COLLECTION.SETTINGS, "categories")
 				)
 				if (docSnap.exists()) categories = docSnap.data()
 				return { data: categories }
@@ -1026,7 +1042,8 @@ async function fireStoreBaseQuery(args) {
 					? keyBy(args.body.fullList, c => c.catId)
 					: { [args.body.categoryItem.catId]: args.body.categoryItem }
 				await setDoc(
-					doc(db, COLLECTION.SETTINGS, "categories"), updatedItems,
+					doc(db, COLLECTION.SETTINGS, "categories"),
+					updatedItems,
 					{ merge: true }
 				)
 				return {
@@ -1070,7 +1087,10 @@ async function fireStoreBaseQuery(args) {
 			//then, all will be overwritten with provided data
 			try {
 				const newList = keyBy(args.body.fullList, c => c.catId)
-				await setDoc(doc(db, COLLECTION.SETTINGS, "categories"), newList)
+				await setDoc(
+					doc(db, COLLECTION.SETTINGS, "categories"),
+					newList
+				)
 				return {
 					data: {
 						action: ACTION.DELETE_CATEGORY,
@@ -1092,8 +1112,8 @@ async function fireStoreBaseQuery(args) {
 				let res = []
 				const querySnapshot = await getDocs(collection(db,
 					COLLECTION.USERNAMES, args.username,
-					"tickets")
-				)
+					"tickets"
+				))
 				querySnapshot.forEach((ticket) => { res.push(ticket.data()) })
 				return { data: res }
 			} catch (e) {
@@ -1499,7 +1519,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_PAGES:
 			try {
 				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.PAGES))
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.PAGES
+				))
 				querySnapshot.forEach((page) => { all.push(page.data()) })
 				return { data: all }
 			} catch (e) {
@@ -1509,7 +1531,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_PAGE:	//body: pid
 			try {
 				let page = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.PAGES, args.body))
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.PAGES, args.body)
+				)
 				if (docSnap.exists()) page = docSnap.data()
 				return { data: page }
 			} catch (e) {
@@ -1519,10 +1543,12 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_PAGE_CONTENT:	//body: pid
 			try {
 				let pageContent = {}
-				const docSnap = await getDoc(doc(db,
-					COLLECTION.PAGES, args.body,
-					"content", "current"
-				))
+				const docSnap = await getDoc(
+					doc(db,
+						COLLECTION.PAGES, args.body,
+						"content", "current"
+					)
+				)
 				if (docSnap.exists()) { pageContent = docSnap.data() }
 				return { data: pageContent }
 			} catch (e) {
@@ -1635,7 +1661,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_BLOG_POSTS:
 			try {
 				let all = []
-				const querySnapshot = await getDocs(collection(db, COLLECTION.BLOG))
+				const querySnapshot = await getDocs(collection(db,
+					COLLECTION.BLOG
+				))
 				querySnapshot.forEach((post) => { all.push(post.data()) })
 				return { data: all }
 			} catch (e) {
@@ -1645,7 +1673,9 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_BLOG_POST:	//body: bid
 			try {
 				let page = {}
-				const docSnap = await getDoc(doc(db, COLLECTION.BLOG, args.body))
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.BLOG, args.body)
+				)
 				if (docSnap.exists()) page = docSnap.data()
 				return { data: page }
 			} catch (e) {
@@ -1655,10 +1685,12 @@ async function fireStoreBaseQuery(args) {
 		case ACTION.GET_BLOG_POST_CONTENT:	//body: bid
 			try {
 				let pageContent = {}
-				const docSnap = await getDoc(doc(db,
-					COLLECTION.BLOG, args.body,
-					"content", "current"
-				))
+				const docSnap = await getDoc(
+					doc(db,
+						COLLECTION.BLOG, args.body,
+						"content", "current"
+					)
+				)
 				if (docSnap.exists()) { pageContent = docSnap.data() }
 				return { data: pageContent }
 			} catch (e) {

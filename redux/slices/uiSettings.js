@@ -83,6 +83,7 @@ export const initialState = {
 	*/
 	activeSettingTab: 0,
 	activeSettingPanel: "",
+	isAddNewPanel: false,
 	selectedCrid: "",
 	/*
 		used in pages/admin/documentation
@@ -171,6 +172,9 @@ const uiSettingsSlice = createSlice({
 		setActiveSettingPanel: (state, { payload }) => {
 			state.activeSettingPanel = payload
 		},
+		setIsAddNewPanel: (state, { payload }) => {
+			state.isAddNewPanel = payload
+		},
 		setSelectedCrid: (state, { payload }) => {
 			state.selectedCrid = payload
 		},
@@ -197,7 +201,7 @@ export const {
 	setBackgroundForLoggedinPage,
 	setScrolled,
 	setTicketCounter, setFilteredByWord, setSelectedStatusRaw, setFilteredByDepartment, setFilteredByPriority, setFilteredByLabel, resetTicketFilters, setFilteredByInbox, setFilteredGroupBy,
-	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid,
+	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid, setIsAddNewPanel,
 	setSideBarLeft, setShowTocSideBarDetails,
 	setSelectedTickets
 } = uiSettingsSlice.actions

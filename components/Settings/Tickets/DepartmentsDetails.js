@@ -96,25 +96,25 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	}
 
 	const handleDeleteDepartment = async (confirmed) => {
-		if (confirmed) {
-			//User must delete all related canned-reply
-			//before they can delete department
-			const existedCannedReplies = filter(cannedReplies, { department: selectedDepartment.did })
-			if (existedCannedReplies.length > 0) {
-				enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
-				return
-			}
+		if (confirmed === false) return
 
-			//redirect to overview tab
-			dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-
-			//get newList of department
-			const newList = filter(departments, d => d.did !== selectedDepartment.did)
-			await deleteDepartment({
-				departmentItem: { did: selectedDepartment.did },
-				fullList: newList
-			})
+		//User must delete all related canned-reply
+		//before they can delete department
+		const existedCannedReplies = filter(cannedReplies, { department: selectedDepartment.did })
+		if (existedCannedReplies.length > 0) {
+			enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
+			return
 		}
+
+		//redirect to overview tab
+		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
+
+		//get newList of department
+		const newList = filter(departments, d => d.did !== selectedDepartment.did)
+		await deleteDepartment({
+			departmentItem: { did: selectedDepartment.did },
+			fullList: newList
+		})
 	}
 
 	const handleUpdateDepartment = async () => {

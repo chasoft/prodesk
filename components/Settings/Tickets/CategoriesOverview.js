@@ -75,7 +75,10 @@ const CategoriesOverview = ({ backBtnClick }) => {
 
 		await updateCategory({
 			isDefault: true,
-			categoryItem: { catId: category.catId },
+			categoryItem: {
+				catId: category.catId,
+				default: true
+			},
 			fullList
 		})
 	}

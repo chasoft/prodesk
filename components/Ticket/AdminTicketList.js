@@ -329,17 +329,17 @@ const DeleteTicketsButton = () => {
 	dayjs.extend(relativeTime)
 
 	const handleDeleteTicket = async (confirmed) => {
-		if (confirmed) {
-			const affectedTickets = []
-			selectedTickets.forEach((selectedTicket) => {
-				affectedTickets.push({
-					username: selectedTicket.username,
-					tid: selectedTicket.tid
-				})
+		if (confirmed === false) return
+
+		const affectedTickets = []
+		selectedTickets.forEach((selectedTicket) => {
+			affectedTickets.push({
+				username: selectedTicket.username,
+				tid: selectedTicket.tid
 			})
-			await deleteTicketTemp(affectedTickets)
-			console.log("delete tickets clicked")
-		}
+		})
+		await deleteTicketTemp(affectedTickets)
+		console.log("delete tickets clicked")
 	}
 
 	return (

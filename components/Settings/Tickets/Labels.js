@@ -133,14 +133,14 @@ export const SubCatItem = ({ currentItem, labels }) => {
 	const isModified = currentItem.color !== color || currentItem.name !== name
 
 	const handleDeleteLabel = async (confirmed) => {
-		if (confirmed) {
-			//get newList of labels
-			const newList = filter(labels, l => l.lid !== currentItem.lid)
-			await deleteLabel({
-				labelItem: { lid: currentItem.lid },
-				fullList: newList
-			})
-		}
+		if (confirmed === false) return
+
+		//get newList of labels
+		const newList = filter(labels, l => l.lid !== currentItem.lid)
+		await deleteLabel({
+			labelItem: { lid: currentItem.lid },
+			fullList: newList
+		})
 	}
 
 	const handleUpdateLabel = async () => {

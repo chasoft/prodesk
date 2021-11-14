@@ -254,7 +254,6 @@ SideBarContentCollapsed.propTypes = { data: PropTypes.array }
 const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 	const { showSideBar, isSmallScreen, isSideBarExpanded } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
-	console.log({ isMobile })
 	return (
 		<>
 			<Box
