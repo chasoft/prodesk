@@ -39,7 +39,6 @@ import { configureStore } from "@reduxjs/toolkit"
 import createEmotionCache from "./../helpers/createEmotionCache"
 import { CacheProvider } from "@emotion/react"
 
-
 //PROJECT IMPORT
 import rootReducer from "./../redux/slices"
 import { theme } from "./../components/theme"
