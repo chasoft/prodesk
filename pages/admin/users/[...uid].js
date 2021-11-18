@@ -67,8 +67,7 @@ function AdminViewUser() {
 	/*[bug] When nagivate to other page,
 	useRouter would return undefined,
 	just before getting out, we would have error,
-	then, solution is to return null
-	(render nothing in this case) */
+	then, solution is to return null (render nothing in this case) */
 	if (!uid) return null
 
 	if (profile === undefined) return <DefaultErrorPage statusCode={404} />

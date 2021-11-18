@@ -59,6 +59,18 @@ DepartmentMembersCount.propTypes = {
 	count: PropTypes.number
 }
 
+const DepartmentAvailableForAll = () => {
+	return (
+		<Chip
+			size="small"
+			label="Available for all"
+			color="primary"
+			sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
+			onClick={(e) => e.stopPropagation()}
+		/>
+	)
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
@@ -121,21 +133,37 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 								{item.availableForAll
 									?
 									<Tooltip arrow title="All members" placement="top">
-										<FingerprintIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+										<FingerprintIcon
+											fontSize="small"
+											color="primary"
+											sx={{ ml: 1 }}
+										/>
 									</Tooltip>
 									:
 									<Tooltip arrow title="Only selected members" placement="top">
-										<FingerprintIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+										<FingerprintIcon
+											fontSize="small"
+											color="warning"
+											sx={{ ml: 1 }}
+										/>
 									</Tooltip>}
 
 								{item.isPublic
 									?
 									<Tooltip arrow title="Available for all users" placement="top">
-										<PublicIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+										<PublicIcon
+											fontSize="small"
+											color="primary"
+											sx={{ ml: 1 }}
+										/>
 									</Tooltip>
 									:
 									<Tooltip arrow title="For internal use only" placement="top">
-										<PublicIcon fontSize="small" color="disabled" sx={{ ml: 1 }} />
+										<PublicIcon
+											fontSize="small"
+											color="disabled"
+											sx={{ ml: 1 }}
+										/>
 									</Tooltip>}
 
 							</Box>
@@ -149,12 +177,15 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 									{item.description ? <>&nbsp; | &nbsp; </> : null}
 								</Typography>
 
-								<DepartmentMembersCount count={item.members.length} />
+								{(item.availableForAll === false)
+									? <DepartmentMembersCount count={item.members.length} />
+									: <DepartmentAvailableForAll />}
 							</Box>
 						</Box>
 
 						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<AvatarList members={item.members} />
+							{(item.availableForAll === false) &&
+								<AvatarList members={item.members} />}
 						</Box>
 
 					</Box>

@@ -46,6 +46,8 @@ import { useRequestRefetchingMutation } from "../redux/slices/firestoreApi"
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 import VisibilityIcon from "@mui/icons-material/Visibility"
+import { ACTIONS } from "../redux/slices/firestoreApiConstants"
+import { notisLinkBuilder } from "../components/BackEnd/NotificationDrawer"
 
 /*****************************************************************
  * INIT                                                          *
@@ -103,6 +105,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 			notisRef,
 			async (data) => {
 				if (data.val().hasBeenShowed === false) {
+					const link = notisLinkBuilder(isAdminURL, data.val().content)
 					enqueueSnackbar(
 						data.val().content.title,
 						{
@@ -114,7 +117,11 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 									onClick={() => { closeSnackbar(key) }}
 								>
 									{!!data.val().content.link &&
-										<Link href={data.val().content.link} passHref>
+										<Link
+											passHref
+											scroll={data.val().content.actionType !== ACTIONS.ADD_TICKET_REPLY}
+											href={link}
+										>
 											<a href="just-a-placeholder">
 												<VisibilityIcon sx={{ ":hover": { color: "#F9B100" } }} />
 											</a>
@@ -207,13 +214,16 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 		const unsubscribeFetchingOnChildChanged = onChildChanged(
 			ref(realtimeDB, STRINGS.invalidatesTags),
 			async (data) => {
-				console.log("fetchingOnChildChanged executed", data.val())
-				if (data.val().target.isForAdmin && isAdminURL) {
-					await requestRefetching(data.val().tag)
-				}
+				//only trigger refetching if currentUser is not the trigger
+				//this is to prevent unnecessary double fetching data
+				if (username !== data.val().trigger) {
+					if (data.val().target.isForAdmin && isAdminURL) {
+						await requestRefetching(data.val().tag)
+					}
 
-				if (data.val().target.isForUser && isAdminURL === false) {
-					await requestRefetching(data.val().tag)
+					if (data.val().target.isForUser && isAdminURL === false) {
+						await requestRefetching(data.val().tag)
+					}
 				}
 			}
 		)
@@ -317,6 +327,7 @@ export const readNotification = async (username, nid) => {
 /**
  * Request to refetch data, isLoading
  * invalidatesTags: {
+ * 						trigger: currentUser.username
 						tag: [{type, id}],
 						target: {
 							isForUser: boolean,
@@ -346,10 +357,10 @@ export const requestSilentRefetching = async (invalidatesTags) => {
 }
 
 /**
- * Send a notification to a list of users
- * @param {array} receivers 
- * @param {object} notisData 
- * @returns 
+ * Send a SINGLE notification to a list of users
+ * @param {array} receivers
+ * @param {object} notisData
+ * @returns
  */
 export const addNewNotification = async (receivers, notisData = {}, invalidatesTags = {}) => {
 	try {
@@ -383,5 +394,63 @@ export const addNewNotification = async (receivers, notisData = {}, invalidatesT
 		}
 	} catch (e) {
 		return throwError(CODE.FAILED, "addNewNotification", e, null)
+	}
+}
+
+/**
+ * add many notifications to many users
+ * @param {array of object} notisGroup
+ * @param {object} invalidatesTags
+ * @returns
+ * Note: notisGroup : [
+		{
+			receivers: array of usernames
+			notisData: {}
+		},
+		{
+			receivers: array of usernames
+			notisData: {}
+		},
+	]
+ */
+export const addNewNotifications = async (notisGroup = [], invalidatesTags = {}) => {
+	try {
+		const createdAt = dayjs().valueOf()
+		const updates = {}
+
+		forEach(notisGroup,
+			(notisItem) => {
+				forEach(
+					notisItem.receivers,
+					(username) => {
+						const nid = nanoid()
+						updates[username + "/" + STRINGS.notifications + "/" + nid] = {
+							nid,
+							hasBeenRead: false,
+							hasBeenShowed: false,
+							createdAt,
+							content: notisItem.notisData,
+						}
+					}
+				)
+			}
+		)
+
+		//update invalidatesTags
+		updates["invalidatesTags/details"] = {
+			...invalidatesTags,
+			randomId: random(1000)
+		}
+
+		await update(ref(realtimeDB), updates)
+
+		return {
+			data: {
+				code: CODE.SUCCESS,
+				message: "Send notifications to users successfully"
+			}
+		}
+	} catch (e) {
+		return throwError(CODE.FAILED, "addNewNotifications", e, null)
 	}
 }

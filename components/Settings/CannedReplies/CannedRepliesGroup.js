@@ -36,13 +36,16 @@ import { useDispatch, useSelector } from "react-redux"
 import CannedRepliesList from "./CannedRepliesList"
 import ConfirmDialog from "../../common/ConfirmDialog"
 import CannedRepliesDetails from "./CannedRepliesDetails"
-import { getUiSettings } from "./../../../redux/selectors"
+import { getAuth, getUiSettings } from "./../../../redux/selectors"
 import { setSelectedCrid } from "../../../redux/slices/uiSettings"
 import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { useDeleteCannedReplyMutation, useGetCannedRepliesQuery, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
+import { CODE } from "../../../helpers/constants"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -50,15 +53,19 @@ import DeleteIcon from "@mui/icons-material/Delete"
 
 const CannedRepliesGroup = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+
 	const {
 		selectedCrid,
 		activeSettingPanel
 	} = useSelector(getUiSettings)
+
 	const {
 		data: departments,
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
+
 	const {
 		data: cannedReplies = [],
 		isLoading: isLoadingCannedReplies
@@ -66,10 +73,13 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 
 	const [deleteCannedReply] = useDeleteCannedReplyMutation()
 
-	const cannedRepliesGroup = cannedReplies.filter((cannedReply) =>
-		cannedReply.department === activeSettingPanel) ?? []
+	const cannedRepliesGroup = cannedReplies.filter(
+		(cannedReply) => cannedReply.department === activeSettingPanel
+	) ?? []
 
-	const currentDepartment = departments.find(e => e.did === activeSettingPanel)
+	const currentDepartment = departments.find(
+		department => department.did === activeSettingPanel
+	)
 
 	const handleDeleteCannedReply = async (confirmed) => {
 		if (confirmed === false) return
@@ -77,10 +87,23 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 		dispatch(setSelectedCrid(""))
 		//get newList of canned-replies
 		const newList = filter(cannedReplies, e => e.crid !== selectedCrid)
-		await deleteCannedReply({
+
+		const res = await deleteCannedReply({
 			cannedReplyItem: { crid: selectedCrid },
 			fullList: newList
 		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	if (isLoadingDepartments || isLoadingCannedReplies) {

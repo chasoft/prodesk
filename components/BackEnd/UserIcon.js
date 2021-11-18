@@ -14,16 +14,17 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import useAdmin from "../../helpers/useAdmin"
 import { getAuth } from "./../../redux/selectors"
 import { REDIRECT_URL } from "./../../helpers/constants"
 import { signOut } from "./../../helpers/firebase/logout"
-import { AuthAdminTrue, AuthUserTrue } from "./../AuthCheck"
+import { AuthStaffTrue, AuthUserTrue } from "./../AuthCheck"
 import usePopupContainer from "./../../components/common/usePopupContainer"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
-import useAdmin from "../../helpers/useAdmin"
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 /*****************************************************************
  * INIT                                                          *
@@ -130,28 +131,35 @@ const UserIcon = () => {
 				}}
 				onClick={handleClose}
 			>
-				<AuthAdminTrue>
+				<AuthStaffTrue>
 					<Link href={REDIRECT_URL.ADMIN.INDEX} passHref>
-						<li><SettingsIcon />Admin Dashboard</li>
+						<li>
+							<SettingsIcon />Admin Dashboard
+						</li>
 					</Link>
-				</AuthAdminTrue>
+				</AuthStaffTrue>
 
 				<AuthUserTrue>
 					<Link href={REDIRECT_URL.CLIENT.INDEX} passHref>
-						<li><SettingsIcon />Client Dashboard</li>
+						<li>
+							<SettingsIcon />Client Dashboard
+						</li>
 					</Link>
 				</AuthUserTrue>
 
 				<Link href={isAdminURL ? REDIRECT_URL.ADMIN.EDIT_PROFILE : REDIRECT_URL.CLIENT.EDIT_PROFILE} passHref>
-					<li><SettingsIcon />Profile Settings</li>
+					<li>
+						<AccountBoxIcon />Profile Settings
+					</li>
 				</Link>
 
-				<li
+				<Box
+					component="li"
 					onClick={() => { signOut({ enqueueSnackbar, dispatch }) }}
 					style={{ borderBottomLeftRadius: "4px", borderBottomRightRadius: "4px" }}
 				>
 					<ExitToAppIcon />Logout
-				</li>
+				</Box>
 
 			</Box>
 

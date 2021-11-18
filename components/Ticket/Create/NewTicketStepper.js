@@ -43,11 +43,12 @@ import { LearnMoreAdvancedTextEditor } from "./../../common"
 import { setRedirect } from "./../../../redux/slices/redirect"
 import { getPlainTextFromMarkDown } from "./../../../helpers/utils"
 import { addNewNotification } from "./../../../helpers/realtimeApi"
-import { CODE, REDIRECT_URL, STATUS_FILTER } from "./../../../helpers/constants"
+import { CODE, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "./../../../helpers/constants"
 import { getAuth, getNewTicket, getTextEditor } from "./../../../redux/selectors"
 import { setCurrentStep, setNewlyAddedTicketSlug } from "./../../../redux/slices/newTicket"
 import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
 import { ACTIONS, TYPE } from "../../../redux/slices/firestoreApiConstants"
+import useProfilesGroup from "../../../helpers/useProfilesGroup"
 
 //ASSETS
 
@@ -116,17 +117,40 @@ export const useGetNewTicketData = () => {
 
 const StepperControlButtons = () => {
 	const dispatch = useDispatch()
-	const [isProcessingNewTicket, setIsProcessingNewTicket] = useState(false)
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
-	const { currentStep, subject, onBehalf } = useSelector(getNewTicket)
+	const [isProcessingNewTicket, setIsProcessingNewTicket] = useState(false)
+
+	const {
+		currentStep,
+		onBehalf,
+		subject
+	} = useSelector(getNewTicket)
+
 	const [addTicket] = useAddTicketMutation()
 	const { isAdminURL } = useAdmin()
 
 	const raw = useGetTicketDetails()
-	const { data: departments } = useGetDepartmentsQuery(undefined)
 
-	const handleGoBack = () => { dispatch(setCurrentStep(currentStep - 1)) }
+	const {
+		data: departments,
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
+
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
+
+	const handleGoBack = () => {
+		dispatch(setCurrentStep(currentStep - 1))
+	}
+
 	const handleGoNext = async () => {
 		let slug
 		if (currentStep === steps.length - 1) {
@@ -136,8 +160,11 @@ const StepperControlButtons = () => {
 			slug = slugify(subject) + "/" + tid
 			const res = await addTicket({
 				tid,
-				username: onBehalf ?? currentUser.username,	//owner of the ticket
-				createdBy: currentUser.username, // who create the ticket, sometimes, admin will create ticket on behalf of customer
+				//owner of the ticket
+				username: onBehalf ?? currentUser.username,
+				//who create the ticket
+				//sometimes, admin will create ticket on behalf of customer
+				createdBy: currentUser.username,
 				subject: subject,
 				department: raw.selectedDepartmentId,
 				priority: raw.selectedPriority,
@@ -150,17 +177,9 @@ const StepperControlButtons = () => {
 			})
 
 			if (res?.data.code === CODE.SUCCESS) {
-				//prepare notification content
-				const notisContent = {
-					actionType: ACTIONS.ADD_TICKET,
-					iconURL: currentUser.photoURL,
-					title: currentUser.username + " just opened new ticket",
-					description: subject,
-					link: slug,
-				}
-				const departmentDetails = departments.find(i => i.did === raw.selectedDepartmentId)
 
 				const invalidatesTags = {
+					trigger: currentUser.username,
 					tag: [{ type: TYPE.TICKETS, id: "LIST" }],
 					target: {
 						isForUser: true,
@@ -168,7 +187,26 @@ const StepperControlButtons = () => {
 					}
 				}
 
-				await addNewNotification(departmentDetails.members, notisContent, invalidatesTags)
+				const notisContent = {
+					actionType: ACTIONS.ADD_TICKET,
+					iconURL: currentUser.photoURL,
+					title: currentUser.username + " just opened new ticket",
+					description: subject,
+					link: slug,
+				}
+
+				//Determine who will receive notifications
+				//about this newly created ticket
+				const selectedDepartment = departments.find(
+					department => department.did === raw.selectedDepartmentId
+				) ?? {}
+
+				let receivers =
+					(selectedDepartment?.availableForAll)
+						? allAdminProfiles.map(profile => profile.username)
+						: selectedDepartment.members
+
+				await addNewNotification(receivers, notisContent, invalidatesTags)
 			}
 
 			setIsProcessingNewTicket(false)
@@ -200,8 +238,18 @@ const StepperControlButtons = () => {
 
 				<Button
 					disabled={
-						(currentStep === 0 && subject.length < 10 || isAdminURL ? (onBehalf ? (false || subject.length < 10) : true) : false)
+						(
+							currentStep === 0 && subject.length < 10 || isAdminURL
+								? (
+									onBehalf
+										? (false || subject.length < 10)
+										: true
+								)
+								: false
+						)
 						|| (currentStep === 2 && editorData.length < 20)
+						|| isLoadingDepartments
+						|| isLoadingAllAdminProfiles
 					}
 					variant="contained" color="primary"
 					onClick={handleGoNext}

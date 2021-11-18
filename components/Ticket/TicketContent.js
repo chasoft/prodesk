@@ -103,7 +103,10 @@ const PopupMenu = ({ ticket }) => {
 				description: ticket.subject,
 				link: ticket.slug,
 			}
-			const departmentDetails = departments.find(i => i.did === ticket.department)
+
+			const departmentDetails = departments.find(
+				department => department.did === ticket.department
+			)
 
 			const receivers = (currentUser.username !== ticket.username)
 				? [ticket.username]
@@ -112,6 +115,7 @@ const PopupMenu = ({ ticket }) => {
 					: departmentDetails.members
 
 			const invalidatesTags = {
+				trigger: currentUser.username,
 				tag: [{ type: TYPE.TICKETS, id: "LIST" }],
 				target: {
 					isForUser: true,

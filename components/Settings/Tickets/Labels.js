@@ -44,6 +44,9 @@ import SaveIcon from "@mui/icons-material/Save"
 import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { CODE } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -275,7 +278,7 @@ const PageLabels = ({ backBtnClick }) => {
 	const handleAddNewLabel = async () => {
 		const lid = nanoid()
 		const incNum = uniqueId()
-		addLabel({
+		const res = await addLabel({
 			lid,
 			name: "Label " + incNum,
 			color: Object.entries(HUE)[random(18)][1][SHADE[random(7)]],
@@ -284,6 +287,18 @@ const PageLabels = ({ backBtnClick }) => {
 			createdAt: dayjs().valueOf(),
 			updatedAt: dayjs().valueOf()
 		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.LABELS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	return (

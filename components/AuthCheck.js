@@ -150,17 +150,29 @@ export function AuthTrue(props) {
  */
 export function AuthStaffTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group !== USERGROUP.USER.code) ? props.children : null
+
+	const isStaffGroup = [
+		USERGROUP.ADMIN.code,
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	].includes(currentUser.group)
+
+	return isStaffGroup ? props.children : null
 }
 
 /**
- * Users only
+ * Users only (Members & Users)
  */
 export function AuthUserTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group === USERGROUP.USER.code)
-		? props.children
-		: null
+
+	const isUserGroup = [
+		USERGROUP.USER.code,
+		USERGROUP.MEMBER.code
+	].includes(currentUser.group)
+
+	return isUserGroup ? props.children : null
 }
 
 /**
@@ -168,9 +180,13 @@ export function AuthUserTrue(props) {
  */
 export function AuthAdminTrue(props) {
 	const { currentUser } = useSelector(getAuth)
-	return (currentUser.group === USERGROUP.ADMIN.code || currentUser.group === USERGROUP.SUPERADMIN.code)
-		? props.children
-		: null
+
+	const isAdminGroup = [
+		USERGROUP.ADMIN.code,
+		USERGROUP.SUPERADMIN.code,
+	].includes(currentUser.group)
+
+	return isAdminGroup ? props.children : null
 }
 
 /**
@@ -178,7 +194,6 @@ export function AuthAdminTrue(props) {
  * so, if you are Already loggedin, you will be redirected to dashboard
  */
 export function GuestOnly(props) {
-	// const dispatch = useDispatch()
 	const router = useRouter()
 	const { isAuthenticated, currentUser } = useSelector(getAuth)
 
@@ -186,18 +201,15 @@ export function GuestOnly(props) {
 		//the user logged-in and account created
 		&& currentUser?.nextStep === REDIRECT_URL.SIGNUP.DONE) {
 		if (currentUser.group === USERGROUP.USER.code) {
-			// dispatch(setRedirect(REDIRECT_URL.CLIENT))
 			router.push(REDIRECT_URL.CLIENT.INDEX)
 			return null
 		}
 
-		// dispatch(setRedirect(REDIRECT_URL.ADMIN))
 		router.push(REDIRECT_URL.ADMIN.INDEX)
 		return null
 	}
 
-	if (isAuthenticated === false)
-		return props.children
+	if (isAuthenticated === false) return props.children
 
 	//Else
 	return (

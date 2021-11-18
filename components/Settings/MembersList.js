@@ -26,11 +26,11 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, AvatarGroup, Box, Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
+import { Avatar, AvatarGroup, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { isEqual, sortBy } from "lodash"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
 
@@ -41,7 +41,8 @@ import { DepartmentMembersCount } from "./Tickets/DepartmentsOverview"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import { USERGROUP } from "../../helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "../../helpers/constants"
+import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
@@ -178,12 +179,21 @@ StaffListChooserDialog.propTypes = {
  *****************************************************************/
 
 const MembersList = ({ members, addMemberCallback }) => {
+	const dispatch = useDispatch()
 	const [membersCache, setMembersCache] = useState(members)
-	const [membersProfile, setMembersProfile] = useState([])
+	const [memberProfiles, setMemberProfiles] = useState([])
+
 	const {
 		userList: staffList = [],
 		isLoading: isLoadingStaffList
-	} = useProfilesGroup([USERGROUP.USER.code, USERGROUP.MEMBER.code], { inverting: true })
+	} = useProfilesGroup(
+		[
+			USERGROUP.USER.code,
+			USERGROUP.MEMBER.code
+		],
+		{ inverting: true }
+	)
+
 	const [openStaffListChooserDialog, setOpenStaffListChooserDialog] = useState(false)
 	/*
 		members is an array of usernames only,
@@ -197,12 +207,10 @@ const MembersList = ({ members, addMemberCallback }) => {
 
 	useDeepCompareEffect(() => {
 		const verifiedList = membersCache
-			.map(u => staffList.find(i => i.username === u) ?? undefined)
+			.map(u => staffList.find(i => i.username === u))
 			.filter(i => i !== undefined)
-		setMembersProfile(verifiedList)
+		setMemberProfiles(verifiedList)
 	}, [staffList, membersCache])
-
-	console.log({ membersProfile })
 
 	if (isLoadingStaffList) {
 		return (
@@ -219,58 +227,57 @@ const MembersList = ({ members, addMemberCallback }) => {
 
 	return <>
 		<Box sx={{ display: "flex", alignItems: "center" }}>
-			<Typography variant="caption" sx={{ mr: 1 }}>There are</Typography>
-			<DepartmentMembersCount count={membersProfile?.length} />
+			<Typography variant="caption" sx={{ mr: 1 }}>
+				Members
+			</Typography>
 		</Box>
 		<Box sx={{
 			display: "flex",
 			justifyContent: "space-between",
-			alignItems: "center",
-			mt: 2
+			alignItems: "center"
 		}}>
-			<Box sx={{
-				display: "flex",
-				justifyContent: "center",
-				alignContent: "flex-start",
-				alignItems: "center",
-				"& > *": { marginRight: "5px" },
-				"& > *:last-child": { marginRight: 0 }
-			}}>
-				<AvatarGroup max={5}>
-					{membersProfile.map((item) =>
-						<Avatar
-							key={item.username}
-							alt={item.displayName}
-							src={item.photoURL}
-						/>
-					)}
-				</AvatarGroup>
-
-				<Tooltip arrow title="Add members" placement="top">
-					<IconButton
-						color="primary"
-						size="large"
-						onClick={() => setOpenStaffListChooserDialog(true)}
-					>
-						<AddIcon />
-					</IconButton>
-				</Tooltip>
-
-				<StaffListChooserDialog
-					open={openStaffListChooserDialog}
-					members={members}
-					addMemberCallback={(members) => {
-						setMembersCache(members)
-						addMemberCallback(members)
-					}}
-					handleClose={() => setOpenStaffListChooserDialog(false)}
-				/>
-			</Box>
 
 			<Box>
-				{/* TODO: Decorate and link the username to user management  */}
-				{[...members].join(", ")}
+				{memberProfiles.map((profile) => (
+					<Chip
+						key={profile.username}
+						avatar={<Avatar src={profile.photoURL}></Avatar>}
+						label={profile.displayName}
+						variant="outlined"
+						sx={{
+							mb: 0.5,
+							mx: 0.5,
+							".MuiChip-avatar": { color: "#FFF", fontWeight: 700 }
+						}}
+						onClick={(e) => {
+							e.stopPropagation()
+							dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + profile.username))
+						}}
+					/>
+				))}
 			</Box>
+
+			<Tooltip arrow title="Add members" placement="top">
+				<Button
+					color="primary"
+					sx={{ mt: -0.5 }}
+					startIcon={<AddIcon />}
+					variant="outlined"
+					onClick={() => setOpenStaffListChooserDialog(true)}
+				>
+					Add
+				</Button>
+			</Tooltip>
+
+			<StaffListChooserDialog
+				open={openStaffListChooserDialog}
+				members={members}
+				addMemberCallback={(members) => {
+					setMembersCache(members)
+					addMemberCallback(members)
+				}}
+				handleClose={() => setOpenStaffListChooserDialog(false)}
+			/>
 		</Box>
 
 	</>

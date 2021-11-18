@@ -45,7 +45,7 @@ function throwError(statusCode, action, e, data) {
 	console.log(e.message)
 	return {
 		error: {
-			code: statusCode ?? 100,
+			code: statusCode,
 			data: {
 				action: action,
 				message: e.message,
@@ -118,6 +118,7 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						uid: userCredential.user.uid,
 						message: "SuperAdmin account created successfully",
 						redirect: REDIRECT_URL.INSTALL.COMPLETED
@@ -459,6 +460,7 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_PROFILE,
 						id: args.body.uid,
 						message: "Profile updated successfully"
@@ -529,6 +531,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_DOC,
 						id: args.body.docItem.docId,
 						message: "doc added successfully"
@@ -552,6 +555,7 @@ async function fireStoreBaseQuery(args) {
 					)
 					return {
 						data: {
+							code: CODE.SUCCESS,
 							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "Doc or External link updated successfully"
@@ -575,6 +579,7 @@ async function fireStoreBaseQuery(args) {
 					await batch.commit()
 					return {
 						data: {
+							code: CODE.SUCCESS,
 							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "category updated successfully"
@@ -598,6 +603,7 @@ async function fireStoreBaseQuery(args) {
 					await batch.commit()
 					return {
 						data: {
+							code: CODE.SUCCESS,
 							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "SubCategory updated successfully"
@@ -631,6 +637,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_DOC_CONTENT,
 						id: args.body.docItem.docId,
 						message: "DocContent updated successfully"
@@ -647,6 +654,7 @@ async function fireStoreBaseQuery(args) {
 					await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 					return {
 						data: {
+							code: CODE.SUCCESS,
 							action: ACTIONS.DELETE_DOC,
 							id: args.body.docItem.docId,
 							message: "External Link deleted successfully"
@@ -659,6 +667,7 @@ async function fireStoreBaseQuery(args) {
 					await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 					return {
 						data: {
+							code: CODE.SUCCESS,
 							action: ACTIONS.DELETE_DOC,
 							id: args.body.docItem.docId,
 							message: "Doc deleted successfully"
@@ -680,6 +689,7 @@ async function fireStoreBaseQuery(args) {
 						await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 						return {
 							data: {
+								code: CODE.SUCCESS,
 								action: ACTIONS.DELETE_DOC,
 								id: args.body.docItem.docId,
 								message: "Category deleted successfully"
@@ -711,6 +721,7 @@ async function fireStoreBaseQuery(args) {
 						await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 						return {
 							data: {
+								code: CODE.SUCCESS,
 								action: ACTIONS.DELETE_DOC,
 								id: args.body.docItem.docId,
 								message: "SubCategory deleted successfully"
@@ -755,6 +766,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_APPSETTINGS,
 						message: "Settings updated successfully"
 					}
@@ -786,6 +798,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_USERSETTINGS,
 						message: "User settings updated successfully"
 					}
@@ -819,6 +832,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_DEPARTMENT,
 						id: args.body.did,
 						message: "Department added successfully"
@@ -842,6 +856,7 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_DEPARTMENT,
 						id: args.body.did,
 						message: "Department updated successfully"
@@ -866,6 +881,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_DEPARTMENT,
 						id: args.body.departmentItem.did,
 						message: "Department deleted successfully"
@@ -901,6 +917,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_CANNED_REPLY,
 						id: args.body.crid,
 						message: "Canned-reply added successfully"
@@ -921,6 +938,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_CANNED_REPLY,
 						id: args.body.crid,
 						message: "Canned-reply updated successfully"
@@ -943,6 +961,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_CANNED_REPLY,
 						id: args.body.cannedReplyItem.crid,
 						message: "Canned-reply deleted successfully"
@@ -979,6 +998,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_LABEL,
 						id: args.body.lid,
 						message: "Label added successfully"
@@ -999,6 +1019,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_LABEL,
 						id: args.body.lid,
 						message: "Label updated successfully"
@@ -1021,6 +1042,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_LABEL,
 						id: args.body.labelItem.lid,
 						message: "Label deleted successfully"
@@ -1058,6 +1080,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category added successfully"
@@ -1081,6 +1104,7 @@ async function fireStoreBaseQuery(args) {
 				await updateDoc(doc(db, COLLECTION.SETTINGS, "categories"), updatedItems)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category updated successfully"
@@ -1103,6 +1127,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category deleted successfully"
@@ -1586,6 +1611,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_PAGE,
 						pid: args.body.pageItem.pid,
 						message: "Page added successfully"
@@ -1608,6 +1634,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_PAGE,
 						pid: args.body.pid,
 						message: "Page properties updated successfully"
@@ -1636,6 +1663,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_PAGE_CONTENT,
 						pid: args.body.pageItem.pid,
 						message: "Page content updated successfully"
@@ -1655,6 +1683,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_PAGE,
 						message: "Page deleted successfully"
 					}
@@ -1728,6 +1757,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.ADD_BLOG_POST,
 						bid: args.body.blogItem.bid,
 						message: "Blog added successfully"
@@ -1750,6 +1780,7 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_BLOG_POST,
 						bid: args.body.bid,
 						message: "Blog properties updated successfully"
@@ -1778,6 +1809,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_BLOG_POST_CONTENT,
 						bid: args.body.blogItem.bid,
 						message: "Blog content updated successfully"
@@ -1797,6 +1829,7 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						action: ACTIONS.DELETE_BLOG_POST,
 						message: "Blog post deleted successfully"
 					}

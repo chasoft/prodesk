@@ -143,16 +143,28 @@ function AdminNewTicket() {
 										>
 											<MenuItem value="default">
 												<Box sx={{ display: "flex", alignItems: "center", px: 1 }}>
-													<Avatar sx={{ width: 32, height: 32, mr: 2 }} ><PersonIcon /></Avatar>
-													<Typography>Please select a user...</Typography>
+													<Avatar sx={{ width: 32, height: 32, mr: 2 }} >
+														<PersonIcon />
+													</Avatar>
+													<Typography>
+														Please select a user...
+													</Typography>
 												</Box>
 											</MenuItem>
 											{userList.map((profile) => {
 												return (
-													<MenuItem key={profile.username} value={profile.username}>
+													<MenuItem
+														key={profile.username}
+														value={profile.username}
+													>
 														<Box sx={{ display: "flex", alignItems: "center", px: 1 }}>
-															<Avatar url={profile.photoURL} sx={{ width: 32, height: 32, mr: 2 }} />
-															<ListItemText primary={`${profile.displayName} (${profile.email})`} />
+															<Avatar
+																src={profile.photoURL}
+																sx={{ width: 32, height: 32, mr: 2 }}
+															/>
+															<ListItemText
+																primary={`${profile.displayName} (${profile.email})`}
+															/>
 														</Box>
 													</MenuItem>
 												)

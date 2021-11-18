@@ -38,8 +38,8 @@ import { useSelector, useDispatch } from "react-redux"
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
 import ConfirmDialog from "../../common/ConfirmDialog"
-import { CODE, DATE_FORMAT } from "../../../helpers/constants"
-import { getTextEditor } from "./../../../redux/selectors"
+import { CODE, DATE_FORMAT, STATUS_FILTER } from "../../../helpers/constants"
+import { getAuth, getTextEditor } from "./../../../redux/selectors"
 import { setEditorData } from "./../../../redux/slices/textEditor"
 import { useDeleteTicketReplyMutation, useUpdateTicketReplyMutation } from "../../../redux/slices/firestoreApi"
 
@@ -89,15 +89,18 @@ ReplyCreatedAt.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
+function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst = false }) {
+	const dispatch = useDispatch()
+
+	const { currentUser } = useSelector(getAuth)
+	const { editorData } = useSelector(getTextEditor)
+
+	const [editMode, setEditMode] = useState(false)
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+	const [replyItemContent, setReplyItemContent] = useState(replyItem.content)
 
 	const profile = useGetProfileByUsername(replyItem.username)
 
-	const dispatch = useDispatch()
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-	const [editMode, setEditMode] = useState(false)
-	const [replyItemContent, setReplyItemContent] = useState(replyItem.content)
-	const { editorData } = useSelector(getTextEditor)
 	const [deleteTicketReply] = useDeleteTicketReplyMutation()
 	const [updateTicketReply] = useUpdateTicketReplyMutation()
 
@@ -105,11 +108,23 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 		if (confirmed === false) return
 
 		console.log("processing to delete replyId", replyItem.trid)
-		await deleteTicketReply({
+		const res = await deleteTicketReply({
 			username: ticketUsername,
 			tid: replyItem.tid,
 			trid: replyItem.trid
 		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	const handleUpdateReply = async () => {
@@ -128,6 +143,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 
 		if (res?.data.code === CODE.SUCCESS) {
 			const invalidatesTags = {
+				trigger: currentUser.username,
 				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
 				target: {
 					isForUser: true,
@@ -147,7 +163,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 	dayjs.extend(relativeTime)
 
 	return (
-		<Box sx={{
+		<Box id={replyItem.trid} sx={{
 			display: "flex",
 			px: 3, py: { xs: 3, md: 4 },
 			flexDirection: { xs: "column", sm: "row" },
@@ -267,7 +283,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 					: null}
 			</Box>
 
-			{isAdmin &&
+			{(isAdmin && ticketStatus !== STATUS_FILTER.CLOSED) &&
 				<Box
 					id="actionButtons"
 					sx={{
@@ -323,6 +339,7 @@ ReplyItem.propTypes = {
 	isAdmin: PropTypes.bool,
 	replyItem: PropTypes.object.isRequired,
 	ticketUsername: PropTypes.string.isRequired,
+	ticketStatus: PropTypes.string.isRequired,
 	isFirst: PropTypes.bool
 }
 

@@ -39,9 +39,10 @@ import { useDispatch, useSelector } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 //PROJECT IMPORT
+import useAdmin from "../../helpers/useAdmin"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import { ACTIONS } from "../../redux/slices/firestoreApiConstants"
-import { STATUS_FILTER, DATE_FORMAT, USERGROUP } from "./../../helpers/constants"
+import { STATUS_FILTER, DATE_FORMAT } from "./../../helpers/constants"
 import { setForceRefreshId, setNotificationInbox } from "../../redux/slices/uiSettings"
 import { readAllNotifications, readNotification, removeNotifications } from "../../helpers/realtimeApi"
 
@@ -172,26 +173,39 @@ NotisItemContainer.propTypes = {
 	children: PropTypes.node.isRequired,
 }
 
-const NotisItemLink = ({ title, actionType, link }) => {
-	const { currentUser } = useSelector(getAuth)
+export const notisLinkBuilder = (isAdminURL, notisContent) => {
+	let Url = ""
 
-	let URL = [USERGROUP.USER.code, USERGROUP.MEMBER.code].includes(currentUser.group)
-		? "/client"
-		: "/admin"
-
-	switch (actionType) {
-		case ACTIONS.ADD_TICKET:
+	switch (notisContent.actionType) {
 		case ACTIONS.ADD_TICKET_REPLY:
+		case ACTIONS.ADD_TICKET:
 		case ACTIONS.UPDATE_TICKET:
-		case ACTIONS.UPDATE_TICKET_REPLY:
-			URL = URL + "/tickets/" + link
+			Url = `${isAdminURL ? "/admin" : "/client"}/tickets/${notisContent.link}`
+			break
+		case ACTIONS.NEW_ASSIGNMENT:
+			Url = notisContent.link
 			break
 		default:
 			console.log("default of NotisItemLink")
 	}
 
+	if (notisContent.actionType === ACTIONS.ADD_TICKET_REPLY)
+		Url = Url + "#" + notisContent.trid
+
+	return Url
+}
+
+const NotisItemLink = ({ notisContent }) => {
+	const { isAdminURL } = useAdmin()
+
+	const link = notisLinkBuilder(isAdminURL, notisContent)
+
 	return (
-		<Link href={URL} passHref>
+		<Link
+			passHref
+			href={link}
+			scroll={notisContent.actionType !== ACTIONS.ADD_TICKET_REPLY}
+		>
 			<Typography
 				component="a"
 				variant="h4"
@@ -201,15 +215,13 @@ const NotisItemLink = ({ title, actionType, link }) => {
 					":hover": { textDecoration: "underline", }
 				}}
 			>
-				{title}
+				{notisContent.title}
 			</Typography>
-		</Link>
+		</Link >
 	)
 }
 NotisItemLink.propTypes = {
-	title: PropTypes.string,
-	actionType: PropTypes.string,
-	link: PropTypes.string
+	notisContent: PropTypes.object.isRequired,
 }
 
 /*****************************************************************
@@ -332,17 +344,8 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 										<ListItemText
 											primary={
 												i.content.link
-													?
-													<NotisItemLink
-														actionType={i.content.actionType}
-														link={i.content.link}
-														title={i.content.title}
-													/>
-													:
-													<Typography
-														variant="h4"
-														sx={{ my: 0 }}
-													>
+													? <NotisItemLink notisContent={i.content} />
+													: <Typography variant="h4" sx={{ my: 0 }}>
 														{i.content.title}
 													</Typography>}
 											secondary={i.content.description}

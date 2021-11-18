@@ -40,6 +40,9 @@ import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/depart
 import { useAddDepartmentMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { getAuth } from "../../../redux/selectors"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { CODE } from "../../../helpers/constants"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
 
 //PROJECT IMPORT
 
@@ -95,7 +98,20 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 		}
 
 		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
-		await addDepartment(departmentItem)
+		const res = await addDepartment(departmentItem)
+
+		//broadcast refetching-request
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	const handleCancelAddNewDepartment = () => {

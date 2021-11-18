@@ -46,6 +46,9 @@ import useTicketCategories from "../../../helpers/useTicketCategories"
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
+import { CODE } from "../../../helpers/constants"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -201,13 +204,24 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 		}
 
 		dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
-		await addCategory(
-			{
-				isDefault,
-				categoryItem,
-				fullList
+		const res = await addCategory({
+			isDefault,
+			categoryItem,
+			fullList
+		})
+
+		//broadcast refetching-request
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
 			}
-		)
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	const handleCancel = () => {

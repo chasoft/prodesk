@@ -267,6 +267,7 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug,
 					isAdmin={isAdmin}
 					replyItem={replyItem}
 					ticketUsername={username}
+					ticketStatus={status}
 					isFirst={idx === 0}
 				/>
 			)}

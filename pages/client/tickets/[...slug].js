@@ -78,7 +78,7 @@ function SingleTicket() {
 	if (!slug) return null
 
 	//Note: `tickets` is array of object => [{}]
-	const ticket = tickets?.find(i => i.tid === slug[1]) ?? undefined
+	const ticket = tickets?.find(i => i.tid === slug[1])
 
 	if (isLoading) {
 		return (

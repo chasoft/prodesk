@@ -73,11 +73,19 @@ function TicketSettingsCannedReply() {
 
 	const dispatch = useDispatch()
 	const [showContent, setShowContent] = useState(false)
-	const { activeSettingPanel, isAddNewPanel } = useSelector(getUiSettings)	// used to keep selected canned-replies group (aka department)
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+
+	const {
+		activeSettingPanel,
+		isAddNewPanel
+	} = useSelector(getUiSettings)	// used to keep selected canned-replies group (aka department)
+
+	const {
+		data: departments,
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
 	const hasSelectedGroup =
-		(isLoading)
+		(isLoadingDepartments)
 			? false
 			: some(departments, { did: activeSettingPanel })
 
@@ -128,7 +136,7 @@ function TicketSettingsCannedReply() {
 
 					<ListTitle>Available groups</ListTitle>
 
-					{isLoading
+					{isLoadingDepartments
 						? <Box sx={{
 							display: "flex",
 							alignItems: "center",

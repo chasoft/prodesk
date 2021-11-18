@@ -25,12 +25,12 @@
 import Link from "next/link"
 import PropTypes from "prop-types"
 import React, { useState } from "react"
-import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemText, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography, ListItemButton, ListItemIcon } from "@mui/material"
+import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemText, Divider, Drawer, IconButton, MenuItem, Paper, Tooltip, Typography, ListItemButton } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { every, filter, size } from "lodash"
+import { every, size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -40,12 +40,14 @@ import useProfilesGroup from "../../helpers/useProfilesGroup"
 import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
 import MemoizedAdminTicketListItem from "./AdminTicketListItem"
-import useFilteredTicketsForAdmin from "../../helpers/useFilteredTicketsForAdmin"
+import { addNewNotifications } from "../../helpers/realtimeApi"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
+import { ACTIONS, TYPE } from "../../redux/slices/firestoreApiConstants"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
+import useFilteredTicketsForAdmin from "../../helpers/useFilteredTicketsForAdmin"
 import { resetTicketFilters, setSelectedTickets } from "../../redux/slices/uiSettings"
-import { DATE_FORMAT, PERMISSIONS_LEVELS, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES, USERGROUP } from "../../helpers/constants"
-import { useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { CODE, DATE_FORMAT, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES, USERGROUP } from "../../helpers/constants"
+import { useGetDepartmentsQuery, useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation, useGetProfilesQuery } from "../../redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -83,48 +85,164 @@ AdminFilterDrawer.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
-const AssignButton = ({ assignor }) => {
-	const { filteredByInbox, selectedTickets } = useSelector(getUiSettings)
-	const { userList: staffList, isLoading: isLoadingStaffList } = useProfilesGroup([USERGROUP.STAFF.code])
-	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+const AssignButton = ({ departments }) => {
+	const { currentUser } = useSelector(getAuth)
 	const [updateTicket] = useUpdateTicketMutation()
+
+	const {
+		filteredByInbox,
+		selectedTickets
+	} = useSelector(getUiSettings)
+
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
+
+	const {
+		data: profiles = [],
+		isLoading: isLoadingProfiles
+	} = useGetProfilesQuery()
+
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose,
+			handleListKeyDown
+		}
+	] = useMenuContainer()
 
 	//Only use this button when in UNASSIGNED INBOX
 	//If assigned, then, admin must handle directly in a specific ticket
 	if (filteredByInbox !== TICKET_INBOXES.UNASSIGNED) return null
-	const selectedDepartmentId = selectedTickets[0].department
-	if (every(selectedTickets, { department: selectedDepartmentId }) === false) return null
 
-	const availableStaffs = filter(staffList, (i) => i.departments[selectedDepartmentId] > PERMISSIONS_LEVELS.VIEWER) ?? []
+	//Assign button can be used only when
+	//all selected tickets are belong to same department
+	const selectedDepartmentId = selectedTickets[0].department
+	if (
+		every(
+			selectedTickets,
+			{ department: selectedDepartmentId }
+		) === false
+	) {
+		return null
+	}
+
+	//get list of staffs who are allow to proccess current department
+	//this is "members" which is set at
+	//	=> 1. `admin/settings/tickets/department` => members
+	//  => 2. `availableForAll`
+
+	const department = departments.find(
+		department => department.did === selectedDepartmentId
+	) ?? {}
+
+	const profilesByDepartment = profiles.filter(
+		profile => department.members.includes(profile.username)
+	)
+
+	let availableStaffs =
+		(department?.availableForAll)
+			? allAdminProfiles
+			: profilesByDepartment
 
 	const handleAssignTicket = async (selectedUsername) => {
 		//this is new assignment,
 		//for modification, admin/staff must handle directly in a specific ticket
-		const affectedTickets = selectedTickets.map(i => ({
-			username: i.username,
-			tid: i.tid,
-			//we keep track of assignments history
-			//that's why we use an array here!
-			staffInCharge: [{
-				assignor: assignor,
-				assignee: selectedUsername,
-				assignedDate: dayjs().valueOf()
-			}]
-		}))
-		await updateTicket(affectedTickets)
+		const affectedTickets = selectedTickets.map(
+			(ticket) => ({
+				username: ticket.username,
+				tid: ticket.tid,
+				//we keep track of assignments history
+				//that's why we use an array here!
+				staffInCharge: [{
+					assignor: currentUser.username,
+					assignee: selectedUsername,
+					assignedDate: dayjs().valueOf()
+				}]
+			})
+		)
+		const res = await updateTicket(affectedTickets)
+
+		/*
+			Send 2 notifications to
+			Assignee - who is the support of the ticket
+			Ticket's owners - tell him/her that his/her ticket is initial processing...
+		*/
+
+		if (res?.data.code === CODE.SUCCESS) {
+
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.TICKETS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+
+			let notisGroup = []
+
+			//Notification for assignee
+			notisGroup.push({
+				receivers: [selectedUsername],
+				notisData: {
+					actionType: ACTIONS.NEW_ASSIGNMENT,
+					iconURL: currentUser.photoURL,
+					title: "You got new assignment",
+					description:
+						(selectedTickets.length === 1)
+							? selectedTickets[0].subject
+							: `${selectedTickets.length} newly opened ticket waiting for your support`,
+					link:
+						(selectedTickets.length === 1)
+							? selectedTickets[0].slug
+							: "/admin/tickets",
+				}
+			})
+
+			//Notification for users
+			selectedTickets.forEach(
+				(ticket) => {
+					notisGroup.push({
+						receivers: [ticket.username],
+						notisData: {
+							actionType: ACTIONS.UPDATE_TICKET,
+							iconURL: currentUser.photoURL,
+							title: "Your ticket is initially processing",
+							description: ticket.subject,
+							link: ticket.slug,
+						}
+					})
+				}
+			)
+			await addNewNotifications(notisGroup, invalidatesTags)
+		}
 	}
 
 	const handleAssignToMyself = async () => {
-		const affectedTickets = selectedTickets.map(i => ({
-			username: i.username,
-			tid: i.tid,
-			staffInCharge: [{
-				assignor: assignor,
-				assignee: assignor,
-				assignedDate: dayjs().valueOf()
-			}]
-		}))
+		const affectedTickets = selectedTickets.map(
+			(ticket) => ({
+				username: ticket.username,
+				tid: ticket.tid,
+				staffInCharge: [{
+					assignor: currentUser.username,
+					assignee: currentUser.username,
+					assignedDate: dayjs().valueOf()
+				}]
+			})
+		)
 		await updateTicket(affectedTickets)
+
+		//Send notification
 	}
 
 	return (
@@ -147,42 +265,53 @@ const AssignButton = ({ assignor }) => {
 			>
 				<MenuItem onClick={handleAssignToMyself}>
 					Assign to myself
-				</MenuItem>,
+				</MenuItem>
 				<Divider key="divider" />
-				{ /*
-					Liệt kê các user có thẩm quyền xử lý ticket
-					chứ ko phải staff nào cũng assign được!
-					 */}
 
-				{isLoadingStaffList &&
+				{(isLoadingAllAdminProfiles || isLoadingProfiles) &&
 					<MenuItem>Loading staffs... <CircularProgress size={20} /></MenuItem>}
 
-				{(!isLoadingStaffList && availableStaffs.length === 0) &&
-					<MenuItem disabled={true}>{"You don't have any staff"}</MenuItem>}
+				{(!isLoadingAllAdminProfiles && !isLoadingProfiles && availableStaffs.length === 0) &&
+					<MenuItem disabled={true}>{"You don't have any staff that can be assigned."}</MenuItem>}
 
-				{(!isLoadingStaffList && availableStaffs.length > 0) &&
-					availableStaffs.map((staff) =>
-						<MenuItem key={staff.username} onClick={() => handleAssignTicket(staff.username)}>
-							<ListItemIcon>
-								<Avatar src={staff.photoURL} />
-							</ListItemIcon>
-							<ListItemText>{staff.displayName}</ListItemText>
-							<Typography variant="body2" color="text.secondary">
-								{staff.username} - {staff.email}
-							</Typography>
+				{(!isLoadingAllAdminProfiles && !isLoadingProfiles && availableStaffs.length > 0) &&
+					availableStaffs.map((profile) =>
+						<MenuItem key={profile.username} onClick={() => handleAssignTicket(profile.username)}>
+							<Avatar
+								src={profile.photoURL}
+								sx={{ width: 32, height: 32, mr: 2 }}
+							/>
+							<ListItemText
+								primary={profile.displayName}
+								secondary={`${profile.username} (${profile.email})`}
+								secondaryTypographyProps={{
+									fontSize: "0.9rem"
+								}}
+							/>
 						</MenuItem>
 					)}
 			</MenuContainer>
 		</>
 	)
 }
-AssignButton.propTypes = { assignor: PropTypes.string }
+AssignButton.propTypes = {
+	departments: PropTypes.array
+}
 
 const StatusButton = () => {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
 	const { selectedTickets } = useSelector(getUiSettings)
-	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose,
+			handleListKeyDown
+		}
+	] = useMenuContainer()
 
 	const handleChangeTicketStatus = async (newStatus) => {
 		let affectedTickets = []
@@ -220,27 +349,43 @@ const StatusButton = () => {
 					STATUS_FILTER.PENDING,
 					STATUS_FILTER.REPLIED,
 					STATUS_FILTER.CLOSED
-				]
-					.map((newStatus) => (
-						<MenuItem
-							key={newStatus}
-							onClick={() => handleChangeTicketStatus(newStatus)}
-						>
-							{newStatus}
-						</MenuItem>
-					))}
+				].map((newStatus) => (
+					<MenuItem
+						key={newStatus}
+						onClick={() => handleChangeTicketStatus(newStatus)}
+					>
+						{newStatus}
+					</MenuItem>
+				))}
 			</MenuContainer>
 		</>
 	)
 }
 
 const LabelButton = () => {
-	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
-	const { data: labels, isLoading: isLoadingLabels } = useGetLabelsQuery()
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
-	const [MenuContainer, open, anchorRef, { handleToggle, handleClose }] = useMenuContainer()
-	const { selectedTickets } = useSelector(getUiSettings)
 	const [updateTicket] = useUpdateTicketMutation()
+	const { selectedTickets } = useSelector(getUiSettings)
+	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
+
+	const {
+		data: labels,
+		isLoading: isLoadingLabels
+	} = useGetLabelsQuery()
+
+	const {
+		data: tickets,
+		isLoading: isLoadingTickets
+	} = useGetTicketsForAdminQuery(undefined)
+
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = useMenuContainer()
 
 	console.log("LabelButton => tickets", tickets)
 
@@ -323,10 +468,18 @@ const LabelButton = () => {
 }
 
 const DeleteTicketsButton = () => {
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-	const { selectedTickets, isSmallScreen } = useSelector(getUiSettings)
-	const { userList: allUsers, isLoading: isLoadingAllUsers } = useProfilesGroup()
 	const [deleteTicketTemp] = useDeleteTicketTempMutation()
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+
+	const {
+		selectedTickets,
+		isSmallScreen
+	} = useSelector(getUiSettings)
+
+	const {
+		userList: allUsers,
+		isLoading: isLoadingAllUsers
+	} = useProfilesGroup()
 
 	dayjs.extend(relativeTime)
 
@@ -484,15 +637,27 @@ function AdminTicketList() {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const [showFilter, setShowFilter] = useState(false)
-	const { selectedTickets, filteredByInbox } = useSelector(getUiSettings)
 
-	const { data: tickets, isLoading } = useFilteredTicketsForAdmin()
+	const {
+		data: departments,
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery()
+
+	const {
+		selectedTickets,
+		filteredByInbox
+	} = useSelector(getUiSettings)
+
+	const {
+		data: tickets,
+		isLoading: isLoadingTickets
+	} = useFilteredTicketsForAdmin()
 
 	const currentInbox = TICKET_INBOXES_LIST.find(i => i.name === filteredByInbox)
 
 	console.log("AdminTicketList rendering", tickets)
 
-	if (isLoading) {
+	if (isLoadingTickets || isLoadingDepartments) {
 		return (
 			<Box sx={{
 				display: "flex",
@@ -560,7 +725,9 @@ function AdminTicketList() {
 						}}>
 							<Typography sx={{ mr: { xs: 0, sm: 1 } }}><b>{selectedTickets.length}</b> items selected</Typography>
 							<div>
-								<AssignButton assignor={currentUser.username} />
+								<AssignButton
+									departments={departments}
+								/>
 								<StatusButton />
 								<LabelButton />
 								{(currentUser.username === "superadmin" || currentUser.permissions.deleteTicket) &&

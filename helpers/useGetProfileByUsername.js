@@ -32,13 +32,23 @@ import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGetProfileByUsername(username) {
-
+/**
+ * get profiles of a list of provided username
+ * @param {array of username || username} username 
+ * @returns array of profiles
+ */
+export default function useGetProfileByUsername(usernames) {
 	const { data: profiles = [], isLoading } = useGetProfilesQuery()
 
-	if (isLoading) return undefined
+	if (isLoading || usernames === undefined) return undefined
 
-	const res = profiles.find((profile) => profile.username === username) ?? undefined
+	let filteredProfiles = undefined
 
-	return res
+	if (Array.isArray(usernames)) {
+		filteredProfiles = profiles.filter(profile => usernames.includes(profile.username))
+	} else {
+		filteredProfiles = profiles.find(profile => profile.username === usernames)
+	}
+
+	return filteredProfiles
 }

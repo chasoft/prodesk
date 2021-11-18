@@ -44,10 +44,13 @@ import { USERGROUP } from "../../helpers/constants"
 /* members is just array of usernames */
 function AvatarList({ members }) {
 	const [membersProfile, setMembersProfile] = useState([])
-	const { userList: staffList = [], isLoading: isLoadingStaffList } = useProfilesGroup([USERGROUP.STAFF.code])
+	const {
+		userList: staffList = [],
+		isLoading: isLoadingStaffList
+	} = useProfilesGroup([USERGROUP.STAFF.code])
 
 	useDeepCompareEffect(() => {
-		const verifiedList = members.map(u => staffList.find(i => i.username === u) ?? undefined).filter(i => i !== undefined)
+		const verifiedList = members.map(u => staffList.find(i => i.username === u)).filter(i => i !== undefined)
 		setMembersProfile(verifiedList)
 	}, [staffList, members])
 

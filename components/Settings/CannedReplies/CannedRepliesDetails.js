@@ -41,6 +41,9 @@ import { getAuth, getTextEditor } from "./../../../redux/selectors"
 import { SettingsContentActionBar, SettingsContentDetails } from "./../../Settings/SettingsPanel"
 import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateCannedReplyMutation } from "../../../redux/slices/firestoreApi"
 import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { CODE } from "../../../helpers/constants"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
 
 //ASSETS
 
@@ -49,8 +52,16 @@ import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
  *****************************************************************/
 
 const CannedRepliesDetails = ({ crid }) => {
-	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
-	const { data: cannedReplies, isLoading: isLoadingCannedReplies } = useGetCannedRepliesQuery(undefined)
+	const {
+		data: departments,
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
+
+	const {
+		data: cannedReplies,
+		isLoading: isLoadingCannedReplies
+	} = useGetCannedRepliesQuery(undefined)
+
 	const selectedCannedReply = find(cannedReplies, { crid })
 
 	const { currentUser } = useSelector(getAuth)
@@ -85,7 +96,19 @@ const CannedRepliesDetails = ({ crid }) => {
 			updatedAt: dayjs().valueOf()
 		}
 		dispatch(setActiveSettingPanel(department))
-		await updateCannedReply(updatedContent)
+		const res = await updateCannedReply(updatedContent)
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	return (

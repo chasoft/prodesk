@@ -47,6 +47,9 @@ import { useDeleteDepartmentMutation, useGetCannedRepliesQuery, useGetDepartment
 import DeleteIcon from "@mui/icons-material/Delete"
 import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
 import ConfirmDialog from "../../common/ConfirmDialog"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { CODE } from "../../../helpers/constants"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -59,11 +62,20 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	const [deleteDepartment] = useDeleteDepartmentMutation()
 	const [updateDepartment] = useUpdateDepartmentMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-	const { data: cannedReplies, isLoading: isLoadingCannedReplies } = useGetCannedRepliesQuery(undefined)
-	//
+
+	const {
+		data: cannedReplies,
+		isLoading: isLoadingCannedReplies
+	} = useGetCannedRepliesQuery(undefined)
+
 	const { activeSettingPanel } = useSelector(getUiSettings)
 	const [selectedDepartment, setSelectedDepartment] = useState()
-	const { data: departments, isLoading: isLoadingDepartment } = useGetDepartmentsQuery(undefined)
+
+	const {
+		data: departments,
+		isLoading: isLoadingDepartment
+	} = useGetDepartmentsQuery(undefined)
+
 	//Local memory
 	const [localCache, setLocalCache] = useState({
 		isPublic: true,
@@ -74,9 +86,15 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	})
 
 	//Re-render
+	//TODO: Kiểm tra lại chỗ này nghĩa là gì? `name` or `did`
+	// department.department là `department name` hay `did`
+	// activeSettingPanel  là `department name` hay `did`
+
 	useDeepCompareEffect(() => {
 		if (isLoadingDepartment === false && departments !== undefined) {
-			const _ = departments.find(d => d?.department === activeSettingPanel)
+			const _ = departments.find(
+				department => department.department === activeSettingPanel
+			)
 			setSelectedDepartment(_)
 			setLocalCache(_)
 		}
@@ -136,7 +154,20 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 		}
 
 		dispatch(setActiveSettingPanel(localCache.department))
-		await updateDepartment(departmentItem)
+		const res = await updateDepartment(departmentItem)
+
+		//broadcast refetching-request
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	return (

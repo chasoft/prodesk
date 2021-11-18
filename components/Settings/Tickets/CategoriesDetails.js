@@ -48,6 +48,9 @@ import { CATEGORY_PAGES } from "../../../pages/admin/settings/tickets/category"
 import { SubCatItem } from "./CategoriesAddNew"
 import useTicketCategories from "../../../helpers/useTicketCategories"
 import ConfirmDialog from "../../common/ConfirmDialog"
+import { CODE } from "../../../helpers/constants"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -140,11 +143,24 @@ const CategoriesDetails = ({ backBtnClick }) => {
 		Object.assign(updatedItem, updatedData)
 
 		dispatch(setActiveSettingPanel(categoryName))
-		await updateCategory({
+		const res = await updateCategory({
 			isDefault,
 			categoryItem: updatedItem,
 			fullList
 		})
+
+		//broadcast refetching-request
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	console.log("Category Details")

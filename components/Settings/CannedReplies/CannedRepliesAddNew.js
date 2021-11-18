@@ -38,6 +38,9 @@ import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned
 import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
 import { useAddCannedReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { CODE } from "../../../helpers/constants"
 
 //PROJECT IMPORT
 
@@ -83,13 +86,27 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 			createdAt: dayjs().valueOf(),
 			updatedAt: dayjs().valueOf(),
 		}
-		await addCannedReply(newCannedReply)
+
 		// Go to the group of new canned
 		reduxBatch(() => {
 			dispatch(setIsAddNewPanel(false))
 			dispatch(setSelectedCrid(""))
 			dispatch(setActiveSettingPanel(department))
 		})
+
+		const res = await addCannedReply(newCannedReply)
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	return (

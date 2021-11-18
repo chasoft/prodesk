@@ -37,6 +37,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getStaffInCharge } from "../../helpers/utils"
 import { setRedirect } from "../../redux/slices/redirect"
 import { getAuth, getUiSettings } from "../../redux/selectors"
 import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
@@ -53,7 +54,6 @@ import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
-import { getStaffInCharge } from "../../helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -349,7 +349,9 @@ export const TicketDepartment = ({ department: departmentId }) => {
 
 	if (isLoading || size(departments) === 0) return null
 
-	const department = departments.find(i => i.did === departmentId)?.department ?? "<Empty>"
+	const department = departments.find(
+		department => department.did === departmentId
+	)?.department ?? "<Empty>"
 
 	return (
 		<Tooltip arrow title="Department" placement="top">
@@ -485,8 +487,8 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const { selectedTickets } = useSelector(getUiSettings)
-
-	const handleSelectTicket = useCallback((event, ticketItem) => {	//ticketItem = {ticketId, department...}
+	//ticketItem = {ticketId, department...}
+	const handleSelectTicket = useCallback((event, ticketItem) => {
 		const idArray = selectedTickets.map(i => i.tid)
 		const selectedIndex = idArray.indexOf(ticketItem.tid)
 

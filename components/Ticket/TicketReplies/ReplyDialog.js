@@ -126,8 +126,12 @@ const ReplyDialog = ({
 				title: currentUser.username + " just replied his/her ticket",
 				description: subject,
 				link: slug,
+				trid: trid
 			}
-			const departmentDetails = departments.find(i => i.did === department)
+
+			const departmentDetails = departments.find(
+				d => d.did === department
+			)
 
 			const receivers = (currentUser.username !== username)
 				? [username]
@@ -136,7 +140,12 @@ const ReplyDialog = ({
 					: departmentDetails.members
 
 			const invalidatesTags = {
-				tag: [{ type: TYPE.TICKETS, id: "LIST" }, { type: TYPE.TICKETS, id: tid + "_replies" }],
+				trigger: currentUser.username,
+				tag:
+					[
+						{ type: TYPE.TICKETS, id: "LIST" },
+						{ type: TYPE.TICKETS, id: tid.concat("_replies") }
+					],
 				target: {
 					isForUser: true,
 					isForAdmin: true,

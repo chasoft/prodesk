@@ -135,5 +135,6 @@ export const ACTIONS = {
 	DELETE_BLOG_POST: "deleteBlogPost",
 
 	/* */
-	REQUEST_REFETCHING: "requestRefetching"
+	REQUEST_REFETCHING: "requestRefetching",
+	NEW_ASSIGNMENT: "newAssignment"
 }
