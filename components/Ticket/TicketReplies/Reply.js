@@ -38,7 +38,7 @@ import { useSelector, useDispatch } from "react-redux"
 //PROJECT IMPORT
 import TextEditor from "./../../common/TextEditor"
 import ConfirmDialog from "../../common/ConfirmDialog"
-import { DATE_FORMAT } from "../../../helpers/constants"
+import { CODE, DATE_FORMAT } from "../../../helpers/constants"
 import { getTextEditor } from "./../../../redux/selectors"
 import { setEditorData } from "./../../../redux/slices/textEditor"
 import { useDeleteTicketReplyMutation, useUpdateTicketReplyMutation } from "../../../redux/slices/firestoreApi"
@@ -48,6 +48,8 @@ import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import useGetProfileByUsername from "../../../helpers/useGetProfileByUsername"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -113,7 +115,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 	const handleUpdateReply = async () => {
 		setEditMode(false)
 		setReplyItemContent(editorData)
-		await updateTicketReply({
+		const res = await updateTicketReply({
 			ticketItem: {
 				username: ticketUsername,
 				tid: replyItem.tid,
@@ -123,6 +125,17 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, isFirst = false }) {
 				content: editorData
 			}
 		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	const handleCancelUpdateReply = () => {

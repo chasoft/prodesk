@@ -7,17 +7,18 @@ import { setTitle, setSubTitle, setPageId } from "../redux/slices/pageMeta"
 
 /**
  * This hook is used to update UI's Settings
- * @param {*} param0 
- * @returns null
+ * @param {
+ * 		background,				//for background of loggedin pages
+ *		id, title, subTitle,	//pageMeta purposes
+ *		activeTab,				//Name of activeTab (used in admin settings pages or any group of tabs)
+ *		activePanel				//active settings panel
+ * } 
+ * @returns 
  */
 export default function useUiSettings({
-	//for background of loggedin pages
 	background,
-	//pageMeta purposes
 	id, title, subTitle,
-	//Name of activeTab (used in admin settings pages or any group of tabs)
 	activeTab,
-	//active settings panel
 	activePanel
 }) {
 

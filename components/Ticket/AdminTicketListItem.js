@@ -53,6 +53,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp"
+import { getStaffInCharge } from "../../helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -414,16 +415,17 @@ TicketReplyCount.propTypes = {
 	count: PropTypes.number
 }
 
-export const TicketOwner = ({ username, customTooltip = "" }) => {
+export const TicketUser = ({ username, title = "Ticket's Owner" }) => {
 	const dispatch = useDispatch()
 	const profile = useGetProfileByUsername(username)
+
+	if (!profile) return null
+
 	return (
 		<Tooltip
 			arrow
 			placement="top"
-			title={customTooltip
-				? customTooltip
-				: <>Ticket&apos;s Owner <br /> {profile.email}</>}
+			title={<>{title} <br /> {profile.email}</>}
 		>
 			<Chip
 				size="small"
@@ -443,9 +445,9 @@ export const TicketOwner = ({ username, customTooltip = "" }) => {
 		</Tooltip>
 	)
 }
-TicketOwner.propTypes = {
+TicketUser.propTypes = {
 	username: PropTypes.string,
-	customTooltip: PropTypes.node,
+	title: PropTypes.node,
 }
 
 export const TicketCreatedBy = ({ createdBy }) => {
@@ -481,6 +483,7 @@ TicketCreatedBy.propTypes = {
 
 function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
 	const { selectedTickets } = useSelector(getUiSettings)
 
 	const handleSelectTicket = useCallback((event, ticketItem) => {	//ticketItem = {ticketId, department...}
@@ -507,6 +510,8 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const isSelected = useMemo(() => {
 		return find(selectedTickets, { tid: ticket.tid }) ? true : false
 	}, [selectedTickets, ticket.tid])
+
+	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 
 	console.log("AdminTicketListItem", ticket.tid)
 
@@ -609,10 +614,18 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							/>
 
 							<TicketReplyCount count={ticket.replyCount} />
-							<TicketOwner username={ticket.username} />
+							<TicketUser username={ticket.username} />
 
 							{(ticket.createdBy !== ticket.username) &&
-								<TicketCreatedBy createdBy={ticket.createdBy} />}
+								<TicketCreatedBy
+									createdBy={ticket.createdBy}
+								/>}
+
+							{latestStaffInCharge.assignee &&
+								<TicketUser
+									username={latestStaffInCharge.assignee}
+									title={(currentUser.username === latestStaffInCharge.assignee) ? "Ticket Supporter (it's you)" : "Ticket Supporter"}
+								/>}
 						</Box>
 
 						<TicketDateTimeSmallScreen ticket={ticket} />

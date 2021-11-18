@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect } from "react"
+import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 // MATERIAL-UI
@@ -40,7 +40,7 @@ import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
 import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
-import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
+import { setIsSmallScreen } from "./../redux/slices/uiSettings"
 
 //ASSETS
 
@@ -84,15 +84,6 @@ function ClientLayout({ children }) {
 
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")
-
-	const handleSetScrolled = useCallback(() => {
-		dispatch(setScrolled(window.scrollY > 50))
-	}, [dispatch])
-
-	useEffect(() => {
-		window.addEventListener("scroll", handleSetScrolled)
-		return () => window.removeEventListener("scroll", handleSetScrolled)
-	}, [handleSetScrolled])
 
 	useEffect(() => {
 		dispatch(setIsSmallScreen(isSmallScreen))

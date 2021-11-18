@@ -46,12 +46,6 @@ export const initialState = {
 	backgroundForLoggedinPage: defaultBackground,
 
 	/*
-		Does user scrollY > 50 ?
-		use this to enable elevation for header!
-	*/
-	scrolled: false,
-
-	/*
 		Settings for ListTicketsFilter
 	*/
 	ticketCounter: {
@@ -96,6 +90,11 @@ export const initialState = {
 	//keep selected tid
 	selectedTickets: [],
 
+	/* Notification Inbox */
+	notificationInbox: STATUS_FILTER.ALL,
+
+	/* Force refresh */
+	forceRefreshId: undefined
 }
 
 const uiSettingsSlice = createSlice({
@@ -119,9 +118,6 @@ const uiSettingsSlice = createSlice({
 				...defaultBackground,
 				...payload
 			}
-		},
-		setScrolled: (state, { payload }) => {
-			state.scrolled = payload
 		},
 		setTicketCounter: (state, { payload }) => {
 			state.ticketCounter = payload
@@ -190,6 +186,14 @@ const uiSettingsSlice = createSlice({
 		setSelectedTickets: (state, { payload }) => {
 			state.selectedTickets = payload
 		},
+		/* */
+		setNotificationInbox: (state, { payload }) => {
+			state.notificationInbox = payload
+		},
+		/* */
+		setForceRefreshId: (state, { payload }) => {
+			state.forceRefreshId = payload
+		},
 	}
 })
 
@@ -199,11 +203,12 @@ export const {
 	setIsSideBarExpanded,
 	setflexDirection,
 	setBackgroundForLoggedinPage,
-	setScrolled,
 	setTicketCounter, setFilteredByWord, setSelectedStatusRaw, setFilteredByDepartment, setFilteredByPriority, setFilteredByLabel, resetTicketFilters, setFilteredByInbox, setFilteredGroupBy,
 	setActiveSettingTab, setActiveSettingPanel, setSelectedCrid, setIsAddNewPanel,
 	setSideBarLeft, setShowTocSideBarDetails,
-	setSelectedTickets
+	setSelectedTickets,
+	setNotificationInbox,
+	setForceRefreshId
 } = uiSettingsSlice.actions
 
 export default uiSettingsSlice.reducer

@@ -35,14 +35,15 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../redux/selectors"
+import { getAuth, getUiSettings } from "../../redux/selectors"
 import { setRedirect } from "../../redux/slices/redirect"
 import { DATE_FORMAT, PRIORITY, REDIRECT_URL } from "../../helpers/constants"
-import { TicketCategory, TicketDepartment, TicketReplyCount, TicketStatus, TicketCreatedBy } from "./AdminTicketListItem"
+import { TicketCategory, TicketDepartment, TicketReplyCount, TicketStatus, TicketCreatedBy, TicketUser } from "./AdminTicketListItem"
 
 //ASSETS
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
+import { getStaffInCharge } from "../../helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -183,8 +184,12 @@ TicketDateTime.propTypes = { ticket: PropTypes.object }
  *****************************************************************/
 
 function TicketListItem({ ticket, isFirst = false, isLast = false }) {
+	const { currentUser } = useSelector(getAuth)
 	const dispatch = useDispatch()
 	const { isSmallScreen } = useSelector(getUiSettings)
+
+	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
+
 	return (
 		<Box
 			sx={{
@@ -253,16 +258,30 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 					}}>
 
 						<Box>
-							<TicketStatus status={ticket.status} />
-							<TicketDepartment department={ticket.department} />
+							<TicketStatus
+								status={ticket.status}
+							/>
+							<TicketDepartment
+								department={ticket.department}
+							/>
 							<TicketCategory
 								department={ticket.department}
 								category={ticket.category}
 								subCategory={ticket.subCategory}
 							/>
 							{(ticket.createdBy !== ticket.username && isSmallScreen) &&
-								<TicketCreatedBy createdBy={ticket.createdBy} />}
-							<TicketReplyCount count={ticket.replyCount} />
+								<TicketCreatedBy
+									createdBy={ticket.createdBy}
+								/>}
+							<TicketReplyCount
+								count={ticket.replyCount}
+							/>
+
+							{latestStaffInCharge.assignee &&
+								<TicketUser
+									username={latestStaffInCharge.assignee}
+									title={(currentUser.username === latestStaffInCharge.assignee) ? "Ticket Supporter (it's you)" : "Ticket Supporter"}
+								/>}
 
 						</Box>
 

@@ -23,6 +23,7 @@ import { getAuth } from "firebase/auth"
 import { initializeApp } from "firebase/app"
 import { getStorage } from "firebase/storage"
 import { getFirestore } from "firebase/firestore"
+import { getDatabase } from "firebase/database"
 
 //THIRD-PARTY
 
@@ -41,7 +42,7 @@ const firebaseApp = initializeApp(firebaseConfig)
 //EXPORT FOR QUICK REFERENCING
 export const auth = getAuth(firebaseApp)
 export const db = getFirestore(firebaseApp)
-
+export const realtimeDB = getDatabase(firebaseApp)
 
 //use this to get consistent datetime for users in different timezones
 // export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp => import { serverTimestamp } from "firebase/firestore"
@@ -61,39 +62,3 @@ export const fix_datetime_single = (item) => ({
 	createdAt: item?.createdAt?.toMillis() || 0,
 	updatedAt: item?.updatedAt?.toMillis() || 0
 })
-
-const GENERATED_MESSAGING_KEY = "BLj-uGqeyBFLjN-R8wpzQcKD4fGvNxvNlFO5f0xwQMB4IPw74ToC8SFAuh84IWc0mWfgHnQZDN4k9MChqO2LbF4"
-
-export function getToken(setTokenFound) {
-	// [START messaging_get_token]
-	const { getMessaging, getToken } = require("firebase/messaging")
-
-	// Get registration token. Initially this makes a network call, once retrieved
-	// subsequent calls to getToken will return from cache.
-	const messaging = getMessaging()
-	getToken(messaging, { vapidKey: GENERATED_MESSAGING_KEY }).then((currentToken) => {
-		if (currentToken) {
-			// Send the token to your server and update the UI if necessary
-			console.log("current token for client: ", currentToken)
-			setTokenFound(true)
-		} else {
-			// Show permission request UI
-			console.log("No registration token available. Request permission to generate one.")
-			setTokenFound(false)
-		}
-	}).catch((err) => {
-		console.log("An error occurred while retrieving token. ", err)
-		// ...
-	})
-	// [END messaging_get_token]
-}
-
-export function receiveMessage() {
-	const { getMessaging, onMessage } = require("firebase/messaging")
-
-	const messaging = getMessaging()
-	onMessage(messaging, (payload) => {
-		console.log("Message received. ", payload)
-		// ...
-	})
-}

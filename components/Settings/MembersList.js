@@ -35,12 +35,13 @@ import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
-import useProfiles from "../../helpers/useProfiles"
+import useProfilesGroup from "../../helpers/useProfilesGroup"
 import { getUiSettings } from "./../../redux/selectors"
 import { DepartmentMembersCount } from "./Tickets/DepartmentsOverview"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
+import { USERGROUP } from "../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -49,7 +50,10 @@ import AddIcon from "@mui/icons-material/Add"
 export const StaffListChooserDialog = ({ open, members, addMemberCallback, handleClose }) => {
 	const [selected, setSelected] = useState(members)
 	const { isSmallScreen } = useSelector(getUiSettings)
-	const { staffList = [], isLoadingStaffList } = useProfiles()
+	const {
+		userList: supporterList = [],
+		isLoading: isLoadingSupporterList
+	} = useProfilesGroup([USERGROUP.USER.code, USERGROUP.MEMBER.code], { inverting: true })
 
 	useDeepCompareEffect(() => {
 		setSelected(members)
@@ -85,7 +89,7 @@ export const StaffListChooserDialog = ({ open, members, addMemberCallback, handl
 		>
 			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>Add members</DialogTitle>
 			<DialogContent>
-				{isLoadingStaffList &&
+				{isLoadingSupporterList &&
 					<Box sx={{
 						display: "flex",
 						height: "200px",
@@ -95,20 +99,20 @@ export const StaffListChooserDialog = ({ open, members, addMemberCallback, handl
 						<CircularProgress />
 					</Box>}
 
-				{(!isLoadingStaffList && staffList.length === 0) &&
+				{(!isLoadingSupporterList && supporterList.length === 0) &&
 					<DialogContentText>
 						You don&apos;t have any staff. Please go to User management to ....
 					</DialogContentText>
 				}
 
-				{(!isLoadingStaffList && staffList.length > 0) &&
+				{(!isLoadingSupporterList && supporterList.length > 0) &&
 					<>
 						<DialogContentText sx={{ my: 1 }}>
 							Add staffs/agents who are in charge of supporting tickets in current department.
 						</DialogContentText>
 
 						<List dense sx={{ width: "100%", minWidth: 360, bgcolor: "background.paper" }}>
-							{staffList.map((staff) => {
+							{supporterList.map((staff) => {
 								const labelId = `checkbox-list-secondary-label-${staff.username}`
 								return (
 									<ListItem
@@ -176,7 +180,10 @@ StaffListChooserDialog.propTypes = {
 const MembersList = ({ members, addMemberCallback }) => {
 	const [membersCache, setMembersCache] = useState(members)
 	const [membersProfile, setMembersProfile] = useState([])
-	const { staffList = [], isLoadingStaffList } = useProfiles()
+	const {
+		userList: staffList = [],
+		isLoading: isLoadingStaffList
+	} = useProfilesGroup([USERGROUP.USER.code, USERGROUP.MEMBER.code], { inverting: true })
 	const [openStaffListChooserDialog, setOpenStaffListChooserDialog] = useState(false)
 	/*
 		members is an array of usernames only,
@@ -189,7 +196,9 @@ const MembersList = ({ members, addMemberCallback }) => {
 	}, [members])
 
 	useDeepCompareEffect(() => {
-		const verifiedList = membersCache.map(u => staffList.find(i => i.username === u) ?? undefined).filter(i => i !== undefined)
+		const verifiedList = membersCache
+			.map(u => staffList.find(i => i.username === u) ?? undefined)
+			.filter(i => i !== undefined)
 		setMembersProfile(verifiedList)
 	}, [staffList, membersCache])
 

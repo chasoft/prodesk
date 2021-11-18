@@ -25,7 +25,6 @@
 import React from "react"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
@@ -38,7 +37,6 @@ import useUiSettings from "./../helpers/useUiSettings"
  *****************************************************************/
 
 function Home() {
-	const dispatch = useDispatch()
 
 	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.HOME,

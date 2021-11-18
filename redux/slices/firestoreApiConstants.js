@@ -31,7 +31,7 @@ export const GROUP = {
 	TICKETS_GROUP: "tickets-group"
 }
 
-export const ACTION = {
+export const ACTIONS = {
 	/* DOCUMENTATION => docId */
 	GET_DOCS: "getDocs",
 	GET_DOC: "getDoc",
@@ -109,7 +109,6 @@ export const ACTION = {
 	DELETE_TICKET: "deleteTicket",
 	DELETE_TICKET_TEMP: "deleteTicketTemp",
 	DELETE_TICKET_REPLY: "deleteTicketReply",
-	REFETCH_TICKET: "refetchTicket",
 
 	/* MEMBERS */
 	//members is a sub-set of users (aka Profiles),
@@ -134,4 +133,7 @@ export const ACTION = {
 	UPDATE_BLOG_POST: "updateBlogPost",
 	UPDATE_BLOG_POST_CONTENT: "updateBlogPostContent",
 	DELETE_BLOG_POST: "deleteBlogPost",
+
+	/* */
+	REQUEST_REFETCHING: "requestRefetching"
 }

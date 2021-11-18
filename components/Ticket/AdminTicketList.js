@@ -34,17 +34,17 @@ import { every, filter, size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import useProfiles from "../../helpers/useProfiles"
 import ConfirmDialog from "../common/ConfirmDialog"
-import MemoizedAdminTicketListItem from "./AdminTicketListItem"
 import useMenuContainer from "../common/useMenuContainer"
+import useProfilesGroup from "../../helpers/useProfilesGroup"
 import { LabelEditorDialog } from "../Settings/Tickets/Labels"
 import { getUiSettings, getAuth } from "../../redux/selectors"
+import MemoizedAdminTicketListItem from "./AdminTicketListItem"
 import useFilteredTicketsForAdmin from "../../helpers/useFilteredTicketsForAdmin"
 import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
 import { resetTicketFilters, setSelectedTickets } from "../../redux/slices/uiSettings"
-import { DATE_FORMAT, PERMISSIONS_LEVELS, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES } from "../../helpers/constants"
+import { DATE_FORMAT, PERMISSIONS_LEVELS, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES, USERGROUP } from "../../helpers/constants"
 import { useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
 
 //ASSETS
@@ -85,7 +85,7 @@ AdminFilterDrawer.propTypes = {
 
 const AssignButton = ({ assignor }) => {
 	const { filteredByInbox, selectedTickets } = useSelector(getUiSettings)
-	const { staffList, isLoadingStaffList } = useProfiles()
+	const { userList: staffList, isLoading: isLoadingStaffList } = useProfilesGroup([USERGROUP.STAFF.code])
 	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
 	const [updateTicket] = useUpdateTicketMutation()
 
@@ -179,9 +179,10 @@ const AssignButton = ({ assignor }) => {
 AssignButton.propTypes = { assignor: PropTypes.string }
 
 const StatusButton = () => {
-	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
-	const { selectedTickets } = useSelector(getUiSettings)
+	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
+	const { selectedTickets } = useSelector(getUiSettings)
+	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
 
 	const handleChangeTicketStatus = async (newStatus) => {
 		let affectedTickets = []
@@ -193,6 +194,7 @@ const StatusButton = () => {
 			})
 		})
 		await updateTicket(affectedTickets)
+		dispatch(setSelectedTickets([]))
 	}
 
 	return (
@@ -323,7 +325,7 @@ const LabelButton = () => {
 const DeleteTicketsButton = () => {
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const { selectedTickets, isSmallScreen } = useSelector(getUiSettings)
-	const { userList, isLoading: isLoadingUserList } = useProfiles()
+	const { userList: allUsers, isLoading: isLoadingAllUsers } = useProfilesGroup()
 	const [deleteTicketTemp] = useDeleteTicketTempMutation()
 
 	dayjs.extend(relativeTime)
@@ -388,7 +390,7 @@ const DeleteTicketsButton = () => {
 							</Typography>
 						</Box>
 
-						{(isLoadingUserList) &&
+						{(isLoadingAllUsers) &&
 							<Box sx={{
 								display: "flex",
 								height: "100px",
@@ -399,7 +401,7 @@ const DeleteTicketsButton = () => {
 								<CircularProgress />
 							</Box>}
 
-						{(!isLoadingUserList) &&
+						{(!isLoadingAllUsers && allUsers.length > 0) &&
 
 							<List sx={{
 								width: "100%",
@@ -408,7 +410,7 @@ const DeleteTicketsButton = () => {
 								borderColor: "warning.main"
 							}}>
 								{selectedTickets.map((selectedTicket) => {
-									const userProfile = userList.find(i => i.username === selectedTicket.username)
+									const userProfile = allUsers.find(i => i.username === selectedTicket.username)
 									return (
 										<ListItemButton
 											key={selectedTicket.tid}

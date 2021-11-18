@@ -142,6 +142,9 @@ function AdminSingleTicket() {
 						username={ticket.username}
 						staffInCharge={ticket.staffInCharge}
 						replyCount={ticket.replyCount}
+						slug={ticket.slug}
+						subject={ticket.subject}
+						department={ticket.department}
 					/>
 					<TicketActionButtons ticket={ticket} />
 				</>

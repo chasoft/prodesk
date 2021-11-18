@@ -41,10 +41,12 @@ import { useSelector } from "react-redux"
 import TextEditor from "./../../common/TextEditor"
 import useAdmin from "./../../../helpers/useAdmin"
 import { getAuth, getTextEditor } from "../../../redux/selectors"
-import { STATUS_FILTER, DATE_FORMAT } from "./../../../helpers/constants"
-import { TicketOwner } from "./../../../components/Ticket/AdminTicketListItem"
-import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import { STATUS_FILTER, DATE_FORMAT, CODE } from "./../../../helpers/constants"
+import { TicketUser } from "./../../../components/Ticket/AdminTicketListItem"
+import { useAddTicketReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 import { getStaffInCharge } from "../../../helpers/utils"
+import { ACTIONS, TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { addNewNotification } from "../../../helpers/realtimeApi"
 
 //ASSETS
 
@@ -61,11 +63,13 @@ const ReplyDialog = ({
 	status,
 	username,
 	staffInCharge,
+	slug,
+	subject,
+	department,
 	//
 	open,
 	setOpen
 }) => {
-
 	const theme = useTheme()
 	dayjs.extend(relativeTime)
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
@@ -74,6 +78,7 @@ const ReplyDialog = ({
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
+	const { data: departments } = useGetDepartmentsQuery(undefined)
 
 	const loadLocalStorage = () => localStorage.getItem("NewReply") ?? ""
 	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
@@ -94,7 +99,7 @@ const ReplyDialog = ({
 				...((currentUser.username === username)
 					? ((status !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
 					: { status: STATUS_FILTER.REPLIED }),
-				...((staffInCharge?.length === 0)
+				...((staffInCharge?.length === 0 && currentUser.username !== username)
 					? {
 						staffInCharge: [{
 							assignor: currentUser.username,
@@ -110,7 +115,37 @@ const ReplyDialog = ({
 				username: currentUser.username,
 			}
 		}
-		await addTicketReply(newReplyItem)
+		const res = await addTicketReply(newReplyItem)
+
+		if (res?.data.code === CODE.SUCCESS) {
+			//prepare notification content
+			const notisContent = {
+				tid,
+				actionType: ACTIONS.ADD_TICKET_REPLY,
+				iconURL: currentUser.photoURL,
+				title: currentUser.username + " just replied his/her ticket",
+				description: subject,
+				link: slug,
+			}
+			const departmentDetails = departments.find(i => i.did === department)
+
+			const receivers = (currentUser.username !== username)
+				? [username]
+				: (latestStaffInCharge.assignee)
+					? [latestStaffInCharge.assignee]
+					: departmentDetails.members
+
+			const invalidatesTags = {
+				tag: [{ type: TYPE.TICKETS, id: "LIST" }, { type: TYPE.TICKETS, id: tid + "_replies" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+
+			await addNewNotification(receivers, notisContent, invalidatesTags)
+		}
+
 		localStorage.removeItem("NewReply")
 	}
 
@@ -206,15 +241,18 @@ const ReplyDialog = ({
 
 					<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
 						{(latestStaffInCharge.assignee === currentUser.username)
-							? <>
-								This ticket has been assigned to you by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})
-							</>
-							: <>
-								This ticket has been assigned to {<TicketOwner username={latestStaffInCharge.assignee} />} by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketOwner username={latestStaffInCharge.assignor} />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})
-							</>}
+							? <div>
+								This ticket has been assigned to you by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : <TicketUser username={latestStaffInCharge.assignor} title="Assignor" />} at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})
+							</div>
+							: <div>
+								This ticket has been assigned to {<TicketUser username={latestStaffInCharge.assignee} title="Supporter" />} by {(latestStaffInCharge.assignor === currentUser.username) ? " yourself " : (latestStaffInCharge.assignor === latestStaffInCharge.assignee) ? "himself/herself" : <TicketUser username={latestStaffInCharge.assignor} title="Supporter" />} <div>at {dayjs(latestStaffInCharge.assignedDate).format(DATE_FORMAT.LONG)} ({dayjs(latestStaffInCharge.assignedDate).fromNow()})</div>
+							</div>}
 
 						{(latestStaffInCharge.assignee !== currentUser.username)
-							? "You are not in charge of this ticket. Are you sure you want to do a reply?"
+							? <div>
+								<hr style={{ borderColor: "transparent", margin: 0 }} />
+								You are not in charge of this ticket. Are you sure you want to do a reply?
+							</div>
 							: null}
 					</Box>
 				</Box>}
@@ -227,6 +265,9 @@ ReplyDialog.propTypes = {
 	status: PropTypes.string.isRequired,
 	username: PropTypes.string.isRequired,
 	staffInCharge: PropTypes.array.isRequired,
+	slug: PropTypes.string.isRequired,
+	subject: PropTypes.string.isRequired,
+	department: PropTypes.string.isRequired,
 	//
 	open: PropTypes.bool.isRequired,
 	setOpen: PropTypes.func.isRequired,

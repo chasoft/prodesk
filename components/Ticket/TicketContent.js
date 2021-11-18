@@ -22,34 +22,38 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
 import { Avatar, Box, IconButton, MenuItem, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
 import { useSnackbar } from "notistack"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "../common/TextEditor"
 import { getAuth } from "../../redux/selectors"
-import { TicketCategory, TicketDepartment, TicketLabels, TicketPriority, TicketReplyCount, TicketStatus } from "./AdminTicketListItem"
+import { getStaffInCharge } from "../../helpers/utils"
 import useMenuContainer from "../common/useMenuContainer"
 import { setRedirect } from "../../redux/slices/redirect"
 import ReplyDialog from "../Ticket/TicketReplies/ReplyDialog"
-import { DATE_FORMAT, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
-import { useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { addNewNotification } from "../../helpers/realtimeApi"
+import { ACTIONS, TYPE } from "../../redux/slices/firestoreApiConstants"
+import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
+import { CODE, DATE_FORMAT, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
+import { useGetDepartmentsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
+import { TicketCategory, TicketDepartment, TicketLabels, TicketUser, TicketPriority, TicketReplyCount, TicketStatus } from "./AdminTicketListItem"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 import ReplyIcon from "@mui/icons-material/Reply"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
-import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
+
 
 /*****************************************************************
  * INIT                                                          *
@@ -78,14 +82,46 @@ const PopupMenu = ({ ticket }) => {
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
+	const { data: departments } = useGetDepartmentsQuery(undefined)
 
 	const handleCloseTicket = async () => {
 		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-		await updateTicket([{
+		const res = await updateTicket([{
 			username: currentUser.username,
 			tid: ticket.tid,
 			status: STATUS_FILTER.CLOSED
 		}])
+
+		const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
+
+		if (res?.data.code === CODE.SUCCESS) {
+			//prepare notification content
+			const notisContent = {
+				actionType: ACTIONS.UPDATE_TICKET,
+				iconURL: currentUser.photoURL,
+				title: currentUser.username + " just closed a ticket",
+				description: ticket.subject,
+				link: ticket.slug,
+			}
+			const departmentDetails = departments.find(i => i.did === ticket.department)
+
+			const receivers = (currentUser.username !== ticket.username)
+				? [ticket.username]
+				: (latestStaffInCharge.assignee)
+					? [latestStaffInCharge.assignee]
+					: departmentDetails.members
+
+			const invalidatesTags = {
+				tag: [{ type: TYPE.TICKETS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+
+			await addNewNotification(receivers, notisContent, invalidatesTags)
+		}
+
 		dispatch(setRedirect(REDIRECT_URL.CLIENT.TICKETS))
 	}
 
@@ -136,6 +172,9 @@ const PopupMenu = ({ ticket }) => {
 				status={ticket.status}
 				username={ticket.username}
 				staffInCharge={ticket.staffInCharge}
+				slug={ticket.slug}
+				subject={ticket.subject}
+				department={ticket.department}
 				open={showReplyDialog}
 				setOpen={setShowReplyDialog}
 			/>
@@ -182,8 +221,12 @@ TicketCreatedAt.propTypes = {
  *****************************************************************/
 
 function TicketContent({ ticket }) {
+	const { currentUser } = useSelector(getAuth)
 	const profile = useGetProfileByUsername(ticket.username)
+	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
+
 	dayjs.extend(relativeTime)
+
 	return (
 		<Paper component="main" sx={{
 			borderRadius: "0.5rem",
@@ -277,16 +320,33 @@ function TicketContent({ ticket }) {
 				borderTopColor: "divider",
 				flexWrap: "wrap"
 			}}>
-				<TicketPriority sx={{ cursor: "pointer" }} priority={ticket.priority} />
-				<TicketStatus status={ticket.status} sx={{ mb: 0.5, ml: 1 }} />
-				<TicketDepartment department={ticket.department} />
+				<TicketPriority
+					sx={{ cursor: "pointer" }}
+					priority={ticket.priority}
+				/>
+				<TicketStatus
+					sx={{ mb: 0.5, ml: 1 }}
+					status={ticket.status}
+				/>
+				<TicketDepartment
+					department={ticket.department}
+				/>
 				<TicketCategory
 					department={ticket.department}
 					category={ticket.category}
 					subCategory={ticket.subCategory}
 				/>
-				<TicketReplyCount count={ticket.replyCount} />
-				<TicketLabels ticket={ticket} sx={{ ml: 1 }} />
+				<TicketReplyCount
+					count={ticket.replyCount}
+				/>
+				<TicketLabels
+					sx={{ ml: 1 }}
+					ticket={ticket}
+				/>
+				<TicketUser
+					username={latestStaffInCharge.assignee}
+					title={(currentUser.username === latestStaffInCharge.assignee) ? "Ticket Supporter (it's you)" : "Ticket Supporter"}
+				/>
 			</Box>
 
 		</Paper>

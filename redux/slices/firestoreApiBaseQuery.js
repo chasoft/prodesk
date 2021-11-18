@@ -33,8 +33,8 @@ import { keyBy } from "lodash"
 
 //PROJECT IMPORT
 import { auth, db } from "./../../helpers/firebase"
-import { ACTION, COLLECTION, GROUP } from "./firestoreApiConstants"
-import { DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
+import { ACTIONS, COLLECTION, GROUP } from "./firestoreApiConstants"
+import { CODE, DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
 import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
 
 /*****************************************************************
@@ -45,7 +45,7 @@ function throwError(statusCode, action, e, data) {
 	console.log(e.message)
 	return {
 		error: {
-			status: statusCode,
+			code: statusCode ?? 100,
 			data: {
 				action: action,
 				message: e.message,
@@ -60,10 +60,19 @@ async function fireStoreBaseQuery(args) {
 
 	switch (args.action) {
 
+		case ACTIONS.REQUEST_REFETCHING:
+			return {
+				data: {
+					action: ACTIONS.REQUEST_REFETCHING,
+					invalidatesTags: args.invalidatesTags,
+					message: "Yet another request for refetching executed successfully!"
+				}
+			}
+
 		/*****************************************************************
 		 * INSTALL                                                       *
 		 *****************************************************************/
-		case ACTION.INSTALL_GET_STATUS:
+		case ACTIONS.INSTALL_GET_STATUS:
 			try {
 				let res = []
 				const q = query(
@@ -74,15 +83,16 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((user) => { res.push(user.data()) })
 				return {
 					data: {
+						code: CODE.SUCCESS,
 						isInstalled: (res[0]?.nextStep) === REDIRECT_URL.SIGNUP.DONE,
 						profile: res[0] ?? {}
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.INSTALL_GET_STATUS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.INSTALL_GET_STATUS, e, null)
 			}
 
-		case ACTION.INSTALL_CREATE_ADMIN:
+		case ACTIONS.INSTALL_CREATE_ADMIN:
 			try {
 				const userCredential = await createUserWithEmailAndPassword(auth, args.body.email, args.body.password)
 
@@ -115,10 +125,10 @@ async function fireStoreBaseQuery(args) {
 				}
 
 			} catch (e) {
-				return throwError(200, ACTION.INSTALL_CREATE_ADMIN, e, null)
+				return throwError(CODE.FAILED, ACTIONS.INSTALL_CREATE_ADMIN, e, null)
 			}
 
-		case ACTION.INSTALL_FINALIZATION:
+		case ACTIONS.INSTALL_FINALIZATION:
 			try {
 
 				const batch = writeBatch(db)
@@ -141,13 +151,13 @@ async function fireStoreBaseQuery(args) {
 				return { data: { justInstalled: true } } //just dummy data
 
 			} catch (e) {
-				return throwError(200, ACTION.INSTALL_FINALIZATION, e, null)
+				return throwError(CODE.FAILED, ACTIONS.INSTALL_FINALIZATION, e, null)
 			}
 
 		/*****************************************************************
 		 * SIGN-IN (LOGIN-IN)                                            *
 		 *****************************************************************/
-		case ACTION.SIGN_IN_WITH_EMAIL:
+		case ACTIONS.SIGN_IN_WITH_EMAIL:
 			if (args.body.username.includes("@")) {
 				try {
 					//Login
@@ -171,8 +181,8 @@ async function fireStoreBaseQuery(args) {
 					}
 				}
 				catch (e) {
-					// return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, e, null)
-					return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, { message: "Please check your credentials and try again" }, null)
+					// return throwError(CODE.FAILED, ACTION.SIGN_IN_WITH_EMAIL, e, null)
+					return throwError(CODE.FAILED, ACTIONS.SIGN_IN_WITH_EMAIL, { message: "Please check your credentials and try again" }, null)
 				}
 			}
 
@@ -193,13 +203,13 @@ async function fireStoreBaseQuery(args) {
 						},
 					}
 				}
-				return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, { message: "Account not found" }, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_IN_WITH_EMAIL, { message: "Account not found" }, null)
 
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_IN_WITH_EMAIL, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_IN_WITH_EMAIL, e, null)
 			}
 
-		case ACTION.SIGN_IN_WITH_GOOGLE:
+		case ACTIONS.SIGN_IN_WITH_GOOGLE:
 			try {
 				const googleAuthProvider = new GoogleAuthProvider()
 				// await signInWithRedirect(auth, googleAuthProvider)
@@ -207,25 +217,25 @@ async function fireStoreBaseQuery(args) {
 				//
 				//nothing to do here?!!
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_IN_WITH_GOOGLE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_IN_WITH_GOOGLE, e, null)
 			}
 			break
 
 		/*****************************************************************
 		 * SIGN-UP         	                                             *
 		 *****************************************************************/
-		case ACTION.SIGN_UP_WITH_EMAIL:
+		case ACTIONS.SIGN_UP_WITH_EMAIL:
 			try {
 				//Check username availabitity
 				const res = await isUsernameAvailable(args.body.username)
 				if (res.error)
 					return throwError(
-						200, ACTION.SIGN_UP_WITH_EMAIL,
+						200, ACTIONS.SIGN_UP_WITH_EMAIL,
 						{ message: res.error }, null
 					)
 				if (res.isUsernameAvailable === false)
 					return throwError(
-						200, ACTION.SIGN_UP_WITH_EMAIL,
+						200, ACTIONS.SIGN_UP_WITH_EMAIL,
 						{ message: "Username existed." }, null
 					)
 
@@ -272,10 +282,10 @@ async function fireStoreBaseQuery(args) {
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_UP_WITH_EMAIL, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_UP_WITH_EMAIL, e, null)
 			}
 
-		case ACTION.SIGN_UP_VIA_GOOGLE:
+		case ACTIONS.SIGN_UP_VIA_GOOGLE:
 			try {
 
 				const batch = writeBatch(db)
@@ -310,10 +320,10 @@ async function fireStoreBaseQuery(args) {
 				}
 
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_UP_VIA_GOOGLE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_UP_VIA_GOOGLE, e, null)
 			}
 
-		case ACTION.SIGN_UP_CREATE_PROFILE:
+		case ACTIONS.SIGN_UP_CREATE_PROFILE:
 			try {
 				const publicProfile = {
 					photoURL: args.body.avatar,
@@ -330,10 +340,10 @@ async function fireStoreBaseQuery(args) {
 				}
 			}
 			catch (e) {
-				return throwError(200, ACTION.SIGN_UP_CREATE_PROFILE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_UP_CREATE_PROFILE, e, null)
 			}
 
-		case ACTION.SIGN_UP_SURVEY:
+		case ACTIONS.SIGN_UP_SURVEY:
 			try {
 				const batch = writeBatch(db)
 				batch.set(doc(db, COLLECTION.USERNAMES, args.body.username), {
@@ -370,23 +380,23 @@ async function fireStoreBaseQuery(args) {
 				}
 				// dispatch(setRedirect(REDIRECT_URL.SIGNUP.CREATE_COMPLETED))
 			} catch (e) {
-				return throwError(200, ACTION.SIGN_UP_SURVEY, e, null)
+				return throwError(CODE.FAILED, ACTIONS.SIGN_UP_SURVEY, e, null)
 			}
 
 		/*****************************************************************
 		 * PROFILE => uid  	                                             *
 		 *****************************************************************/
-		case ACTION.GET_PROFILES:	//Get from GROUP.PUBLIC_PROFILES
+		case ACTIONS.GET_PROFILES:	//Get from GROUP.PUBLIC_PROFILES
 			try {
 				let res = {}
 				const docSnapshot = await getDoc(doc(db, COLLECTION.USERS, GROUP.PROFILES_PUBLIC))
 				if (docSnapshot.exists()) { res = docSnapshot.data() }
 				return { data: res }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PROFILES, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PROFILES, e, null)
 			}
 
-		case ACTION.GET_PROFILE:
+		case ACTIONS.GET_PROFILE:
 			try {
 				let res = []
 				const q = query(
@@ -397,10 +407,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((user) => { res.push(user.data()) })
 				return { data: res[0] ?? {} }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PROFILE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PROFILE, e, null)
 			}
 
-		case ACTION.GET_PROFILE_BY_USERNAME:
+		case ACTIONS.GET_PROFILE_BY_USERNAME:
 			try {
 				let res = []
 				const q = query(
@@ -411,10 +421,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((user) => { res.push(user.data()) })
 				return { data: res[0] ?? {} }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PROFILE_BY_USERNAME, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PROFILE_BY_USERNAME, e, null)
 			}
 
-		case ACTION.GET_PROFILE_BY_EMAIL:
+		case ACTIONS.GET_PROFILE_BY_EMAIL:
 			try {
 				let res = []
 				const q = query(
@@ -425,10 +435,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((user) => { res.push(user.data()) })
 				return { data: res[0] ?? {} }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PROFILE_BY_EMAIL, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PROFILE_BY_EMAIL, e, null)
 			}
 
-		case ACTION.UPDATE_PROFILE:
+		case ACTIONS.UPDATE_PROFILE:
 			try {
 				await updateDoc(
 					doc(db, COLLECTION.USERS, args.body.uid),
@@ -449,13 +459,13 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.UPDATE_PROFILE,
+						action: ACTIONS.UPDATE_PROFILE,
 						id: args.body.uid,
 						message: "Profile updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_PROFILE, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_PROFILE, e, {
 					id: args.body.uid
 				})
 			}
@@ -463,7 +473,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * DOCUMENTATION => docId                                        *
 		 *****************************************************************/
-		case ACTION.GET_DOCS:
+		case ACTIONS.GET_DOCS:
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
@@ -472,10 +482,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((doc) => { all.push(doc.data()) })
 				return { data: all }
 			} catch (e) {
-				return throwError(200, ACTION.GET_DOCS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_DOCS, e, null)
 			}
 
-		case ACTION.GET_DOC:
+		case ACTIONS.GET_DOC:
 			try {
 				let docItem = {}
 				const docSnap = await getDoc(
@@ -484,10 +494,10 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) { docItem = docSnap.data() }
 				return { data: docItem }
 			} catch (e) {
-				return throwError(200, ACTION.GET_DOC, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_DOC, e, null)
 			}
 
-		case ACTION.GET_CONTENT:
+		case ACTIONS.GET_CONTENT:
 			try {
 				let docItemContent = {}
 				const docSnap = await getDoc(
@@ -500,10 +510,10 @@ async function fireStoreBaseQuery(args) {
 				console.log({ docItemContent })
 				return { data: docItemContent }
 			} catch (e) {
-				return throwError(200, ACTION.GET_CONTENT, e, "")
+				return throwError(CODE.FAILED, ACTIONS.GET_CONTENT, e, "")
 			}
 
-		case ACTION.ADD_DOC:
+		case ACTIONS.ADD_DOC:
 			try {
 				const batch = writeBatch(db)
 				batch.set(
@@ -519,18 +529,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.ADD_DOC,
+						action: ACTIONS.ADD_DOC,
 						id: args.body.docItem.docId,
 						message: "doc added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_DOC, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_DOC, e, {
 					id: args.body.docItem.docId
 				})
 			}
 
-		case ACTION.UPDATE_DOC:
+		case ACTIONS.UPDATE_DOC:
 			try {
 				if (args.body.docItem.type === DOC_TYPE.EXTERNAL || args.body.docItem.type === DOC_TYPE.DOC) {
 					await updateDoc(
@@ -542,7 +552,7 @@ async function fireStoreBaseQuery(args) {
 					)
 					return {
 						data: {
-							action: ACTION.UPDATE_DOC,
+							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "Doc or External link updated successfully"
 						}
@@ -565,7 +575,7 @@ async function fireStoreBaseQuery(args) {
 					await batch.commit()
 					return {
 						data: {
-							action: ACTION.UPDATE_DOC,
+							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "category updated successfully"
 						}
@@ -588,20 +598,20 @@ async function fireStoreBaseQuery(args) {
 					await batch.commit()
 					return {
 						data: {
-							action: ACTION.UPDATE_DOC,
+							action: ACTIONS.UPDATE_DOC,
 							id: args.body.docItem.docId,
 							message: "SubCategory updated successfully"
 						}
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_DOC, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC, e, {
 					id: args.body.docItem.docId
 				})
 			}
 			break
 
-		case ACTION.UPDATE_DOC_CONTENT:	//body: {docItem, content: object}
+		case ACTIONS.UPDATE_DOC_CONTENT:	//body: {docItem, content: object}
 			try {
 				const batch = writeBatch(db)
 				batch.update(
@@ -621,23 +631,23 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.UPDATE_DOC_CONTENT,
+						action: ACTIONS.UPDATE_DOC_CONTENT,
 						id: args.body.docItem.docId,
 						message: "DocContent updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_DOC_CONTENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC_CONTENT, e, {
 					id: args.body.docItem.docId
 				})
 			}
-		case ACTION.DELETE_DOC:
+		case ACTIONS.DELETE_DOC:
 			try {
 				if (args.body.docItem.type === DOC_TYPE.EXTERNAL) {
 					await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 					return {
 						data: {
-							action: ACTION.DELETE_DOC,
+							action: ACTIONS.DELETE_DOC,
 							id: args.body.docItem.docId,
 							message: "External Link deleted successfully"
 						}
@@ -649,7 +659,7 @@ async function fireStoreBaseQuery(args) {
 					await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 					return {
 						data: {
-							action: ACTION.DELETE_DOC,
+							action: ACTIONS.DELETE_DOC,
 							id: args.body.docItem.docId,
 							message: "Doc deleted successfully"
 						}
@@ -670,7 +680,7 @@ async function fireStoreBaseQuery(args) {
 						await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 						return {
 							data: {
-								action: ACTION.DELETE_DOC,
+								action: ACTIONS.DELETE_DOC,
 								id: args.body.docItem.docId,
 								message: "Category deleted successfully"
 							}
@@ -679,7 +689,7 @@ async function fireStoreBaseQuery(args) {
 					//if the code reach here, means... can not delete selected item
 					return throwError(
 						200,
-						ACTION.DELETE_DOC,
+						ACTIONS.DELETE_DOC,
 						{ message: "You can only delete empty category!" },
 						{ id: args.body.docItem.docId }
 					)
@@ -701,7 +711,7 @@ async function fireStoreBaseQuery(args) {
 						await deleteDoc(doc(db, COLLECTION.DOCS, args.body.docItem.docId))
 						return {
 							data: {
-								action: ACTION.DELETE_DOC,
+								action: ACTIONS.DELETE_DOC,
 								id: args.body.docItem.docId,
 								message: "SubCategory deleted successfully"
 							}
@@ -710,13 +720,13 @@ async function fireStoreBaseQuery(args) {
 					//if the code reach here, means... can not delete selected item
 					return throwError(
 						200,
-						ACTION.DELETE_DOC,
+						ACTIONS.DELETE_DOC,
 						{ message: "You can only delete empty sub-category!" },
 						{ id: args.body.docItem.docId }
 					)
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_DOC, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_DOC, e, {
 					id: args.body.docItem.docId
 				})
 			}
@@ -725,7 +735,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * APPLICATION SETTINGS                                          *
 		 *****************************************************************/
-		case ACTION.GET_APPSETTINGS:
+		case ACTIONS.GET_APPSETTINGS:
 			try {
 				let settings = {}
 				const docSnap = await getDoc(
@@ -734,9 +744,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) settings = docSnap.data()
 				return { data: settings }
 			} catch (e) {
-				return throwError(200, ACTION.GET_APPSETTINGS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_APPSETTINGS, e, null)
 			}
-		case ACTION.UPDATE_APPSETTINGS:
+		case ACTIONS.UPDATE_APPSETTINGS:
 			try {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "settings"),
@@ -745,18 +755,18 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_APPSETTINGS,
+						action: ACTIONS.UPDATE_APPSETTINGS,
 						message: "Settings updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_APPSETTINGS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_APPSETTINGS, e, null)
 			}
 
 		/*****************************************************************
 		 * APPLICATION SETTINGS                                          *
 		 *****************************************************************/
-		case ACTION.GET_USERSETTINGS:	//args.username
+		case ACTIONS.GET_USERSETTINGS:	//args.username
 			try {
 				let settings = {}
 				const docSnap = await getDoc(
@@ -765,9 +775,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) settings = docSnap.data()
 				return { data: settings }
 			} catch (e) {
-				return throwError(200, ACTION.GET_USERSETTINGS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_USERSETTINGS, e, null)
 			}
-		case ACTION.UPDATE_USERSETTINGS:	//args.body = { username:string, settings: object}
+		case ACTIONS.UPDATE_USERSETTINGS:	//args.body = { username:string, settings: object}
 			try {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, args.body.username),
@@ -776,18 +786,18 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_USERSETTINGS,
+						action: ACTIONS.UPDATE_USERSETTINGS,
 						message: "User settings updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_USERSETTINGS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_USERSETTINGS, e, null)
 			}
 
 		/*****************************************************************
 		 * DEPARTMENTS => did                                            *
 		 *****************************************************************/
-		case ACTION.GET_DEPARTMENTS:
+		case ACTIONS.GET_DEPARTMENTS:
 			try {
 				let departments = []
 				const docSnap = await getDoc(
@@ -796,9 +806,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) departments = docSnap.data()
 				return { data: departments }
 			} catch (e) {
-				return throwError(200, ACTION.GET_DEPARTMENTS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_DEPARTMENTS, e, null)
 			}
-		case ACTION.ADD_DEPARTMENT:
+		case ACTIONS.ADD_DEPARTMENT:
 			try {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "departments"),
@@ -809,17 +819,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.ADD_DEPARTMENT,
+						action: ACTIONS.ADD_DEPARTMENT,
 						id: args.body.did,
 						message: "Department added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_DEPARTMENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_DEPARTMENT, e, {
 					id: args.body.did
 				})
 			}
-		case ACTION.UPDATE_DEPARTMENT:
+		case ACTIONS.UPDATE_DEPARTMENT:
 			try {
 				const batch = writeBatch(db)
 				batch.update(
@@ -832,19 +842,19 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.UPDATE_DEPARTMENT,
+						action: ACTIONS.UPDATE_DEPARTMENT,
 						id: args.body.did,
 						message: "Department updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_DEPARTMENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DEPARTMENT, e, {
 					id: args.body.did
 				})
 			}
 
 		//Note: do not allow to delete department if there are related canned-replies existed
-		case ACTION.DELETE_DEPARTMENT:
+		case ACTIONS.DELETE_DEPARTMENT:
 			//body = {departmentItem, fullList}
 			//To remove an item, we use setDoc without merge option,
 			//then, all will be overwritten with provided data
@@ -856,13 +866,13 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.DELETE_DEPARTMENT,
+						action: ACTIONS.DELETE_DEPARTMENT,
 						id: args.body.departmentItem.did,
 						message: "Department deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_DEPARTMENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_DEPARTMENT, e, {
 					id: args.body.departmentItem.did
 				})
 			}
@@ -870,7 +880,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * CANNED REPLIES => crid                                        *
 		 *****************************************************************/
-		case ACTION.GET_CANNED_REPLIES:
+		case ACTIONS.GET_CANNED_REPLIES:
 			try {
 				let cannedReplies = []
 				const docSnap = await getDoc(
@@ -879,9 +889,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) cannedReplies = docSnap.data()
 				return { data: cannedReplies }
 			} catch (e) {
-				return throwError(200, ACTION.GET_CANNED_REPLIES, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_CANNED_REPLIES, e, null)
 			}
-		case ACTION.ADD_CANNED_REPLY:
+		case ACTIONS.ADD_CANNED_REPLY:
 			try {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "canned-replies"),
@@ -891,17 +901,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.ADD_CANNED_REPLY,
+						action: ACTIONS.ADD_CANNED_REPLY,
 						id: args.body.crid,
 						message: "Canned-reply added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_CANNED_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_CANNED_REPLY, e, {
 					id: args.body.crid
 				})
 			}
-		case ACTION.UPDATE_CANNED_REPLY:
+		case ACTIONS.UPDATE_CANNED_REPLY:
 			try {
 				updateDoc(
 					doc(db, COLLECTION.SETTINGS, "canned-replies"),
@@ -911,17 +921,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_CANNED_REPLY,
+						action: ACTIONS.UPDATE_CANNED_REPLY,
 						id: args.body.crid,
 						message: "Canned-reply updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_CANNED_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_CANNED_REPLY, e, {
 					id: args.body.crid
 				})
 			}
-		case ACTION.DELETE_CANNED_REPLY:
+		case ACTIONS.DELETE_CANNED_REPLY:
 			//body = {cannedReplyItem, fullList}
 			//To remove an item, we use setDoc without merge option,
 			//then, all will be overwritten with provided data
@@ -933,13 +943,13 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.DELETE_CANNED_REPLY,
+						action: ACTIONS.DELETE_CANNED_REPLY,
 						id: args.body.cannedReplyItem.crid,
 						message: "Canned-reply deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_CANNED_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_CANNED_REPLY, e, {
 					id: args.body.cannedReplyItem.crid
 				})
 			}
@@ -947,7 +957,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * LABELS => lid                                                 *
 		 *****************************************************************/
-		case ACTION.GET_LABELS:
+		case ACTIONS.GET_LABELS:
 			try {
 				let labels = {}
 				const docSnap = await getDoc(
@@ -956,9 +966,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) labels = docSnap.data()
 				return { data: labels }
 			} catch (e) {
-				return throwError(200, ACTION.GET_LABELS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_LABELS, e, null)
 			}
-		case ACTION.ADD_LABEL:
+		case ACTIONS.ADD_LABEL:
 			try {
 				await setDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
@@ -969,17 +979,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.ADD_LABEL,
+						action: ACTIONS.ADD_LABEL,
 						id: args.body.lid,
 						message: "Label added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_LABEL, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_LABEL, e, {
 					id: args.body.lid
 				})
 			}
-		case ACTION.UPDATE_LABEL:
+		case ACTIONS.UPDATE_LABEL:
 			try {
 				updateDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
@@ -989,17 +999,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_LABEL,
+						action: ACTIONS.UPDATE_LABEL,
 						id: args.body.lid,
 						message: "Label updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_LABEL, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_LABEL, e, {
 					id: args.body.lid
 				})
 			}
-		case ACTION.DELETE_LABEL:
+		case ACTIONS.DELETE_LABEL:
 			//body = {labelItem, fullList}
 			//To remove an item, we use setDoc without merge option,
 			//then, all will be overwritten with provided data
@@ -1011,13 +1021,13 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.DELETE_LABEL,
+						action: ACTIONS.DELETE_LABEL,
 						id: args.body.labelItem.lid,
 						message: "Label deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_LABEL, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_LABEL, e, {
 					id: args.body.labelItem.lid
 				})
 			}
@@ -1025,7 +1035,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * CATEGORIES => catId                                           *
 		 *****************************************************************/
-		case ACTION.GET_CATEGORIES:
+		case ACTIONS.GET_CATEGORIES:
 			try {
 				let categories = []
 				const docSnap = await getDoc(
@@ -1034,9 +1044,9 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) categories = docSnap.data()
 				return { data: categories }
 			} catch (e) {
-				return throwError(200, ACTION.GET_CATEGORIES, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_CATEGORIES, e, null)
 			}
-		case ACTION.ADD_CATEGORY:
+		case ACTIONS.ADD_CATEGORY:
 			try {
 				const updatedItems = args.body.isDefault
 					? keyBy(args.body.fullList, c => c.catId)
@@ -1048,17 +1058,17 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.ADD_CATEGORY,
+						action: ACTIONS.ADD_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_CATEGORY, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_CATEGORY, e, {
 					id: args.body.categoryItem.catId
 				})
 			}
-		case ACTION.UPDATE_CATEGORY: //body = {isDefault, categoryItem, fullList}
+		case ACTIONS.UPDATE_CATEGORY: //body = {isDefault, categoryItem, fullList}
 			//Note: behavior of update_category & add_category are the same!
 			//the only difference is that add_category use `setDoc`
 			//and update_category uses `updateDoc`
@@ -1071,17 +1081,17 @@ async function fireStoreBaseQuery(args) {
 				await updateDoc(doc(db, COLLECTION.SETTINGS, "categories"), updatedItems)
 				return {
 					data: {
-						action: ACTION.UPDATE_CATEGORY,
+						action: ACTIONS.UPDATE_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_CATEGORY, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_CATEGORY, e, {
 					id: args.body.categoryItem.catId
 				})
 			}
-		case ACTION.DELETE_CATEGORY:
+		case ACTIONS.DELETE_CATEGORY:
 			//body = {categoryItem, fullList}
 			//To remove an item, we use setDoc without merge option,
 			//then, all will be overwritten with provided data
@@ -1093,13 +1103,13 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.DELETE_CATEGORY,
+						action: ACTIONS.DELETE_CATEGORY,
 						id: args.body.categoryItem.catId,
 						message: "Category deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_CATEGORY, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_CATEGORY, e, {
 					id: args.body.categoryItem.catId
 				})
 			}
@@ -1107,7 +1117,7 @@ async function fireStoreBaseQuery(args) {
 		/*****************************************************************
 		 * TICKETS => tid                                                *
 		 *****************************************************************/
-		case ACTION.GET_TICKETS_FOR_USER:
+		case ACTIONS.GET_TICKETS_FOR_USER:
 			try {
 				let res = []
 				const querySnapshot = await getDocs(collection(db,
@@ -1117,20 +1127,20 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((ticket) => { res.push(ticket.data()) })
 				return { data: res }
 			} catch (e) {
-				return throwError(200, ACTION.GET_TICKETS_FOR_USER, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_TICKETS_FOR_USER, e, null)
 			}
 
-		case ACTION.GET_TICKETS_FOR_ADMIN:
+		case ACTIONS.GET_TICKETS_FOR_ADMIN:
 			try {
 				let res = {}
 				const docSnapshot = await getDoc(doc(db, COLLECTION.USERNAMES, GROUP.TICKETS_GROUP))
 				if (docSnapshot.exists()) { res = docSnapshot.data() }
 				return { data: res }
 			} catch (e) {
-				return throwError(200, ACTION.GET_TICKETS_FOR_ADMIN, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_TICKETS_FOR_ADMIN, e, null)
 			}
 
-		case ACTION.GET_TICKET_REPLIES:
+		case ACTIONS.GET_TICKET_REPLIES:
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
@@ -1141,10 +1151,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((reply) => { all.push(reply.data()) })
 				return { data: all }
 			} catch (e) {
-				return throwError(200, ACTION.GET_TICKET_REPLIES, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_TICKET_REPLIES, e, null)
 			}
 
-		case ACTION.ADD_TICKET:	//body: {...ticketItem}
+		case ACTIONS.ADD_TICKET:	//body: {...ticketItem}
 			try {
 				const batch = writeBatch(db)
 				const newTicket = {
@@ -1188,20 +1198,21 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.ADD_TICKET,
+						code: CODE.SUCCESS,
+						action: ACTIONS.ADD_TICKET,
 						username: args.body.username,
 						tid: args.body.tid,
 						message: "Ticket added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_TICKET, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_TICKET, e, {
 					username: args.body.username,
 					tid: args.body.tid,
 				})
 			}
 
-		case ACTION.ADD_TICKET_REPLY:	//body: {ticketItem, replyItem}
+		case ACTIONS.ADD_TICKET_REPLY:	//body: {ticketItem, replyItem}
 			try {
 				const batch = writeBatch(db)
 				batch.set(
@@ -1247,20 +1258,21 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.ADD_TICKET_REPLY,
+						code: CODE.SUCCESS,
+						action: ACTIONS.ADD_TICKET_REPLY,
 						username: args.body.ticketItem.username,
 						tid: args.body.ticketItem.tid,
 						message: "Ticket reply added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_TICKET_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_TICKET_REPLY, e, {
 					username: args.body.ticketItem.username,
 					tid: args.body.ticketItem.tid,
 				})
 			}
 
-		case ACTION.UPDATE_TICKET:	//body: [{...ticketItem1}, {...ticketItem2}]
+		case ACTIONS.UPDATE_TICKET:	//body: [{...ticketItem1}, {...ticketItem2}]
 			try {
 				const batch = writeBatch(db)
 				args.body.forEach((ticketItem) => {
@@ -1302,18 +1314,19 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.UPDATE_TICKET,
+						code: CODE.SUCCESS,
+						action: ACTIONS.UPDATE_TICKET,
 						tickets: args.body,
 						message: "Ticket(s) updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_TICKET, e, {
 					tickets: args.body
 				})
 			}
 
-		case ACTION.UPDATE_TICKET_REPLY:	//body: {ticketItem, replyItem}
+		case ACTIONS.UPDATE_TICKET_REPLY:	//body: {ticketItem, replyItem}
 			try {
 				await updateDoc(
 					doc(db,
@@ -1344,21 +1357,22 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.UPDATE_TICKET_REPLY,
+						code: CODE.SUCCESS,
+						action: ACTIONS.UPDATE_TICKET_REPLY,
 						username: args.body.ticketItem.username,
 						tid: args.body.ticketItem.tid,
 						message: "Ticket reply updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_TICKET_REPLY, e, {
 					username: args.body.ticketItem.username,
 					tid: args.body.ticketItem.tid,
 				})
 			}
 
 		//!For safety reason, just allow to delete ticket one by one
-		case ACTION.DELETE_TICKET:	//body: {username, tid}
+		case ACTIONS.DELETE_TICKET:	//body: {username, tid}
 			try {
 				const batch = writeBatch(db)
 				//delete ticket's replies
@@ -1388,21 +1402,22 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.DELETE_TICKET,
+						code: CODE.SUCCESS,
+						action: ACTIONS.DELETE_TICKET,
 						username: args.body.username,
 						tid: args.body.tid,
 						message: "Ticket deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_TICKET, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_TICKET, e, {
 					username: args.body.username,
 					tid: args.body.tid,
 				})
 			}
 
 		//!THIS IS A SIMPLIFIED VERSION OF UPDATE_TICKET
-		case ACTION.DELETE_TICKET_TEMP:	//body: [{username, tid},{username, tid}]
+		case ACTIONS.DELETE_TICKET_TEMP:	//body: [{username, tid},{username, tid}]
 			try {
 				const batch = writeBatch(db)
 				args.body.forEach((ticketItem) => {
@@ -1440,16 +1455,17 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.DELETE_TICKET_TEMP,
+						code: CODE.SUCCESS,
+						action: ACTIONS.DELETE_TICKET_TEMP,
 						tickets: args.body,
 						message: "Ticket temporarily deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_TICKET, e, { tickets: args.body })
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_TICKET, e, { tickets: args.body })
 			}
 
-		case ACTION.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
+		case ACTIONS.DELETE_TICKET_REPLY:	//body: {username, tid, trid}
 			try {
 				console.log("DELETE_TICKET_REPLY", args.body)
 				const batch = writeBatch(db)
@@ -1489,7 +1505,8 @@ async function fireStoreBaseQuery(args) {
 
 				return {
 					data: {
-						action: ACTION.DELETE_TICKET_REPLY,
+						code: CODE.SUCCESS,
+						action: ACTIONS.DELETE_TICKET_REPLY,
 						username: args.body.username,
 						tid: args.body.tid,
 						trid: args.body.trid,
@@ -1497,26 +1514,17 @@ async function fireStoreBaseQuery(args) {
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_TICKET_REPLY, e, {
+				return throwError(CODE.FAILED, ACTIONS.DELETE_TICKET_REPLY, e, {
 					username: args.body.username,
 					tid: args.body.tid,
 					trid: args.body.trid,
 				})
 			}
 
-		case ACTION.REFETCH_TICKET:
-			return {
-				data: {
-					action: ACTION.REFETCH_TICKET,
-					message: "Nothing todo! Just a request to refetch the tickets"
-				}
-			}
-
-
 		/*****************************************************************
 		 * PAGES => pid                                                  *
 		 *****************************************************************/
-		case ACTION.GET_PAGES:
+		case ACTIONS.GET_PAGES:
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
@@ -1525,10 +1533,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((page) => { all.push(page.data()) })
 				return { data: all }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PAGES, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PAGES, e, null)
 			}
 
-		case ACTION.GET_PAGE:	//body: pid
+		case ACTIONS.GET_PAGE:	//body: pid
 			try {
 				let page = {}
 				const docSnap = await getDoc(
@@ -1537,10 +1545,10 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) page = docSnap.data()
 				return { data: page }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PAGE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_PAGE, e, null)
 			}
 
-		case ACTION.GET_PAGE_CONTENT:	//body: pid
+		case ACTIONS.GET_PAGE_CONTENT:	//body: pid
 			try {
 				let pageContent = {}
 				const docSnap = await getDoc(
@@ -1552,12 +1560,12 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) { pageContent = docSnap.data() }
 				return { data: pageContent }
 			} catch (e) {
-				return throwError(200, ACTION.GET_PAGE_CONTENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.GET_PAGE_CONTENT, e, {
 					pid: args.body
 				})
 			}
 
-		case ACTION.ADD_PAGE:	// body: {pageItem, content: {text: string} }
+		case ACTIONS.ADD_PAGE:	// body: {pageItem, content: {text: string} }
 			try {
 				const batch = writeBatch(db)
 				batch.set(
@@ -1578,18 +1586,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.ADD_PAGE,
+						action: ACTIONS.ADD_PAGE,
 						pid: args.body.pageItem.pid,
 						message: "Page added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_PAGE, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_PAGE, e, {
 					pid: args.body.pageItem.pid
 				})
 			}
 
-		case ACTION.UPDATE_PAGE:	//body: {...pageItem}
+		case ACTIONS.UPDATE_PAGE:	//body: {...pageItem}
 			try {
 				updateDoc(
 					doc(db, COLLECTION.PAGES, args.body.pid),
@@ -1600,18 +1608,18 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_PAGE,
+						action: ACTIONS.UPDATE_PAGE,
 						pid: args.body.pid,
 						message: "Page properties updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_PAGE, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_PAGE, e, {
 					pid: args.body.pid,
 				})
 			}
 
-		case ACTION.UPDATE_PAGE_CONTENT:	//body: {pageItem, content: {text:string} }
+		case ACTIONS.UPDATE_PAGE_CONTENT:	//body: {pageItem, content: {text:string} }
 			try {
 				const batch = writeBatch(db)
 				batch.update(
@@ -1628,18 +1636,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.UPDATE_PAGE_CONTENT,
+						action: ACTIONS.UPDATE_PAGE_CONTENT,
 						pid: args.body.pageItem.pid,
 						message: "Page content updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_PAGE_CONTENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_PAGE_CONTENT, e, {
 					pid: args.body.pageItem.pid
 				})
 			}
 
-		case ACTION.DELETE_PAGE:	//body: pid
+		case ACTIONS.DELETE_PAGE:	//body: pid
 			try {
 				const batch = writeBatch(db)
 				batch.delete(doc(db, COLLECTION.PAGES, args.body, "content", "current"))
@@ -1647,18 +1655,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.DELETE_PAGE,
+						action: ACTIONS.DELETE_PAGE,
 						message: "Page deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_PAGE, e, null)
+				return throwError(CODE.FAILED, ACTIONS.DELETE_PAGE, e, null)
 			}
 
 		/*****************************************************************
 		 * BLOG => bid                                                   *
 		 *****************************************************************/
-		case ACTION.GET_BLOG_POSTS:
+		case ACTIONS.GET_BLOG_POSTS:
 			try {
 				let all = []
 				const querySnapshot = await getDocs(collection(db,
@@ -1667,10 +1675,10 @@ async function fireStoreBaseQuery(args) {
 				querySnapshot.forEach((post) => { all.push(post.data()) })
 				return { data: all }
 			} catch (e) {
-				return throwError(200, ACTION.GET_BLOG_POSTS, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_BLOG_POSTS, e, null)
 			}
 
-		case ACTION.GET_BLOG_POST:	//body: bid
+		case ACTIONS.GET_BLOG_POST:	//body: bid
 			try {
 				let page = {}
 				const docSnap = await getDoc(
@@ -1679,10 +1687,10 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) page = docSnap.data()
 				return { data: page }
 			} catch (e) {
-				return throwError(200, ACTION.GET_BLOG_POST, e, null)
+				return throwError(CODE.FAILED, ACTIONS.GET_BLOG_POST, e, null)
 			}
 
-		case ACTION.GET_BLOG_POST_CONTENT:	//body: bid
+		case ACTIONS.GET_BLOG_POST_CONTENT:	//body: bid
 			try {
 				let pageContent = {}
 				const docSnap = await getDoc(
@@ -1694,12 +1702,12 @@ async function fireStoreBaseQuery(args) {
 				if (docSnap.exists()) { pageContent = docSnap.data() }
 				return { data: pageContent }
 			} catch (e) {
-				return throwError(200, ACTION.GET_BLOG_POST_CONTENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.GET_BLOG_POST_CONTENT, e, {
 					bid: args.body
 				})
 			}
 
-		case ACTION.ADD_BLOG_POST:	// body: {blogItem, content: {text: string} }
+		case ACTIONS.ADD_BLOG_POST:	// body: {blogItem, content: {text: string} }
 			try {
 				const batch = writeBatch(db)
 				batch.set(
@@ -1720,18 +1728,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.ADD_BLOG_POST,
+						action: ACTIONS.ADD_BLOG_POST,
 						bid: args.body.blogItem.bid,
 						message: "Blog added successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.ADD_BLOG_POST, e, {
+				return throwError(CODE.FAILED, ACTIONS.ADD_BLOG_POST, e, {
 					pid: args.body.blogItem.bid
 				})
 			}
 
-		case ACTION.UPDATE_BLOG_POST:	//body: {...blogItem}
+		case ACTIONS.UPDATE_BLOG_POST:	//body: {...blogItem}
 			try {
 				updateDoc(
 					doc(db, COLLECTION.BLOG, args.body.bid),
@@ -1742,18 +1750,18 @@ async function fireStoreBaseQuery(args) {
 				)
 				return {
 					data: {
-						action: ACTION.UPDATE_BLOG_POST,
+						action: ACTIONS.UPDATE_BLOG_POST,
 						bid: args.body.bid,
 						message: "Blog properties updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_BLOG_POST, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_BLOG_POST, e, {
 					pid: args.body.bid,
 				})
 			}
 
-		case ACTION.UPDATE_BLOG_POST_CONTENT:	//body: {blogItem, content: {text:string} }
+		case ACTIONS.UPDATE_BLOG_POST_CONTENT:	//body: {blogItem, content: {text:string} }
 			try {
 				const batch = writeBatch(db)
 				batch.update(
@@ -1770,18 +1778,18 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.UPDATE_BLOG_POST_CONTENT,
+						action: ACTIONS.UPDATE_BLOG_POST_CONTENT,
 						bid: args.body.blogItem.bid,
 						message: "Blog content updated successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.UPDATE_BLOG_POST_CONTENT, e, {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_BLOG_POST_CONTENT, e, {
 					bid: args.body.blogItem.bid
 				})
 			}
 
-		case ACTION.DELETE_BLOG_POST:	//body: bid
+		case ACTIONS.DELETE_BLOG_POST:	//body: bid
 			try {
 				const batch = writeBatch(db)
 				batch.delete(doc(db, COLLECTION.BLOG, args.body, "content", "current"))
@@ -1789,16 +1797,16 @@ async function fireStoreBaseQuery(args) {
 				await batch.commit()
 				return {
 					data: {
-						action: ACTION.DELETE_BLOG_POST,
+						action: ACTIONS.DELETE_BLOG_POST,
 						message: "Blog post deleted successfully"
 					}
 				}
 			} catch (e) {
-				return throwError(200, ACTION.DELETE_BLOG_POST, e, null)
+				return throwError(CODE.FAILED, ACTIONS.DELETE_BLOG_POST, e, null)
 			}
 
 		default:
-			return throwError(200, "Action not yet implemented", { message: "Action not yet implemented" }, null)
+			return throwError(CODE.FAILED, "Action not yet implemented", { message: "Action not yet implemented" }, null)
 	}
 }
 

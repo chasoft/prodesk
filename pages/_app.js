@@ -96,7 +96,13 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 			<Provider store={store}>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					<SnackbarProvider maxSnack={3}>
+					<SnackbarProvider
+						anchorOrigin={{
+							vertical: "bottom",
+							horizontal: "right",
+						}}
+						maxSnack={3}
+					>
 						{getLayout(
 							<PageTransition location={router.pathname}>
 								<CssBaseline />

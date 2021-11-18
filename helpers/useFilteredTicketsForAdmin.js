@@ -47,7 +47,9 @@ export default function useFilteredTicketsForAdmin() {
 	const { currentUser } = useSelector(getAuth)
 	const [availableTicketsByInbox, setAvailableTicketsByInbox] = useState({})
 	const { data: tickets = {}, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
+
 	const {
 		filteredGroupBy,
 		filteredByInbox,

@@ -70,6 +70,9 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 				status={ticket.status}
 				username={ticket.username}
 				staffInCharge={ticket.staffInCharge}
+				slug={ticket.slug}
+				subject={ticket.subject}
+				department={ticket.department}
 				open={open}
 				setOpen={setOpen}
 			/>
@@ -84,7 +87,7 @@ ReplyButton.propTypes = {
 	sx: PropTypes.object
 }
 
-const RepliesContainer = ({ tid, status, username, staffInCharge, children }) => {
+const RepliesContainer = ({ tid, status, username, staffInCharge, slug, subject, department, children }) => {
 	const [open, setOpen] = useState(false)
 	return (
 		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
@@ -117,6 +120,9 @@ const RepliesContainer = ({ tid, status, username, staffInCharge, children }) =>
 				status={status}
 				username={username}
 				staffInCharge={staffInCharge}
+				slug={slug}
+				department={department}
+				subject={subject}
 			/>
 
 		</Box >
@@ -127,6 +133,9 @@ RepliesContainer.propTypes = {
 	status: PropTypes.string,
 	username: PropTypes.string,
 	staffInCharge: PropTypes.array,
+	slug: PropTypes.string,
+	subject: PropTypes.string,
+	department: PropTypes.string,
 	children: PropTypes.node
 }
 
@@ -134,7 +143,7 @@ RepliesContainer.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
+function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug, subject, department }) {
 
 	const { currentUser } = useSelector(getAuth)
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
@@ -144,6 +153,7 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
 		tid: tid
 	})
 
+	//TODO: reply this line with Permission system
 	const isAdmin = currentUser.username === "superadmin" || hasAdminPermissions
 
 	//We already know the number of replies based on replyCount,
@@ -155,6 +165,9 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
 				status={status}
 				username={username}
 				staffInCharge={staffInCharge}
+				slug={slug}
+				subject={subject}
+				department={department}
 			>
 				<Box sx={{ p: 4 }}>There is no replies!</Box>
 			</RepliesContainer>
@@ -169,6 +182,9 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
 				status={status}
 				username={username}
 				staffInCharge={staffInCharge}
+				slug={slug}
+				subject={subject}
+				department={department}
 			>
 				<Box sx={{
 					display: "flex",
@@ -241,6 +257,9 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount }) {
 			status={status}
 			username={username}
 			staffInCharge={staffInCharge}
+			slug={slug}
+			subject={subject}
+			department={department}
 		>
 			{ticketReplies?.map((replyItem, idx) =>
 				<ReplyItem
@@ -259,7 +278,10 @@ TicketReplies.propTypes = {
 	status: PropTypes.string,
 	username: PropTypes.string,
 	staffInCharge: PropTypes.array,
-	replyCount: PropTypes.number
+	replyCount: PropTypes.number,
+	slug: PropTypes.string,
+	subject: PropTypes.string,
+	department: PropTypes.string
 }
 
 export default TicketReplies

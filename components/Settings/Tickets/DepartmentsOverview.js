@@ -75,7 +75,9 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting...
+					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting.
+					<hr style={{ borderColor: "transparent", margin: 0 }} />
+					Superadmin and admin can view all tickets of any departments but only members of department will receive notification.
 					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>

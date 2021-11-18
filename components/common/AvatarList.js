@@ -28,7 +28,8 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 import { Avatar, AvatarGroup, CircularProgress } from "@mui/material"
 import { useDeepCompareEffect } from "react-use"
-import useProfiles from "../../helpers/useProfiles"
+import useProfilesGroup from "../../helpers/useProfilesGroup"
+import { USERGROUP } from "../../helpers/constants"
 
 //THIRD-PARTY
 
@@ -43,7 +44,7 @@ import useProfiles from "../../helpers/useProfiles"
 /* members is just array of usernames */
 function AvatarList({ members }) {
 	const [membersProfile, setMembersProfile] = useState([])
-	const { staffList = [], isLoadingStaffList } = useProfiles()
+	const { userList: staffList = [], isLoading: isLoadingStaffList } = useProfilesGroup([USERGROUP.STAFF.code])
 
 	useDeepCompareEffect(() => {
 		const verifiedList = members.map(u => staffList.find(i => i.username === u) ?? undefined).filter(i => i !== undefined)

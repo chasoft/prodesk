@@ -34,7 +34,7 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import CustomCheckbox from "../common/CustomCheckbox"
 import { getUiSettings } from "../../redux/selectors"
-import { useGetDepartmentsQuery, useGetLabelsQuery, useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
+import { useGetDepartmentsQuery, useGetLabelsQuery } from "../../redux/slices/firestoreApi"
 import { PRIORITY, TICKET_STATUS, TICKET_INBOXES, STATUS_FILTER, GROUPBY } from "../../helpers/constants"
 import { setFilteredByPriority, setSelectedStatusRaw, setFilteredByInbox, resetTicketFilters, setFilteredByWord, setFilteredByLabel, setFilteredByDepartment, setFilteredGroupBy } from "../../redux/slices/uiSettings"
 
@@ -351,7 +351,7 @@ const FilterTicketLabels = () => {
 	)
 }
 
-const FilterTicketHasWord = () => {
+export const FilterTicketHasWord = () => {
 	const dispatch = useDispatch()
 	const { filteredByWord } = useSelector(getUiSettings)
 	return (
@@ -369,7 +369,8 @@ const FilterTicketHasWord = () => {
 					margin="dense"
 					value={filteredByWord}
 					onChange={(e) => {
-						dispatch(setFilteredByWord(e.target.value))
+						if (e.target.value.length >= 3)
+							dispatch(setFilteredByWord(e.target.value))
 					}}
 
 					sx={{
@@ -401,12 +402,8 @@ const FilterTicketHasWord = () => {
 function AdminTicketFilters({ sx }) {
 	const dispatch = useDispatch()
 
-	const [refetchTicket] = useRefetchTicketMutation()
-
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
-		await refetchTicket()
-		//TODO: Remove this force refetch when finished implementing Notification system
 		dispatch(resetTicketFilters())
 	}
 

@@ -24,7 +24,7 @@
 
 import Link from "next/link"
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 // MATERIAL-UI
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material"
@@ -53,14 +53,13 @@ import { MORE_BTN } from "./DUMMY_DATA"
 function Header({ showLogo = false, showSlogan = true, title, slogan, separator = " - ", showPortfolio = true }) {
 	const [scrolled, setScrolled] = useState(false)
 
-	const animateHeader = useCallback(() => {
-		setScrolled(window.scrollY > 50 ? true : false)
-	}, [])
-
 	useEffect(() => {
-		window.addEventListener("scroll", animateHeader)
-		return () => window.removeEventListener("scroll", animateHeader)
-	}, [animateHeader])
+		const handleSetScrolled = () => {
+			setScrolled(window.scrollY > 50)
+		}
+		window.addEventListener("scroll", handleSetScrolled)
+		return () => window.removeEventListener("scroll", handleSetScrolled)
+	}, [])
 
 	return (
 		<AppBar position="sticky" color="inherit" elevation={scrolled ? 4 : 0}>

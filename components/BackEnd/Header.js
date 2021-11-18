@@ -24,24 +24,27 @@
 
 import Link from "next/link"
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 //MATERIAL-UI
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDeepCompareEffect } from "react-use"
 import { isMobile } from "react-device-detect"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
 import NotificationDrawer from "./NotificationDrawer"
-import { getPageMeta, getUiSettings } from "./../../redux/selectors"
 import { setShowSideBar } from "./../../redux/slices/uiSettings"
+import { useNotifications } from "../../helpers/realtimeApi"
+import { getAuth, getPageMeta, getUiSettings } from "./../../redux/selectors"
 
 //ASSETS
-import NotificationsIcon from "@mui/icons-material/Notifications"
 import MenuIcon from "@mui/icons-material/Menu"
+import NotificationsIcon from "@mui/icons-material/Notifications"
+import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * INIT                                                          *
@@ -52,11 +55,26 @@ import MenuIcon from "@mui/icons-material/Menu"
  *****************************************************************/
 
 const Header = () => {
-	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
-	const { title } = useSelector(getPageMeta)
-	const { scrolled, isSmallScreen } = useSelector(getUiSettings)
-
 	const dispatch = useDispatch()
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+	const { title } = useSelector(getPageMeta)
+	const { currentUser } = useSelector(getAuth)
+	const [scrolled, setScrolled] = useState(false)
+	const { isSmallScreen } = useSelector(getUiSettings)
+	const { notis, counter } = useNotifications(currentUser.username, enqueueSnackbar, closeSnackbar)
+	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+
+	useEffect(() => {
+		const handleSetScrolled = () => {
+			setScrolled(window.scrollY > 50)
+		}
+		window.addEventListener("scroll", handleSetScrolled)
+		return () => window.removeEventListener("scroll", handleSetScrolled)
+	}, [])
+
+	useDeepCompareEffect(() => {
+		console.log("Header", { notis })
+	}, [notis])
 
 	return (
 		<AppBar
@@ -129,7 +147,7 @@ const Header = () => {
 						onClick={() => setShowNotificationDraw(true)}
 						sx={{ mx: 1 }}
 					>
-						<Badge badgeContent={4} color="warning">
+						<Badge badgeContent={counter.unreadCount} color="warning">
 							<NotificationsIcon />
 						</Badge>
 					</IconButton>
@@ -138,6 +156,8 @@ const Header = () => {
 				<NotificationDrawer
 					isOpen={showNotificationDrawer}
 					handleClose={() => setShowNotificationDraw(false)}
+					notis={notis}
+					counter={counter}
 				/>
 
 				<UserIcon />

@@ -38,14 +38,16 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 import NewTicketStep1 from "./NewTicketStep1"
 import NewTicketStep2 from "./NewTicketStep2"
 import NewTicketStep3 from "./NewTicketStep3"
+import useAdmin from "../../../helpers/useAdmin"
 import { LearnMoreAdvancedTextEditor } from "./../../common"
 import { setRedirect } from "./../../../redux/slices/redirect"
-import { setCurrentStep, setNewlyAddedTicketSlug } from "./../../../redux/slices/newTicket"
 import { getPlainTextFromMarkDown } from "./../../../helpers/utils"
-import { REDIRECT_URL, STATUS_FILTER } from "./../../../helpers/constants"
+import { addNewNotification } from "./../../../helpers/realtimeApi"
+import { CODE, REDIRECT_URL, STATUS_FILTER } from "./../../../helpers/constants"
 import { getAuth, getNewTicket, getTextEditor } from "./../../../redux/selectors"
+import { setCurrentStep, setNewlyAddedTicketSlug } from "./../../../redux/slices/newTicket"
 import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
-import useAdmin from "../../../helpers/useAdmin"
+import { ACTIONS, TYPE } from "../../../redux/slices/firestoreApiConstants"
 
 //ASSETS
 
@@ -120,18 +122,19 @@ const StepperControlButtons = () => {
 	const { currentStep, subject, onBehalf } = useSelector(getNewTicket)
 	const [addTicket] = useAddTicketMutation()
 	const { isAdminURL } = useAdmin()
+
 	const raw = useGetTicketDetails()
+	const { data: departments } = useGetDepartmentsQuery(undefined)
 
 	const handleGoBack = () => { dispatch(setCurrentStep(currentStep - 1)) }
 	const handleGoNext = async () => {
 		let slug
 		if (currentStep === steps.length - 1) {
 			setIsProcessingNewTicket(true)
-			console.log("start...")
 			//
 			const tid = nanoid()
 			slug = slugify(subject) + "/" + tid
-			await addTicket({
+			const res = await addTicket({
 				tid,
 				username: onBehalf ?? currentUser.username,	//owner of the ticket
 				createdBy: currentUser.username, // who create the ticket, sometimes, admin will create ticket on behalf of customer
@@ -145,9 +148,30 @@ const StepperControlButtons = () => {
 				slug,
 				content: editorData
 			})
-			//
+
+			if (res?.data.code === CODE.SUCCESS) {
+				//prepare notification content
+				const notisContent = {
+					actionType: ACTIONS.ADD_TICKET,
+					iconURL: currentUser.photoURL,
+					title: currentUser.username + " just opened new ticket",
+					description: subject,
+					link: slug,
+				}
+				const departmentDetails = departments.find(i => i.did === raw.selectedDepartmentId)
+
+				const invalidatesTags = {
+					tag: [{ type: TYPE.TICKETS, id: "LIST" }],
+					target: {
+						isForUser: true,
+						isForAdmin: true,
+					}
+				}
+
+				await addNewNotification(departmentDetails.members, notisContent, invalidatesTags)
+			}
+
 			setIsProcessingNewTicket(false)
-			console.log("end...")
 		}
 
 		reduxBatch(() => {

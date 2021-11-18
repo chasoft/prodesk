@@ -32,8 +32,7 @@ import { useDispatch } from "react-redux"
 //PROJECT IMPORT
 import { GROUPBY } from "../../helpers/constants"
 import { resetTicketFilters } from "../../redux/slices/uiSettings"
-import { useRefetchTicketMutation } from "../../redux/slices/firestoreApi"
-import { FilterTicketStatus, FilterTicketPriorities, FilterTicketDepartments, FilterTicketGroupBy } from "./AdminTicketFilters"
+import { FilterTicketStatus, FilterTicketPriorities, FilterTicketDepartments, FilterTicketGroupBy, FilterTicketHasWord } from "./AdminTicketFilters"
 
 //ASSETS
 
@@ -47,12 +46,9 @@ import { FilterTicketStatus, FilterTicketPriorities, FilterTicketDepartments, Fi
 
 function TicketFilters({ sx }) {
 	const dispatch = useDispatch()
-	const [refetchTicket] = useRefetchTicketMutation()
 
 	const handleResetAndRefresh = async (e) => {
 		e.stopPropagation()
-		await refetchTicket()
-		//TODO: Remove this force refetch when finished implementing Notification system
 		dispatch(resetTicketFilters())
 	}
 
@@ -86,7 +82,7 @@ function TicketFilters({ sx }) {
 
 			<FilterTicketDepartments />
 
-			{/* <FilterTicketHasWord /> */}
+			<FilterTicketHasWord />
 
 		</Box >
 	)

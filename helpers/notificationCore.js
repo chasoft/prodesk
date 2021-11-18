@@ -19,18 +19,26 @@
  ************************************************************************/
 
 /*
+	affectedUsers: array of string, //array of usernames, who will received the notification
+
 	Notification structure:
 	{
-		nid: dayjs().valueOf(), //this is used as id of notificationItem, and used to sort the list
-		triggerBy: string, //username of user who do the action
-		affectedUsers: array of string, //array of usernames, who will received the notification
-		content: {
-			actionType,
-			icon,
-			title: string,
-			description: string,
-			link: string, //the link which will be redirected to if user click the notification item
+		user1: {
+			notifications: {
+				nid_#1: {
+						nid: -> auto-generated id by push() method
+						triggerBy: string, //username of user who do the action
+						content: {
+							actionType,
+							iconURL,
+							title: string,
+							description: string,
+							link: string, //the link which will be redirected to if user click the notification item
+						}
+						hasBeenRead: boolean, //used to hot show the counter
+				},
+			}
 		}
-		hasBeenRead: boolean, //used to hot show the counter
 	}
+
 */

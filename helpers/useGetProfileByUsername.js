@@ -34,11 +34,11 @@ import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
 
 export default function useGetProfileByUsername(username) {
 
-	const { profile } = useGetProfilesQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			profile: data?.find((profile) => profile.username === username) ?? undefined,
-		})
-	})
+	const { data: profiles = [], isLoading } = useGetProfilesQuery()
 
-	return profile
+	if (isLoading) return undefined
+
+	const res = profiles.find((profile) => profile.username === username) ?? undefined
+
+	return res
 }

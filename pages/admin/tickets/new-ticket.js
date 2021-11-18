@@ -34,11 +34,11 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 import TicketStepper from "../../../components/Ticket/Create/NewTicketStepper"
 
 //PROJECT IMPORT
-import useProfiles from "../../../helpers/useProfiles"
-import { getNewTicket, getUiSettings } from "../../../redux/selectors"
-import { REDIRECT_URL } from "../../../helpers/constants"
-import { getLayout } from "./../../../layout/ClientLayout"
+import { getLayout } from "./../../../layout/AdminLayout"
+import useProfiles from "../../../helpers/useProfilesGroup"
 import { setEditorData } from "../../../redux/slices/textEditor"
+import { REDIRECT_URL, USERGROUP } from "../../../helpers/constants"
+import { getNewTicket, getUiSettings } from "../../../redux/selectors"
 import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
 import { resetNewTicket, setOnBehalf } from "../../../redux/slices/newTicket"
 
@@ -58,7 +58,7 @@ import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 function AdminNewTicket() {
 
 	const dispatch = useDispatch()
-	const { userList, isLoading } = useProfiles()
+	const { userList, isLoading } = useProfiles([USERGROUP.MEMBER.code, USERGROUP.USER.code])
 	const { onBehalf } = useSelector(getNewTicket)
 	const { currentStep } = useSelector(getNewTicket)
 	const { isSmallScreen } = useSelector(getUiSettings)

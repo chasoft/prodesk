@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect } from "react"
+import React, { useEffect } from "react"
 
 // MATERIAL-UI
 import { Box } from "@mui/material"
@@ -40,7 +40,7 @@ import Header from "./../components/BackEnd/Header"
 import { getUiSettings } from "./../redux/selectors"
 import SideBar from "./../components/BackEnd/SideBar"
 import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
-import { setIsSmallScreen, setScrolled } from "./../redux/slices/uiSettings"
+import { setIsSmallScreen } from "./../redux/slices/uiSettings"
 import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
 
 //ASSETS
@@ -120,15 +120,6 @@ function AdminLayout({ children }) {
 
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")
-
-	const handleSetScrolled = useCallback(() => {
-		dispatch(setScrolled(window.scrollY > 50))
-	}, [dispatch])
-
-	useEffect(() => {
-		window.addEventListener("scroll", handleSetScrolled)
-		return () => window.removeEventListener("scroll", handleSetScrolled)
-	}, [handleSetScrolled])
 
 	useEffect(() => {
 		dispatch(setIsSmallScreen(isSmallScreen))

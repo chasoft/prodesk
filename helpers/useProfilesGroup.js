@@ -22,43 +22,47 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-//CORE SYSTEM
-import React, { useEffect, useState } from "react"
-import PropTypes from "prop-types"
-// import { useRouter } from "next/router"
-
-// MATERIAL-UI
-import { Button } from "@mui/material"
-import { getToken, onMessageListener, receiveMessage } from "../../helpers/firebase"
+import { useState } from "react"
+import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
 
 //THIRD-PARTY
+import { isEqual, filter } from "lodash"
+import { useDeepCompareEffect, usePrevious } from "react-use"
 
 //PROJECT IMPORT
 
 /*****************************************************************
- * EXPORT DEFAULT                                                *
+ * INIT                                                          *
  *****************************************************************/
+/**
+ * get profiles all users belong to a list of usergroup,
+ * or not belong to (use inverting option)
+ * @param {array} userGroups
+ * @param {array} minus
+ * @returns array of profiles in one or more usergroups
+ */
+export default function useProfilesGroup(userGroups = [], { inverting } = { inverting: false }) {
+	const { data = [], isLoading } = useGetProfilesQuery()
+	const [filteredList, setFilteredList] = useState([])
+	const prevFilteredList = usePrevious(filteredList)
 
-function Notification() {
-	const [isTokenFound, setTokenFound] = useState(false)
+	useDeepCompareEffect(() => {
+		if (userGroups.length === 0) {
+			setFilteredList(data)
+		} else {
+			const filtered = filter(data ?? [], i => {
+				if (inverting) return !userGroups.includes(i.group)
+				return userGroups.includes(i.group)
+			})
 
-	useEffect(() => {
-		receiveMessage()
-	}, [])
+			if (!isEqual(prevFilteredList, filtered)) {
+				setFilteredList(filtered)
+			}
+		}
+	}, [data, userGroups])
 
-	return (
-		<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-
-			<Button variant="contained" onClick={() => {
-				getToken(setTokenFound)
-			}}>
-				Ask for
-			</Button>
-			{isTokenFound && <h1> Notification permission enabled</h1>}
-			{!isTokenFound && <h1> Need notification permission</h1>}
-		</div >
-	)
+	return {
+		userList: filteredList,
+		isLoading
+	}
 }
-Notification.propTypes = { children: PropTypes.any }
-
-export default Notification

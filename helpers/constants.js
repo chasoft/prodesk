@@ -281,6 +281,11 @@ export const SETTINGS_NAME = {
 
 }
 
+export const CODE = {
+	SUCCESS: 300,	//Successful API operation
+	FAILED: 100,	//Failed API operation in general
+}
+
 export const DEFAULT_USER_SETTINGS = {
 	[SETTINGS_NAME.createTicket]: false,
 	[SETTINGS_NAME.updateTicket]: false,
