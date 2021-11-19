@@ -25,8 +25,8 @@
 import { useState } from "react"
 
 //THIRD-PARTY
-import { useDeepCompareEffect } from "react-use"
 import { useSelector } from "react-redux"
+import { useDeepCompareEffect } from "react-use"
 import { filter, groupBy, orderBy, pickBy, size } from "lodash"
 
 //PROJECT IMPORT
@@ -41,39 +41,53 @@ import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
  *****************************************************************/
 
 const useFilteredTicketsForUser = () => {
-	const { currentUser } = useSelector(getAuth)
 	const [res, setRes] = useState([])
-	const { filteredGroupBy, filteredByStatusRaw, filteredByPriority, filteredByDepartment } = useSelector(getUiSettings)
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForUserQuery(currentUser.username)
+	const { currentUser } = useSelector(getAuth)
 
-	useDeepCompareEffect(() => {
-		console.log("useFilteredTicketsForUser - useDeepCompareEffect")
-		//filter #1 by priority & department
-		let filtered_1 = tickets
-		let f = {}
-		if (filteredByPriority !== STATUS_FILTER.ANY) f.priority = filteredByPriority
-		if (filteredByDepartment !== STATUS_FILTER.ANY) f.department = filteredByDepartment
-		if (size(f) > 0) filtered_1 = filter(tickets, f)
-
-		//filter by status
-		const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
-		const filteredStatus = filter(filtered_1, i => selectedStatus.includes(i.status))
-
-		//sort the list - descensing by `createdAt`
-		const filteredSorted = orderBy(filteredStatus, ["updatedAt"])
-
-		//group by department | status (default) | priority
-		const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])
-
-		setRes(Object.entries(filteredGroupedByStatus))
-
-	}, [
-		tickets,
+	const {
 		filteredGroupBy,
 		filteredByDepartment,
 		filteredByPriority,
 		filteredByStatusRaw,
-	])
+	} = useSelector(getUiSettings)
+
+	const {
+		data: tickets,
+		isLoading: isLoadingTickets
+	} = useGetTicketsForUserQuery(currentUser.username)
+
+	useDeepCompareEffect(
+		() => {
+			console.log("useFilteredTicketsForUser - useDeepCompareEffect")
+			//filter #1 by priority & department
+			let filtered_1 = tickets
+
+			let filterCriteria = {}
+			if (filteredByPriority !== STATUS_FILTER.ANY) filterCriteria.priority = filteredByPriority
+			if (filteredByDepartment !== STATUS_FILTER.ANY) filterCriteria.departmentId = filteredByDepartment
+			if (size(filterCriteria) > 0) filtered_1 = filter(tickets, filterCriteria)
+
+			//filter by status
+			const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
+			const filteredStatus = filter(filtered_1, i => selectedStatus.includes(i.status))
+
+			//sort the list - descensing by `createdAt`
+			const filteredSorted = orderBy(filteredStatus, ["updatedAt"])
+
+			//group by department | status (default) | priority
+			const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])
+
+			setRes(Object.entries(filteredGroupedByStatus))
+
+		},
+		[
+			tickets,
+			filteredGroupBy,
+			filteredByDepartment,
+			filteredByPriority,
+			filteredByStatusRaw,
+		]
+	)
 
 	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
 

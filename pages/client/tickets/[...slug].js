@@ -36,10 +36,10 @@ import { useSelector } from "react-redux"
 import { getAuth } from "@redux/selectors"
 import { getLayout } from "@layout/ClientLayout"
 import { REDIRECT_URL } from "@helpers/constants"
-import TicketReplies from "@components/ticket/TicketReplies"
-import TicketContent from "@components/ticket/TicketContent"
+import TicketReplies from "@components/Ticket/TicketReplies"
+import TicketContent from "@components/Ticket/TicketContent"
 import useUiSettings from "@helpers/useUiSettings"
-import TicketActionButtons from "@components/ticket/TicketCloseReplyButtons"
+import TicketActionButtons from "@components/Ticket/TicketCloseReplyButtons"
 import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
 import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcrumbs"
 
@@ -61,7 +61,10 @@ function SingleTicket() {
 	const { slug } = router.query
 	const { currentUser } = useSelector(getAuth)
 	//
-	const { data: tickets, isLoading } = useGetTicketsForUserQuery(currentUser.username)
+	const {
+		data: tickets = [],
+		isLoading: isLoadingTickets
+	} = useGetTicketsForUserQuery(currentUser.username)
 
 	useUiSettings({
 		title: "Title",
@@ -70,17 +73,12 @@ function SingleTicket() {
 		}
 	})
 
-	/*[bug] When nagivate to other page,
-	useRouter would return undefined,
-	just before getting out, we would have error,
-	then, solution is to return null
-	(render nothing in this case) */
-	if (!slug) return null
+	if (router.isFallback) return null
 
 	//Note: `tickets` is array of object => [{}]
 	const ticket = tickets?.find(i => i.tid === slug[1])
 
-	if (isLoading) {
+	if (isLoadingTickets) {
 		return (
 			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 				<Box sx={{
@@ -117,7 +115,7 @@ function SingleTicket() {
 				/>
 			</BreadcrumbsBox>
 
-			{(!isLoading && ticket === undefined) ?
+			{(!isLoadingTickets && ticket === undefined) ?
 				<Box sx={{
 					display: "flex",
 					alignItems: "center",
@@ -133,19 +131,10 @@ function SingleTicket() {
 
 				</Box> : null}
 
-			{(!isLoading && ticket !== undefined) ?
+			{(!isLoadingTickets && ticket !== undefined) ?
 				<>
 					<TicketContent ticket={ticket} />
-					<TicketReplies
-						tid={ticket.tid}
-						status={ticket.status}
-						username={ticket.username}
-						staffInCharge={ticket.staffInCharge}
-						replyCount={ticket.replyCount}
-						slug={ticket.slug}
-						subject={ticket.subject}
-						department={ticket.department}
-					/>
+					<TicketReplies ticket={ticket} />
 					<TicketActionButtons ticket={ticket} />
 				</> : null}
 

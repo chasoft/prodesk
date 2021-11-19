@@ -1,4 +1,4 @@
-export default {
+module.exports = {
 	"env": {
 		"browser": true,
 		"es2021": true,
@@ -51,7 +51,8 @@ export default {
 					["@layout", "./layout"],
 					["@styles", "./styles"],
 					["@helpers", "./helpers"],
-					["@components", "./components"]
+					["@components", "./components"],
+					["@pages", "./pages"]
 				]
 			}
 		}

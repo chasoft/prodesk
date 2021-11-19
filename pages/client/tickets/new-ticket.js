@@ -31,13 +31,16 @@ import { Box, Container, Typography } from "@mui/material"
 import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "@layout/ClientLayout"
-import { REDIRECT_URL } from "@helpers/constants"
-import useUiSettings from "@helpers/useUiSettings"
+import TicketStepper from "@components/Ticket/Create/NewTicketStepper"
 import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
-import { resetNewTicket } from "@redux/slices/newTicket"
+
+import useUiSettings from "@helpers/useUiSettings"
+import { REDIRECT_URL } from "@helpers/constants"
+
 import { setEditorData } from "@redux/slices/textEditor"
-import TicketStepper from "@components/ticket/Create/NewTicketStepper"
+import { resetNewTicket } from "@redux/slices/newTicket"
+
+import { getLayout } from "@layout/ClientLayout"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"

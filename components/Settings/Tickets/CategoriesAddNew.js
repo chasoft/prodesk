@@ -28,27 +28,44 @@ import { Box, Button, CircularProgress, FormControlLabel, Grid, IconButton, Swit
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { nanoid } from "nanoid"
+import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
-import { cloneDeep, some, filter, sortBy, trim } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
-//PROJECT IMPORT
-import { useSnackbar } from "notistack"
-import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import { useAddCategoryMutation } from "../../../redux/slices/firestoreApi"
-import { CATEGORY_PAGES } from "./../../../pages/admin/settings/tickets/category"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
+import {
+	cloneDeep,
+	filter,
+	some,
+	sortBy,
+	trim
+} from "lodash"
 
 //PROJECT IMPORT
-import { getAuth, getUiSettings } from "../../../redux/selectors"
-import useTicketCategories from "../../../helpers/useTicketCategories"
+import { CODE } from "@helpers/constants"
+import useTicketCategories from "@helpers/useTicketCategories"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
+
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import { useAddCategoryMutation } from "@redux/slices/firestoreApi"
+
+import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
-import { CODE } from "../../../helpers/constants"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 
 /*****************************************************************
  * INIT                                                          *

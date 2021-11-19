@@ -32,8 +32,8 @@ import { Container, Typography } from "@mui/material"
 // import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
-import TabsSettings from "./TabsSettings"
+import TabsSettings from "@components/Settings/TabsSettings"
+import { getLayout as getAdminLayout } from "@layout/AdminLayout"
 
 //ASSETS
 

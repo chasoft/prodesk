@@ -33,11 +33,13 @@ import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "./../../redux/selectors"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { RegContainer } from "./../../layout/RegLayout"
-import { useSignUpSurveyMutation } from "../../redux/slices/firestoreApi"
-import { setRedirect } from "../../redux/slices/redirect"
+import { getAuth } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+import { useSignUpSurveyMutation } from "@redux/slices/firestoreApi"
+
+import { REDIRECT_URL } from "@helpers/constants"
+
+import { RegContainer } from "@layout/RegLayout"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

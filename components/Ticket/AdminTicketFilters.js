@@ -32,11 +32,31 @@ import PerfectScrollbar from "react-perfect-scrollbar"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import CustomCheckbox from "../common/CustomCheckbox"
-import { getUiSettings } from "../../redux/selectors"
-import { useGetDepartmentsQuery, useGetLabelsQuery } from "../../redux/slices/firestoreApi"
-import { PRIORITY, TICKET_STATUS, TICKET_INBOXES, STATUS_FILTER, GROUPBY } from "../../helpers/constants"
-import { setFilteredByPriority, setSelectedStatusRaw, setFilteredByInbox, resetTicketFilters, setFilteredByWord, setFilteredByLabel, setFilteredByDepartment, setFilteredGroupBy } from "../../redux/slices/uiSettings"
+import CustomCheckbox from "@components/common/CustomCheckbox"
+
+import { getUiSettings } from "@redux/selectors"
+import {
+	useGetDepartmentsQuery,
+	useGetLabelsQuery
+} from "@redux/slices/firestoreApi"
+import {
+	resetTicketFilters,
+	setFilteredByDepartment,
+	setFilteredByInbox,
+	setFilteredByLabel,
+	setFilteredByPriority,
+	setFilteredByWord,
+	setFilteredGroupBy,
+	setSelectedStatusRaw,
+} from "@redux/slices/uiSettings"
+
+import {
+	GROUPBY,
+	PRIORITY,
+	STATUS_FILTER,
+	TICKET_INBOXES,
+	TICKET_STATUS
+} from "@helpers/constants"
 
 //ASSETS
 import LabelIcon from "@mui/icons-material/Label"
@@ -148,7 +168,7 @@ export const FilterTicketDepartments = () => {
 					{size(departments) &&
 						departments.map((department) => (
 							<MenuItem key={department.did} value={department.did}>
-								{department.department}
+								{department.name}
 							</MenuItem>
 						))}
 				</Select>

@@ -30,9 +30,16 @@ import { Box, Button, Typography } from "@mui/material"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { GROUPBY } from "../../helpers/constants"
-import { resetTicketFilters } from "../../redux/slices/uiSettings"
-import { FilterTicketStatus, FilterTicketPriorities, FilterTicketDepartments, FilterTicketGroupBy, FilterTicketHasWord } from "./AdminTicketFilters"
+import { GROUPBY } from "@helpers/constants"
+import { resetTicketFilters } from "@redux/slices/uiSettings"
+
+import {
+	FilterTicketDepartments,
+	FilterTicketGroupBy,
+	FilterTicketHasWord,
+	FilterTicketPriorities,
+	FilterTicketStatus
+} from "@components/Ticket/AdminTicketFilters"
 
 //ASSETS
 

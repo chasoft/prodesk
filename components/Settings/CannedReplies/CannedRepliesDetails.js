@@ -26,24 +26,34 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { find } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import { setEditorData } from "../../../redux/slices/textEditor"
-import { getAuth, getTextEditor } from "./../../../redux/selectors"
-import { SettingsContentActionBar, SettingsContentDetails } from "./../../Settings/SettingsPanel"
-import { useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateCannedReplyMutation } from "../../../redux/slices/firestoreApi"
-import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { CODE } from "../../../helpers/constants"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import TextEditor from "@components/common/TextEditor"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails
+} from "@components/Settings/SettingsPanel"
+
+import { CODE, DATE_FORMAT } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import { setEditorData } from "@redux/slices/textEditor"
+import { getAuth, getTextEditor } from "@redux/selectors"
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+
+import {
+	useGetDepartmentsQuery,
+	useUpdateCannedReplyMutation
+} from "@redux/slices/firestoreApi"
+
 
 //ASSETS
 
@@ -51,51 +61,46 @@ import { TYPE } from "../../../redux/slices/firestoreApiConstants"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesDetails = ({ crid }) => {
+const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 	const {
 		data: departments,
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
-	const {
-		data: cannedReplies,
-		isLoading: isLoadingCannedReplies
-	} = useGetCannedRepliesQuery(undefined)
-
-	const selectedCannedReply = find(cannedReplies, { crid })
-
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 
 	const [content, setContent] = useState("")
-	const [department, setDepartment] = useState("")
 	const [description, setDescription] = useState("")
+	const [departmentId, setDepartmentId] = useState("")
 
 	const [updateCannedReply] = useUpdateCannedReplyMutation()
 
 	const isModified = (selectedCannedReply.content !== editorData
-		|| selectedCannedReply.department !== department
-		|| selectedCannedReply.description !== description)
+		|| selectedCannedReply.departmentId !== departmentId
+		|| selectedCannedReply.description !== description
+		|| isFullCannedReply !== selectedCannedReply?.full)
 
 	const dispatch = useDispatch()
 
 	useDeepCompareEffect(() => {
-		dispatch(setEditorData(selectedCannedReply.content))
 		setContent(selectedCannedReply.content)
-		setDepartment(selectedCannedReply.department)
+		setDepartmentId(selectedCannedReply.departmentId)
 		setDescription(selectedCannedReply.description)
+		dispatch(setEditorData(selectedCannedReply.content))
 	}, [selectedCannedReply])
 
 	const handleUpdateCannedReply = async () => {
 		const updatedContent = {
 			...selectedCannedReply,
-			department: department,
+			departmentId: departmentId,
 			description: description,
 			content: editorData,
+			full: isFullCannedReply,
 			updatedBy: currentUser.username,
 			updatedAt: dayjs().valueOf()
 		}
-		dispatch(setActiveSettingPanel(department))
+		dispatch(setActiveSettingPanel(departmentId))
 		const res = await updateCannedReply(updatedContent)
 
 		if (res?.data.code === CODE.SUCCESS) {
@@ -104,8 +109,9 @@ const CannedRepliesDetails = ({ crid }) => {
 				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 				target: {
 					isForUser: true,
-					isForAdmin: false,
-				}
+					isForAdmin: true,
+				},
+				forceRefetch: true
 			}
 			await requestSilentRefetching(invalidatesTags)
 		}
@@ -132,44 +138,41 @@ const CannedRepliesDetails = ({ crid }) => {
 						<Select
 							id="department-select"
 							label="Department"
-							value={department}
-							onChange={(e) => { setDepartment(e.target.value) }}
+							value={departmentId}
+							onChange={(e) => { setDepartmentId(e.target.value) }}
 						>
 							{departments.map((department) => (
 								<MenuItem key={department.did} value={department.did}>
-									{department.department}
+									{department.name}
 								</MenuItem>
 							))}
 						</Select>
 					</FormControl>}
 
-				{isLoadingCannedReplies
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
-					: <>
-						<Box sx={{ py: 2 }}>
-							<TextField
-								id="cannedReply-description"
-								label="Description"
-								variant="standard"
-								value={description}
-								onChange={(e) => { setDescription(e.target.value) }}
-								fullWidth
-							/>
-						</Box>
+				<Box sx={{ py: 2 }}>
+					<TextField
+						id="cannedReply-description"
+						label="Description"
+						variant="standard"
+						value={description}
+						onChange={(e) => { setDescription(e.target.value) }}
+						fullWidth
+					/>
+				</Box>
 
-						<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
-							<TextEditor
-								value={content}
-							/>
-						</Box>
-					</>}
+				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #f0f0f0" }}>
+					<TextEditor
+						value={content}
+					/>
+				</Box>
+
+				<Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+					Created at {dayjs(selectedCannedReply.createdAt).format(DATE_FORMAT.LONG)} by {selectedCannedReply.createdBy}
+					<span style={{ display: "block" }}>
+						Updated at {dayjs(selectedCannedReply.createdAt).format(DATE_FORMAT.LONG)} by {selectedCannedReply.updatedBy}&nbsp;
+						<span style={{ fontStyle: "italic" }}>({dayjs(selectedCannedReply.updatedAt).fromNow()})</span>
+					</span>
+				</Typography>
 
 			</SettingsContentDetails>
 
@@ -189,7 +192,8 @@ const CannedRepliesDetails = ({ crid }) => {
 }
 
 CannedRepliesDetails.propTypes = {
-	crid: PropTypes.string,
+	selectedCannedReply: PropTypes.string,
+	isFullCannedReply: PropTypes.bool,
 }
 
 export default CannedRepliesDetails

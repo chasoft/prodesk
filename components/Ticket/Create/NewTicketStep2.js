@@ -32,14 +32,15 @@ import { Select, MenuItem, InputLabel, Grid, FormControl } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getNewTicket } from "./../../../redux/selectors"
-import { useGetDepartmentsQuery, useGetCategoriesQuery } from "./../../../redux/slices/firestoreApi"
+import { getNewTicket } from "@redux/selectors"
+import { useGetDepartmentsQuery, useGetCategoriesQuery } from "@redux/slices/firestoreApi"
 import {
 	setSelectedCategory, setSelectedSubCategory,
 	setSelectedPriority,
 	setSelectedDepartment
-} from "./../../../redux/slices/newTicket"
-import { useGetTicketDetails } from "./NewTicketStepper"
+} from "@redux/slices/newTicket"
+
+import { useGetTicketDetails } from "@components/Ticket/Create/NewTicketStepper"
 
 //ASSETS
 
@@ -85,9 +86,9 @@ const DepartmentBlock = () => {
 				}}
 			>
 
-				{departments.map((item) => (
-					<MenuItem key={item.did} value={item.did}>
-						{item.department}
+				{departments.map((department) => (
+					<MenuItem key={department.did} value={department.did}>
+						{department.name}
 					</MenuItem>))}
 
 			</Select>

@@ -26,35 +26,42 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, AvatarGroup, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { isEqual, sortBy } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
 import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import useProfilesGroup from "../../helpers/useProfilesGroup"
-import { getUiSettings } from "./../../redux/selectors"
-import { DepartmentMembersCount } from "./Tickets/DepartmentsOverview"
+import { setRedirect } from "@redux/slices/redirect"
+import { getUiSettings } from "@redux/selectors"
+
+import useProfilesGroup from "@helpers/useProfilesGroup"
+import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import { REDIRECT_URL, USERGROUP } from "../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const StaffListChooserDialog = ({ open, members, addMemberCallback, handleClose }) => {
+export const AddMembersDialog = ({ open, members, addMemberCallback, handleClose }) => {
 	const [selected, setSelected] = useState(members)
 	const { isSmallScreen } = useSelector(getUiSettings)
+
 	const {
 		userList: supporterList = [],
 		isLoading: isLoadingSupporterList
-	} = useProfilesGroup([USERGROUP.USER.code, USERGROUP.MEMBER.code], { inverting: true })
+	} = useProfilesGroup(
+		[
+			USERGROUP.USER.code,
+			USERGROUP.MEMBER.code
+		],
+		{ inverting: true }
+	)
 
 	useDeepCompareEffect(() => {
 		setSelected(members)
@@ -71,7 +78,10 @@ export const StaffListChooserDialog = ({ open, members, addMemberCallback, handl
 		setSelected(newChecked)
 	}
 
-	const isModified = isEqual(sortBy(members), sortBy(selected)) === false
+	const isModified = isEqual(
+		sortBy(members),
+		sortBy(selected)
+	) === false
 
 	const handleUpdateStaffList = () => {
 		if (isModified) {
@@ -167,7 +177,7 @@ export const StaffListChooserDialog = ({ open, members, addMemberCallback, handl
 		</Dialog>
 	)
 }
-StaffListChooserDialog.propTypes = {
+AddMembersDialog.propTypes = {
 	open: PropTypes.bool,
 	members: PropTypes.array,
 	addMemberCallback: PropTypes.func,
@@ -184,7 +194,7 @@ const MembersList = ({ members, addMemberCallback }) => {
 	const [memberProfiles, setMemberProfiles] = useState([])
 
 	const {
-		userList: staffList = [],
+		userList: administrativeUsers = [],
 		isLoading: isLoadingStaffList
 	} = useProfilesGroup(
 		[
@@ -194,23 +204,25 @@ const MembersList = ({ members, addMemberCallback }) => {
 		{ inverting: true }
 	)
 
-	const [openStaffListChooserDialog, setOpenStaffListChooserDialog] = useState(false)
+	const [openAddMemberDialog, setOpenAddMemberDialog] = useState(false)
+
+	useDeepCompareEffect(() => {
+		setMembersCache(members)
+	}, [members])
+
 	/*
 		members is an array of usernames only,
 		then, we need to get full profile of these usernames,
 		anyway, sometime, an item in members would not be existed in staffList
 		maybe... that user is fired/removed from staffList
 	*/
-	useDeepCompareEffect(() => {
-		setMembersCache(members)
-	}, [members])
 
 	useDeepCompareEffect(() => {
-		const verifiedList = membersCache
-			.map(u => staffList.find(i => i.username === u))
-			.filter(i => i !== undefined)
-		setMemberProfiles(verifiedList)
-	}, [staffList, membersCache])
+		const verifiedMembers = membersCache
+			.map(memberCache => administrativeUsers.find(user => user.username === memberCache))
+			.filter(e => e !== undefined)
+		setMemberProfiles(verifiedMembers)
+	}, [administrativeUsers, membersCache])
 
 	if (isLoadingStaffList) {
 		return (
@@ -226,22 +238,31 @@ const MembersList = ({ members, addMemberCallback }) => {
 	}
 
 	return <>
-		<Box sx={{ display: "flex", alignItems: "center" }}>
-			<Typography variant="caption" sx={{ mr: 1 }}>
-				Members
-			</Typography>
-		</Box>
+		<Typography variant="caption">
+			Members
+		</Typography>
 		<Box sx={{
 			display: "flex",
-			justifyContent: "space-between",
-			alignItems: "center"
+			alignItems: "center",
+			marginTop: 1,
+			marginLeft: -0.5
 		}}>
 
-			<Box>
+			<Tooltip arrow title="Add members" placement="top">
+				<IconButton
+					color="primary"
+					aria-label="add new members for current department"
+					onClick={() => setOpenAddMemberDialog(true)}
+				>
+					<AddIcon />
+				</IconButton>
+			</Tooltip>
+
+			<div>
 				{memberProfiles.map((profile) => (
 					<Chip
 						key={profile.username}
-						avatar={<Avatar src={profile.photoURL}></Avatar>}
+						avatar={<Avatar src={profile.photoURL} />}
 						label={profile.displayName}
 						variant="outlined"
 						sx={{
@@ -255,28 +276,16 @@ const MembersList = ({ members, addMemberCallback }) => {
 						}}
 					/>
 				))}
-			</Box>
+			</div>
 
-			<Tooltip arrow title="Add members" placement="top">
-				<Button
-					color="primary"
-					sx={{ mt: -0.5 }}
-					startIcon={<AddIcon />}
-					variant="outlined"
-					onClick={() => setOpenStaffListChooserDialog(true)}
-				>
-					Add
-				</Button>
-			</Tooltip>
-
-			<StaffListChooserDialog
-				open={openStaffListChooserDialog}
+			<AddMembersDialog
 				members={members}
+				open={openAddMemberDialog}
 				addMemberCallback={(members) => {
 					setMembersCache(members)
 					addMemberCallback(members)
 				}}
-				handleClose={() => setOpenStaffListChooserDialog(false)}
+				handleClose={() => setOpenAddMemberDialog(false)}
 			/>
 		</Box>
 

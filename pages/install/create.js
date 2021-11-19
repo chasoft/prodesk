@@ -37,12 +37,14 @@ import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { Logo } from ".@components/common"
+import { Logo } from "@components/common"
+import { getInstallLayout } from "@pages/install/InstallLayout"
+
 import { loginTemp } from "@redux/slices/auth"
-import { REDIRECT_URL } from "@helpers/constants"
-import { getInstallLayout } from "./InstallLayout"
 import { setRedirect } from "@redux/slices/redirect"
 import { useCreateAdminAccountMutation } from "@redux/slices/firestoreApi"
+
+import { REDIRECT_URL } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -71,7 +73,6 @@ const validationSchema = yup.object({
  *****************************************************************/
 
 function CreateSuperAdmin() {
-	// const router = useRouter()
 	const dispatch = useDispatch()
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 	const [createAdminAccount] = useCreateAdminAccountMutation()
@@ -111,7 +112,6 @@ function CreateSuperAdmin() {
 			enqueueSnackbar("Account created", { variant: "success" })
 
 			dispatch(setRedirect(REDIRECT_URL.SIGNUP.INSTALL_COMPLETED))
-			// router.push(REDIRECT_URL.SIGNUP.INSTALL_COMPLETED)
 		},
 	})
 

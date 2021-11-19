@@ -33,10 +33,12 @@ import { useSnackbar } from "notistack"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "./../../redux/selectors"
-import { STATUS_FILTER } from "./../../helpers/constants"
-import { ReplyButton } from "./../../components/Ticket/TicketReplies"
-import { useUpdateTicketMutation } from "./../../redux/slices/firestoreApi"
+import { ReplyButton } from "@components/Ticket/TicketReplies"
+
+import { STATUS_FILTER } from "@helpers/constants"
+
+import { getAuth } from "@redux/selectors"
+import { useUpdateTicketMutation } from "@redux/slices/firestoreApi"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"

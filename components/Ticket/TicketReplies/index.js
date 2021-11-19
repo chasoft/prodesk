@@ -26,26 +26,41 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Button, ButtonGroup, CircularProgress, Divider, Fab, ListItemText, MenuItem, Skeleton, Tooltip } from "@mui/material"
+import { Avatar, Box, Button, ButtonGroup, CircularProgress, Divider, Fab, ListItemIcon, ListItemText, MenuItem, Skeleton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import ReplyItem from "./Reply"
-import ReplyDialog from "./ReplyDialog"
-import useAdmin from "./../../../helpers/useAdmin"
-import { getAuth } from "../../../redux/selectors"
-import useMenuContainer from "../../common/useMenuContainer"
-import { setRedirect } from "../../../redux/slices/redirect"
-import useUserSettings from "../../../helpers/useUserSettings"
-import { REDIRECT_URL, SETTINGS_NAME } from "../../../helpers/constants"
-import { useGetCannedRepliesQuery, useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
+import ReplyItem from "@components/Ticket/TicketReplies/Reply"
+import ReplyDialog, { handleSubmitReplyBase } from "@components/Ticket/TicketReplies/ReplyDialog"
+import useMenuContainer from "@components/common/useMenuContainer"
+
+import useAdmin from "@helpers/useAdmin"
+import useUserSettings from "@helpers/useUserSettings"
+
+import {
+	DATE_FORMAT,
+	REDIRECT_URL,
+	SETTINGS_NAME
+} from "@helpers/constants"
+
+import { getAuth } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+
+import {
+	useAddTicketReplyMutation,
+	useGetCannedRepliesQuery,
+	useGetDepartmentsQuery,
+	useGetTicketRepliesQuery
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
+import AddIcon from "@mui/icons-material/Add"
 import ReplyIcon from "@mui/icons-material/Reply"
 import FlashOnIcon from "@mui/icons-material/FlashOn"
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
 
 /*****************************************************************
  * INIT                                                          *
@@ -54,7 +69,14 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()
-	const [showDialog, setShowDialog] = useState(false)
+	const { currentUser } = useSelector(getAuth)
+	const [showReplyDialog, setShowReplyDialog] = useState(false)
+	const [addTicketReply] = useAddTicketReplyMutation()
+
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
 	const [
 		MenuContainer,
@@ -72,9 +94,33 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 		isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
-	const filterCannedReplies = cannedReplies.filter(e => e.department === ticket.department)
+	const filterCannedReplies = cannedReplies.filter(
+		cannedReply => (cannedReply.departmentId === ticket.departmentId) && cannedReply.full === true
+	)
 
-	const handleCannedReply = () => { }
+	const departmentDetails = departments.find(
+		department => department.did === ticket.departmentId
+	)
+
+	const handleSubmitReplyUsingCannedReply = ({ cannedReplyContent }) => {
+
+		handleSubmitReplyBase({
+			currentUser: currentUser,
+			departmentDetails,
+			addTicketReply,
+			//
+			tid: ticket.tid,
+			status: ticket.tid,
+			username: ticket.username,
+			staffInCharge: ticket.staffInCharge,
+			slug: ticket.slug,
+			subject: ticket.subject,
+			departmentId: ticket.departmentId,
+			//
+			content: cannedReplyContent
+		})
+
+	}
 
 	return (
 		<Box sx={{
@@ -88,22 +134,24 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 						variant={variant}
 						disabled={disabled}
 						startIcon={<ReplyIcon />}
-						onClick={() => setShowDialog(true)}
+						onClick={() => setShowReplyDialog(true)}
 					>
 						Reply
 					</Button>
 
 					{isAdminURL &&
-						<Button
-							size="small"
-							aria-controls={open ? "split-button-menu" : undefined}
-							aria-expanded={open ? "true" : undefined}
-							aria-label="select merge strategy"
-							aria-haspopup="menu"
-							onClick={handleToggle}
-						>
-							<ArrowDropDownIcon />
-						</Button>}
+						<Tooltip arrow title="Canned-replies" placement="bottom">
+							<Button
+								size="small"
+								aria-controls={open ? "split-button-menu" : undefined}
+								aria-expanded={open ? "true" : undefined}
+								aria-label="select canned-reply"
+								aria-haspopup="menu"
+								onClick={handleToggle}
+							>
+								<ArrowDropUpIcon />
+							</Button>
+						</Tooltip>}
 				</ButtonGroup>
 			</Tooltip>
 
@@ -112,45 +160,68 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 				anchorRef={anchorRef}
 				handleClose={handleClose}
 				handleListKeyDown={handleListKeyDown}
-				placement="bottom-end"
-				transformOrigin="right top"
+				placement="top-end"
+				transformOrigin="right bottom"
 			>
-				{isLoadingCannedReplies &&
-					<MenuItem>Loading canned replies... <CircularProgress size={20} /></MenuItem>}
+				{(isLoadingCannedReplies || isLoadingDepartments) &&
+					[
+						<MenuItem key="loading">
+							Loading canned replies... <CircularProgress size={20} />
+						</MenuItem>,
+						<Divider key="divider_01" />
+					]}
+
+				<MenuItem
+					key="goto-settings-canned-replies"
+					onClick={() => {
+						dispatch(setRedirect(REDIRECT_URL.SETTINGS.CANNED_REPLIES))
+					}}
+				>
+					<ListItemIcon>
+						<AddIcon fontSize="small" />
+					</ListItemIcon>
+					Add/Edit canned-replies...
+				</MenuItem>
+				<Divider key="divider_02" />
 
 				{(!isLoadingCannedReplies && filterCannedReplies.length === 0) &&
 					[
 						<MenuItem key="message-no-canned-replies" disabled={true}>
 							You don&apos;t have any canned-replies
 						</MenuItem>,
-						<Divider key="divider" />,
-						<MenuItem
-							key="goto-settings-canned-replies"
-							onClick={() => {
-								dispatch(setRedirect(REDIRECT_URL.SETTINGS.CANNED_REPLIES))
-							}}
-						>
-							Add/Edit canned-replies...
-						</MenuItem>
+						<Divider key="divider_03" />
 					]}
 
 				{(!isLoadingCannedReplies && filterCannedReplies.length > 0) &&
-					filterCannedReplies.map((profile) =>
+					filterCannedReplies.map((cannedReply) =>
 						<MenuItem
-							key={profile.username}
-							onClick={() => { }}
+							key={cannedReply.createdAt}
+							onClick={() => handleSubmitReplyUsingCannedReply(cannedReply.content)}
 						>
-							<Avatar
-								src={profile.photoURL}
-								sx={{ width: 32, height: 32, mr: 2 }}
-							>
-								<FlashOnIcon />
+							<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
+								<FlashOnIcon sx={{ fill: (theme) => theme.palette.primary.light }} />
 							</Avatar>
 							<ListItemText
-								primary={profile.displayName}
-								secondary={`${profile.username} (${profile.email})`}
+								primary={cannedReply.description}
+								primaryTypographyProps={{
+									fontWeight: 500
+								}}
+								secondary={
+									<Box component="span" sx={{ whiteSpace: "normal" }}>
+										{cannedReply.content.substring(0, 110)}
+										<span style={{
+											display: "block",
+											marginTop: "6px",
+											fontSize: "0.75rem"
+										}}>
+											Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+											<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
+										</span>
+									</Box>
+								}
 								secondaryTypographyProps={{
-									fontSize: "0.9rem"
+									fontSize: "0.9rem",
+									maxWidth: "385px"
 								}}
 							/>
 						</MenuItem>
@@ -158,15 +229,9 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 			</MenuContainer>
 
 			<ReplyDialog
-				tid={ticket.tid}
-				status={ticket.status}
-				username={ticket.username}
-				staffInCharge={ticket.staffInCharge}
-				slug={ticket.slug}
-				subject={ticket.subject}
-				department={ticket.department}
-				open={showDialog}
-				setOpen={setShowDialog}
+				ticket={ticket}
+				open={showReplyDialog}
+				setOpen={setShowReplyDialog}
 			/>
 		</Box>
 	)
@@ -179,8 +244,8 @@ ReplyButton.propTypes = {
 	sx: PropTypes.object
 }
 
-const RepliesContainer = ({ tid, status, username, staffInCharge, slug, subject, department, children }) => {
-	const [open, setOpen] = useState(false)
+const RepliesContainer = ({ ticket, children }) => {
+	const [showReplyDialog, setShowReplyDialog] = useState(false)
 	return (
 		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
 
@@ -200,34 +265,22 @@ const RepliesContainer = ({ tid, status, username, staffInCharge, slug, subject,
 					bottom: { xs: 32, md: 64 },
 					right: { xs: 32, md: 128, lg: 152 }
 				}}
-				onClick={() => { setOpen(true) }}
+				onClick={() => { setShowReplyDialog(true) }}
 			>
 				<ReplyIcon />
 			</Fab>
 
 			<ReplyDialog
-				open={open}
-				setOpen={setOpen}
-				tid={tid}
-				status={status}
-				username={username}
-				staffInCharge={staffInCharge}
-				slug={slug}
-				department={department}
-				subject={subject}
+				ticket={ticket}
+				open={showReplyDialog}
+				setOpen={setShowReplyDialog}
 			/>
 
 		</Box >
 	)
 }
 RepliesContainer.propTypes = {
-	tid: PropTypes.string,
-	status: PropTypes.string,
-	username: PropTypes.string,
-	staffInCharge: PropTypes.array,
-	slug: PropTypes.string,
-	subject: PropTypes.string,
-	department: PropTypes.string,
+	ticket: PropTypes.object,
 	children: PropTypes.node
 }
 
@@ -235,14 +288,14 @@ RepliesContainer.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug, subject, department }) {
+function TicketReplies({ ticket }) {
 
 	const { currentUser } = useSelector(getAuth)
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
 	const { data: ticketReplies, isLoading: isLoadingReplies } = useGetTicketRepliesQuery({
-		username: username,
-		tid: tid
+		username: ticket.username,
+		tid: ticket.tid
 	})
 
 	//TODO: reply this line with Permission system
@@ -250,17 +303,9 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug,
 
 	//We already know the number of replies based on replyCount,
 	//then, show the result immediately when replyCount === 0
-	if (replyCount == 0) {
+	if (ticket.replyCount == 0) {
 		return (
-			<RepliesContainer
-				tid={tid}
-				status={status}
-				username={username}
-				staffInCharge={staffInCharge}
-				slug={slug}
-				subject={subject}
-				department={department}
-			>
+			<RepliesContainer ticket={ticket}>
 				<Box sx={{ p: 4 }}>There is no replies!</Box>
 			</RepliesContainer>
 		)
@@ -269,15 +314,7 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug,
 	//Skeleton when waiting for replies' content
 	if (isLoadingReplies) {
 		return (
-			<RepliesContainer
-				tid={tid}
-				status={status}
-				username={username}
-				staffInCharge={staffInCharge}
-				slug={slug}
-				subject={subject}
-				department={department}
-			>
+			<RepliesContainer ticket={ticket}>
 				<Box sx={{
 					display: "flex",
 					px: 3, py: { xs: 3, md: 4 },
@@ -344,22 +381,14 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug,
 
 	//Replies
 	return (
-		<RepliesContainer
-			tid={tid}
-			status={status}
-			username={username}
-			staffInCharge={staffInCharge}
-			slug={slug}
-			subject={subject}
-			department={department}
-		>
+		<RepliesContainer ticket={ticket}>
 			{ticketReplies?.map((replyItem, idx) =>
 				<ReplyItem
 					key={replyItem.trid}
 					isAdmin={isAdmin}
 					replyItem={replyItem}
-					ticketUsername={username}
-					ticketStatus={status}
+					ticketUsername={ticket.username}
+					ticketStatus={ticket.status}
 					isFirst={idx === 0}
 				/>
 			)}
@@ -367,14 +396,7 @@ function TicketReplies({ tid, status, username, staffInCharge, replyCount, slug,
 	)
 }
 TicketReplies.propTypes = {
-	tid: PropTypes.string,
-	status: PropTypes.string,
-	username: PropTypes.string,
-	staffInCharge: PropTypes.array,
-	replyCount: PropTypes.number,
-	slug: PropTypes.string,
-	subject: PropTypes.string,
-	department: PropTypes.string
+	ticket: PropTypes.object,
 }
 
 export default TicketReplies

@@ -105,7 +105,7 @@ export const SettingsContainer = ({ children }) => (
 export const SettingsList = ({ showContent, sx, children }) => (
 	<Box
 		sx={{
-			backgroundColor: "#FAFAFA",
+			backgroundColor: "#F0F0F0",
 			borderTopLeftRadius: "0.5rem",
 			borderBottomLeftRadius: "0.5rem",
 			minWidth: {
@@ -175,7 +175,7 @@ const ContentHeader = ({ children }) => (
 		py: { xs: 1, sm: 2 },
 		borderTopLeftRadius: 8,
 		borderTopRightRadius: 8,
-		backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
+		backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
 	}}> {children} </Box>
 ); ContentHeader.propTypes = { children: PropTypes.node }
 
@@ -319,8 +319,8 @@ export const SettingsContentActionBar = ({ children }) => (
 		justifyContent: "flex-end",
 		px: 3,
 		py: { xs: 1, sm: 2 },
-		backgroundColor: "#FAFAFA",
-		// backgroundColor: { xs: "#FAFAFA", sm: "transparent" },
+		backgroundColor: "#F0F0F0",
+		// backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
 		"> *:last-child": {
 			ml: 2,
 			minWidth: 100

@@ -35,17 +35,31 @@ import { useSnackbar } from "notistack"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getRedirect } from "./../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
-import { ForgotPasswordLink, SignUpLink } from "./../common"
-import { USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
-import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
-import { useSignInWithEmailMutation, useSignInWithGoogleMutation } from "./../../redux/slices/firestoreApi"
+import { ForgotPasswordLink, SignUpLink } from "@components/common"
+
+import { getRedirect } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+import { loginSuccess } from "@redux/slices/auth"
+
+import {
+	useSignInWithEmailMutation,
+	useSignInWithGoogleMutation
+} from "@redux/slices/firestoreApi"
+
+import {
+	USERGROUP,
+	REDIRECT_URL
+} from "@helpers/constants"
+
+import {
+	RegContainer,
+	RegHeader,
+	useFlexDirection
+} from "@layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { GithubIcon, GoogleIcon, TwitterIcon } from "../svgIcon"
-import { loginSuccess } from "../../redux/slices/auth"
 
 /*****************************************************************
  * INIT                                                          *

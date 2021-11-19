@@ -34,15 +34,29 @@ import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { LoginLink } from "./../common"
-import { regEmail, regRule } from "./../../helpers/regex"
-import { setRedirect } from "../../redux/slices/redirect"
-import { useGetAppSettingsQuery, useSignUpWithEmailMutation } from "../../redux/slices/firestoreApi"
-import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
+import { LoginLink } from "@components/common"
+
+import { REDIRECT_URL } from "@helpers/constants"
+import {
+	regEmail,
+	regRule
+} from "@helpers/regex"
+
+import { setRedirect } from "@redux/slices/redirect"
+
+import {
+	useGetAppSettingsQuery,
+	useSignUpWithEmailMutation
+} from "@redux/slices/firestoreApi"
+
+import {
+	RegContainer,
+	RegHeader,
+	useFlexDirection
+} from "@layout/RegLayout"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *

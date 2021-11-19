@@ -31,8 +31,8 @@ import { Container, Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import TabsSettings from "./TabsSettings"
-import { getLayout as getAdminLayout } from "./../../layout/AdminLayout"
+import TabsSettings from "@components/Settings/TabsSettings"
+import { getLayout as getAdminLayout } from "@layout/AdminLayout"
 
 //ASSETS
 

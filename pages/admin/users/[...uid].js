@@ -54,7 +54,7 @@ import PersonIcon from "@mui/icons-material/Person"
 function AdminViewUser() {
 	const router = useRouter()
 	const { uid } = router.query
-	console.log({ uid })
+
 	const profile = useGetProfileByUsername(uid ? uid[0] : "")
 
 	useUiSettings({
@@ -64,11 +64,7 @@ function AdminViewUser() {
 		}
 	})
 
-	/*[bug] When nagivate to other page,
-	useRouter would return undefined,
-	just before getting out, we would have error,
-	then, solution is to return null (render nothing in this case) */
-	if (!uid) return null
+	if (router.isFallback) return null
 
 	if (profile === undefined) return <DefaultErrorPage statusCode={404} />
 

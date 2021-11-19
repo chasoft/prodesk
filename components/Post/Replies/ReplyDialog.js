@@ -123,7 +123,7 @@ const ReplyDialog = ({ children }) => {
 
 				<DialogContent sx={{ mt: 2 }}>
 					<Box sx={{
-						pl: 4, py: 3, border: "1px solid #FAFAFA",
+						pl: 4, py: 3, border: "1px solid #F0F0F0",
 						width: { sm: "500px", md: "650px", lg: "700px" }
 					}}>
 						<TextEditor

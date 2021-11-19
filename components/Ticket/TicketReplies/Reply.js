@@ -32,24 +32,42 @@ import { Avatar, Box, Button, IconButton, Tooltip, Typography } from "@mui/mater
 //THIRD-PARTY]
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { random, trim } from "lodash"
-import { useSelector, useDispatch } from "react-redux"
+import {
+	random,
+	trim
+} from "lodash"
+import {
+	useSelector,
+	useDispatch
+} from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import ConfirmDialog from "../../common/ConfirmDialog"
-import { CODE, DATE_FORMAT, STATUS_FILTER } from "../../../helpers/constants"
-import { getAuth, getTextEditor } from "./../../../redux/selectors"
-import { setEditorData } from "./../../../redux/slices/textEditor"
-import { useDeleteTicketReplyMutation, useUpdateTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import TextEditor from "@components/common/TextEditor"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { setEditorData } from "@redux/slices/textEditor"
+import {
+	getAuth,
+	getTextEditor
+} from "@redux/selectors"
+import {
+	useDeleteTicketReplyMutation,
+	useUpdateTicketReplyMutation
+} from "@redux/slices/firestoreApi"
+
+import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+import {
+	CODE,
+	DATE_FORMAT,
+	STATUS_FILTER
+} from "@helpers/constants"
 
 //ASSETS
 import EditIcon from "@mui/icons-material/Edit"
 import DeleteIcon from "@mui/icons-material/Delete"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
-import useGetProfileByUsername from "../../../helpers/useGetProfileByUsername"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *

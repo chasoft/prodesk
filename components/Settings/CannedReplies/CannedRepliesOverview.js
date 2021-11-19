@@ -23,15 +23,21 @@
  *****************************************************************/
 
 import React from "react"
+import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-// import { Box, Container, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import {
+	SettingsContentHeader,
+	SettingsContentHelper,
+	SettingsContentHelperLearnMore,
+	SettingsContentHelperText
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 
@@ -43,7 +49,7 @@ import { SettingsContentHeader, SettingsContentHelper, SettingsContentHelperText
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesOverview = ({ backBtnClick }) => {
+const CannedRepliesOverview = ({ departmentCreated, backBtnClick }) => {
 	return (
 		<>
 			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
@@ -52,16 +58,24 @@ const CannedRepliesOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Canned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned replies
-				</SettingsContentHelperText>
-				<SettingsContentHelperText>
-					Canned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned repliesCanned replies
+					Canned-replies are great to speed up your supporting or prevent repeative actions. They are linked & grouped by departments.
+					<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
+					You can create new canned-replies here or convert any existing replies to canned-replies.
+					<SettingsContentHelperLearnMore target="/docs" />
+					{!departmentCreated &&
+						<>
+							<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
+							<span>
+								You can not add any new canned-reply for there is no department created. Click here to go to <Link href="/admin/settings/tickets/department" passHref><Box component="a" href="just-a-placeholder" sx={{ color: "primary.main" }}>department settings</Box></Link>, create at least one department and come back later.
+							</span>
+						</>}
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
 		</>
 	)
 }
 CannedRepliesOverview.propTypes = {
+	departmentCreated: PropTypes.bool.isRequired,
 	backBtnClick: PropTypes.func,
 }
 

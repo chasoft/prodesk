@@ -31,17 +31,19 @@ import { Box, Button, CircularProgress, Drawer, IconButton, Paper, Tooltip, Typo
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import AskNow from "../Docs/AskNow"
-import TicketFilters from "./TicketFilters"
-import TicketListItem from "./TicketListItem"
-import { REDIRECT_URL } from "../../helpers/constants"
-import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
+import AskNow from "@components/Docs/AskNow"
+import TicketFilters from "@components/Ticket/TicketFilters"
+import TicketListItem from "@components/Ticket/TicketListItem"
+import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
+
+import { REDIRECT_URL } from "@helpers/constants"
+import useFilteredTicketsForUser from "@helpers/useFilteredTicketsForUser"
+
+import { resetTicketFilters } from "@redux/slices/uiSettings"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import FilterListIcon from "@mui/icons-material/FilterList"
-import { resetTicketFilters } from "../../redux/slices/uiSettings"
-import useFilteredTicketsForUser from "../../helpers/useFilteredTicketsForUser"
 
 /*****************************************************************
  * INIT                                                          *
@@ -76,7 +78,7 @@ FilterDrawer.propTypes = {
 function TicketList() {
 	const dispatch = useDispatch()
 	const [showFilter, setShowFilter] = useState(false)
-	const { data: tickets, isLoading } = useFilteredTicketsForUser()
+	const { data: tickets = [], isLoading } = useFilteredTicketsForUser()
 	const handleResetSearchCriteria = () => { dispatch(resetTicketFilters()) }
 
 	if (isLoading) {

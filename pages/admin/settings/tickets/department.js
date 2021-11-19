@@ -74,9 +74,12 @@ function TicketSettingsDepartment() {
 	const [showContent, setShowContent] = useState(false)
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
-	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
+	const {
+		data: departments,
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
-	const hasSelectedDepartment = isLoading ? false : some(departments, { department: activeSettingPanel })
+	const hasSelectedDepartment = isLoadingDepartments ? false : some(departments, { name: activeSettingPanel })
 
 	return (
 		<>
@@ -109,7 +112,7 @@ function TicketSettingsDepartment() {
 
 					<ListTitle>{(departments?.length > 0) ? "Available departments" : "No available department"}</ListTitle>
 
-					{isLoading
+					{isLoadingDepartments
 						? <Box sx={{
 							display: "flex",
 							alignItems: "center",
@@ -118,17 +121,17 @@ function TicketSettingsDepartment() {
 						}}>
 							<CircularProgress />
 						</Box>
-						: departments.map((item) => (
+						: departments.map((department) => (
 							<ListItem
-								key={item.did}
-								selected={activeSettingPanel === item.department}
+								key={department.did}
+								selected={activeSettingPanel === department.name}
 								icon={<BusinessIcon fontSize="small" />}
 								onClick={() => {
-									dispatch(setActiveSettingPanel(item.department))
+									dispatch(setActiveSettingPanel(department.name))
 									setShowContent(true)
 								}}
 							>
-								{item.department}
+								{department.name}
 							</ListItem>
 						))}
 
@@ -136,7 +139,7 @@ function TicketSettingsDepartment() {
 
 				<SettingsContent showContent={showContent}>
 
-					{isLoading
+					{isLoadingDepartments
 						? <Box sx={{
 							display: "flex",
 							alignItems: "center",

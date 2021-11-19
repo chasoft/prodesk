@@ -216,7 +216,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 			async (data) => {
 				//only trigger refetching if currentUser is not the trigger
 				//this is to prevent unnecessary double fetching data
-				if (username !== data.val().trigger) {
+				if (username !== data.val().trigger || data.val()?.forceRefetch) {
 					if (data.val().target.isForAdmin && isAdminURL) {
 						await requestRefetching(data.val().tag)
 					}

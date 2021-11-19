@@ -33,10 +33,35 @@ import { useSelector } from "react-redux"
 import { filter, random, uniqueId } from "lodash"
 
 //PROJECT IMPORT
-import { getAuth, getUiSettings } from "./../../../redux/selectors"
-import { ColorTable, HUE, SHADE } from "../../common/ColorPicker"
-import { useAddLabelMutation, useDeleteLabelMutation, useGetLabelsQuery, useUpdateLabelMutation } from "./../../../redux/slices/firestoreApi"
-import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import { CODE } from "@helpers/constants"
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import {
+	HUE,
+	SHADE,
+	ColorTable,
+} from "@components/common/ColorPicker"
+
+import {
+	SettingsContentDetails,
+	SettingsContentHeader,
+	SettingsContentHelper,
+	SettingsContentHelperLearnMore,
+	SettingsContentHelperText
+} from "@components/Settings/SettingsPanel"
+
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
+
+import {
+	useAddLabelMutation,
+	useDeleteLabelMutation,
+	useGetLabelsQuery,
+	useUpdateLabelMutation
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -44,9 +69,6 @@ import SaveIcon from "@mui/icons-material/Save"
 import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { CODE } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -77,9 +99,6 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 			<DialogContent>
 				<DialogContentText>
 					Label is advanced feature to manage your tickets in case you have so many tickets and types of tickets which Department, Category/Subcategory still not enough.
-				</DialogContentText>
-				<DialogContentText sx={{ mt: 1 }}>
-					Please note that if you delete a label which is used, then the label will be still remained with the ticket.
 				</DialogContentText>
 
 				<Box sx={{
@@ -322,12 +341,8 @@ const PageLabels = ({ backBtnClick }) => {
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
 					Support tickets are categorized by Department, Category &amp; Sub-Category and now you can have deeper categorization by creating labels.
-				</SettingsContentHelperText>
-				<SettingsContentHelperText>
-					Please note that if you delete a label which is used, then the label will be still remained with the ticket.
 					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
-
 			</SettingsContentHelper>
 
 			<SettingsContentDetails>
@@ -341,7 +356,14 @@ const PageLabels = ({ backBtnClick }) => {
 						<CircularProgress />
 					</Box>
 					: (labels.length === 0)
-						? <div>Label list is empty</div>
+						? <Box sx={{
+							py: 3,
+							fontStyle: "italic",
+							color: "text.secondary",
+							textAlign: "center"
+						}}>
+							Label list is empty
+						</Box>
 						: labels.map((label) =>
 							<SubCatItem
 								key={label.lid}

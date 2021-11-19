@@ -388,7 +388,7 @@ export const firestoreApi = createApi({
 						ACTIONS.GET_DEPARTMENTS,
 						undefined,
 						(draft) => {
-							let obj = draft.find(e => e.did === body.did)
+							let obj = draft.find(department => department.did === body.did)
 							Object.assign(obj, body)
 						})
 				)

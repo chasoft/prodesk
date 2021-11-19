@@ -33,16 +33,28 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import MembersList from "./../MembersList"
-import SettingsSwitch from "./../../common/SettingsSwitch"
-import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import { DEPARTMENT_PAGES } from "./../../../pages/admin/settings/tickets/department"
-import { useAddDepartmentMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { getAuth } from "../../../redux/selectors"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { CODE } from "../../../helpers/constants"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import MembersList from "@components/Settings/MembersList"
+import SettingsSwitch from "@components/common/SettingsSwitch"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { getAuth } from "@redux/selectors"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+
+import {
+	useAddDepartmentMutation,
+	useGetDepartmentsQuery
+} from "@redux/slices/firestoreApi"
+
+import { CODE } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import { DEPARTMENT_PAGES } from "@pages/admin/settings/tickets/department"
 
 //PROJECT IMPORT
 
@@ -62,7 +74,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 	//Local memory
 	const [localCache, setLocalCache] = useState({
 		isPublic: true,
-		department: "",
+		name: "",
 		description: "",
 		members: [],
 		availableForAll: false
@@ -81,9 +93,9 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 
 	const handleAddNewDepartment = async () => {
 		//Do not allow departments have the same name
-		const departmentDuplicated = some(departments, { department: localCache.department })
+		const departmentDuplicated = some(departments, { name: localCache.name })
 		if (departmentDuplicated) {
-			enqueueSnackbar(`Department with name ${localCache.department} existed`, { variant: "error" })
+			enqueueSnackbar(`Department with name ${localCache.name} existed`, { variant: "error" })
 			return
 		}
 
@@ -130,9 +142,9 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						<TextField
 							label="Name of the department"
 							placeholder="eg. Sales, Accounting..."
-							value={localCache.department}
+							value={localCache.name}
 							onChange={(e) =>
-								handleSetLocalCache(e.target.value, "department")
+								handleSetLocalCache(e.target.value, "name")
 							}
 							fullWidth
 						/>

@@ -36,20 +36,39 @@ import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import MembersList from "./../MembersList"
-import { getAuth, getUiSettings } from "../../../redux/selectors"
-import SettingsSwitch from "./../../common/SettingsSwitch"
-import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useDeleteDepartmentMutation, useGetCannedRepliesQuery, useGetDepartmentsQuery, useUpdateDepartmentMutation } from "../../../redux/slices/firestoreApi"
+import MembersList from "@components/Settings/MembersList"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+import SettingsSwitch from "@components/common/SettingsSwitch"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
+
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+
+import {
+	useDeleteDepartmentMutation,
+	useGetCannedRepliesQuery,
+	useGetDepartmentsQuery,
+	useUpdateDepartmentMutation
+} from "@redux/slices/firestoreApi"
+
+import { DEPARTMENT_PAGES } from "@pages/admin/settings/tickets/department"
+
+import { CODE } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { DEPARTMENT_PAGES } from "../../../pages/admin/settings/tickets/department"
-import ConfirmDialog from "../../common/ConfirmDialog"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { CODE } from "../../../helpers/constants"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -69,36 +88,32 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	} = useGetCannedRepliesQuery(undefined)
 
 	const { activeSettingPanel } = useSelector(getUiSettings)
-	const [selectedDepartment, setSelectedDepartment] = useState()
+	const [selectedDepartment, setSelectedDepartment] = useState({})
 
 	const {
-		data: departments,
-		isLoading: isLoadingDepartment
+		data: departments = [],
+		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	//Local memory
 	const [localCache, setLocalCache] = useState({
 		isPublic: true,
-		department: "",
+		name: "",
 		description: "",
 		members: [],
 		availableForAll: true
 	})
 
 	//Re-render
-	//TODO: Kiểm tra lại chỗ này nghĩa là gì? `name` or `did`
-	// department.department là `department name` hay `did`
-	// activeSettingPanel  là `department name` hay `did`
-
 	useDeepCompareEffect(() => {
-		if (isLoadingDepartment === false && departments !== undefined) {
-			const _ = departments.find(
-				department => department.department === activeSettingPanel
-			)
-			setSelectedDepartment(_)
-			setLocalCache(_)
+		if (isLoadingDepartments === false && departments.length > 0) {
+			const activeDepartment = departments.find(
+				department => department.name === activeSettingPanel
+			) ?? {}
+			setSelectedDepartment(activeDepartment)
+			setLocalCache(activeDepartment)
 		}
-	}, [departments, activeSettingPanel, isLoadingDepartment])
+	}, [departments, activeSettingPanel, isLoadingDepartments])
 
 	console.log("Department Details", { selectedDepartment }, { localCache })
 
@@ -116,9 +131,9 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	const handleDeleteDepartment = async (confirmed) => {
 		if (confirmed === false) return
 
-		//User must delete all related canned-reply
+		//User must delete all related canned-replies
 		//before they can delete department
-		const existedCannedReplies = filter(cannedReplies, { department: selectedDepartment.did })
+		const existedCannedReplies = filter(cannedReplies, { departmentId: selectedDepartment.did })
 		if (existedCannedReplies.length > 0) {
 			enqueueSnackbar("Please delete all related canned-replies first!", { variant: "error" })
 			return
@@ -128,7 +143,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 		dispatch(setActiveSettingPanel(DEPARTMENT_PAGES.OVERVIEW))
 
 		//get newList of department
-		const newList = filter(departments, d => d.did !== selectedDepartment.did)
+		const newList = filter(departments, department => department.did !== selectedDepartment.did)
 		await deleteDepartment({
 			departmentItem: { did: selectedDepartment.did },
 			fullList: newList
@@ -138,11 +153,11 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	const handleUpdateDepartment = async () => {
 		//Do not allow departments have the same name
 		const departmentDuplicated =
-			(selectedDepartment.department === localCache.department)
+			(selectedDepartment?.name === localCache.name)
 				? false
-				: some(departments, { department: localCache.department })
+				: some(departments, { name: localCache.name })
 		if (departmentDuplicated) {
-			enqueueSnackbar(`Department with name "${localCache.department}" existed."`, { variant: "error" })
+			enqueueSnackbar(`Department with name "${localCache.name}" existed."`, { variant: "error" })
 			return
 		}
 
@@ -153,7 +168,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 			updatedBy: currentUser.username,
 		}
 
-		dispatch(setActiveSettingPanel(localCache.department))
+		dispatch(setActiveSettingPanel(localCache.name))
 		const res = await updateDepartment(departmentItem)
 
 		//broadcast refetching-request
@@ -172,7 +187,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 	return (
 		<>
-			{(isLoadingDepartment || isLoadingCannedReplies)
+			{(isLoadingDepartments || isLoadingCannedReplies)
 				? <Box sx={{
 					display: "flex",
 					height: "300px",
@@ -195,7 +210,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 							</Tooltip>
 						}
 					>
-						<Typography variant="button">{localCache.department}</Typography>
+						<Typography variant="button">{localCache.name}</Typography>
 
 						<ConfirmDialog
 							okButtonText="Delete"
@@ -220,9 +235,9 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 							<Grid item xs={12}>
 								<TextField
-									value={localCache.department}
+									value={localCache.name}
 									onChange={(e) => {
-										handleUpdateDetails(e.target.value, "department")
+										handleUpdateDetails(e.target.value, "name")
 									}}
 									label="Name of the department"
 									placeholder="eg. Sales, Accounting..."

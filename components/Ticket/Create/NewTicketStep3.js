@@ -28,11 +28,11 @@ import React from "react"
 import { Box } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import { useSelector } from "react-redux"
-import { getTextEditor } from "./../../../redux/selectors"
+import { getTextEditor } from "@redux/selectors"
+import TextEditor from "@components/common/TextEditor"
 
 //ASSETS
 
@@ -49,7 +49,7 @@ const NewTicketStep3 = () => {
 	return (
 		<Box sx={{
 			pl: 4, py: 1, my: 0,
-			border: "1px solid #FAFAFA",
+			border: "1px solid #F0F0F0",
 			minWidth: 120
 		}}>
 			<TextEditor

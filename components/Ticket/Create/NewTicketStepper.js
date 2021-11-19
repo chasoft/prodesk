@@ -35,20 +35,22 @@ import { useDeepCompareEffect } from "react-use"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import NewTicketStep1 from "./NewTicketStep1"
-import NewTicketStep2 from "./NewTicketStep2"
-import NewTicketStep3 from "./NewTicketStep3"
-import useAdmin from "../../../helpers/useAdmin"
-import { LearnMoreAdvancedTextEditor } from "./../../common"
-import { setRedirect } from "./../../../redux/slices/redirect"
-import { getPlainTextFromMarkDown } from "./../../../helpers/utils"
-import { addNewNotification } from "./../../../helpers/realtimeApi"
-import { CODE, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "./../../../helpers/constants"
-import { getAuth, getNewTicket, getTextEditor } from "./../../../redux/selectors"
-import { setCurrentStep, setNewlyAddedTicketSlug } from "./../../../redux/slices/newTicket"
-import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
-import { ACTIONS, TYPE } from "../../../redux/slices/firestoreApiConstants"
-import useProfilesGroup from "../../../helpers/useProfilesGroup"
+import NewTicketStep1 from "@components/Ticket/Create/NewTicketStep1"
+import NewTicketStep2 from "@components/Ticket/Create/NewTicketStep2"
+import NewTicketStep3 from "@components/Ticket/Create/NewTicketStep3"
+import { LearnMoreAdvancedTextEditor } from "@components/common"
+
+import useAdmin from "@helpers/useAdmin"
+import useProfilesGroup from "@helpers/useProfilesGroup"
+import { addNewNotification } from "@helpers/realtimeApi"
+import { getPlainTextFromMarkDown } from "@helpers/utils"
+import { CODE, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "@helpers/constants"
+
+import { setRedirect } from "@redux/slices/redirect"
+import { ACTIONS, TYPE } from "@redux/slices/firestoreApiConstants"
+import { getAuth, getNewTicket, getTextEditor } from "@redux/selectors"
+import { setCurrentStep, setNewlyAddedTicketSlug } from "@redux/slices/newTicket"
+import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 
 //ASSETS
 
@@ -56,7 +58,11 @@ import useProfilesGroup from "../../../helpers/useProfilesGroup"
  * INIT                                                          *
  *****************************************************************/
 
-const steps = ["Create your question", "Select details", "Describe & post"]
+const steps = [
+	"Create your question",
+	"Select details",
+	"Describe & post"
+]
 
 export const useGetTicketDetails = () => {
 	const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery()
@@ -90,29 +96,44 @@ export const useGetNewTicketData = () => {
 	const res = useRef([])
 	const { editorData } = useSelector(getTextEditor)
 	const { subject, selectedPriority } = useSelector(getNewTicket)
-	const { selectedDepartmentId, selectedCategory, selectedSubCategory } = useGetTicketDetails()
-	const { data: departments } = useGetDepartmentsQuery()
+
+	const {
+		selectedCategory,
+		selectedDepartmentId,
+		selectedSubCategory
+	} = useGetTicketDetails()
+
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery()
 
 	useEffect(() => {
 		res.current[0] = `Your question: ${subject}`
 	}, [subject])
 
-	useDeepCompareEffect(() => {
-		const department = departments?.find(i => i.did === selectedDepartmentId)?.department ?? "<Empty>"
-		res.current[1] = `Department: ${department} | Priority: ${selectedPriority} | Category: ${selectedCategory} ${selectedSubCategory}`
-	}, [
-		departments,
-		selectedCategory,
-		selectedPriority,
-		selectedSubCategory,
-		selectedDepartmentId,
-	])
+	useDeepCompareEffect(
+		() => {
+			const departmentName = departments.find(
+				department => department.did === selectedDepartmentId
+			)?.name ?? "<Empty>"
+
+			res.current[1] = `Department: ${departmentName} | Priority: ${selectedPriority} | Category: ${selectedCategory} ${selectedSubCategory}`
+		},
+		[
+			departments,
+			selectedCategory,
+			selectedPriority,
+			selectedSubCategory,
+			selectedDepartmentId,
+		]
+	)
 
 	useEffect(() => {
 		res.current[2] = `📝 ${getPlainTextFromMarkDown(editorData)}`
 	}, [editorData])
 
-	return res.current
+	return { data: res.current, isLoading: isLoadingDepartments }
 }
 
 const StepperControlButtons = () => {
@@ -140,12 +161,14 @@ const StepperControlButtons = () => {
 	const {
 		userList: allAdminProfiles = [],
 		isLoading: isLoadingAllAdminProfiles
-	} = useProfilesGroup([
-		USERGROUP.SUPERADMIN.code,
-		USERGROUP.ADMIN.code,
-		USERGROUP.STAFF.code,
-		USERGROUP.AGENT.code
-	])
+	} = useProfilesGroup(
+		[
+			USERGROUP.SUPERADMIN.code,
+			USERGROUP.ADMIN.code,
+			USERGROUP.STAFF.code,
+			USERGROUP.AGENT.code
+		]
+	)
 
 	const handleGoBack = () => {
 		dispatch(setCurrentStep(currentStep - 1))
@@ -166,7 +189,7 @@ const StepperControlButtons = () => {
 				//sometimes, admin will create ticket on behalf of customer
 				createdBy: currentUser.username,
 				subject: subject,
-				department: raw.selectedDepartmentId,
+				departmentId: raw.selectedDepartmentId,
 				priority: raw.selectedPriority,
 				category: raw.selectedCategory,
 				subCatgory: raw.selectedSubCategory,
@@ -284,9 +307,20 @@ const StepperControlButtons = () => {
 
 export default function TicketStepper() {
 	const dispatch = useDispatch()
-	const newTicketData = useGetNewTicketData()
-	const { currentStep, newlyAddedTicketSlug } = useSelector(getNewTicket)
+
+	const {
+		data: newTicketData,
+		isLoading
+	} = useGetNewTicketData()
+
+	const {
+		currentStep,
+		newlyAddedTicketSlug
+	} = useSelector(getNewTicket)
+
 	const { isAdminURL } = useAdmin()
+
+	if (isLoading) return null
 
 	return (
 		<div style={{ width: "100%" }}>

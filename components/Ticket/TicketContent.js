@@ -35,18 +35,43 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "../common/TextEditor"
-import { getAuth } from "../../redux/selectors"
-import { getStaffInCharge } from "../../helpers/utils"
-import useMenuContainer from "../common/useMenuContainer"
-import { setRedirect } from "../../redux/slices/redirect"
-import ReplyDialog from "../Ticket/TicketReplies/ReplyDialog"
-import { addNewNotification } from "../../helpers/realtimeApi"
-import { ACTIONS, TYPE } from "../../redux/slices/firestoreApiConstants"
-import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
-import { CODE, DATE_FORMAT, REDIRECT_URL, STATUS_FILTER } from "../../helpers/constants"
-import { useGetDepartmentsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
-import { TicketCategory, TicketDepartment, TicketLabels, TicketUser, TicketPriority, TicketReplyCount, TicketStatus } from "./AdminTicketListItem"
+import TextEditor from "@components/common/TextEditor"
+import ReplyDialog from "@components/Ticket/TicketReplies/ReplyDialog"
+import useMenuContainer from "@components/common/useMenuContainer"
+
+import {
+	TicketCategory,
+	TicketDepartment,
+	TicketLabels,
+	TicketUser,
+	TicketPriority,
+	TicketReplyCount,
+	TicketStatus
+} from "@components/Ticket/AdminTicketListItem"
+
+import { getAuth } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+
+import {
+	ACTIONS,
+	TYPE
+} from "@redux/slices/firestoreApiConstants"
+
+import {
+	useGetDepartmentsQuery,
+	useUpdateTicketMutation
+} from "@redux/slices/firestoreApi"
+
+import { getStaffInCharge } from "@helpers/utils"
+import { addNewNotification } from "@helpers/realtimeApi"
+
+import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
+import {
+	CODE,
+	DATE_FORMAT,
+	REDIRECT_URL,
+	STATUS_FILTER
+} from "@helpers/constants"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
@@ -105,7 +130,7 @@ const PopupMenu = ({ ticket }) => {
 			}
 
 			const departmentDetails = departments.find(
-				department => department.did === ticket.department
+				department => department.did === ticket.departmentId
 			)
 
 			const receivers = (currentUser.username !== ticket.username)
@@ -172,13 +197,7 @@ const PopupMenu = ({ ticket }) => {
 			</MenuContainer>
 
 			<ReplyDialog
-				tid={ticket.tid}
-				status={ticket.status}
-				username={ticket.username}
-				staffInCharge={ticket.staffInCharge}
-				slug={ticket.slug}
-				subject={ticket.subject}
-				department={ticket.department}
+				ticket={ticket}
 				open={showReplyDialog}
 				setOpen={setShowReplyDialog}
 			/>
@@ -333,10 +352,10 @@ function TicketContent({ ticket }) {
 					status={ticket.status}
 				/>
 				<TicketDepartment
-					department={ticket.department}
+					departmentId={ticket.departmentId}
 				/>
 				<TicketCategory
-					department={ticket.department}
+					departmentId={ticket.departmentId}
 					category={ticket.category}
 					subCategory={ticket.subCategory}
 				/>

@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, Button, Popover, TextField } from "@mui/material"
-import { ColorPickerBase } from "./../../common/ColorPicker"
+import { ColorPickerBase } from "@components/common/ColorPicker"
 
 //THIRD-PARTY
 

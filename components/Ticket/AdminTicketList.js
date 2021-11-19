@@ -34,20 +34,48 @@ import { every, size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import ConfirmDialog from "../common/ConfirmDialog"
-import useMenuContainer from "../common/useMenuContainer"
-import useProfilesGroup from "../../helpers/useProfilesGroup"
-import { LabelEditorDialog } from "../Settings/Tickets/Labels"
-import { getUiSettings, getAuth } from "../../redux/selectors"
-import MemoizedAdminTicketListItem from "./AdminTicketListItem"
-import { addNewNotifications } from "../../helpers/realtimeApi"
-import IconBreadcrumbs from "./../../components/BackEnd/IconBreadcrumbs"
-import { ACTIONS, TYPE } from "../../redux/slices/firestoreApiConstants"
-import AdminTicketFilters, { TICKET_INBOXES_LIST } from "./AdminTicketFilters"
-import useFilteredTicketsForAdmin from "../../helpers/useFilteredTicketsForAdmin"
-import { resetTicketFilters, setSelectedTickets } from "../../redux/slices/uiSettings"
-import { CODE, DATE_FORMAT, REDIRECT_URL, STATUS_FILTER, TICKET_INBOXES, USERGROUP } from "../../helpers/constants"
-import { useGetDepartmentsQuery, useDeleteTicketTempMutation, useGetLabelsQuery, useGetTicketsForAdminQuery, useUpdateTicketMutation, useGetProfilesQuery } from "../../redux/slices/firestoreApi"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
+import useMenuContainer from "@components/common/useMenuContainer"
+import { LabelEditorDialog } from "@components/Settings/Tickets/Labels"
+import AdminTicketFilters, { TICKET_INBOXES_LIST } from "@components/Ticket/AdminTicketFilters"
+import MemoizedAdminTicketListItem from "@components/Ticket/AdminTicketListItem"
+
+import useProfilesGroup from "@helpers/useProfilesGroup"
+import { addNewNotifications } from "@helpers/realtimeApi"
+import useFilteredTicketsForAdmin from "@helpers/useFilteredTicketsForAdmin"
+import {
+	CODE,
+	DATE_FORMAT,
+	REDIRECT_URL,
+	STATUS_FILTER,
+	TICKET_INBOXES,
+	USERGROUP
+} from "@helpers/constants"
+
+import {
+	getAuth,
+	getUiSettings,
+} from "@redux/selectors"
+
+import {
+	ACTIONS,
+	TYPE
+} from "@redux/slices/firestoreApiConstants"
+
+import {
+	resetTicketFilters,
+	setSelectedTickets
+} from "@redux/slices/uiSettings"
+
+import {
+	useDeleteTicketTempMutation,
+	useGetDepartmentsQuery,
+	useGetLabelsQuery,
+	useGetProfilesQuery,
+	useGetTicketsForAdminQuery,
+	useUpdateTicketMutation
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -126,11 +154,11 @@ const AssignButton = ({ departments }) => {
 
 	//Assign button can be used only when
 	//all selected tickets are belong to same department
-	const selectedDepartmentId = selectedTickets[0].department
+	const selectedDepartmentId = selectedTickets[0].departmentId
 	if (
 		every(
 			selectedTickets,
-			{ department: selectedDepartmentId }
+			{ departmentId: selectedDepartmentId }
 		) === false
 	) {
 		return null
@@ -428,7 +456,7 @@ const LabelButton = () => {
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				{(isLoadingLabels && isLoadingTickets) && <MenuItem>Loading...</MenuItem>}
+				{(isLoadingLabels && isLoadingTickets) && <MenuItem>Loading... <CircularProgress size={16} /></MenuItem>}
 
 				{size(labels) &&
 					<MenuItem disabled={true}>

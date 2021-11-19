@@ -35,7 +35,7 @@ import { once } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { Logo } from "@common"
+import { Logo } from "@components/common"
 import { getAuth } from "@redux/selectors"
 import { loginSuccess } from "@redux/slices/auth"
 import { REDIRECT_URL } from "@helpers/constants"

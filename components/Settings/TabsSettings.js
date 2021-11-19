@@ -20,6 +20,7 @@
 
 import React, { useCallback, useMemo } from "react"
 import PropTypes from "prop-types"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
 import { Paper, Tab, Tabs, useMediaQuery } from "@mui/material"
@@ -29,8 +30,7 @@ import { findIndex } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "./../../redux/selectors"
-import { useRouter } from "next/router"
+import { getUiSettings } from "@redux/selectors"
 
 //ASSETS
 

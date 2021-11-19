@@ -30,10 +30,18 @@ import { Avatar, Box, Chip, CircularProgress, Tooltip, Typography } from "@mui/m
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import AvatarList from "./../../common/AvatarList"
-import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import { useGetDepartmentsQuery } from "./../../../redux/slices/firestoreApi"
-import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import AvatarList from "@components/common/AvatarList"
+
+import {
+	SettingsContentDetails,
+	SettingsContentHeader,
+	SettingsContentHelper,
+	SettingsContentHelperText,
+	SettingsContentHelperLearnMore,
+} from "@components/Settings/SettingsPanel"
+
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 
 //ASSETS
 import PublicIcon from "@mui/icons-material/Public"
@@ -87,9 +95,10 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					Departments are must have to get the system up and running. eg. Sales, Technical, Accounting.
-					<hr style={{ borderColor: "transparent", margin: 0 }} />
-					Superadmin and admin can view all tickets of any departments but only members of department will receive notification.
+					Departments are your basic support blocks. They are usually Sales, Technical, Accounting,..etc.
+					Administrators can view all tickets of any departments but only members of department will receive related notifications.
+					<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
+					After deploying your support system, try avoid to delete any departments for they would affect existing tickets. In almost all cases, renaming would be better than deleting.
 					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
@@ -105,10 +114,10 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 						<CircularProgress />
 					</Box>
 				</SettingsContentDetails>
-				: departments.map((item) => (
+				: departments.map((department) => (
 					<Box
-						key={item.did}
-						onClick={() => dispatch(setActiveSettingPanel(item.department))}
+						key={department.did}
+						onClick={() => dispatch(setActiveSettingPanel(department.name))}
 						sx={{
 							display: "flex",
 							p: 3,
@@ -127,10 +136,10 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 								alignItems: "center"
 							}}>
 								<Typography variant="h3" style={{ margin: 0 }}>
-									{item.department}
+									{department.name}
 								</Typography>
 
-								{item.availableForAll
+								{department.availableForAll
 									?
 									<Tooltip arrow title="All members" placement="top">
 										<FingerprintIcon
@@ -148,7 +157,7 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 										/>
 									</Tooltip>}
 
-								{item.isPublic
+								{department.isPublic
 									?
 									<Tooltip arrow title="Available for all users" placement="top">
 										<PublicIcon
@@ -173,19 +182,19 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 								flexDirection: { xs: "column", md: "row" }
 							}}>
 								<Typography variant="caption" sx={{ margin: 0 }}>
-									{item.description}
-									{item.description ? <>&nbsp; | &nbsp; </> : null}
+									{department.description}
+									{department.description ? <>&nbsp; | &nbsp; </> : null}
 								</Typography>
 
-								{(item.availableForAll === false)
-									? <DepartmentMembersCount count={item.members.length} />
+								{(department.availableForAll === false)
+									? <DepartmentMembersCount count={department.members.length} />
 									: <DepartmentAvailableForAll />}
 							</Box>
 						</Box>
 
 						<Box sx={{ display: "flex", alignItems: "center" }}>
-							{(item.availableForAll === false) &&
-								<AvatarList members={item.members} />}
+							{(department.availableForAll === false) &&
+								<AvatarList members={department.members} />}
 						</Box>
 
 					</Box>

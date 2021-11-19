@@ -32,21 +32,36 @@ import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, T
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
 import { size } from "lodash"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import useAdmin from "./../../../helpers/useAdmin"
-import { getAuth, getTextEditor } from "../../../redux/selectors"
-import { STATUS_FILTER, DATE_FORMAT, CODE } from "./../../../helpers/constants"
-import { TicketUser } from "./../../../components/Ticket/AdminTicketListItem"
-import { useAddTicketReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
-import { getStaffInCharge } from "../../../helpers/utils"
-import { ACTIONS, TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { addNewNotification } from "../../../helpers/realtimeApi"
+import TextEditor from "@components/common/TextEditor"
+import { TicketUser } from "@components/Ticket/AdminTicketListItem"
+
+import {
+	ACTIONS,
+	TYPE
+} from "@redux/slices/firestoreApiConstants"
+import {
+	getAuth,
+	getTextEditor
+} from "@redux/selectors"
+import {
+	useAddTicketReplyMutation,
+	useGetDepartmentsQuery
+} from "@redux/slices/firestoreApi"
+
+import useAdmin from "@helpers/useAdmin"
+import { getStaffInCharge } from "@helpers/utils"
+import { addNewNotification } from "@helpers/realtimeApi"
+import {
+	CODE,
+	DATE_FORMAT,
+	STATUS_FILTER,
+} from "@helpers/constants"
 
 //ASSETS
 
@@ -54,22 +69,84 @@ import { addNewNotification } from "../../../helpers/realtimeApi"
  * INIT                                                          *
  *****************************************************************/
 
+export const handleSubmitReplyBase = async ({
+	currentUser,
+	departmentDetails,
+	addTicketReply,
+	latestStaffInCharge,
+	ticket,
+	content
+}) => {
+	if (currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED) return
+
+	const trid = nanoid()
+	const newReplyItem = {
+		ticketItem: {
+			username: ticket.username,
+			tid: ticket.tid,
+			...((currentUser.username === ticket.username)
+				? ((ticket.status !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
+				: { status: STATUS_FILTER.REPLIED }),
+			...((ticket.staffInCharge?.length === 0 && currentUser.username !== ticket.username)
+				? {
+					staffInCharge: [{
+						assignor: currentUser.username,
+						assignee: currentUser.username,
+						assignedDate: dayjs().valueOf()
+					}]
+				} : {})
+		},
+		replyItem: {
+			trid,
+			tid: ticket.tid,
+			content: content,
+			username: currentUser.username,
+		}
+	}
+	const res = await addTicketReply(newReplyItem)
+
+	if (res?.data.code === CODE.SUCCESS) {
+		//prepare notification content
+		const notisContent = {
+			tid: ticket.tid,
+			actionType: ACTIONS.ADD_TICKET_REPLY,
+			iconURL: currentUser.photoURL,
+			title: (currentUser.username === ticket.username)
+				? `${currentUser.displayName} just replied his/her ticket`
+				: `${currentUser.displayName} just replied your ticket`,
+			description: ticket.subject,
+			link: ticket.slug,
+			trid: trid
+		}
+
+		const receivers = (currentUser.username !== ticket.username)
+			? [ticket.username]
+			: (latestStaffInCharge.assignee)
+				? [latestStaffInCharge.assignee]
+				: departmentDetails.members
+
+		const invalidatesTags = {
+			trigger: currentUser.username,
+			tag:
+				[
+					{ type: TYPE.TICKETS, id: "LIST" },
+					{ type: TYPE.TICKETS, id: ticket.tid.concat("_replies") }
+				],
+			target: {
+				isForUser: true,
+				isForAdmin: true,
+			}
+		}
+
+		await addNewNotification(receivers, notisContent, invalidatesTags)
+	}
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ReplyDialog = ({
-	tid,
-	status,
-	username,
-	staffInCharge,
-	slug,
-	subject,
-	department,
-	//
-	open,
-	setOpen
-}) => {
+const ReplyDialog = ({ ticket, open, setOpen }) => {
 	const theme = useTheme()
 	dayjs.extend(relativeTime)
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
@@ -78,82 +155,31 @@ const ReplyDialog = ({
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
-	const { data: departments } = useGetDepartmentsQuery(undefined)
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
 	const loadLocalStorage = () => localStorage.getItem("NewReply") ?? ""
 	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
 	const handleCancelReply = () => { setOpen(false); localStorage.removeItem("NewReply") }
 
-	const latestStaffInCharge = getStaffInCharge(staffInCharge)
+	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
+
+	const departmentDetails = departments.find(
+		d => d.did === ticket.departmentId
+	) ?? {}
 
 	const handleSubmitReply = async () => {
 		setOpen(false)
-		//prevent non-owner to reply a closed ticket
-		if (currentUser.username !== username && status === STATUS_FILTER.CLOSED) return
 
-		const trid = nanoid()
-		const newReplyItem = {
-			ticketItem: {
-				username: username,
-				tid: tid,
-				...((currentUser.username === username)
-					? ((status !== STATUS_FILTER.OPEN) ? { status: STATUS_FILTER.PENDING } : {})
-					: { status: STATUS_FILTER.REPLIED }),
-				...((staffInCharge?.length === 0 && currentUser.username !== username)
-					? {
-						staffInCharge: [{
-							assignor: currentUser.username,
-							assignee: currentUser.username,
-							assignedDate: dayjs().valueOf()
-						}]
-					} : {})
-			},
-			replyItem: {
-				trid,
-				tid: tid,
-				content: editorData,
-				username: currentUser.username,
-			}
-		}
-		const res = await addTicketReply(newReplyItem)
-
-		if (res?.data.code === CODE.SUCCESS) {
-			//prepare notification content
-			const notisContent = {
-				tid,
-				actionType: ACTIONS.ADD_TICKET_REPLY,
-				iconURL: currentUser.photoURL,
-				title: currentUser.username + " just replied his/her ticket",
-				description: subject,
-				link: slug,
-				trid: trid
-			}
-
-			const departmentDetails = departments.find(
-				d => d.did === department
-			)
-
-			const receivers = (currentUser.username !== username)
-				? [username]
-				: (latestStaffInCharge.assignee)
-					? [latestStaffInCharge.assignee]
-					: departmentDetails.members
-
-			const invalidatesTags = {
-				trigger: currentUser.username,
-				tag:
-					[
-						{ type: TYPE.TICKETS, id: "LIST" },
-						{ type: TYPE.TICKETS, id: tid.concat("_replies") }
-					],
-				target: {
-					isForUser: true,
-					isForAdmin: true,
-				}
-			}
-
-			await addNewNotification(receivers, notisContent, invalidatesTags)
-		}
+		handleSubmitReplyBase({
+			currentUser: currentUser,
+			departmentDetails,
+			addTicketReply,
+			ticket: ticket,
+			content: editorData
+		})
 
 		localStorage.removeItem("NewReply")
 	}
@@ -178,7 +204,7 @@ const ReplyDialog = ({
 
 			<DialogContent sx={{ mt: 2 }}>
 				<Box sx={{
-					pl: 4, py: 3, border: "1px solid #FAFAFA",
+					pl: 4, py: 3, border: "1px solid #F0F0F0",
 					width: { sm: "500px", md: "650px", lg: "700px" }
 				}}>
 					<TextEditor
@@ -202,13 +228,13 @@ const ReplyDialog = ({
 					size="small" variant="contained"
 					onClick={handleSubmitReply}
 					sx={{ px: 4, minWidth: "100px" }}
-					disabled={loadLocalStorage() < 10 || size(editorData) < 10}
+					disabled={loadLocalStorage() < 10 || size(editorData) < 10 || isLoadingDepartments}
 				>
 					Post
 				</Button>
 			</DialogActions>
 
-			{(isAdminURL && staffInCharge?.length === 0) &&
+			{(isAdminURL && ticket.staffInCharge?.length === 0) &&
 				<Box sx={{
 					display: "flex",
 					alignItems: "center",
@@ -230,7 +256,7 @@ const ReplyDialog = ({
 					</Typography>
 				</Box>}
 
-			{(isAdminURL && size(staffInCharge) > 0) &&
+			{(isAdminURL && size(ticket.staffInCharge) > 0) &&
 				<Box sx={{
 					display: "flex",
 					alignItems: "center",
@@ -270,14 +296,7 @@ const ReplyDialog = ({
 	)
 }
 ReplyDialog.propTypes = {
-	tid: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired,
-	username: PropTypes.string.isRequired,
-	staffInCharge: PropTypes.array.isRequired,
-	slug: PropTypes.string.isRequired,
-	subject: PropTypes.string.isRequired,
-	department: PropTypes.string.isRequired,
-	//
+	ticket: PropTypes.object.isRequired,
 	open: PropTypes.bool.isRequired,
 	setOpen: PropTypes.func.isRequired,
 }

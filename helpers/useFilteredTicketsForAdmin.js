@@ -79,7 +79,9 @@ export default function useFilteredTicketsForAdmin() {
 				tickets,
 				(ticket) => {
 					const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
-					const departmentIndex = findIndex(departments, d => d.did === ticket.department)
+					const departmentIndex = findIndex(
+						departments, department => department.did === ticket.departmentId
+					)
 					return latestStaffInCharge.assignee === currentUser.username
 						|| (departments[departmentIndex].members.includes(currentUser.username))
 				}
@@ -139,12 +141,12 @@ export default function useFilteredTicketsForAdmin() {
 	useDeepCompareEffect(() => {
 		//filter
 		const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))
-		const filteredStatus = filter(availableTicketsByInbox[filteredByInbox], (i) => {
+		const filteredStatus = filter(availableTicketsByInbox[filteredByInbox], (ticket) => {
 			const isPassed =
-				selectedStatus.includes(i.status)
-				&& (i.labels.includes(filteredByLabel) || filteredByLabel === STATUS_FILTER.ANY)
-				&& (i.priority === filteredByPriority || filteredByPriority === STATUS_FILTER.ANY)
-				&& (i.department === filteredByDepartment || filteredByDepartment === STATUS_FILTER.ANY)
+				selectedStatus.includes(ticket.status)
+				&& (ticket.labels.includes(filteredByLabel) || filteredByLabel === STATUS_FILTER.ANY)
+				&& (ticket.priority === filteredByPriority || filteredByPriority === STATUS_FILTER.ANY)
+				&& (ticket.departmentId === filteredByDepartment || filteredByDepartment === STATUS_FILTER.ANY)
 			return isPassed
 		})
 

@@ -37,7 +37,7 @@ import PerfectScrollbar from "react-perfect-scrollbar"
  * INIT                                                          *
  *****************************************************************/
 
-const AddMemberList = ({ department, members, children }) => {
+const AddMemberList = ({ departmentName, members, children }) => {
 
 	const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -86,7 +86,7 @@ const AddMemberList = ({ department, members, children }) => {
 				}}
 			>
 				<div style={{ padding: "1rem" }}>
-					<Typography variant="button">Department: {department}</Typography>
+					<Typography variant="button">Department: {departmentName}</Typography>
 				</div>
 
 				<List dense sx={{
@@ -144,7 +144,7 @@ const AddMemberList = ({ department, members, children }) => {
 	)
 }
 AddMemberList.propTypes = {
-	department: PropTypes.string,
+	departmentName: PropTypes.string,
 	members: PropTypes.array,
 	children: PropTypes.node
 }

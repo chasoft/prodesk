@@ -6,7 +6,8 @@
 			"@layout/*": ["layout/*"],
 			"@styles/*": ["styles/*"],
 			"@helpers/*": ["helpers/*"],
-			"@components/*": ["components/*"]
+			"@components/*": ["components/*"],
+			"@pages/*": ["pages/*"]
 		}
 	}
 }

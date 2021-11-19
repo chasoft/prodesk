@@ -31,23 +31,33 @@ import { Avatar, Box, Button, Grid, TextField, Tooltip, Typography, IconButton, 
 //THIRD-PARTY
 import * as yup from "yup"
 import { useFormik } from "formik"
+import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
-import TimezoneSelect from "../common/TimezoneSelect"
-import { getLayout } from "./../../layout/ClientLayout"
-import { changePassword } from "../../helpers/firebase/user"
-import { DefaultAvatarPanel, SimpleTogglePanel } from "../../components/common"
-import { SettingsContainer, SettingsContent, SettingsHeader } from "../../components/Settings/SettingsPanel"
+import TimezoneSelect from "@components/common/TimezoneSelect"
 
+import {
+	DefaultAvatarPanel,
+	SimpleTogglePanel
+} from "@components/common"
+
+import {
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader
+} from "@components/Settings/SettingsPanel"
+
+import { getAuth } from "@redux/selectors"
+import { loginSuccess } from "@redux/slices/auth"
+import { useUpdateProfileMutation } from "@redux/slices/firestoreApi"
+
+import { getLayout } from "@layout/ClientLayout"
+import { changePassword } from "@helpers/firebase/user"
 
 //ASSETS
 import EditIcon from "@mui/icons-material/Edit"
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
-import { loginSuccess } from "../../redux/slices/auth"
-import { useUpdateProfileMutation } from "../../redux/slices/firestoreApi"
-import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * INIT                                                          *

@@ -41,17 +41,24 @@ import { useSnackbar } from "notistack"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { LoginLink } from "./../common"
-import { regRule } from "./../../helpers/regex"
-import { getAuth } from "./../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
-import { isUsernameAvailable } from "./../../helpers/firebase/user"
-import { RegContainer, RegHeader, useFlexDirection } from "./../../layout/RegLayout"
+import {
+	RegContainer,
+	RegHeader,
+	useFlexDirection
+} from "@layout/RegLayout"
+
+import { LoginLink } from "@components/common"
+
+import { regRule } from "@helpers/regex"
+import { REDIRECT_URL } from "@helpers/constants"
+import { isUsernameAvailable } from "@helpers/firebase/user"
+
+import { getAuth } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+import { useSignUpViaGoogleMutation } from "@redux/slices/firestoreApi"
 
 //ASSETS
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
-import { useSignUpViaGoogleMutation } from "../../redux/slices/firestoreApi"
-import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *

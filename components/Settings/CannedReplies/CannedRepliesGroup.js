@@ -26,23 +26,35 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, CircularProgress, IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, CircularProgress, IconButton, FormControlLabel, Switch, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY]
 import { filter } from "lodash"
+import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { CODE } from "../../../helpers/constants"
-import CannedRepliesList from "./CannedRepliesList"
-import ConfirmDialog from "../../common/ConfirmDialog"
-import CannedRepliesDetails from "./CannedRepliesDetails"
-import { setSelectedCrid } from "../../../redux/slices/uiSettings"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { getAuth, getUiSettings } from "./../../../redux/selectors"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useDeleteCannedReplyMutation, useGetCannedRepliesQuery, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+import CannedRepliesList from "@components/Settings/CannedReplies/CannedRepliesList"
+import CannedRepliesDetails from "@components/Settings/CannedReplies/CannedRepliesDetails"
+
+import {
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
+
+import { CODE } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { setSelectedCrid } from "@redux/slices/uiSettings"
+import { getAuth, getUiSettings } from "@redux/selectors"
+
+import {
+	useDeleteCannedReplyMutation,
+	useGetCannedRepliesQuery,
+	useGetDepartmentsQuery
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
@@ -55,6 +67,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 const CannedRepliesGroup = ({ backBtnClick }) => {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
+	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
@@ -75,19 +88,30 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 	const [deleteCannedReply] = useDeleteCannedReplyMutation()
 
 	const cannedRepliesGroup = cannedReplies.filter(
-		(cannedReply) => cannedReply.department === activeSettingPanel
+		(cannedReply) => cannedReply.departmentId === activeSettingPanel
 	) ?? []
 
 	const currentDepartment = departments.find(
 		department => department.did === activeSettingPanel
 	)
 
+	const selectedCannedReply = cannedReplies.find(
+		cannedReply => cannedReply.crid === selectedCrid
+	)
+
+	useDeepCompareEffect(() => {
+		setIsFullCannedReply(selectedCannedReply?.full ?? false)
+	}, [selectedCannedReply])
+
 	const handleDeleteCannedReply = async (confirmed) => {
 		if (confirmed === false) return
 		//
 		dispatch(setSelectedCrid(""))
 		//get newList of canned-replies
-		const newList = filter(cannedReplies, e => e.crid !== selectedCrid)
+		const newList = filter(
+			cannedReplies,
+			cannedReply => cannedReply.crid !== selectedCrid
+		)
 
 		const res = await deleteCannedReply({
 			cannedReplyItem: { crid: selectedCrid },
@@ -111,7 +135,7 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 		return (
 			<>
 				<SettingsContentHeader>
-					{currentDepartment.department}
+					{currentDepartment.name}
 				</SettingsContentHeader>
 				<SettingsContentDetails>
 					<Box sx={{
@@ -131,7 +155,7 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 		return (
 			<>
 				<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
-					{currentDepartment.department}
+					{currentDepartment.name}
 				</SettingsContentHeader>
 				<SettingsContentDetails>
 					<Typography>
@@ -154,27 +178,46 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 				}}
 
 				rightButton={
-					selectedCrid &&
-					<div>
-						<Tooltip arrow title="Delete current canned-reply" placement="left">
-							<IconButton
-								sx={{ ":hover": { color: "warning.main" } }}
-								onClick={() => setOpenConfirmDialog(true)}
-							>
-								<DeleteIcon fontSize="small" />
-							</IconButton>
-						</Tooltip>
-					</div>
+					selectedCannedReply &&
+					<Box sx={{ display: "flex", alignItems: "center" }}>
+						<FormControlLabel
+							control={
+								<Switch
+									checked={isFullCannedReply}
+									onChange={() => setIsFullCannedReply(p => !p)}
+									name="full-canned-reply"
+									color="primary"
+								/>
+							}
+							label={isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
+						/>
+
+						<div>
+							<Tooltip arrow title="Delete current canned-reply" placement="top">
+								<IconButton
+									sx={{ ":hover": { color: "warning.main" } }}
+									onClick={() => setOpenConfirmDialog(true)}
+								>
+									<DeleteIcon fontSize="small" />
+								</IconButton>
+							</Tooltip>
+						</div>
+					</Box>
 				}
 			>
-				{currentDepartment.department}
+				{currentDepartment.name}
 			</SettingsContentHeader>
 
-			{(selectedCrid === "")
-				&& <CannedRepliesList cannedReplies={cannedRepliesGroup} />}
+			{(!selectedCannedReply) &&
+				<CannedRepliesList
+					cannedReplies={cannedRepliesGroup}
+				/>}
 
-			{(selectedCrid !== "")
-				&& <CannedRepliesDetails crid={selectedCrid} />}
+			{(selectedCannedReply) &&
+				<CannedRepliesDetails
+					selectedCannedReply={selectedCannedReply}
+					isFullCannedReply={isFullCannedReply}
+				/>}
 
 			<ConfirmDialog
 				okButtonText="Delete"

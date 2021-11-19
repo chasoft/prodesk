@@ -25,7 +25,7 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { Logo } from "@common"
+import { Logo } from "@components/common"
 import AuthCheck from "@components/AuthCheck"
 import CreateProfileForm from "@components/Signup/CreateProfileForm"
 import { getLayout, TopLine, useFlexDirection } from "@layout/RegLayout"

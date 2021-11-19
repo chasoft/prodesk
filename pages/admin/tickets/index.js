@@ -32,8 +32,8 @@ import { Box, Container } from "@mui/material"
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
-import AdminTicketList from "@components/ticket/AdminTicketList"
-import AdminTicketFilters from "@components/ticket/AdminTicketFilters"
+import AdminTicketList from "@components/Ticket/AdminTicketList"
+import AdminTicketFilters from "@components/Ticket/AdminTicketFilters"
 
 //ASSETS
 

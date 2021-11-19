@@ -49,12 +49,7 @@ function SingleBlog() {
 	const router = useRouter()
 	const { blogId } = router.query
 
-	/*[bug] When nagivate to other page,
-	useRouter would return undefined,
-	just before getting out, we would have error,
-	then, solution is to return null
-	(render nothing in this case) */
-	if (!blogId) return null
+	if (router.isFallback) return null
 
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>

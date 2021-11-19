@@ -37,20 +37,32 @@ import { useDispatch, useSelector } from "react-redux"
 import { cloneDeep, find, filter, some, isEqual } from "lodash"
 
 //PROJECT IMPORT
-import { getAuth, getUiSettings } from "../../../redux/selectors"
-import { setActiveSettingPanel } from "../../../redux/slices/uiSettings"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { useDeleteCategoryMutation, useUpdateCategoryMutation } from "../../../redux/slices/firestoreApi"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+import { SubCatItem } from "@components/Settings/Tickets/CategoriesAddNew"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { getAuth, getUiSettings } from "@redux/selectors"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+
+import {
+	useDeleteCategoryMutation,
+	useUpdateCategoryMutation
+} from "@redux/slices/firestoreApi"
+
+import { CODE } from "@helpers/constants"
+import useTicketCategories from "@helpers/useTicketCategories"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { CATEGORY_PAGES } from "../../../pages/admin/settings/tickets/category"
-import { SubCatItem } from "./CategoriesAddNew"
-import useTicketCategories from "../../../helpers/useTicketCategories"
-import ConfirmDialog from "../../common/ConfirmDialog"
-import { CODE } from "../../../helpers/constants"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

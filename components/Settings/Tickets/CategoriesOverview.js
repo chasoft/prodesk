@@ -31,10 +31,17 @@ import { cloneDeep } from "lodash"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { useUpdateCategoryMutation } from "./../../../redux/slices/firestoreApi"
-import { setActiveSettingPanel } from "./../../../redux/slices/uiSettings"
-import useTicketCategories from "../../../helpers/useTicketCategories"
-import { SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText } from "./../../Settings/SettingsPanel"
+import useTicketCategories from "@helpers/useTicketCategories"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import { useUpdateCategoryMutation } from "@redux/slices/firestoreApi"
+
+import {
+	SettingsContentHeader,
+	SettingsContentHelper,
+	SettingsContentDetails,
+	SettingsContentHelperText,
+	SettingsContentHelperLearnMore,
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
@@ -91,7 +98,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 				<SettingsContentHelperText>
-					If your business have
+					You can create as many category and sub-category as you want to support your business.
 					<SettingsContentHelperLearnMore target="/docs" />
 				</SettingsContentHelperText>
 			</SettingsContentHelper>
@@ -132,12 +139,10 @@ const CategoriesOverview = ({ backBtnClick }) => {
 						}}
 					>
 						<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
-							<Box
-								sx={{
-									display: "flex",
-									alignItems: "center"
-								}}
-							>
+							<Box sx={{
+								display: "flex",
+								alignItems: "center"
+							}}>
 								<Typography variant="h4">
 									{category.name}
 								</Typography>

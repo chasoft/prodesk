@@ -23,7 +23,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -32,15 +32,35 @@ import { nanoid } from "nanoid"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
-import { CANNED_REPLY_PAGES } from "../../../pages/admin/settings/tickets/canned-reply"
-import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "../../../redux/slices/uiSettings"
-import { useAddCannedReplyMutation, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
-import { SettingsContentActionBar, SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { CODE } from "../../../helpers/constants"
+import TextEditor from "@components/common/TextEditor"
+
+import {
+	useAddCannedReplyMutation,
+	useGetDepartmentsQuery
+} from "@redux/slices/firestoreApi"
+
+import {
+	setActiveSettingPanel,
+	setIsAddNewPanel,
+	setSelectedCrid
+} from "@redux/slices/uiSettings"
+
+import {
+	SettingsContentActionBar,
+	SettingsContentDetails,
+	SettingsContentHeader
+} from "@components/Settings/SettingsPanel"
+
+import { CODE } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+
+import {
+	getAuth,
+	getTextEditor,
+	getUiSettings
+} from "@redux/selectors"
+
+import { TYPE } from "@redux/slices/firestoreApiConstants"
 
 //PROJECT IMPORT
 
@@ -51,23 +71,27 @@ import { CODE } from "../../../helpers/constants"
  *****************************************************************/
 
 const CannedRepliesAddNew = ({ backBtnClick }) => {
+	const dispatch = useDispatch()
 	const { activeSettingPanel } = useSelector(getUiSettings)
-	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
-	console.log({ activeSettingPanel })
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
-	const [department, setDepartment] = useState(
-		(activeSettingPanel !== CANNED_REPLY_PAGES.ADD_NEW_CANNED_REPLY)
-			? activeSettingPanel
-			: ""
-	)
 	const [description, setDescription] = useState("")
-	const { editorData } = useSelector(getTextEditor)
+	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 
 	const { currentUser } = useSelector(getAuth)
+	const { editorData } = useSelector(getTextEditor)
 	const [addCannedReply] = useAddCannedReplyMutation()
 
-	const dispatch = useDispatch()
+	//empty dependency on purpose
+	//we only want to check length of departments only once
+	// useEffect(() => {
+	// 	if (departments.length === 1)
+	// 		setDepartmentId(departments[0].did)
+	// }, [])
 
 	const handleCancel = () => {
 		dispatch(setIsAddNewPanel(false))
@@ -78,9 +102,10 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 		const crid = nanoid()
 		const newCannedReply = {
 			crid,
-			department,
 			description,
+			full: isFullCannedReply,
 			content: editorData,
+			departmentId: activeSettingPanel,
 			createdBy: currentUser.username,
 			updatedBy: currentUser.username,
 			createdAt: dayjs().valueOf(),
@@ -91,7 +116,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 		reduxBatch(() => {
 			dispatch(setIsAddNewPanel(false))
 			dispatch(setSelectedCrid(""))
-			dispatch(setActiveSettingPanel(department))
+			// dispatch(setActiveSettingPanel(departmentId))
 		})
 
 		const res = await addCannedReply(newCannedReply)
@@ -111,7 +136,22 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 	return (
 		<>
-			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
+			<SettingsContentHeader
+				backBtnOnClick={() => backBtnClick(false)}
+				rightButton={
+					<FormControlLabel
+						control={
+							<Switch
+								checked={isFullCannedReply}
+								onChange={() => setIsFullCannedReply(p => !p)}
+								name="full-canned-reply"
+								color="primary"
+							/>
+						}
+						label={isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
+					/>
+				}
+			>
 				New canned reply
 			</SettingsContentHeader>
 
@@ -136,9 +176,10 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						<Select
 							id="department-select"
 							label="Department"
-							value={department}
+							value={activeSettingPanel}
 							onChange={(e) => {
-								setDepartment(e.target.value)
+								// setDepartmentId(e.target.value)
+								dispatch(setActiveSettingPanel(e.target.value))
 							}}
 						>
 							{departments.map((department) => (
@@ -146,7 +187,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 									key={department.did}
 									value={department.did}
 								>
-									{department.department}
+									{department.name}
 								</MenuItem>
 							))}
 						</Select>
@@ -165,7 +206,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 					/>
 				</Box>
 
-				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #FAFAFA" }}>
+				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #F0F0F0" }}>
 					<TextEditor defaultValue="" />
 				</Box>
 
@@ -183,8 +224,7 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 				<Button
 					variant="contained" color="primary"
 					disabled={
-						(department === "")
-						|| (description === "")
+						(description === "")
 						|| (trim(editorData) === "")
 						|| (trim(editorData) === "\\")
 					}

@@ -31,13 +31,16 @@ import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "./../../redux/selectors"
-import { loginSuccess } from "../../redux/slices/auth"
-import { REDIRECT_URL } from "../../helpers/constants"
-import { RegContainer } from "./../../layout/RegLayout"
-import { setRedirect } from "../../redux/slices/redirect"
-import { SimpleTogglePanel, DefaultAvatarPanel } from "./../common"
-import { useSignUpCreateProfileMutation } from "../../redux/slices/firestoreApi"
+import { getAuth } from "@redux/selectors"
+import { setRedirect } from "@redux/slices/redirect"
+import { loginSuccess } from "@redux/slices/auth"
+import { useSignUpCreateProfileMutation } from "@redux/slices/firestoreApi"
+
+import { REDIRECT_URL } from "@helpers/constants"
+
+import { RegContainer } from "@layout/RegLayout"
+
+import { SimpleTogglePanel, DefaultAvatarPanel } from "@components/common"
 
 /*****************************************************************
  * INIT                                                          *

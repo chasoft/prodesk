@@ -35,7 +35,7 @@ import { Box, Grid, Button, Typography, Dialog, useMediaQuery, DialogTitle, Dial
 // import { useFormik } from "formik"
 
 //PROJECT IMPORT
-import { useGetAllFiles } from "./../../helpers/firebase-storage"
+import { useGetAllFiles } from "@helpers/firebase-storage"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"

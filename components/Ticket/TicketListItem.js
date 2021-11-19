@@ -35,15 +35,32 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth, getUiSettings } from "../../redux/selectors"
-import { setRedirect } from "../../redux/slices/redirect"
-import { DATE_FORMAT, PRIORITY, REDIRECT_URL } from "../../helpers/constants"
-import { TicketCategory, TicketDepartment, TicketReplyCount, TicketStatus, TicketCreatedBy, TicketUser } from "./AdminTicketListItem"
+import { getStaffInCharge } from "@helpers/utils"
+import { setRedirect } from "@redux/slices/redirect"
+
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
+
+import {
+	DATE_FORMAT,
+	PRIORITY,
+	REDIRECT_URL
+} from "@helpers/constants"
+
+import {
+	TicketCategory,
+	TicketCreatedBy,
+	TicketDepartment,
+	TicketReplyCount,
+	TicketStatus,
+	TicketUser
+} from "@components/Ticket/AdminTicketListItem"
 
 //ASSETS
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
-import { getStaffInCharge } from "../../helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -262,10 +279,10 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 								status={ticket.status}
 							/>
 							<TicketDepartment
-								department={ticket.department}
+								departmentId={ticket.departmentId}
 							/>
 							<TicketCategory
-								department={ticket.department}
+								departmentId={ticket.departmentId}
 								category={ticket.category}
 								subCategory={ticket.subCategory}
 							/>

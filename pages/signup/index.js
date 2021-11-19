@@ -25,7 +25,7 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { LoginLink, Logo } from "@common"
+import { LoginLink, Logo } from "@components/common"
 import SignupForm from "@components/Signup/SignupForm"
 import { GuestOnly } from "@components/AuthCheck"
 import { getLayout, TopLine } from "@layout/RegLayout"

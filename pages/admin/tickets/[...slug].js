@@ -34,10 +34,10 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
-import TicketContent from "@components/ticket/TicketContent"
+import TicketContent from "@components/Ticket/TicketContent"
 import { REDIRECT_URL } from "@helpers/constants"
-import TicketReplies from "@components/ticket/TicketReplies"
-import TicketActionButtons from "@components/ticket/TicketCloseReplyButtons"
+import TicketReplies from "@components/Ticket/TicketReplies"
+import TicketActionButtons from "@components/Ticket/TicketCloseReplyButtons"
 import { useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
 import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcrumbs"
 
@@ -57,9 +57,11 @@ import ErrorIcon from "@mui/icons-material/Error"
 function AdminSingleTicket() {
 	const router = useRouter()
 	const { slug } = router.query
-	console.log({ slug })
-	//
-	const { data: tickets, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+
+	const {
+		data: tickets = [],
+		isLoading: isLoadingTickets
+	} = useGetTicketsForAdminQuery(undefined)
 
 	useUiSettings({
 		title: "Title",
@@ -68,12 +70,7 @@ function AdminSingleTicket() {
 		}
 	})
 
-	/*[bug] When nagivate to other page,
-	useRouter would return undefined,
-	just before getting out, we would have error,
-	then, solution is to return null
-	(render nothing in this case) */
-	if (!slug) return null
+	if (router.isFallback) return null
 
 	//tickets = {tid: {}, tid: {}}
 	const ticket = tickets ? tickets[slug[1]] : undefined
@@ -136,16 +133,7 @@ function AdminSingleTicket() {
 			{(isLoadingTickets === false && ticket !== undefined)
 				? <>
 					<TicketContent ticket={ticket} />
-					<TicketReplies
-						tid={ticket.tid}
-						status={ticket.status}
-						username={ticket.username}
-						staffInCharge={ticket.staffInCharge}
-						replyCount={ticket.replyCount}
-						slug={ticket.slug}
-						subject={ticket.subject}
-						department={ticket.department}
-					/>
+					<TicketReplies ticket={ticket} />
 					<TicketActionButtons ticket={ticket} />
 				</>
 				: null}

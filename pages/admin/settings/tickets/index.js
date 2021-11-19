@@ -31,9 +31,11 @@ import { useRouter } from "next/router"
 
 function TicketSettings() {
 	const router = useRouter()
+
 	useEffect(() => {
 		router.push("/admin/settings/tickets/department")
 	})
+
 	return null
 }
 

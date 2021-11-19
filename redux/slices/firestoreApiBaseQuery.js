@@ -913,7 +913,8 @@ async function fireStoreBaseQuery(args) {
 					doc(db, COLLECTION.SETTINGS, "canned-replies"),
 					{
 						[args.body.crid]: args.body
-					}
+					},
+					{ merge: true }
 				)
 				return {
 					data: {

@@ -22,17 +22,21 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Box } from "@mui/material"
 import React from "react"
+
+// MATERIAL-UI
+import { Container, Box } from "@mui/material"
 
 //THIRD-PARTY
 // import { useDispatch } from "react-redux"
 import { isMobile } from "react-device-detect"
 
 //PROJECT IMPORT
-import TicketList from "@components/ticket/TicketList"
+import TicketList from "@components/Ticket/TicketList"
+import TicketFilters from "@components/Ticket/TicketFilters"
+
 import { getLayout } from "@layout/ClientLayout"
-import TicketFilters from "@components/ticket/TicketFilters"
+
 import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS

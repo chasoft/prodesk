@@ -26,24 +26,27 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
-
-//PROJECT IMPORT
+import { List, ListItemButton, ListItemIcon, ListItemText, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { setSelectedCrid } from "../../../redux/slices/uiSettings"
+import { DATE_FORMAT } from "@helpers/constants"
+import { setSelectedCrid } from "@redux/slices/uiSettings"
 
 //ASSETS
-import FlashOnIcon from "@mui/icons-material/FlashOn"
+import Battery30Icon from "@mui/icons-material/Battery30"
+import BatteryFullIcon from "@mui/icons-material/BatteryFull"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const CannedRepliesList = ({ cannedReplies }) => {
+	dayjs.extend(relativeTime)
 	const dispatch = useDispatch()
 	return (
 		<List sx={{
@@ -52,18 +55,36 @@ const CannedRepliesList = ({ cannedReplies }) => {
 			borderBottomLeftRadius: 8,
 			borderBottomRightRadius: 8,
 		}}>
-			{cannedReplies?.map((item) => (
+			{cannedReplies?.map((cannedReply) => (
 
 				<ListItemButton
-					key={item.crid}
-					onClick={() => dispatch(setSelectedCrid(item.crid))}
+					key={cannedReply.crid}
+					onClick={() => dispatch(setSelectedCrid(cannedReply.crid))}
 				>
 					<ListItemIcon>
-						<FlashOnIcon sx={{ flexGrow: 1 }} />
+						{cannedReply.full
+							? <Tooltip arrow title="Full canned-reply" placement="top">
+								<BatteryFullIcon sx={{ flexGrow: 1, fill: (theme) => theme.palette.primary.light }} />
+							</Tooltip>
+							: <Tooltip arrow title="Partial canned-reply" placement="top">
+								<Battery30Icon sx={{ flexGrow: 1, fill: (theme) => theme.palette.info.light }} />
+							</Tooltip>}
 					</ListItemIcon>
 					<ListItemText
-						primary={item.description}
-						secondary={item.content.substring(0, 70)}
+						primary={cannedReply.description}
+						secondary={
+							<>
+								{cannedReply.content.substring(0, 70)}
+								<span style={{
+									display: "block",
+									marginTop: "6px",
+									fontSize: "0.75rem"
+								}}>
+									Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+									<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
+								</span>
+							</>
+						}
 						primaryTypographyProps={{
 							variant: "h4",
 							marginBottom: "0"

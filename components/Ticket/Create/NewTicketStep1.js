@@ -32,8 +32,8 @@ import { TextField } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getNewTicket } from "./../../../redux/selectors"
-import { setSubject } from "./../../../redux/slices/newTicket"
+import { setSubject } from "@redux/slices/newTicket"
+import { getNewTicket } from "@redux/selectors"
 
 //ASSETS
 

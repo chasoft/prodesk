@@ -37,13 +37,32 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getStaffInCharge } from "../../helpers/utils"
-import { setRedirect } from "../../redux/slices/redirect"
-import { getAuth, getUiSettings } from "../../redux/selectors"
-import useGetProfileByUsername from "../../helpers/useGetProfileByUsername"
-import { useGetDepartmentsQuery, useGetLabelsQuery, useUpdateTicketMutation } from "../../redux/slices/firestoreApi"
-import { DATE_FORMAT, PRIORITY, REDIRECT_URL, STATUS_FILTER, TICKET_STATUS } from "../../helpers/constants"
-import { setSelectedTickets, setSelectedStatusRaw, setFilteredByLabel, setFilteredByPriority, setFilteredByDepartment } from "../../redux/slices/uiSettings"
+import { getStaffInCharge } from "@helpers/utils"
+import { setRedirect } from "@redux/slices/redirect"
+import { getAuth, getUiSettings } from "@redux/selectors"
+import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
+
+import {
+	DATE_FORMAT,
+	PRIORITY,
+	REDIRECT_URL,
+	STATUS_FILTER,
+	TICKET_STATUS
+} from "@helpers/constants"
+
+import {
+	useGetDepartmentsQuery,
+	useGetLabelsQuery,
+	useUpdateTicketMutation
+} from "@redux/slices/firestoreApi"
+
+import {
+	setFilteredByDepartment,
+	setFilteredByLabel,
+	setFilteredByPriority,
+	setSelectedStatusRaw,
+	setSelectedTickets
+} from "@redux/slices/uiSettings"
 
 //ASSETS
 import { CheckBoxNewIcon } from "../svgIcon"
@@ -343,7 +362,7 @@ TicketPriority.propTypes = {
 	callback: PropTypes.func
 }
 
-export const TicketDepartment = ({ department: departmentId }) => {
+export const TicketDepartment = ({ departmentId }) => {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery()
 
@@ -351,7 +370,7 @@ export const TicketDepartment = ({ department: departmentId }) => {
 
 	const department = departments.find(
 		department => department.did === departmentId
-	)?.department ?? "<Empty>"
+	)?.name ?? "<Empty>"
 
 	return (
 		<Tooltip arrow title="Department" placement="top">
@@ -369,10 +388,10 @@ export const TicketDepartment = ({ department: departmentId }) => {
 	)
 }
 TicketDepartment.propTypes = {
-	department: PropTypes.string.isRequired,
+	departmentId: PropTypes.string.isRequired,
 }
 
-export const TicketCategory = ({ department, category, subCategory }) => {
+export const TicketCategory = ({ departmentId, category, subCategory }) => {
 	const dispatch = useDispatch()
 	if (!category) return null
 	const subText = subCategory
@@ -386,14 +405,14 @@ export const TicketCategory = ({ department, category, subCategory }) => {
 				sx={{ mr: 1, mb: 0.5 }}
 				onClick={(e) => {
 					e.stopPropagation()
-					dispatch(setFilteredByDepartment(department))
+					dispatch(setFilteredByDepartment(departmentId))
 				}}
 			/>
 		</Tooltip>
 	)
 }
 TicketCategory.propTypes = {
-	department: PropTypes.string.isRequired,
+	departmentId: PropTypes.string.isRequired,
 	category: PropTypes.string.isRequired,
 	subCategory: PropTypes.string,
 }
@@ -607,10 +626,10 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							flexWrap: "wrap"
 						}}>
 							<TicketStatus status={ticket.status} />
-							<TicketDepartment department={ticket.department} />
+							<TicketDepartment departmentId={ticket.departmentId} />
 
 							<TicketCategory
-								department={ticket.department}
+								departmentId={ticket.departmentId}
 								category={ticket.category}
 								subCategory={ticket.subCategory}
 							/>

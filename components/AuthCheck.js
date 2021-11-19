@@ -31,10 +31,21 @@ import { CircularProgress } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { regAdminURL } from "./../helpers/regex"
-import { getAuth, getRedirect } from "./../redux/selectors"
-import { clearRedirect, clearRedirectAfterLoginURL, setRedirect, setRedirectAfterLoginURL } from "./../redux/slices/redirect"
-import { PRIORITY_URLS, REDIRECT_URL, USERGROUP } from "./../helpers/constants"
+import { regAdminURL } from "@helpers/regex"
+import { getAuth, getRedirect } from "@redux/selectors"
+
+import {
+	PRIORITY_URLS,
+	REDIRECT_URL,
+	USERGROUP
+} from "@helpers/constants"
+
+import {
+	clearRedirect,
+	clearRedirectAfterLoginURL,
+	setRedirect,
+	setRedirectAfterLoginURL
+} from "@redux/slices/redirect"
 
 //ASSETS
 

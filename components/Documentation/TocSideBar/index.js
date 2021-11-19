@@ -59,7 +59,7 @@ const HiddenBgFixBug = () => <Box sx={{
 	left: 0,
 	minWidth: "700px",
 	height: "100%",
-	backgroundColor: "#FAFAFA",
+	backgroundColor: "#F0F0F0",
 	...(open ?
 		{
 			opacity: 1,
@@ -130,7 +130,7 @@ const TocSideBar = () => {
 					pl: 2,
 					borderRight: "1px solid transparent",
 					borderColor: "divider",
-					backgroundColor: "#FAFAFA",
+					backgroundColor: "#F0F0F0",
 					zIndex: 10
 				}}
 			>

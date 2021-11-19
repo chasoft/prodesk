@@ -80,7 +80,7 @@ function TicketSettingsCannedReply() {
 	} = useSelector(getUiSettings)	// used to keep selected canned-replies group (aka department)
 
 	const {
-		data: departments,
+		data: departments = [],
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
@@ -104,7 +104,16 @@ function TicketSettingsCannedReply() {
 	}
 
 	const handleAddNewCannedReply = () => {
-		dispatch(setIsAddNewPanel(true))
+		//if there is currently only 1 department,
+		//then, just select it automatically
+		if (departments.length === 1) {
+			reduxBatch(() => {
+				dispatch(setIsAddNewPanel(true))
+				dispatch(setActiveSettingPanel(departments[0].did))
+			})
+		} else {
+			dispatch(setIsAddNewPanel(true))
+		}
 		setShowContent(true)
 	}
 
@@ -115,7 +124,11 @@ function TicketSettingsCannedReply() {
 					Canned Replies
 				</Typography>
 				<Button
-					variant="contained" color="primary" size="small" startIcon={<AddIcon />}
+					size="small"
+					color="primary"
+					variant="contained"
+					startIcon={<AddIcon />}
+					disabled={departments.length === 0}
 					onClick={handleAddNewCannedReply}
 				>
 					Add New
@@ -145,19 +158,19 @@ function TicketSettingsCannedReply() {
 						}}>
 							<CircularProgress />
 						</Box>
-						: departments.map((item) => (
+						: departments.map((department) => (
 							<ListItem
-								key={item.did}
+								key={department.did}
 								icon={<QuickreplyIcon fontSize="small" />}
-								selected={activeSettingPanel === item.did}
-								onClick={() => handleShowCannedRepliesGroup(item)}
+								selected={activeSettingPanel === department.did}
+								onClick={() => handleShowCannedRepliesGroup(department)}
 							>
-								{item.department}
+								{department.name}
 								<Typography variant="caption" sx={{
 									display: "block",
 									mt: -1
 								}}>
-									{item.description}
+									{department.description}
 								</Typography>
 							</ListItem>
 						))}
@@ -166,16 +179,21 @@ function TicketSettingsCannedReply() {
 
 				<SettingsContent showContent={showContent}>
 
-					{(activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW
-						&& isAddNewPanel === false)
-						&& <CannedRepliesOverview backBtnClick={setShowContent} />}
+					{(activeSettingPanel === CANNED_REPLY_PAGES.OVERVIEW && isAddNewPanel === false) &&
+						<CannedRepliesOverview
+							departmentCreated={departments.length > 0}
+							backBtnClick={setShowContent}
+						/>}
 
-					{((activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || hasSelectedGroup)
-						&& isAddNewPanel === false)
-						&& <CannedRepliesGroup backBtnClick={setShowContent} />}
+					{((activeSettingPanel === CANNED_REPLY_PAGES.GENERAL_GROUP || hasSelectedGroup) && isAddNewPanel === false) &&
+						<CannedRepliesGroup
+							backBtnClick={setShowContent}
+						/>}
 
-					{(isAddNewPanel === true)
-						&& <CannedRepliesAddNew backBtnClick={setShowContent} />}
+					{(isAddNewPanel === true) &&
+						<CannedRepliesAddNew
+							backBtnClick={setShowContent}
+						/>}
 
 				</SettingsContent>
 
