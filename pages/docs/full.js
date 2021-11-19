@@ -31,10 +31,10 @@ import { Box, Container, Grid } from "@mui/material"
 // import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import Banner from "./../../components/widget/Banner"
-import useUiSettings from "./../../helpers/useUiSettings"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
-import ListAllCategories from "./../../components/Category/ListAllCategories"
+import Banner from "@components/widget/Banner"
+import useUiSettings from "@helpers/useUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
+import ListAllCategories from "@components/Category/ListAllCategories"
 
 
 /*****************************************************************

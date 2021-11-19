@@ -25,10 +25,10 @@
 import React from "react"
 
 //PROJECT IMPORT
-import AuthCheck from "./../../components/AuthCheck"
-import { LoginLink, Logo } from "./../../components/common"
-import { getLayout, TopLine } from "./../../layout/RegLayout"
-import SocialLoginForm from "./../../components/Signup/SocialLoginForm"
+import { LoginLink, Logo } from "@common"
+import AuthCheck from "@components/AuthCheck"
+import SocialLoginForm from "@components/Signup/SocialLoginForm"
+import { getLayout, TopLine } from "@layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

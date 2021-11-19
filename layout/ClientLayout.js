@@ -32,15 +32,15 @@ import { Box, useMediaQuery } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import Footer from "@components/common/Footer"
+import Header from "@components/BackEnd/Header"
+import SideBar from "@components/BackEnd/SideBar"
 import { getRootLayout } from "./RootLayout"
-import AuthCheck from "./../components/AuthCheck"
-import Footer from "./../components/common/Footer"
-import Header from "./../components/BackEnd/Header"
-import { getUiSettings } from "./../redux/selectors"
-import SideBar from "./../components/BackEnd/SideBar"
-import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
-import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
-import { setIsSmallScreen } from "./../redux/slices/uiSettings"
+import AuthCheck from "@components/AuthCheck"
+import { getUiSettings } from "@redux/selectors"
+import { setIsSmallScreen } from "@redux/slices/uiSettings"
+import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
+import usePrefetchImmediately from "@helpers/usePrefetchImmediately"
 
 //ASSETS
 

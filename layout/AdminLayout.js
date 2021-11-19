@@ -33,15 +33,15 @@ import useMediaQuery from "@mui/material/useMediaQuery"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import Footer from "@components/common/Footer"
+import Header from "@components/BackEnd/Header"
+import SideBar from "@components/BackEnd/SideBar"
 import { getRootLayout } from "./RootLayout"
-import AuthCheck from "./../components/AuthCheck"
-import Footer from "./../components/common/Footer"
-import Header from "./../components/BackEnd/Header"
-import { getUiSettings } from "./../redux/selectors"
-import SideBar from "./../components/BackEnd/SideBar"
-import { MENU_ITEM_TYPE, REDIRECT_URL } from "./../helpers/constants"
-import { setIsSmallScreen } from "./../redux/slices/uiSettings"
-import usePrefetchImmediately from "../helpers/usePrefetchImmediately"
+import AuthCheck from "@components/AuthCheck"
+import { getUiSettings } from "@redux/selectors"
+import { setIsSmallScreen } from "@redux/slices/uiSettings"
+import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
+import usePrefetchImmediately from "@helpers/usePrefetchImmediately"
 
 //ASSETS
 

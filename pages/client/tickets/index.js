@@ -30,10 +30,10 @@ import React from "react"
 import { isMobile } from "react-device-detect"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import TicketList from "../../../components/Ticket/TicketList"
-import TicketFilters from "../../../components/Ticket/TicketFilters"
+import TicketList from "@components/ticket/TicketList"
+import { getLayout } from "@layout/ClientLayout"
+import TicketFilters from "@components/ticket/TicketFilters"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
 

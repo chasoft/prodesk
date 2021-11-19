@@ -30,21 +30,21 @@ import React, { useEffect, useState } from "react"
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDeepCompareEffect } from "react-use"
+import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
+import { useDeepCompareEffect } from "react-use"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import UserIcon from "./UserIcon"
 import NotificationDrawer from "./NotificationDrawer"
-import { setShowSideBar } from "./../../redux/slices/uiSettings"
-import { useNotifications } from "../../helpers/realtimeApi"
-import { getAuth, getPageMeta, getUiSettings } from "./../../redux/selectors"
+import { useNotifications } from "@helpers/realtimeApi"
+import { setShowSideBar } from "@redux/slices/uiSettings"
+import { getAuth, getPageMeta, getUiSettings } from "@redux/selectors"
 
 //ASSETS
 import MenuIcon from "@mui/icons-material/Menu"
 import NotificationsIcon from "@mui/icons-material/Notifications"
-import { useSnackbar } from "notistack"
 
 /*****************************************************************
  * INIT                                                          *

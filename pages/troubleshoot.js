@@ -27,10 +27,10 @@ import { Container, Grid } from "@mui/material"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import ListTroubleshoot from "./../components/Category/ListTroubleshoot"
-import { getLayout, FRONT_PAGE_TABS_NAME } from "./../layout/EntryLayout"
-import AskNowFrame from "./../components/Docs/AskNowFrame"
-import useUiSettings from "./../helpers/useUiSettings"
+import useUiSettings from "@helpers/useUiSettings"
+import AskNowFrame from "@components/Docs/AskNowFrame"
+import ListTroubleshoot from "@components/Category/ListTroubleshoot"
+import { getLayout, FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *

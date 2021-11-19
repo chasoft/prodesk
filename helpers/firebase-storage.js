@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { getAuth } from "./../redux/selectors"
+import { getAuth } from "@redux/selectors"
 import { storage } from "./firebase"
 
 /**

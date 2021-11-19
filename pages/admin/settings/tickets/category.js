@@ -32,14 +32,14 @@ import { some } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "./../../../../redux/selectors"
-import useUiSettings from "./../../../../helpers/useUiSettings"
-import { setActiveSettingPanel } from "./../../../../redux/slices/uiSettings"
-import CategoriesAddNew from "./../../../../components/Settings/Tickets/CategoriesAddNew"
-import CategoriesDetails from "./../../../../components/Settings/Tickets/CategoriesDetails"
-import CategoriesOverview from "./../../../../components/Settings/Tickets/CategoriesOverview"
-import { getLayout, TICKET_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "./../../../../components/Settings/SettingsPanel"
+import { getUiSettings } from "@redux/selectors"
+import useUiSettings from "@helpers/useUiSettings"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import CategoriesAddNew from "@components/Settings/Tickets/CategoriesAddNew"
+import CategoriesDetails from "@components/Settings/Tickets/CategoriesDetails"
+import CategoriesOverview from "@components/Settings/Tickets/CategoriesOverview"
+import { getLayout, TICKET_SETTINGS_NAMES } from "@components/Settings/InnerLayoutTickets"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"

@@ -23,25 +23,25 @@
  *****************************************************************/
 
 import React, { useEffect } from "react"
-import useUiSettings from "./../../../helpers/useUiSettings"
 
 // MATERIAL-UI
 import { Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { batch as reduxBatch, useDispatch } from "react-redux"
-import TicketStepper from "../../../components/Ticket/Create/NewTicketStepper"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/ClientLayout"
-import { resetNewTicket } from "../../../redux/slices/newTicket"
-import { setEditorData } from "../../../redux/slices/textEditor"
-import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
+import { getLayout } from "@layout/ClientLayout"
+import { REDIRECT_URL } from "@helpers/constants"
+import useUiSettings from "@helpers/useUiSettings"
+import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
+import { resetNewTicket } from "@redux/slices/newTicket"
+import { setEditorData } from "@redux/slices/textEditor"
+import TicketStepper from "@components/ticket/Create/NewTicketStepper"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
-import { REDIRECT_URL } from "../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *

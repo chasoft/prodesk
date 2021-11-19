@@ -30,8 +30,8 @@ import { Container, Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
 

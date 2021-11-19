@@ -32,19 +32,19 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/AdminLayout"
-import useUiSettings from "../../../helpers/useUiSettings"
-import TicketContent from "../../../components/Ticket/TicketContent"
-import { REDIRECT_URL } from "../../../helpers/constants"
-import TicketReplies from "../../../components/Ticket/TicketReplies"
-import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
-import { useGetTicketsForAdminQuery } from "../../../redux/slices/firestoreApi"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
+import TicketContent from "@components/ticket/TicketContent"
+import { REDIRECT_URL } from "@helpers/constants"
+import TicketReplies from "@components/ticket/TicketReplies"
+import TicketActionButtons from "@components/ticket/TicketCloseReplyButtons"
+import { useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
+import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import ErrorIcon from "@mui/icons-material/Error"
-import TicketActionButtons from "../../../components/Ticket/TicketCloseReplyButtons"
 
 /*****************************************************************
  * INIT                                                          *

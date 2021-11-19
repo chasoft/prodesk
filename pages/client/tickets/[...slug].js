@@ -33,20 +33,20 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../../redux/selectors"
-import { getLayout } from "../../../layout/ClientLayout"
-import useUiSettings from "../../../helpers/useUiSettings"
-import { REDIRECT_URL } from "../../../helpers/constants"
-import TicketReplies from "../../../components/Ticket/TicketReplies"
-import TicketContent from "../../../components/Ticket/TicketContent"
-import { useGetTicketsForUserQuery } from "../../../redux/slices/firestoreApi"
-import TicketActionButtons from "../../../components/Ticket/TicketCloseReplyButtons"
-import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
+import { getAuth } from "@redux/selectors"
+import { getLayout } from "@layout/ClientLayout"
+import { REDIRECT_URL } from "@helpers/constants"
+import TicketReplies from "@components/ticket/TicketReplies"
+import TicketContent from "@components/ticket/TicketContent"
+import useUiSettings from "@helpers/useUiSettings"
+import TicketActionButtons from "@components/ticket/TicketCloseReplyButtons"
+import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
+import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
-import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import ErrorIcon from "@mui/icons-material/Error"
+import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 
 /*****************************************************************
  * INIT                                                          *

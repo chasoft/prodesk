@@ -18,8 +18,8 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+import { PRIORITY } from "@helpers/constants"
 import { createSlice } from "@reduxjs/toolkit"
-import { PRIORITY } from "../../helpers/constants"
 
 export const initialState = {
 	currentStep: 0,

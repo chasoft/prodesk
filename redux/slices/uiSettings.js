@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { GROUPBY, PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "./../../helpers/constants"
+import { GROUPBY, PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "@helpers/constants"
 
 const defaultBackground = {
 	top: 0,

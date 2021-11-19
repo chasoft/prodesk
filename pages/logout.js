@@ -29,8 +29,8 @@ import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { ReduxRedirect } from "./../components/AuthCheck"
-import { signOut } from "./../helpers/firebase/logout"
+import { signOut } from "@helpers/firebase/logout"
+import { ReduxRedirect } from "@components/AuthCheck"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

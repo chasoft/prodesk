@@ -4,9 +4,9 @@ import React from "react"
 // import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import Doc from "../../components/Doc"
-import useUiSettings from "./../../helpers/useUiSettings"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
+import Doc from "@components/Doc"
+import useUiSettings from "@helpers/useUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
 
 /*****************************************************************
  * INIT                                                          *

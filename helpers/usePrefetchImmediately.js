@@ -27,7 +27,7 @@ import { useEffect } from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { firestoreApi } from "../redux/slices/firestoreApi"
+import { firestoreApi } from "@redux/slices/firestoreApi"
 import { useDispatch } from "react-redux"
 
 /*****************************************************************

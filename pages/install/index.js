@@ -34,10 +34,10 @@ import { Button, Typography } from "@mui/material"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { Logo } from "./../../components/common"
+import { Logo } from "@components/common"
+import { REDIRECT_URL } from "@helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
+import { setRedirect } from "@redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

@@ -32,10 +32,10 @@ import dayjs from "dayjs"
 import { keyBy } from "lodash"
 
 //PROJECT IMPORT
-import { auth, db } from "./../../helpers/firebase"
+import { auth, db } from "@helpers/firebase"
 import { ACTIONS, COLLECTION, GROUP } from "./firestoreApiConstants"
-import { CODE, DOC_TYPE, USERGROUP, REDIRECT_URL } from "./../../helpers/constants"
-import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "../../helpers/firebase/user"
+import { CODE, DOC_TYPE, USERGROUP, REDIRECT_URL } from "@helpers/constants"
+import { getUserProfile, getUserProfileByUsername, isUsernameAvailable } from "@helpers/firebase/user"
 
 /*****************************************************************
  * INIT                                                          *

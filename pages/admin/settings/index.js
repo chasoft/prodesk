@@ -25,26 +25,16 @@
 import React from "react"
 
 // MATERIAL-UI
-import {
-	Avatar,
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
-	Container,
-	IconButton,
-	Typography,
-} from "@mui/material"
+import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Container, IconButton, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import useUiSettings from "./../../../helpers/useUiSettings"
 
 
 /*****************************************************************

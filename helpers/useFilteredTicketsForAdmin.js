@@ -31,10 +31,10 @@ import { filter, findIndex, groupBy, orderBy, pickBy } from "lodash"
 
 //PROJECT IMPORT
 import useUserSettings from "./useUserSettings"
-import { getAuth, getUiSettings } from "../redux/selectors"
-import { useGetDepartmentsQuery, useGetTicketsForAdminQuery } from "../redux/slices/firestoreApi"
+import { getAuth, getUiSettings } from "@redux/selectors"
+import { useGetDepartmentsQuery, useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
 import { SETTINGS_NAME, STATUS_FILTER, TICKET_INBOXES } from "./constants"
-import { setTicketCounter } from "../redux/slices/uiSettings"
+import { setTicketCounter } from "@redux/slices/uiSettings"
 import { getStaffInCharge } from "./utils"
 
 /*****************************************************************

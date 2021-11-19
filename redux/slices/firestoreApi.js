@@ -30,8 +30,8 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 //PROJECT IMPORT
 import { ACTIONS, TYPE } from "./firestoreApiConstants"
 import fireStoreBaseQuery from "./firestoreApiBaseQuery"
-import { fix_datetime_list, fix_datetime_single } from "./../../helpers/firebase"
-import { STATUS_FILTER } from "../../helpers/constants"
+import { fix_datetime_list, fix_datetime_single } from "@helpers/firebase"
+import { STATUS_FILTER } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *

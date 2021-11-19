@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
+import { useGetProfilesQuery } from "@redux/slices/firestoreApi"
 
 //THIRD-PARTY
 

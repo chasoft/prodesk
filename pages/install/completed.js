@@ -35,13 +35,13 @@ import { once } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "../../redux/selectors"
-import { Logo } from "./../../components/common"
+import { Logo } from "@common"
+import { getAuth } from "@redux/selectors"
+import { loginSuccess } from "@redux/slices/auth"
+import { REDIRECT_URL } from "@helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
-import { loginSuccess } from "../../redux/slices/auth"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { setRedirect } from "../../redux/slices/redirect"
-import { useFinalizeInstallationMutation } from "./../../redux/slices/firestoreApi"
+import { setRedirect } from "@redux/slices/redirect"
+import { useFinalizeInstallationMutation } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

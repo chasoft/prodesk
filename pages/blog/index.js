@@ -30,8 +30,8 @@ import { Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../../layout/EntryLayout"
-import useUiSettings from "../../helpers/useUiSettings"
+import useUiSettings from "@helpers/useUiSettings"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
 
 //ASSETS
 

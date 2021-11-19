@@ -37,12 +37,12 @@ import { useSnackbar } from "notistack"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { Logo } from "./../../components/common"
-import { REDIRECT_URL } from "./../../helpers/constants"
+import { Logo } from ".@components/common"
+import { loginTemp } from "@redux/slices/auth"
+import { REDIRECT_URL } from "@helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
-import { loginTemp } from "../../redux/slices/auth"
-import { setRedirect } from "../../redux/slices/redirect"
-import { useCreateAdminAccountMutation } from "./../../redux/slices/firestoreApi"
+import { setRedirect } from "@redux/slices/redirect"
+import { useCreateAdminAccountMutation } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

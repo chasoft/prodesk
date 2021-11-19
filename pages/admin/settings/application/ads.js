@@ -30,8 +30,8 @@ import { Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "./../../../../components/Settings/InnerLayoutSettings"
-import useUiSettings from "./../../../../helpers/useUiSettings"
+import useUiSettings from "@helpers/useUiSettings"
+import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
 
 //ASSETS
 

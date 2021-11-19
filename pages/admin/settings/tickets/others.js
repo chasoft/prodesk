@@ -32,19 +32,19 @@ import { Chip, Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "../../../../redux/selectors"
-import useUiSettings from "../../../../helpers/useUiSettings"
-import { setActiveSettingPanel } from "../../../../redux/slices/uiSettings"
-import { getLayout, TICKET_SETTINGS_NAMES } from "../../../../components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "../../../../components/Settings/SettingsPanel"
+import { getUiSettings } from "@redux/selectors"
+import PageLabels from "@components/Settings/Tickets/Labels"
+import useUiSettings from "@helpers/useUiSettings"
+import { STATUS_FILTER } from "@helpers/constants"
+import { TicketStatus } from "@components/ticket/AdminTicketListItem"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import { getLayout, TICKET_SETTINGS_NAMES } from "@components/Settings/InnerLayoutTickets"
+import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
 import LabelIcon from "@mui/icons-material/Label"
 import DoneAllIcon from "@mui/icons-material/DoneAll"
-import PageLabels from "../../../../components/Settings/Tickets/Labels"
-import { STATUS_FILTER } from "../../../../helpers/constants"
-import { TicketStatus } from "../../../../components/Ticket/AdminTicketListItem"
 
 /*****************************************************************
  * INIT                                                          *

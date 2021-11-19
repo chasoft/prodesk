@@ -36,10 +36,10 @@ import { useSelector } from "react-redux"
 
 
 //PROJECT IMPORT
-import Footer from "./../../components/common/Footer"
-import { getAuth } from "../../redux/selectors"
-import { ReduxRedirect } from "./../../components/AuthCheck"
-import { useGetInstallStatusQuery } from "../../redux/slices/firestoreApi"
+import Footer from "@components/common/Footer"
+import { getAuth } from "@redux/selectors"
+import { ReduxRedirect } from "@components/AuthCheck"
+import { useGetInstallStatusQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

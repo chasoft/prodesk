@@ -25,10 +25,10 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { GuestOnly } from "./../components/AuthCheck"
-import LoginForm from "./../components/Signup/LoginForm"
-import { Logo, SignUpLink } from "./../components/common"
-import { getLayout, TopLine } from "./../layout/RegLayout"
+import LoginForm from "@components/Signup/LoginForm"
+import { Logo, SignUpLink } from "@common"
+import { GuestOnly } from "@components/AuthCheck"
+import { getLayout, TopLine } from "@layout/RegLayout"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

@@ -33,11 +33,11 @@ import { Avatar, Box, CircularProgress, Container, Typography } from "@mui/mater
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import Footer from "@components/common/Footer"
 import { getRootLayout } from "./RootLayout"
-import Footer from "./../components/common/Footer"
-import { getUiSettings } from "./../redux/selectors"
-import { setflexDirection } from "./../redux/slices/uiSettings"
-import { useGetInstallStatusQuery } from "./../redux/slices/firestoreApi"
+import { getUiSettings } from "@redux/selectors"
+import { setflexDirection } from "@redux/slices/uiSettings"
+import { useGetInstallStatusQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

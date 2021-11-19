@@ -30,10 +30,10 @@ import { Box, Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import AdminTicketList from "../../../components/Ticket/AdminTicketList"
-import AdminTicketFilters from "../../../components/Ticket/AdminTicketFilters"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
+import AdminTicketList from "@components/ticket/AdminTicketList"
+import AdminTicketFilters from "@components/ticket/AdminTicketFilters"
 
 //ASSETS
 

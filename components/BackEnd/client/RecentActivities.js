@@ -18,10 +18,9 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-
 import React from "react"
+import DocsList from "@components/common/DocsList"
 import { Box, Grid, Typography } from "@mui/material"
-import DocsList from "../../common/DocsList"
 
 /*****************************************************************
  * INIT                                                          *

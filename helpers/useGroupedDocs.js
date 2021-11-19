@@ -29,7 +29,7 @@ import { usePrevious } from "react-use"
 import { forEach, groupBy, isEqual, sortBy } from "lodash"
 
 //PROJECT IMPORT
-import { useGetDocsQuery } from "../redux/slices/firestoreApi"
+import { useGetDocsQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

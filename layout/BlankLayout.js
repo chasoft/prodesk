@@ -32,9 +32,9 @@ import { Box } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import Footer from "@components/common/Footer"
+import Header from "@components/Themes/Google/Header"
 import { getRootLayout } from "./RootLayout"
-import Footer from "./../components/common/Footer"
-import Header from "./../components/Themes/Google/Header"
 
 /*****************************************************************
  * INIT                                                          *

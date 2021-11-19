@@ -25,10 +25,10 @@
 import React from "react"
 
 //PROJECT IMPORT
-import { Logo } from "./../../components/common"
-import AuthCheck from "./../../components/AuthCheck"
-import InitSurveyForm from "./../../components/Signup/InitSurveyForm"
-import { getLayout, TopLine, useFlexDirection } from "./../../layout/RegLayout"
+import { Logo } from "@components/common/"
+import AuthCheck from "@components/AuthCheck"
+import InitSurveyForm from "@components/Signup/InitSurveyForm"
+import { getLayout, TopLine, useFlexDirection } from "@layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

@@ -39,15 +39,15 @@ import { countBy, forEach, filter, size, orderBy, random, isEqual } from "lodash
 //PROJECT IMPORT
 import useAdmin from "./useAdmin"
 import { realtimeDB } from "./firebase"
-import { getUiSettings } from "./../redux/selectors"
-import { CODE, STATUS_FILTER } from "./../helpers/constants"
-import { useRequestRefetchingMutation } from "../redux/slices/firestoreApi"
+import { getUiSettings } from "@redux/selectors"
+import { CODE, STATUS_FILTER } from "@helpers/constants"
+import { useRequestRefetchingMutation } from "@redux/slices/firestoreApi"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 import VisibilityIcon from "@mui/icons-material/Visibility"
-import { ACTIONS } from "../redux/slices/firestoreApiConstants"
-import { notisLinkBuilder } from "../components/BackEnd/NotificationDrawer"
+import { ACTIONS } from "@redux/slices/firestoreApiConstants"
+import { notisLinkBuilder } from "@components/BackEnd/NotificationDrawer"
 
 /*****************************************************************
  * INIT                                                          *

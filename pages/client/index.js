@@ -31,11 +31,11 @@ import { Box, Container, IconButton, Tooltip, Typography } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
-import useUiSettings from "./../../helpers/useUiSettings"
-import ClientStats from "./../../components/BackEnd/client/ClientStats"
-import RecentActivities from "./../../components/BackEnd/client/RecentActivities"
-import LatestTicketFeedback from "./../../components/BackEnd/client/LatestTicketFeedback"
+import { getLayout } from "@layout/ClientLayout"
+import useUiSettings from "@helpers/useUiSettings"
+import ClientStats from "@components/BackEnd/client/ClientStats"
+import RecentActivities from "@components/BackEnd/client/RecentActivities"
+import LatestTicketFeedback from "@components/BackEnd/client/LatestTicketFeedback"
 
 //ASSETS
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"

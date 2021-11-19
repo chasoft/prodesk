@@ -2,8 +2,8 @@
 import { useDeepCompareEffect } from "react-use"
 
 import { batch as reduxBatch, useDispatch } from "react-redux"
-import { setBackgroundForLoggedinPage, setActiveSettingTab, setActiveSettingPanel } from "../redux/slices/uiSettings"
-import { setTitle, setSubTitle, setPageId } from "../redux/slices/pageMeta"
+import { setTitle, setSubTitle, setPageId } from "@redux/slices/pageMeta"
+import { setBackgroundForLoggedinPage, setActiveSettingTab, setActiveSettingPanel } from "@redux/slices/uiSettings"
 
 /**
  * This hook is used to update UI's Settings

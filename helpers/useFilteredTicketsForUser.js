@@ -31,8 +31,8 @@ import { filter, groupBy, orderBy, pickBy, size } from "lodash"
 
 //PROJECT IMPORT
 import { STATUS_FILTER } from "./constants"
-import { getAuth, getUiSettings } from "./../redux/selectors"
-import { useGetTicketsForUserQuery } from "./../redux/slices/firestoreApi"
+import { getAuth, getUiSettings } from "@redux/selectors"
+import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
 
 //ASSETS
 

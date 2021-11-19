@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	"env": {
 		"browser": true,
 		"es2021": true,
@@ -47,21 +47,11 @@ module.exports = {
 		"import/resolver": {
 			"alias": {
 				"map": [
-					["@hehe", "./a/b/c"],
-					["@redux", "./redux/*"],
-					["@layout", "./layout/*"],
-					["@styles", "./styles/*"],
-					["@helpers", "./helpers/*"],
-					["@component", "./component/*"],
-					["@theme", "./components/Themes/*"],
-					["@common", "./components/common/*"],
-					["@signup", "./components/Signup/*"],
-					["@widget", "./components/widget/*"],
-					["@ticket", "./components/Tickets/*"],
-					["@backend", "./components/BackEnd/*"],
-					["@gallery", "./components/Gallery/*"],
-					["@settings", "./components/settings/*"],
-					["@documentation", "./components/Documentation/*"],
+					["@redux", "./redux"],
+					["@layout", "./layout"],
+					["@styles", "./styles"],
+					["@helpers", "./helpers"],
+					["@components", "./components"]
 				]
 			}
 		}

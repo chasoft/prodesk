@@ -32,11 +32,11 @@ import { Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "../../../layout/AdminLayout"
-import useUiSettings from "../../../helpers/useUiSettings"
-import { REDIRECT_URL } from "../../../helpers/constants"
-import IconBreadcrumbs, { BreadcrumbsBox } from "../../../components/BackEnd/IconBreadcrumbs"
-import useGetProfileByUsername from "../../../helpers/useGetProfileByUsername"
+import { getLayout } from "@layout/AdminLayout"
+import { REDIRECT_URL } from "@helpers/constants"
+import useUiSettings from "@helpers/useUiSettings"
+import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
+import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcrumbs"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"

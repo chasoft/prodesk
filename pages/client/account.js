@@ -22,16 +22,16 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { Container, Typography } from "@mui/material"
 import React from "react"
-import useUiSettings from "./../../helpers/useUiSettings"
 
 // MATERIAL-UI
+import { Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/ClientLayout"
+import { getLayout } from "@layout/ClientLayout"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
 

@@ -35,22 +35,22 @@ import { useSelector, useDispatch } from "react-redux"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
-import { Logo } from "./../common"
+import { Logo } from "@components/common"
 import HomeButton from "./HomeButton"
 import NavCollapse from "./NavCollapse"
-import { MENU_ITEM_TYPE } from "./../../helpers/constants"
-import { getUiSettings } from "./../../redux/selectors"
-import { setIsSideBarExpanded, setShowSideBar } from "./../../redux/slices/uiSettings"
+import { getUiSettings } from "@redux/selectors"
+import { MENU_ITEM_TYPE } from "@helpers/constants"
+import { setIsSideBarExpanded, setShowSideBar } from "@redux/slices/uiSettings"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"
-import AssessmentIcon from "@mui/icons-material/Assessment"
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
-import AccountTreeIcon from "@mui/icons-material/AccountTree"
 import BarChartIcon from "@mui/icons-material/BarChart"
 import CategoryIcon from "@mui/icons-material/Category"
+import AssessmentIcon from "@mui/icons-material/Assessment"
 import CreditCardIcon from "@mui/icons-material/CreditCard"
+import AccountTreeIcon from "@mui/icons-material/AccountTree"
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
 
 /*****************************************************************
  * INIT                                                          *

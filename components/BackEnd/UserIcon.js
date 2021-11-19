@@ -14,17 +14,17 @@ import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import useAdmin from "../../helpers/useAdmin"
-import { getAuth } from "./../../redux/selectors"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { signOut } from "./../../helpers/firebase/logout"
-import { AuthStaffTrue, AuthUserTrue } from "./../AuthCheck"
-import usePopupContainer from "./../../components/common/usePopupContainer"
+import useAdmin from "@helpers/useAdmin"
+import { getAuth } from "@redux/selectors"
+import { REDIRECT_URL } from "@helpers/constants"
+import { signOut } from "@helpers/firebase/logout"
+import usePopupContainer from "@components/common/usePopupContainer"
+import { AuthStaffTrue, AuthUserTrue } from "@components/AuthCheck"
 
 //ASSETS
 import SettingsIcon from "@mui/icons-material/Settings"
 import ExitToAppIcon from "@mui/icons-material/ExitToApp"
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AccountBoxIcon from "@mui/icons-material/AccountBox"
 
 /*****************************************************************
  * INIT                                                          *

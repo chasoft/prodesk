@@ -31,13 +31,13 @@ import { Container } from "@mui/material"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
-import TocSideBar from "./../../../components/Documentation/TocSideBar"
-import DocumentEditor from "./../../../components/Documentation/DocumentEditor"
-import DocumentTocSideBar from "./../../../components/Documentation/DocumentTocSideBar"
-import { getDocsCenter } from "./../../../redux/selectors"
-import DocumentEditorNoActiveDocId from "../../../components/Documentation/DocumentEditorNoActiveDocId"
+import { getLayout } from "@layout/AdminLayout"
+import { getDocsCenter } from "@redux/selectors"
+import useUiSettings from "@helpers/useUiSettings"
+import TocSideBar from "@components/Documentation/TocSideBar"
+import DocumentEditor from "@components/Documentation/DocumentEditor"
+import DocumentTocSideBar from "@components/Documentation/DocumentTocSideBar"
+import DocumentEditorNoActiveDocId from "@components/Documentation/DocumentEditorNoActiveDocId"
 
 //ASSETS
 

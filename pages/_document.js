@@ -1,9 +1,34 @@
-import React from "react"
-import Document, { Html, Head, Main, NextScript } from "next/document"
-import createEmotionServer from "@emotion/server/create-instance"
-import createEmotionCache from "./../helpers/createEmotionCache"
+/*************************************************************************
+ * ╔═══════════════════════════════════════════════════════════════════╗ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ╠═══════════════════════════════════════════════════════════════════╣ *
+ * ║                                                                   ║ *
+ * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
+ * ║   @copyright  Chasoft Labs © 2021                                 ║ *
+ * ║   @link       https://chasoft.net                                 ║ *
+ * ║                                                                   ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║ @license This product is licensed and sold at CodeCanyon.net      ║ *
+ * ║ If you have downloaded this from another site or received it from ║ *
+ * ║ someone else than me, then you are engaged in an illegal activity.║ *
+ * ║ You must delete this software immediately or buy a proper license ║ *
+ * ║ from http://codecanyon.net/user/chasoft/portfolio?ref=chasoft.    ║ *
+ * ╟───────────────────────────────────────────────────────────────────╢ *
+ * ║      THANK YOU AND DON'T HESITATE TO CONTACT ME FOR ANYTHING      ║ *
+ * ╚═══════════════════════════════════════════════════════════════════╝ *
+ ************************************************************************/
 
-import { theme } from "./../components/theme"
+import React from "react"
+import createEmotionServer from "@emotion/server/create-instance"
+import Document, { Html, Head, Main, NextScript } from "next/document"
+
+//PROJECT IMPORT
+import { theme } from "@components/theme"
+import createEmotionCache from "@helpers/createEmotionCache"
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
 export default class MyDocument extends Document {
 	render() {

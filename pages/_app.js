@@ -34,23 +34,23 @@ import { CssBaseline, ThemeProvider } from "@mui/material"
 import NProgress from "nprogress"
 import { Provider } from "react-redux"
 import { SnackbarProvider } from "notistack"
+import { CacheProvider } from "@emotion/react"
 import { configureStore } from "@reduxjs/toolkit"
 // import { setupListeners } from "@reduxjs/toolkit/query"
-import createEmotionCache from "./../helpers/createEmotionCache"
-import { CacheProvider } from "@emotion/react"
 
 //PROJECT IMPORT
-import rootReducer from "./../redux/slices"
-import { theme } from "./../components/theme"
+import rootReducer from "@redux/slices"
+import { theme } from "@components/theme"
+import createEmotionCache from "@helpers/createEmotionCache"
 
 /*****************************************************************
  * STYLES                                                        *
  *****************************************************************/
 
-import "./../styles/globals.css"
+import "@styles/globals.css"
 import "./../public/css/nprogress.css"
-import PageTransition from "./../components/PageTransition"
-import { firestoreApi } from "../redux/slices/firestoreApi"
+import PageTransition from "@components/PageTransition"
+import { firestoreApi } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

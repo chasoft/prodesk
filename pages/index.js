@@ -27,10 +27,10 @@ import React from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { FRONT_PAGE_TABS_NAME, getLayout } from "./../layout/EntryLayout"
-import PromotedSearch from "../components/Themes/Google/PromotedSearch"
-import FrontAccordions from "../components/Themes/Google/FrontAccordions"
-import useUiSettings from "./../helpers/useUiSettings"
+import useUiSettings from "@helpers/useUiSettings"
+import PromotedSearch from "@components/Themes/Google/PromotedSearch"
+import FrontAccordions from "@components/Themes/Google/FrontAccordions"
+import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

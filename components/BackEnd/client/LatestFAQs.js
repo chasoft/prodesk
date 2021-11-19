@@ -25,7 +25,7 @@ import React from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import ListGroup from "./../../common/ListGroup"
+import ListGroup from "@components/common/ListGroup"
 import PostListItem, { PostListEmpty } from "./../../Post/PostListItem"
 
 //ASSETS

@@ -29,7 +29,7 @@ import { usePrevious } from "react-use"
 import { isEqual, sortBy } from "lodash"
 
 //PROJECT IMPORT
-import { useGetCategoriesQuery } from "../redux/slices/firestoreApi"
+import { useGetCategoriesQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

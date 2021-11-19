@@ -30,11 +30,11 @@ import { Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/AdminLayout"
-import useUiSettings from "./../../helpers/useUiSettings"
+import { getLayout } from "@layout/AdminLayout"
+import UserProfile from "@Settings/UserProfile"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
-import UserProfile from "../../components/Settings/UserProfile"
 
 /*****************************************************************
  * INIT                                                          *

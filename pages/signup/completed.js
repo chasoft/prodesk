@@ -32,11 +32,11 @@ import { once } from "lodash"
 import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { Logo } from "./../../components/common"
-import AuthCheck from "./../../components/AuthCheck"
-import { REDIRECT_URL } from "./../../helpers/constants"
-import { setRedirect } from "./../../redux/slices/redirect"
-import { getLayout, TopLine, useFlexDirection } from "./../../layout/RegLayout"
+import { Logo } from "@common"
+import AuthCheck from "@components/AuthCheck"
+import { REDIRECT_URL } from "@helpers/constants"
+import { setRedirect } from "@redux/slices/redirect"
+import { getLayout, TopLine, useFlexDirection } from "@layout/RegLayout"
 
 /*****************************************************************
  * INIT                                                          *

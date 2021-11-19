@@ -39,12 +39,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 //PROJECT IMPORT
-import useAdmin from "../../helpers/useAdmin"
-import { getAuth, getUiSettings } from "../../redux/selectors"
-import { ACTIONS } from "../../redux/slices/firestoreApiConstants"
-import { STATUS_FILTER, DATE_FORMAT } from "./../../helpers/constants"
-import { setForceRefreshId, setNotificationInbox } from "../../redux/slices/uiSettings"
-import { readAllNotifications, readNotification, removeNotifications } from "../../helpers/realtimeApi"
+import useAdmin from "@helpers/useAdmin"
+import { getAuth, getUiSettings } from "@redux/selectors"
+import { ACTIONS } from "@redux/slices/firestoreApiConstants"
+import { STATUS_FILTER, DATE_FORMAT } from "@helpers/constants"
+import { setForceRefreshId, setNotificationInbox } from "@redux/slices/uiSettings"
+import { readAllNotifications, readNotification, removeNotifications } from "@helpers/realtimeApi"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"

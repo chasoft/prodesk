@@ -31,16 +31,16 @@ import { Box, Container, FormControl, Avatar, Select, Typography, ListItemText, 
 //THIRD-PARTY
 import { isMobile } from "react-device-detect"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
-import TicketStepper from "../../../components/Ticket/Create/NewTicketStepper"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useProfiles from "../../../helpers/useProfilesGroup"
-import { setEditorData } from "../../../redux/slices/textEditor"
-import { REDIRECT_URL, USERGROUP } from "../../../helpers/constants"
-import { getNewTicket, getUiSettings } from "../../../redux/selectors"
-import IconBreadcrumbs from "../../../components/BackEnd/IconBreadcrumbs"
-import { resetNewTicket, setOnBehalf } from "../../../redux/slices/newTicket"
+import { getLayout } from "@layout/AdminLayout"
+import useProfiles from "@helpers/useProfilesGroup"
+import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
+import { setEditorData } from "@redux/slices/textEditor"
+import TicketStepper from "@components/ticket/Create/NewTicketStepper"
+import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { getNewTicket, getUiSettings } from "@redux/selectors"
+import { resetNewTicket, setOnBehalf } from "@redux/slices/newTicket"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"

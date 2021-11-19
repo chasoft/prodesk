@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import { useState } from "react"
-import { useGetProfilesQuery } from "../redux/slices/firestoreApi"
+import { useGetProfilesQuery } from "@redux/slices/firestoreApi"
 
 //THIRD-PARTY
 import { isEqual, filter } from "lodash"

@@ -31,8 +31,8 @@ import { Container, Typography } from "@mui/material"
 // import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../../layout/AdminLayout"
-import useUiSettings from "./../../../helpers/useUiSettings"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS
 

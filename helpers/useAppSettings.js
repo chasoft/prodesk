@@ -28,7 +28,7 @@ import { useCallback, useRef } from "react"
 
 //PROJECT IMPORT
 import { APP_SETTINGS_NAME } from "./constants"
-import { useGetAppSettingsQuery } from "../redux/slices/firestoreApi"
+import { useGetAppSettingsQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
