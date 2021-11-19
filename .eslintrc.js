@@ -42,5 +42,28 @@ module.exports = {
 			"error",
 			"never"
 		]
+	},
+	"settings": {
+		"import/resolver": {
+			"alias": {
+				"map": [
+					["@hehe", "./a/b/c"],
+					["@redux", "./redux/*"],
+					["@layout", "./layout/*"],
+					["@styles", "./styles/*"],
+					["@helpers", "./helpers/*"],
+					["@component", "./component/*"],
+					["@theme", "./components/Themes/*"],
+					["@common", "./components/common/*"],
+					["@signup", "./components/Signup/*"],
+					["@widget", "./components/widget/*"],
+					["@ticket", "./components/Tickets/*"],
+					["@backend", "./components/BackEnd/*"],
+					["@gallery", "./components/Gallery/*"],
+					["@settings", "./components/settings/*"],
+					["@documentation", "./components/Documentation/*"],
+				]
+			}
+		}
 	}
 }

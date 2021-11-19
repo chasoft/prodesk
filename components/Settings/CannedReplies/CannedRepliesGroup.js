@@ -33,19 +33,20 @@ import { filter } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CODE } from "../../../helpers/constants"
 import CannedRepliesList from "./CannedRepliesList"
 import ConfirmDialog from "../../common/ConfirmDialog"
 import CannedRepliesDetails from "./CannedRepliesDetails"
-import { getAuth, getUiSettings } from "./../../../redux/selectors"
 import { setSelectedCrid } from "../../../redux/slices/uiSettings"
+import { TYPE } from "../../../redux/slices/firestoreApiConstants"
+import { getAuth, getUiSettings } from "./../../../redux/selectors"
+import { requestSilentRefetching } from "../../../helpers/realtimeApi"
 import { SettingsContentDetails, SettingsContentHeader } from "./../../Settings/SettingsPanel"
 import { useDeleteCannedReplyMutation, useGetCannedRepliesQuery, useGetDepartmentsQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { CODE } from "../../../helpers/constants"
-import { TYPE } from "../../../redux/slices/firestoreApiConstants"
-import { requestSilentRefetching } from "../../../helpers/realtimeApi"
+
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

@@ -59,6 +59,10 @@ export const REDIRECT_URL = {
 		NEW_TICKETS: "/client/tickets/new-ticket",
 		EDIT_PROFILE: "/client/edit-profile",
 	},
+
+	SETTINGS: {
+		CANNED_REPLIES: "/admin/settings/tickets/canned-reply"
+	}
 }
 
 export const PRIORITY_URLS = [

@@ -26,44 +26,136 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, Fab, Skeleton, Tooltip } from "@mui/material"
+import { Avatar, Box, Button, ButtonGroup, CircularProgress, Divider, Fab, ListItemText, MenuItem, Skeleton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import ReplyItem from "./Reply"
 import ReplyDialog from "./ReplyDialog"
+import useAdmin from "./../../../helpers/useAdmin"
 import { getAuth } from "../../../redux/selectors"
+import useMenuContainer from "../../common/useMenuContainer"
+import { setRedirect } from "../../../redux/slices/redirect"
 import useUserSettings from "../../../helpers/useUserSettings"
-import { SETTINGS_NAME } from "../../../helpers/constants"
-import { useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
+import { REDIRECT_URL, SETTINGS_NAME } from "../../../helpers/constants"
+import { useGetCannedRepliesQuery, useGetTicketRepliesQuery } from "../../../redux/slices/firestoreApi"
 
 //ASSETS
 import ReplyIcon from "@mui/icons-material/Reply"
+import FlashOnIcon from "@mui/icons-material/FlashOn"
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
 export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
-	const [open, setOpen] = useState(false)
+	const dispatch = useDispatch()
+	const { isAdminURL } = useAdmin()
+	const [showDialog, setShowDialog] = useState(false)
+
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose,
+			handleListKeyDown
+		}
+	] = useMenuContainer()
+
+	const {
+		data: cannedReplies = [],
+		isLoading: isLoadingCannedReplies
+	} = useGetCannedRepliesQuery(undefined)
+
+	const filterCannedReplies = cannedReplies.filter(e => e.department === ticket.department)
+
+	const handleCannedReply = () => { }
+
 	return (
 		<Box sx={{
 			display: { xs: "none", sm: "flex" },
 			justifyContent: "flex-end", mb: 4, ...sx
 		}}>
 			<Tooltip arrow title={tooltip} placement="left">
-				<Button
-					disabled={disabled}
-					variant={variant}
-					startIcon={<ReplyIcon />}
-					sx={{ px: 3 }}
-					onClick={() => setOpen(true)}
-				>
-					Reply
-				</Button>
+				<ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+					<Button
+						sx={{ px: 3 }}
+						variant={variant}
+						disabled={disabled}
+						startIcon={<ReplyIcon />}
+						onClick={() => setShowDialog(true)}
+					>
+						Reply
+					</Button>
+
+					{isAdminURL &&
+						<Button
+							size="small"
+							aria-controls={open ? "split-button-menu" : undefined}
+							aria-expanded={open ? "true" : undefined}
+							aria-label="select merge strategy"
+							aria-haspopup="menu"
+							onClick={handleToggle}
+						>
+							<ArrowDropDownIcon />
+						</Button>}
+				</ButtonGroup>
 			</Tooltip>
+
+			<MenuContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={handleListKeyDown}
+				placement="bottom-end"
+				transformOrigin="right top"
+			>
+				{isLoadingCannedReplies &&
+					<MenuItem>Loading canned replies... <CircularProgress size={20} /></MenuItem>}
+
+				{(!isLoadingCannedReplies && filterCannedReplies.length === 0) &&
+					[
+						<MenuItem key="message-no-canned-replies" disabled={true}>
+							You don&apos;t have any canned-replies
+						</MenuItem>,
+						<Divider key="divider" />,
+						<MenuItem
+							key="goto-settings-canned-replies"
+							onClick={() => {
+								dispatch(setRedirect(REDIRECT_URL.SETTINGS.CANNED_REPLIES))
+							}}
+						>
+							Add/Edit canned-replies...
+						</MenuItem>
+					]}
+
+				{(!isLoadingCannedReplies && filterCannedReplies.length > 0) &&
+					filterCannedReplies.map((profile) =>
+						<MenuItem
+							key={profile.username}
+							onClick={() => { }}
+						>
+							<Avatar
+								src={profile.photoURL}
+								sx={{ width: 32, height: 32, mr: 2 }}
+							>
+								<FlashOnIcon />
+							</Avatar>
+							<ListItemText
+								primary={profile.displayName}
+								secondary={`${profile.username} (${profile.email})`}
+								secondaryTypographyProps={{
+									fontSize: "0.9rem"
+								}}
+							/>
+						</MenuItem>
+					)}
+			</MenuContainer>
 
 			<ReplyDialog
 				tid={ticket.tid}
@@ -73,8 +165,8 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 				slug={ticket.slug}
 				subject={ticket.subject}
 				department={ticket.department}
-				open={open}
-				setOpen={setOpen}
+				open={showDialog}
+				setOpen={setShowDialog}
 			/>
 		</Box>
 	)
