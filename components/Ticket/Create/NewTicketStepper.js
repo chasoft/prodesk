@@ -195,6 +195,9 @@ const StepperControlButtons = () => {
 				subCatgory: raw.selectedSubCategory,
 				status: STATUS_FILTER.OPEN,
 				staffInCharge: [],
+				note: {
+					content: "",
+				},
 				slug,
 				content: editorData
 			})

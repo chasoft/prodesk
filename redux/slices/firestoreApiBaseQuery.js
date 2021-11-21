@@ -1196,7 +1196,6 @@ async function fireStoreBaseQuery(args) {
 						]
 					 */
 					staffInCharge: [],
-					note: "",
 					labels: [],
 					removed: false, //used for temporarily delete feature
 					createdAt: serverTimestamp(),

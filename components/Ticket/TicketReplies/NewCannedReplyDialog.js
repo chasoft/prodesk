@@ -181,7 +181,7 @@ const NewCannedReplyDialog = (
 			<DialogActions sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", pr: 3, mb: 2 }}>
 				<Button
 					variant="outlined"
-					sx={{ px: 2 }}
+					sx={{ minWidth: "100px" }}
 					onClick={() => { setOpen(false) }}
 				>
 					Cancel
@@ -190,7 +190,7 @@ const NewCannedReplyDialog = (
 				<Button
 					variant="contained"
 					color="primary"
-					sx={{ px: 4 }}
+					sx={{ minWidth: "100px" }}
 					disabled={
 						(trim(description) === "")
 						|| (trim(editorData) === "")

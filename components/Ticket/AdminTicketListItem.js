@@ -24,7 +24,7 @@
 
 import Link from "next/link"
 import PropTypes from "prop-types"
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 
 // MATERIAL-UI
 import { alpha } from "@mui/material/styles"
@@ -64,11 +64,14 @@ import {
 	setSelectedTickets
 } from "@redux/slices/uiSettings"
 
+import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
+
 //ASSETS
 import { CheckBoxNewIcon } from "../svgIcon"
 import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import PersonIcon from "@mui/icons-material/Person"
+import CommentIcon from "@mui/icons-material/Comment"
 import ApartmentIcon from "@mui/icons-material/Apartment"
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
@@ -421,13 +424,11 @@ export const TicketReplyCount = ({ count }) => {
 	return (
 		<Chip
 			size="small"
-			avatar={<Avatar sx={{ bgcolor: "primary.light" }}>{count}</Avatar>}
+			avatar={<Avatar>{count}</Avatar>}
 			label="replies"
 			variant="outlined"
-			sx={{
-				mb: 0.5,
-				".MuiChip-avatar": { color: "#FFF", fontWeight: 700 },
-			}}
+			color="primary"
+			sx={{ mb: 0.5 }}
 			onClick={(e) => e.stopPropagation()}
 		/>
 	)
@@ -471,6 +472,60 @@ TicketUser.propTypes = {
 	title: PropTypes.node,
 }
 
+export const TicketNote = ({ ticket }) => {
+
+	const [openNoteDialog, setOpenNoteDialog] = useState(false)
+
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
+
+	if (isLoadingDepartments) return null
+
+	return (
+		<>
+			<Tooltip
+				arrow
+				placement="top"
+				title={
+					<div>show note here: {ticket?.note?.content}</div>
+				}
+			>
+				<Chip
+					size="small"
+					avatar={
+						<CommentIcon sx={{
+							fill: (theme) => theme.palette.success.main,
+							...((!ticket?.note?.content) ? { fill: "grey" } : {})
+						}} />
+					}
+					label="Note"
+					variant="outlined"
+					color={(ticket?.note?.content) ? "success" : "default"}
+					sx={{ mb: 0.5, mx: 0.5 }}
+					onClick={(e) => {
+						e.stopPropagation()
+						setOpenNoteDialog(true)
+
+						/* Đang làm dang dỡ chỗ này!!!  */
+					}}
+				/>
+			</Tooltip>
+			<TicketNoteDialog
+				ticket={ticket}
+				departments={departments}
+				open={openNoteDialog}
+				// setOpen={setOpenNoteDialog}
+				setOpen={() => { }}
+			/>
+		</>
+	)
+}
+TicketNote.propTypes = {
+	ticket: PropTypes.object,
+}
+
 export const TicketCreatedBy = ({ createdBy }) => {
 	const dispatch = useDispatch()
 	return (
@@ -507,6 +562,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const { currentUser } = useSelector(getAuth)
 	const { selectedTickets } = useSelector(getUiSettings)
 	//ticketItem = {ticketId, department...}
+
 	const handleSelectTicket = useCallback((event, ticketItem) => {
 		const idArray = selectedTickets.map(i => i.tid)
 		const selectedIndex = idArray.indexOf(ticketItem.tid)
@@ -645,8 +701,15 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 							{latestStaffInCharge.assignee &&
 								<TicketUser
 									username={latestStaffInCharge.assignee}
-									title={(currentUser.username === latestStaffInCharge.assignee) ? "Ticket Supporter (it's you)" : "Ticket Supporter"}
+									title={
+										(currentUser.username === latestStaffInCharge.assignee)
+											? "Ticket Supporter (it's you)"
+											: "Ticket Supporter"
+									}
 								/>}
+
+							<TicketNote ticket={ticket} />
+
 						</Box>
 
 						<TicketDateTimeSmallScreen ticket={ticket} />
