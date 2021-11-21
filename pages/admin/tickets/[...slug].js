@@ -70,7 +70,7 @@ function AdminSingleTicket() {
 		}
 	})
 
-	if (router.isFallback) return null
+	if (router.isFallback || !slug) return null
 
 	//tickets = {tid: {}, tid: {}}
 	const ticket = tickets ? tickets[slug[1]] : undefined

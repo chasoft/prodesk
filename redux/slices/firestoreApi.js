@@ -76,7 +76,7 @@ export const firestoreApi = createApi({
 
 		finalizeInstallation: builder.mutation({
 			query: (body) => ({ action: ACTIONS.INSTALL_FINALIZATION, body }),
-			invalidatesTags: [{ type: TYPE.INSTALL }],
+			invalidatesTags: () => [{ type: TYPE.INSTALL }],
 		}),
 
 		/*****************************************************************
@@ -266,7 +266,7 @@ export const firestoreApi = createApi({
 
 		deleteDoc: builder.mutation({
 			query: (body) => ({ action: ACTIONS.DELETE_DOC, body }),
-			invalidatesTags: [{ type: TYPE.DOCS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.DOCS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -292,7 +292,7 @@ export const firestoreApi = createApi({
 
 		updateAppSettings: builder.mutation({
 			query: (body) => ({ action: ACTIONS.UPDATE_APPSETTINGS, body }),
-			invalidatesTags: [TYPE.SETTINGS],
+			invalidatesTags: () => [TYPE.SETTINGS],
 			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -360,7 +360,7 @@ export const firestoreApi = createApi({
 
 		addDepartment: builder.mutation({
 			query: (body) => ({ action: ACTIONS.ADD_DEPARTMENT, body }), // body: {...}
-			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic addDepartment")
 				const patchResult = dispatch(
@@ -379,7 +379,7 @@ export const firestoreApi = createApi({
 
 		updateDepartment: builder.mutation({
 			query: (body) => ({ action: ACTIONS.UPDATE_DEPARTMENT, body }), //body: {...}
-			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic updateDepartment")
 				//Update cache of modified department
@@ -402,7 +402,7 @@ export const firestoreApi = createApi({
 
 		deleteDepartment: builder.mutation({
 			query: (body) => ({ action: ACTIONS.DELETE_DEPARTMENT, body }), //body: {departmentItem, fullList}
-			invalidatesTags: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic deleteDepartment")
 				const patchResult = dispatch(
@@ -437,7 +437,7 @@ export const firestoreApi = createApi({
 
 		addCannedReply: builder.mutation({
 			query: (body) => ({ action: ACTIONS.ADD_CANNED_REPLY, body }),
-			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -456,7 +456,7 @@ export const firestoreApi = createApi({
 		updateCannedReply: builder.mutation({
 			//body: {...}
 			query: (body) => ({ action: ACTIONS.UPDATE_CANNED_REPLY, body }),
-			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -478,7 +478,7 @@ export const firestoreApi = createApi({
 		deleteCannedReply: builder.mutation({
 			//body = { cannedReplyItem, fullList }
 			query: (body) => ({ action: ACTIONS.DELETE_CANNED_REPLY, body }),
-			invalidatesTags: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -513,7 +513,7 @@ export const firestoreApi = createApi({
 
 		addLabel: builder.mutation({
 			query: (body) => ({ action: ACTIONS.ADD_LABEL, body }),
-			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic addLabel")
 				const patchResult = dispatch(
@@ -531,7 +531,7 @@ export const firestoreApi = createApi({
 		updateLabel: builder.mutation({
 			//body: {...}
 			query: (body) => ({ action: ACTIONS.UPDATE_LABEL, body }),
-			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic updateLabel")
 				const patchResult = dispatch(
@@ -554,7 +554,7 @@ export const firestoreApi = createApi({
 		deleteLabel: builder.mutation({
 			//body = { labelItem, fullList }
 			query: (body) => ({ action: ACTIONS.DELETE_LABEL, body }),
-			invalidatesTags: [{ type: TYPE.LABELS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.LABELS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic deleteLabel")
 				const patchResult = dispatch(
@@ -591,7 +591,7 @@ export const firestoreApi = createApi({
 		addCategory: builder.mutation({
 			//body = {isDefault, categoryItem, fullList}
 			query: (body) => ({ action: ACTIONS.ADD_CATEGORY, body }),
-			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CATEGORIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				console.log("Optimistic addCategory")
 				const patchResult = dispatch(
@@ -616,7 +616,7 @@ export const firestoreApi = createApi({
 		updateCategory: builder.mutation({
 			//body = {isDefault, categoryItem, fullList}
 			query: (body) => ({ action: ACTIONS.UPDATE_CATEGORY, body }),
-			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CATEGORIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -645,7 +645,7 @@ export const firestoreApi = createApi({
 		deleteCategory: builder.mutation({
 			//body = {categoryItem, fullList}
 			query: (body) => ({ action: ACTIONS.DELETE_CATEGORY, body }),
-			invalidatesTags: [{ type: TYPE.CATEGORIES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.CATEGORIES, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -665,17 +665,10 @@ export const firestoreApi = createApi({
 		/*****************************************************************
 		 * TICKETS                                                       *
 		 *****************************************************************/
-		//TODO!: cần thêm tính năng stream update... tự động update khó dữ liệu mới
+
 		getTicketsForUser: builder.query({
 			query: (username) => ({ action: ACTIONS.GET_TICKETS_FOR_USER, username }),
-			providesTags: (result) => {
-				return result ?
-					[
-						...result.map(({ tid }) => ({ type: TYPE.TICKETS, id: tid })),
-						{ type: TYPE.TICKETS, id: "LIST" }
-					]
-					: [{ type: TYPE.TICKETS, id: "LIST" }]
-			},
+			providesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			transformResponse: (response) => {
 				const fixedDate = fix_datetime_list(response)
 				return fixedDate.filter(i => i.removed === false)
@@ -684,13 +677,7 @@ export const firestoreApi = createApi({
 
 		getTicketsForAdmin: builder.query({
 			query: () => ({ action: ACTIONS.GET_TICKETS_FOR_ADMIN }),
-			providesTags: (result) => {
-				let tagsArray = [{ type: TYPE.TICKETS, id: "LIST" }]
-				forEach(result, function (value, key) {
-					tagsArray.push({ type: TYPE.TICKETS, id: key })
-				})
-				return tagsArray
-			},
+			providesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			transformResponse: (response) => {
 				forEach(response, function (value, key) {
 					if (value.removed === true) {
@@ -714,7 +701,7 @@ export const firestoreApi = createApi({
 
 		addTicket: builder.mutation({
 			query: (body) => ({ action: ACTIONS.ADD_TICKET, body }),	//body: {...ticketItem}
-			invalidatesTags: [{ type: TYPE.TICKETS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchTicketsForUser = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -805,9 +792,7 @@ export const firestoreApi = createApi({
 		updateTicket: builder.mutation({
 			//body: [{...ticketItem1}, {...ticketItem2}]
 			query: (body) => ({ action: ACTIONS.UPDATE_TICKET, body }),
-			invalidatesTags: () => {
-				return [{ type: TYPE.TICKETS, id: "LIST" }]
-			},
+			invalidatesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				//Update cache tickets for User
 				//When comes to updating cache for User,
@@ -883,7 +868,7 @@ export const firestoreApi = createApi({
 		deleteTicket: builder.mutation({
 			//body: [{username, tid},{username, tid}]
 			query: (body) => ({ action: ACTIONS.DELETE_TICKET, body }),
-			invalidatesTags: [{ type: TYPE.TICKETS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const tids = body.map(i => i.tid)
 				//Update ticket cache for User
@@ -919,7 +904,7 @@ export const firestoreApi = createApi({
 		deleteTicketTemp: builder.mutation({
 			//body: [{username, tid},{username, tid}]
 			query: (body) => ({ action: ACTIONS.DELETE_TICKET_TEMP, body }),
-			invalidatesTags: [{ type: TYPE.TICKETS, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.TICKETS, id: "LIST" }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const tids = body.map(i => i.tid)
 				//Update ticket cache for User
@@ -1090,7 +1075,7 @@ export const firestoreApi = createApi({
 
 		deletePage: builder.mutation({
 			query: (pid) => ({ action: ACTIONS.DELETE_PAGE, pid }),
-			invalidatesTags: [{ type: TYPE.PAGES, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.PAGES, id: "LIST" }],
 			async onQueryStarted(pid, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
@@ -1190,7 +1175,7 @@ export const firestoreApi = createApi({
 
 		deleteBlogPost: builder.mutation({
 			query: (bid) => ({ action: ACTIONS.DELETE_BLOG_POST, bid }),
-			invalidatesTags: [{ type: TYPE.BLOG, id: "LIST" }],
+			invalidatesTags: () => [{ type: TYPE.BLOG, id: "LIST" }],
 			async onQueryStarted(bid, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(

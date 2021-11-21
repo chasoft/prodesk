@@ -36,8 +36,9 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
-import ReplyDialog from "@components/Ticket/TicketReplies/ReplyDialog"
 import useMenuContainer from "@components/common/useMenuContainer"
+import ReplyDialog from "@components/Ticket/TicketReplies/ReplyDialog"
+import { handleCloseTicketBase } from "@components/Ticket/TicketCloseReplyButtons"
 
 import {
 	TicketCategory,
@@ -53,21 +54,14 @@ import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 
 import {
-	ACTIONS,
-	TYPE
-} from "@redux/slices/firestoreApiConstants"
-
-import {
 	useGetDepartmentsQuery,
 	useUpdateTicketMutation
 } from "@redux/slices/firestoreApi"
 
 import { getStaffInCharge } from "@helpers/utils"
-import { addNewNotification } from "@helpers/realtimeApi"
 
 import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
 import {
-	CODE,
 	DATE_FORMAT,
 	REDIRECT_URL,
 	STATUS_FILTER
@@ -78,7 +72,6 @@ import CloseIcon from "@mui/icons-material/Close"
 import ReplyIcon from "@mui/icons-material/Reply"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
-
 
 /*****************************************************************
  * INIT                                                          *
@@ -100,56 +93,37 @@ MenuItemStyled.propTypes = {
 }
 
 const PopupMenu = ({ ticket }) => {
-	const [showReplyDialog, setShowReplyDialog] = useState(false)
-	const [MenuContainer, open, anchorRef, { handleToggle, handleClose, handleListKeyDown }] = useMenuContainer()
-
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
-	const { data: departments } = useGetDepartmentsQuery(undefined)
+	const [showReplyDialog, setShowReplyDialog] = useState(false)
+
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose,
+			handleListKeyDown
+		}
+	] = useMenuContainer()
+
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartments
+	} = useGetDepartmentsQuery(undefined)
 
 	const handleCloseTicket = async () => {
 		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
-		const res = await updateTicket([{
-			username: currentUser.username,
-			tid: ticket.tid,
-			status: STATUS_FILTER.CLOSED
-		}])
 
-		const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
-
-		if (res?.data.code === CODE.SUCCESS) {
-			//prepare notification content
-			const notisContent = {
-				actionType: ACTIONS.UPDATE_TICKET,
-				iconURL: currentUser.photoURL,
-				title: currentUser.username + " just closed a ticket",
-				description: ticket.subject,
-				link: ticket.slug,
-			}
-
-			const departmentDetails = departments.find(
-				department => department.did === ticket.departmentId
-			)
-
-			const receivers = (currentUser.username !== ticket.username)
-				? [ticket.username]
-				: (latestStaffInCharge.assignee)
-					? [latestStaffInCharge.assignee]
-					: departmentDetails.members
-
-			const invalidatesTags = {
-				trigger: currentUser.username,
-				tag: [{ type: TYPE.TICKETS, id: "LIST" }],
-				target: {
-					isForUser: true,
-					isForAdmin: true,
-				}
-			}
-
-			await addNewNotification(receivers, notisContent, invalidatesTags)
-		}
+		await handleCloseTicketBase({
+			currentUser,
+			departments,
+			ticket,
+			updateTicket,
+		})
 
 		dispatch(setRedirect(REDIRECT_URL.CLIENT.TICKETS))
 	}
@@ -186,7 +160,7 @@ const PopupMenu = ({ ticket }) => {
 					</Typography>
 				</MenuItem>
 				<MenuItem
-					disabled={ticket.status === STATUS_FILTER.CLOSED}
+					disabled={ticket.status === STATUS_FILTER.CLOSED || isLoadingDepartments}
 					onClick={handleCloseTicket}
 				>
 					{<CloseIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
@@ -198,8 +172,8 @@ const PopupMenu = ({ ticket }) => {
 
 			<ReplyDialog
 				ticket={ticket}
-				open={showReplyDialog}
-				setOpen={setShowReplyDialog}
+				showReplyDialog={showReplyDialog}
+				setShowReplyDialog={setShowReplyDialog}
 			/>
 		</>
 	)

@@ -115,7 +115,7 @@ const ReplyDialog = ({ children }) => {
 				<DialogTitle sx={{
 					bgcolor: "primary.dark",
 					color: "#FFF",
-					typography: "h3",
+					typography: "h4",
 					mt: 0,
 				}}>
 					Create Reply

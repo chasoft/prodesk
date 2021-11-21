@@ -268,7 +268,7 @@ async function fireStoreBaseQuery(args) {
 
 				await batch.commit()
 
-				//TODO: verify email!!! userCredential.user.sendEmailVerification()
+				//TODO: Implement verifying email
 
 				return {
 					data: {

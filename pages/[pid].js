@@ -44,7 +44,7 @@ function SinglePage() {
 	const router = useRouter()
 	const { pid } = router.query
 
-	if (router.isFallback) return null
+	if (router.isFallback || !pid) return null
 
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>

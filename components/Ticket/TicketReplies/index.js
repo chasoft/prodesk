@@ -59,19 +59,20 @@ import {
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import ReplyIcon from "@mui/icons-material/Reply"
-import FlashOnIcon from "@mui/icons-material/FlashOn"
+import BatteryFullIcon from "@mui/icons-material/BatteryFull"
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disabled = false, sx }) => {
+export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()
 	const { currentUser } = useSelector(getAuth)
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 	const [addTicketReply] = useAddTicketReplyMutation()
+	const [isSubmitingCannedReply, setIsSubmitingCannedReply] = useState(false)
 
 	const {
 		data: departments = [],
@@ -95,31 +96,28 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 	} = useGetCannedRepliesQuery(undefined)
 
 	const filterCannedReplies = cannedReplies.filter(
-		cannedReply => (cannedReply.departmentId === ticket.departmentId) && cannedReply.full === true
+		cannedReply =>
+			(cannedReply.departmentId === ticket.departmentId)
+			&& cannedReply.full === true
 	)
 
 	const departmentDetails = departments.find(
 		department => department.did === ticket.departmentId
 	)
 
-	const handleSubmitReplyUsingCannedReply = ({ cannedReplyContent }) => {
+	const handleSubmitReplyUsingCannedReply = async (cannedReplyContent) => {
 
-		handleSubmitReplyBase({
-			currentUser: currentUser,
-			departmentDetails,
+		setIsSubmitingCannedReply(true)
+
+		await handleSubmitReplyBase({
 			addTicketReply,
-			//
-			tid: ticket.tid,
-			status: ticket.tid,
-			username: ticket.username,
-			staffInCharge: ticket.staffInCharge,
-			slug: ticket.slug,
-			subject: ticket.subject,
-			departmentId: ticket.departmentId,
-			//
-			content: cannedReplyContent
+			content: cannedReplyContent,
+			currentUser,
+			departmentDetails,
+			ticket,
 		})
 
+		setIsSubmitingCannedReply(false)
 	}
 
 	return (
@@ -131,12 +129,13 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 				<ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
 					<Button
 						sx={{ px: 3 }}
-						variant={variant}
-						disabled={disabled}
+						disabled={disabled || isSubmitingCannedReply}
 						startIcon={<ReplyIcon />}
 						onClick={() => setShowReplyDialog(true)}
 					>
-						Reply
+						{isSubmitingCannedReply
+							? <>Sending... <CircularProgress size={16} /></>
+							: "Reply"}
 					</Button>
 
 					{isAdminURL &&
@@ -148,6 +147,7 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 								aria-label="select canned-reply"
 								aria-haspopup="menu"
 								onClick={handleToggle}
+								disabled={disabled || isSubmitingCannedReply}
 							>
 								<ArrowDropUpIcon />
 							</Button>
@@ -171,35 +171,26 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 						<Divider key="divider_01" />
 					]}
 
-				<MenuItem
-					key="goto-settings-canned-replies"
-					onClick={() => {
-						dispatch(setRedirect(REDIRECT_URL.SETTINGS.CANNED_REPLIES))
-					}}
-				>
-					<ListItemIcon>
-						<AddIcon fontSize="small" />
-					</ListItemIcon>
-					Add/Edit canned-replies...
-				</MenuItem>
-				<Divider key="divider_02" />
+				{/* TODO: Check permission to add/edit canned-replies */}
 
 				{(!isLoadingCannedReplies && filterCannedReplies.length === 0) &&
-					[
-						<MenuItem key="message-no-canned-replies" disabled={true}>
-							You don&apos;t have any canned-replies
-						</MenuItem>,
-						<Divider key="divider_03" />
-					]}
+					<MenuItem key="message-no-canned-replies" disabled={true}>
+						You don&apos;t have any full canned-replies
+					</MenuItem>}
 
-				{(!isLoadingCannedReplies && filterCannedReplies.length > 0) &&
+				{(filterCannedReplies.length > 0) &&
+					<MenuItem disabled={true}>
+						Select a canned-reply to reply immediately
+					</MenuItem>}
+
+				{(filterCannedReplies.length > 0) &&
 					filterCannedReplies.map((cannedReply) =>
 						<MenuItem
 							key={cannedReply.createdAt}
 							onClick={() => handleSubmitReplyUsingCannedReply(cannedReply.content)}
 						>
 							<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
-								<FlashOnIcon sx={{ fill: (theme) => theme.palette.primary.light }} />
+								<BatteryFullIcon sx={{ fill: (theme) => theme.palette.primary.light }} />
 							</Avatar>
 							<ListItemText
 								primary={cannedReply.description}
@@ -226,12 +217,25 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 							/>
 						</MenuItem>
 					)}
+				<Divider key="divider_02" />
+				<MenuItem
+					key="goto-settings-canned-replies"
+					onClick={() => {
+						dispatch(setRedirect(REDIRECT_URL.SETTINGS.CANNED_REPLIES))
+					}}
+				>
+					<ListItemIcon>
+						<AddIcon fontSize="small" />
+					</ListItemIcon>
+					Add/Edit canned-replies...
+				</MenuItem>
+
 			</MenuContainer>
 
 			<ReplyDialog
 				ticket={ticket}
-				open={showReplyDialog}
-				setOpen={setShowReplyDialog}
+				showReplyDialog={showReplyDialog}
+				setShowReplyDialog={setShowReplyDialog}
 			/>
 		</Box>
 	)
@@ -239,7 +243,6 @@ export const ReplyButton = ({ ticket, tooltip = "", variant = "contained", disab
 ReplyButton.propTypes = {
 	ticket: PropTypes.object,
 	tooltip: PropTypes.string,
-	variant: PropTypes.string,
 	disabled: PropTypes.bool,
 	sx: PropTypes.object
 }
@@ -272,8 +275,8 @@ const RepliesContainer = ({ ticket, children }) => {
 
 			<ReplyDialog
 				ticket={ticket}
-				open={showReplyDialog}
-				setOpen={setShowReplyDialog}
+				showReplyDialog={showReplyDialog}
+				setShowReplyDialog={setShowReplyDialog}
 			/>
 
 		</Box >
@@ -298,7 +301,7 @@ function TicketReplies({ ticket }) {
 		tid: ticket.tid
 	})
 
-	//TODO: reply this line with Permission system
+	//TODO: Replace this line with Permission system
 	const isAdmin = currentUser.username === "superadmin" || hasAdminPermissions
 
 	//We already know the number of replies based on replyCount,
@@ -389,6 +392,7 @@ function TicketReplies({ ticket }) {
 					replyItem={replyItem}
 					ticketUsername={ticket.username}
 					ticketStatus={ticket.status}
+					departmentId={ticket.departmentId}
 					isFirst={idx === 0}
 				/>
 			)}

@@ -680,6 +680,6 @@ AdminTicketListItem.propTypes = {
 	isLast: PropTypes.bool,
 }
 
-const MemoizedAdminTicketListItem = React.memo(AdminTicketListItem)
+// const MemoizedAdminTicketListItem = React.memo(AdminTicketListItem)
 
-export default MemoizedAdminTicketListItem
+export default AdminTicketListItem

@@ -197,6 +197,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 			unsubscribeOnChildChanged()
 			unsubscribeOnChildRemoved()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, enqueueSnackbar, closeSnackbar])
 
 	useEffect(() => {
@@ -230,6 +231,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 		return () => {
 			unsubscribeFetchingOnChildChanged()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return orderBy(notis, ["createdAt"], ["desc"])

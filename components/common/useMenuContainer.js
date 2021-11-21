@@ -36,7 +36,7 @@ import { ClickAwayListener, Grow, MenuList, Paper, Popper } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, children }) => {
+const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, zIndex, children }) => {
 	return (
 		<Popper
 			open={open}
@@ -45,7 +45,7 @@ const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleList
 			placement={placement}
 			transition
 			disablePortal
-			style={{ zIndex: 1 }}
+			style={{ zIndex: zIndex ?? 1 }}
 		>
 			{({ TransitionProps }) => (
 				<Grow {...TransitionProps} style={{ transformOrigin: transformOrigin }}>
@@ -75,6 +75,7 @@ MenuContainer.propTypes = {
 	handleListKeyDown: PropTypes.func,
 	placement: PropTypes.string,
 	transformOrigin: PropTypes.string,
+	zIndex: PropTypes.number,
 	children: PropTypes.node
 }
 

@@ -64,7 +64,7 @@ function AdminViewUser() {
 		}
 	})
 
-	if (router.isFallback) return null
+	if (router.isFallback || !uid) return null
 
 	if (profile === undefined) return <DefaultErrorPage statusCode={404} />
 

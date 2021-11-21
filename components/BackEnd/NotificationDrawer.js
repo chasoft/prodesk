@@ -216,6 +216,9 @@ const NotisItemLink = ({ notisContent }) => {
 				}}
 			>
 				{notisContent.title}
+				<Typography component="span" variant="body1">
+					{notisContent.description}
+				</Typography>
 			</Typography>
 		</Link >
 	)
@@ -347,11 +350,10 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 													? <NotisItemLink notisContent={i.content} />
 													: <Typography variant="h4" sx={{ my: 0 }}>
 														{i.content.title}
+														<Typography component="span" variant="body1">
+															{i.content.description}
+														</Typography>
 													</Typography>}
-											secondary={i.content.description}
-											secondaryTypographyProps={{
-												variant: "body1",
-											}}
 										/>
 										<Typography variant="body1" sx={{
 											color: "grey.500",

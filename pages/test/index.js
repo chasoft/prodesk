@@ -141,7 +141,7 @@ const Test = () => {
 |    |    |    |
 |    |    |    |
 
-- [ ] please, do not do this!`}
+- please, do not do this!`}
 							onChange={(data) => { console.log(data()) }}
 							readOnly={toggle}
 							ref={editorInstance}

@@ -32,6 +32,8 @@ const defaultBackground = {
 }
 
 export const initialState = {
+	//this is used for general purposes
+	isLoadingSomething: false,
 	isSideBarExpanded: true,
 	isSmallScreen: false,
 	showSideBar: false,
@@ -101,6 +103,9 @@ const uiSettingsSlice = createSlice({
 	name: "uiSettings",
 	initialState,
 	reducers: {
+		setIsLoadingSomething: (state, { payload }) => {
+			state.isLoadingSomething = payload
+		},
 		setIsSmallScreen: (state, { payload }) => {
 			state.isSmallScreen = payload
 		},
@@ -198,6 +203,7 @@ const uiSettingsSlice = createSlice({
 })
 
 export const {
+	setIsLoadingSomething,
 	setIsSmallScreen,
 	setShowSideBar,
 	setIsSideBarExpanded,

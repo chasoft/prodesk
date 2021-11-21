@@ -49,7 +49,7 @@ function SingleBlog() {
 	const router = useRouter()
 	const { blogId } = router.query
 
-	if (router.isFallback) return null
+	if (router.isFallback || !blogId) return null
 
 	return (
 		<Container style={{ minHeight: "calc(100vh - 150px)" }}>

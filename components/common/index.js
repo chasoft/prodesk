@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Avatar, Box, Collapse, Grid, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, Collapse, Grid, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -191,3 +191,17 @@ export const DefaultAvatarPanel = ({ size = 45, callback }) => {
 	)
 }
 DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }
+
+export const CircularProgressBox = ({ minHeight = "200px" }) => {
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
+			minHeight: { minHeight }
+		}}>
+			<CircularProgress />
+		</Box>
+	)
+}
+CircularProgressBox.propTypes = { minHeight: PropTypes.string }

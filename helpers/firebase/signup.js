@@ -166,8 +166,6 @@
 // 		})
 // 		await batch.commit()
 
-// 		//TODO: verify email!!! userCredential.user.sendEmailVerification()
-
 // 		//Update Redux before doing the redirecting
 // 		// const userDoc = await getUserDocByUid(userCredential.user.uid)
 // 		// const userProperties = await getUsernameDocByUsername(userDoc.username)

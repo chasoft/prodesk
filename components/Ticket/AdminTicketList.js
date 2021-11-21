@@ -39,7 +39,8 @@ import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
 import useMenuContainer from "@components/common/useMenuContainer"
 import { LabelEditorDialog } from "@components/Settings/Tickets/Labels"
 import AdminTicketFilters, { TICKET_INBOXES_LIST } from "@components/Ticket/AdminTicketFilters"
-import MemoizedAdminTicketListItem from "@components/Ticket/AdminTicketListItem"
+// import MemoizedAdminTicketListItem from "@components/Ticket/AdminTicketListItem"
+import AdminTicketListItem from "@components/Ticket/AdminTicketListItem"
 
 import useProfilesGroup from "@helpers/useProfilesGroup"
 import { addNewNotifications } from "@helpers/realtimeApi"
@@ -225,7 +226,10 @@ const AssignButton = ({ departments }) => {
 				notisData: {
 					actionType: ACTIONS.NEW_ASSIGNMENT,
 					iconURL: currentUser.photoURL,
-					title: "You got new assignment",
+					title:
+						(selectedTickets.length === 1)
+							? "You got new assignment"
+							: "You got new assignments",
 					description:
 						(selectedTickets.length === 1)
 							? selectedTickets[0].subject
@@ -677,7 +681,7 @@ function AdminTicketList() {
 	} = useSelector(getUiSettings)
 
 	const {
-		data: tickets,
+		data: tickets = [],
 		isLoading: isLoadingTickets
 	} = useFilteredTicketsForAdmin()
 
@@ -820,7 +824,7 @@ function AdminTicketList() {
 
 						<Paper elevation={2} >
 							{group[1].map((ticket, idx) => (
-								<MemoizedAdminTicketListItem
+								<AdminTicketListItem
 									key={ticket.tid}
 									ticket={ticket}
 									isFirst={idx === 0}
@@ -828,6 +832,7 @@ function AdminTicketList() {
 								/>
 							))}
 						</Paper>
+
 					</Box>
 				))}
 		</Box>

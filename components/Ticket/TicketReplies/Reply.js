@@ -27,15 +27,19 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { alpha } from "@mui/material/styles"
-import { Avatar, Box, Button, IconButton, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Button, IconButton, MenuItem, Typography, ListItemText, ListItemIcon, Divider } from "@mui/material"
 
 //THIRD-PARTY]
 import dayjs from "dayjs"
+import { isMobile } from "react-device-detect"
 import relativeTime from "dayjs/plugin/relativeTime"
+import CopyToClipboard from "react-copy-to-clipboard"
+
 import {
+	trim,
 	random,
-	trim
 } from "lodash"
+
 import {
 	useSelector,
 	useDispatch
@@ -49,7 +53,8 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { setEditorData } from "@redux/slices/textEditor"
 import {
 	getAuth,
-	getTextEditor
+	getTextEditor,
+	getUiSettings
 } from "@redux/selectors"
 import {
 	useDeleteTicketReplyMutation,
@@ -66,8 +71,13 @@ import {
 
 //ASSETS
 import EditIcon from "@mui/icons-material/Edit"
+import LinkIcon from "@mui/icons-material/Link"
 import DeleteIcon from "@mui/icons-material/Delete"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
+import DescriptionIcon from "@mui/icons-material/Description"
+import useMenuContainer from "@components/common/useMenuContainer"
+import NewCannedReplyDialog from "./NewCannedReplyDialog"
 
 /*****************************************************************
  * INIT                                                          *
@@ -103,47 +113,110 @@ ReplyCreatedAt.propTypes = {
 	sx: PropTypes.object
 }
 
+const ReplyItemPopupMenu = (
+	{
+		editMode,
+		setEditMode,
+		setOpenConfirmDialog,
+		setOpenNewCannedReplyDialog,
+		sx
+	}
+) => {
+
+	const [
+		MenuContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose,
+			handleListKeyDown
+		}
+	] = useMenuContainer()
+
+	return (
+		<Box sx={sx}>
+			<IconButton
+				size="large"
+				ref={anchorRef}
+				id="composition-button"
+				aria-controls={open ? "composition-menu" : undefined}
+				aria-expanded={open ? "true" : undefined}
+				aria-haspopup="true"
+				onClick={handleToggle}
+			>
+				<MoreVertIcon />
+			</IconButton>
+
+			<MenuContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				handleListKeyDown={handleListKeyDown}
+				placement="bottom-end"
+				transformOrigin="right top"
+			>
+				<CopyToClipboard text="">
+					<MenuItem onClick={() => { /* TODO: generate link for replyItem */ }}>
+						<ListItemIcon>
+							<LinkIcon fontSize="small" />
+						</ListItemIcon>
+						<ListItemText>Copy Link</ListItemText>
+					</MenuItem>
+				</CopyToClipboard>
+
+				{!editMode ?
+					<MenuItem onClick={() => { setEditMode(true) }}>
+						<ListItemIcon>
+							<EditIcon fontSize="small" />
+						</ListItemIcon>
+						<ListItemText>Edit</ListItemText>
+					</MenuItem> : null}
+
+				<MenuItem onClick={() => { setOpenConfirmDialog(true) }}>
+					<ListItemIcon>
+						<DeleteIcon fontSize="small" />
+					</ListItemIcon>
+					<ListItemText>Delete...</ListItemText>
+				</MenuItem>
+				<Divider />
+				<MenuItem onClick={() => { setOpenNewCannedReplyDialog(true) }}>
+					<ListItemIcon>
+						<DescriptionIcon fontSize="small" />
+					</ListItemIcon>
+					<ListItemText>Convert to canned-reply...</ListItemText>
+				</MenuItem>
+			</MenuContainer>
+		</Box>
+	)
+}
+ReplyItemPopupMenu.propTypes = {
+	editMode: PropTypes.bool.isRequired,
+	setEditMode: PropTypes.func.isRequired,
+	setOpenConfirmDialog: PropTypes.func.isRequired,
+	setOpenNewCannedReplyDialog: PropTypes.func.isRequired,
+	sx: PropTypes.object,
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst = false }) {
+function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmentId, isFirst = false }) {
 	const dispatch = useDispatch()
-
-	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
+	const { currentUser } = useSelector(getAuth)
+	const { isSmallScreen } = useSelector(getUiSettings)
 
 	const [editMode, setEditMode] = useState(false)
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const [replyItemContent, setReplyItemContent] = useState(replyItem.content)
-
-	const profile = useGetProfileByUsername(replyItem.username)
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+	const [openNewCannedReplyDialog, setOpenNewCannedReplyDialog] = useState(false)
 
 	const [deleteTicketReply] = useDeleteTicketReplyMutation()
 	const [updateTicketReply] = useUpdateTicketReplyMutation()
 
-	const handleDeleteReply = async (confirmed) => {
-		if (confirmed === false) return
-
-		console.log("processing to delete replyId", replyItem.trid)
-		const res = await deleteTicketReply({
-			username: ticketUsername,
-			tid: replyItem.tid,
-			trid: replyItem.trid
-		})
-
-		if (res?.data.code === CODE.SUCCESS) {
-			const invalidatesTags = {
-				trigger: currentUser.username,
-				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
-				target: {
-					isForUser: true,
-					isForAdmin: false,
-				}
-			}
-			await requestSilentRefetching(invalidatesTags)
-		}
-	}
+	const profile = useGetProfileByUsername(replyItem.username)
 
 	const handleUpdateReply = async () => {
 		setEditMode(false)
@@ -172,7 +245,31 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst =
 		}
 	}
 
+	const handleDeleteReply = async (confirmed) => {
+		if (confirmed === false) return
+
+		console.log("processing to delete replyId", replyItem.trid)
+		const res = await deleteTicketReply({
+			username: ticketUsername,
+			tid: replyItem.tid,
+			trid: replyItem.trid
+		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
+				target: {
+					isForUser: true,
+					isForAdmin: false,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
+	}
+
 	const handleCancelUpdateReply = () => {
+		//repeat(...) used here is a trick to force re-render ticketItem's editor
 		setReplyItemContent(prev => prev + " ".repeat(random(20)))
 		dispatch(setEditorData(""))
 		setEditMode(false)
@@ -192,13 +289,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst =
 					? (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
 					: "action.hover",
 				transition: "background-color 500ms cubic-bezier(0.4, 0, 0.2, 1)",
-				"& > #actionButtons": {
-					visibility: "visible"
-				}
 			},
-			"& > #actionButtons": {
-				visibility: "hidden"
-			}
 		}}>
 
 			<Box sx={{
@@ -235,24 +326,44 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst =
 						display: { xs: "flex", sm: "none" },
 						flexDirection: { xs: "column", sm: "row" },
 						alignItems: "flex-end",
+						mr: -1
 					}}
 				/>
+
+				{(isAdmin && ticketStatus !== STATUS_FILTER.CLOSED && (isSmallScreen || isMobile))
+					? <ReplyItemPopupMenu
+						sx={{ mr: -2 }}
+						editMode={editMode}
+						setEditMode={setEditMode}
+						setOpenConfirmDialog={setOpenConfirmDialog}
+						setOpenNewCannedReplyDialog={setOpenNewCannedReplyDialog}
+					/> : null}
 			</Box>
 
 			<Box sx={{
 				flexGrow: 1,
 				pr: { xs: 1, sm: editMode ? 5 : 0 }
 			}}>
-				<ReplyCreatedAt
-					createdAt={replyItem.createdAt}
-					sx={{ display: { xs: "none", sm: "flex" } }}
-				/>
+				<Box sx={{
+					display: { xs: "none", sm: "flex" },
+					justifyContent: "flex-end"
+				}}>
+					<ReplyCreatedAt createdAt={replyItem.createdAt} />
+
+					{(isAdmin && ticketStatus !== STATUS_FILTER.CLOSED && !isSmallScreen & !isMobile)
+						? <ReplyItemPopupMenu
+							editMode={editMode}
+							setEditMode={setEditMode}
+							setOpenConfirmDialog={setOpenConfirmDialog}
+							setOpenNewCannedReplyDialog={setOpenNewCannedReplyDialog}
+						/> : null}
+				</Box>
 
 				<Box sx={{
 					display: "flex",
 					flexDirection: "column",
 					my: { xs: 2, sm: 0 },
-					ml: { xs: 0, sm: 3 },
+					mx: { xs: 0, sm: 1 },
 					"&>p": { lineHeight: "1.5rem" }
 				}}>
 					<TextEditor
@@ -301,55 +412,30 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, isFirst =
 					: null}
 			</Box>
 
-			{(isAdmin && ticketStatus !== STATUS_FILTER.CLOSED) &&
-				<Box
-					id="actionButtons"
-					sx={{
-						display: "flex",
-						flexDirection: { xs: "row", sm: "column" },
-						justifyContent: { xs: "flex-end", sm: "flex-start" },
-						float: "right",
-						mt: { xs: -2, md: -3 },
-						mr: -2,
-						"&>button>#deleteIcon:hover": {
-							fill: (theme) => theme.palette.warning.main
-						},
-						"&>button>#editIcon:hover": {
-							fill: (theme) => theme.palette.primary.main
-						}
-					}}
-				>
-					{editMode === false &&
-						<>
-							<Tooltip title="Delete reply..." placement="left" >
-								<IconButton onClick={() => { setOpenConfirmDialog(true) }}>
-									<DeleteIcon id="deleteIcon" />
-								</IconButton>
-							</Tooltip>
-							<Tooltip title="Edit reply" placement="left" >
-								<IconButton onClick={() => { setEditMode(true) }}>
-									<EditIcon id="editIcon" />
-								</IconButton>
-							</Tooltip>
-						</>}
+			<ConfirmDialog
+				okButtonText="Delete"
+				color="warning"
+				open={openConfirmDialog}
+				setOpen={setOpenConfirmDialog}
+				callback={handleDeleteReply}
+			>
+				<Box sx={{
+					display: "flex"
+				}}>
+					<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
+					<Typography sx={{ lineHeight: 2 }}>
+						Are you sure you want to delete this reply?<br />Please note that this action can not be undo.
+					</Typography>
+				</Box>
+			</ConfirmDialog>
 
-					<ConfirmDialog
-						okButtonText="Delete"
-						color="warning"
-						open={openConfirmDialog}
-						setOpen={setOpenConfirmDialog}
-						callback={handleDeleteReply}
-					>
-						<Box sx={{
-							display: "flex"
-						}}>
-							<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
-							<Typography sx={{ lineHeight: 2 }}>
-								Are you sure you want to delete this reply?<br />Please note that this action can not be undo.
-							</Typography>
-						</Box>
-					</ConfirmDialog>
-				</Box>}
+			<NewCannedReplyDialog
+				content={replyItemContent}
+				createdBy={currentUser.username}
+				departmentId={departmentId}
+				open={openNewCannedReplyDialog}
+				setOpen={setOpenNewCannedReplyDialog}
+			/>
 		</Box >
 	)
 }
@@ -358,6 +444,7 @@ ReplyItem.propTypes = {
 	replyItem: PropTypes.object.isRequired,
 	ticketUsername: PropTypes.string.isRequired,
 	ticketStatus: PropTypes.string.isRequired,
+	departmentId: PropTypes.string.isRequired,
 	isFirst: PropTypes.bool
 }
 

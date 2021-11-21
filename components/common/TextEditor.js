@@ -74,7 +74,7 @@ LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired }
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-//TODO: Embeded URLs... yeah, great!!!!
+//TODO: Implement embeded URLs for Editor
 /*
 	=> Youtube and some video sharing platform.. yeah,
 	=> Music => turn to HTML5 player for .mp3, .wav...v.v.

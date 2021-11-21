@@ -94,10 +94,10 @@ function TicketSettingsCannedReply() {
 		setShowContent(true)
 	}
 
-	const handleShowCannedRepliesGroup = (item) => {
+	const handleShowCannedRepliesGroup = (department) => {
 		reduxBatch(() => {
 			dispatch(setSelectedCrid(""))
-			dispatch(setActiveSettingPanel(item.did))
+			dispatch(setActiveSettingPanel(department.did))
 			dispatch(setIsAddNewPanel(false))
 		})
 		setShowContent(true)

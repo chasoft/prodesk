@@ -31,7 +31,7 @@ import { Container } from "@mui/material"
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
-import UserProfile from "@Settings/UserProfile"
+import UserProfile from "@components/Settings/UserProfile"
 import useUiSettings from "@helpers/useUiSettings"
 
 //ASSETS

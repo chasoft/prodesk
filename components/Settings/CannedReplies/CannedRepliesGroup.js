@@ -26,10 +26,10 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, CircularProgress, IconButton, FormControlLabel, Switch, Tooltip, Typography } from "@mui/material"
+import { Box, CircularProgress, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY]
-import { filter } from "lodash"
+import { filter, size } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -58,6 +58,7 @@ import {
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
+import { FullCannedReplySwitch } from "./CannedRepliesAddNew"
 
 
 /*****************************************************************
@@ -97,7 +98,7 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 
 	const selectedCannedReply = cannedReplies.find(
 		cannedReply => cannedReply.crid === selectedCrid
-	)
+	) ?? {}
 
 	useDeepCompareEffect(() => {
 		setIsFullCannedReply(selectedCannedReply?.full ?? false)
@@ -178,46 +179,40 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 				}}
 
 				rightButton={
-					selectedCannedReply &&
-					<Box sx={{ display: "flex", alignItems: "center" }}>
-						<FormControlLabel
-							control={
-								<Switch
-									checked={isFullCannedReply}
-									onChange={() => setIsFullCannedReply(p => !p)}
-									name="full-canned-reply"
-									color="primary"
-								/>
-							}
-							label={isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
-						/>
+					(size(selectedCannedReply) > 0)
+						? <Box sx={{ display: "flex", alignItems: "center" }}>
 
-						<div>
-							<Tooltip arrow title="Delete current canned-reply" placement="top">
-								<IconButton
-									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={() => setOpenConfirmDialog(true)}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							</Tooltip>
-						</div>
-					</Box>
+							<FullCannedReplySwitch
+								isFullCannedReply={isFullCannedReply}
+								setIsFullCannedReply={setIsFullCannedReply}
+							/>
+
+							<div>
+								<Tooltip arrow title="Delete current canned-reply" placement="top">
+									<IconButton
+										sx={{ ":hover": { color: "warning.main" } }}
+										onClick={() => setOpenConfirmDialog(true)}
+									>
+										<DeleteIcon fontSize="small" />
+									</IconButton>
+								</Tooltip>
+							</div>
+						</Box> : null
 				}
 			>
 				{currentDepartment.name}
 			</SettingsContentHeader>
 
-			{(!selectedCannedReply) &&
-				<CannedRepliesList
+			{(size(selectedCannedReply) === 0)
+				? <CannedRepliesList
 					cannedReplies={cannedRepliesGroup}
-				/>}
+				/> : null}
 
-			{(selectedCannedReply) &&
-				<CannedRepliesDetails
+			{(size(selectedCannedReply) > 0)
+				? <CannedRepliesDetails
 					selectedCannedReply={selectedCannedReply}
 					isFullCannedReply={isFullCannedReply}
-				/>}
+				/> : null}
 
 			<ConfirmDialog
 				okButtonText="Delete"

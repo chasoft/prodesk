@@ -73,7 +73,7 @@ function SingleTicket() {
 		}
 	})
 
-	if (router.isFallback) return null
+	if (router.isFallback || !slug) return null
 
 	//Note: `tickets` is array of object => [{}]
 	const ticket = tickets?.find(i => i.tid === slug[1])

@@ -26,15 +26,21 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
+import { Box, Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { useDeepCompareEffect } from "react-use"
-import { useDispatch, useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
+import { CircularProgressBox } from "@components/common"
+
+import {
+	DepartmentSelect,
+	DescriptionTextField
+} from "@components/Settings/CannedReplies/CannedRepliesAddNew"
 
 import {
 	SettingsContentActionBar,
@@ -47,19 +53,20 @@ import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { setEditorData } from "@redux/slices/textEditor"
 import { getAuth, getTextEditor } from "@redux/selectors"
 import { TYPE } from "@redux/slices/firestoreApiConstants"
-import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "@redux/slices/uiSettings"
 
 import {
 	useGetDepartmentsQuery,
 	useUpdateCannedReplyMutation
 } from "@redux/slices/firestoreApi"
 
-
 //ASSETS
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
+
+//TODO: add bigger option to show bigger text-editor
 
 const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 	const {
@@ -117,6 +124,13 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 		}
 	}
 
+	const handleCancelUpdateCannedReply = () => {
+		reduxBatch(() => {
+			dispatch(setSelectedCrid(""))
+			dispatch(setIsAddNewPanel(false))
+		})
+	}
+
 	return (
 		<>
 			<SettingsContentDetails sx={{
@@ -125,38 +139,21 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "50px"
-					}}>
-						<CircularProgress />
-					</Box>
-					: <FormControl variant="standard" fullWidth>
-						<InputLabel id="demo-simple-select-label">Department</InputLabel>
-						<Select
-							id="department-select"
-							label="Department"
-							value={departmentId}
-							onChange={(e) => { setDepartmentId(e.target.value) }}
-						>
-							{departments.map((department) => (
-								<MenuItem key={department.did} value={department.did}>
-									{department.name}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>}
+					? <CircularProgressBox minHeight="50px" />
+					: <DepartmentSelect
+						departmentId={departmentId}
+						departments={departments}
+						handleSelectDepartment={((e) => {
+							setDepartmentId(e.target.value)
+						})}
+					/>}
 
 				<Box sx={{ py: 2 }}>
-					<TextField
-						id="cannedReply-description"
-						label="Description"
-						variant="standard"
-						value={description}
-						onChange={(e) => { setDescription(e.target.value) }}
-						fullWidth
+					<DescriptionTextField
+						description={description}
+						handleSetDescription={(e) => {
+							setDescription(e.target.value)
+						}}
 					/>
 				</Box>
 
@@ -179,6 +176,13 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 			<SettingsContentActionBar>
 
 				<Button
+					variant="outlined" color="primary"
+					onClick={handleCancelUpdateCannedReply}
+				>
+					Cancel
+				</Button>
+
+				<Button
 					variant="contained" color="primary"
 					disabled={!isModified}
 					onClick={handleUpdateCannedReply}
@@ -192,7 +196,7 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 }
 
 CannedRepliesDetails.propTypes = {
-	selectedCannedReply: PropTypes.string,
+	selectedCannedReply: PropTypes.object,
 	isFullCannedReply: PropTypes.bool,
 }
 

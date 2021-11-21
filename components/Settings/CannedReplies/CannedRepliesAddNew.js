@@ -23,7 +23,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material"
+import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -33,6 +33,7 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
+import { CircularProgressBox } from "@components/common"
 
 import {
 	useAddCannedReplyMutation,
@@ -67,6 +68,125 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
 //ASSETS
 
 /*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+export const FullCannedReplySwitch = ({ isFullCannedReply, setIsFullCannedReply }) => {
+	return (
+		<FormControlLabel
+			control={
+				<Switch
+					checked={isFullCannedReply}
+					onChange={() => setIsFullCannedReply(p => !p)}
+					name="full-canned-reply"
+					color="primary"
+				/>
+			}
+			label={
+				<Typography noWrap>
+					{isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
+				</Typography>
+			}
+		/>
+	)
+}
+FullCannedReplySwitch.propTypes = {
+	isFullCannedReply: PropTypes.bool.isRequired,
+	setIsFullCannedReply: PropTypes.func.isRequired,
+}
+
+export const DepartmentSelect = ({
+	departmentId,
+	departments,
+	handleSelectDepartment
+}) => {
+	return (
+		<FormControl variant="standard" fullWidth>
+			<InputLabel id="department-select-label">
+				Department
+			</InputLabel>
+			<Select
+				id="department-select"
+				label="Department"
+				value={departmentId}
+				onChange={handleSelectDepartment}
+			>
+				{departments.map((department) => (
+					<MenuItem
+						key={department.did}
+						value={department.did}
+					>
+						{department.name}
+					</MenuItem>
+				))}
+			</Select>
+		</FormControl>
+	)
+}
+DepartmentSelect.propTypes = {
+	departmentId: PropTypes.string.isRequired,
+	departments: PropTypes.array.isRequired,
+	handleSelectDepartment: PropTypes.func.isRequired,
+}
+
+export const DescriptionTextField = ({ description, handleSetDescription }) => {
+	return (
+		<TextField
+			id="cannedReply-description"
+			label="Description"
+			variant="standard"
+			value={description}
+			onChange={handleSetDescription}
+			fullWidth
+		/>
+	)
+}
+DescriptionTextField.propTypes = {
+	description: PropTypes.string.isRequired,
+	handleSetDescription: PropTypes.func.isRequired,
+}
+
+export const handleAddNewCannedReplyBase = async ({
+	content,
+	createdBy,
+	departmentId,
+	description,
+	isFullCannedReply,
+	//
+	dispatchActions = () => { },
+	addCannedReply
+}) => {
+	const crid = nanoid()
+	const newCannedReply = {
+		crid,
+		description,
+		full: isFullCannedReply,
+		content,
+		departmentId,
+		createdBy: createdBy,
+		updatedBy: createdBy,	//new, then, createdBy and updatedBy are the same
+		createdAt: dayjs().valueOf(),
+		updatedAt: dayjs().valueOf(),
+	}
+
+	dispatchActions()
+
+	const res = await addCannedReply(newCannedReply)
+
+	if (res?.data.code === CODE.SUCCESS) {
+		const invalidatesTags = {
+			trigger: createdBy,
+			tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+			target: {
+				isForUser: true,
+				isForAdmin: false,
+			}
+		}
+		await requestSilentRefetching(invalidatesTags)
+	}
+}
+
+/*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
@@ -99,39 +219,21 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 	}
 
 	const handleAddNewCannedReply = async () => {
-		const crid = nanoid()
-		const newCannedReply = {
-			crid,
-			description,
-			full: isFullCannedReply,
+		await handleAddNewCannedReplyBase({
 			content: editorData,
-			departmentId: activeSettingPanel,
 			createdBy: currentUser.username,
-			updatedBy: currentUser.username,
-			createdAt: dayjs().valueOf(),
-			updatedAt: dayjs().valueOf(),
-		}
-
-		// Go to the group of new canned
-		reduxBatch(() => {
-			dispatch(setIsAddNewPanel(false))
-			dispatch(setSelectedCrid(""))
-			// dispatch(setActiveSettingPanel(departmentId))
+			departmentId: activeSettingPanel,
+			description: description,
+			isFullCannedReply: isFullCannedReply,
+			//
+			addCannedReply,
+			dispatchActions: () => {
+				reduxBatch(() => {
+					dispatch(setIsAddNewPanel(false))
+					dispatch(setSelectedCrid(""))
+				})
+			},
 		})
-
-		const res = await addCannedReply(newCannedReply)
-
-		if (res?.data.code === CODE.SUCCESS) {
-			const invalidatesTags = {
-				trigger: currentUser.username,
-				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
-				target: {
-					isForUser: true,
-					isForAdmin: false,
-				}
-			}
-			await requestSilentRefetching(invalidatesTags)
-		}
 	}
 
 	return (
@@ -139,16 +241,9 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 			<SettingsContentHeader
 				backBtnOnClick={() => backBtnClick(false)}
 				rightButton={
-					<FormControlLabel
-						control={
-							<Switch
-								checked={isFullCannedReply}
-								onChange={() => setIsFullCannedReply(p => !p)}
-								name="full-canned-reply"
-								color="primary"
-							/>
-						}
-						label={isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
+					<FullCannedReplySwitch
+						isFullCannedReply={isFullCannedReply}
+						setIsFullCannedReply={setIsFullCannedReply}
 					/>
 				}
 			>
@@ -161,48 +256,21 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 			}}>
 
 				{isLoadingDepartments
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
-					: <FormControl variant="standard" fullWidth>
-						<InputLabel id="demo-simple-select-label">
-							Department
-						</InputLabel>
-						<Select
-							id="department-select"
-							label="Department"
-							value={activeSettingPanel}
-							onChange={(e) => {
-								// setDepartmentId(e.target.value)
-								dispatch(setActiveSettingPanel(e.target.value))
-							}}
-						>
-							{departments.map((department) => (
-								<MenuItem
-									key={department.did}
-									value={department.did}
-								>
-									{department.name}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>}
+					? <CircularProgressBox />
+					: <DepartmentSelect
+						departmentId={activeSettingPanel}
+						departments={departments}
+						handleSelectDepartment={(e) => {
+							dispatch(setActiveSettingPanel(e.target.value))
+						}}
+					/>}
 
 				<Box sx={{ py: 2 }}>
-					<TextField
-						id="cannedReply-description"
-						label="Description"
-						variant="standard"
-						value={description}
-						onChange={(e) => {
+					<DescriptionTextField
+						description={description}
+						handleSetDescription={(e) => {
 							setDescription(e.target.value)
 						}}
-						fullWidth
 					/>
 				</Box>
 

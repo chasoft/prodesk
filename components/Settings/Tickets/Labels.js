@@ -95,7 +95,9 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 			onClose={handleClose}
 			fullWidth={isSmallScreen}
 		>
-			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>Add New Label</DialogTitle>
+			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>
+				Add New Label
+			</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
 					Label is advanced feature to manage your tickets in case you have so many tickets and types of tickets which Department, Category/Subcategory still not enough.
