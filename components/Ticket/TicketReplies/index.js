@@ -43,7 +43,8 @@ import useUserSettings from "@helpers/useUserSettings"
 import {
 	DATE_FORMAT,
 	REDIRECT_URL,
-	SETTINGS_NAME
+	SETTINGS_NAME,
+	USERGROUP
 } from "@helpers/constants"
 
 import { getAuth } from "@redux/selectors"
@@ -61,6 +62,7 @@ import AddIcon from "@mui/icons-material/Add"
 import ReplyIcon from "@mui/icons-material/Reply"
 import BatteryFullIcon from "@mui/icons-material/BatteryFull"
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -73,6 +75,16 @@ export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 	const [addTicketReply] = useAddTicketReplyMutation()
 	const [isSubmitingCannedReply, setIsSubmitingCannedReply] = useState(false)
+
+	const {
+		userList: allAdminProfiles = [],
+		// isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
 
 	const {
 		data: departments = [],
@@ -114,6 +126,7 @@ export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 			content: cannedReplyContent,
 			currentUser,
 			departmentDetails,
+			allAdminProfiles,
 			ticket,
 		})
 

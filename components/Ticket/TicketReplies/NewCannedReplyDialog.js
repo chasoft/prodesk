@@ -26,7 +26,7 @@ import React, { useEffect, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, Select, MenuItem } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 
 //THIRD-PARTY
 import { trim } from "lodash"
@@ -43,8 +43,6 @@ import {
 	handleAddNewCannedReplyBase
 } from "@components/Settings/CannedReplies/CannedRepliesAddNew"
 
-import { setIsLoadingSomething } from "@redux/slices/uiSettings"
-
 import {
 	getTextEditor,
 	getUiSettings
@@ -55,6 +53,9 @@ import {
 	useGetDepartmentsQuery
 } from "@redux/slices/firestoreApi"
 import { setEditorData } from "@redux/slices/textEditor"
+import { CODE } from "@helpers/constants"
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 //ASSETS
 
@@ -85,7 +86,6 @@ const NewCannedReplyDialog = (
 
 	const { editorData } = useSelector(getTextEditor)
 	const [addCannedReply] = useAddCannedReplyMutation()
-	const { isLoadingSomething } = useSelector(getUiSettings)
 
 	const {
 		data: departments = [],
@@ -99,9 +99,9 @@ const NewCannedReplyDialog = (
 	const DepartmentDetails = departments.find(department => department.did === departmentId)
 
 	const handleAddNewCannedReply = async () => {
-		dispatch(setIsLoadingSomething(true))
+		setOpen(false)
 
-		await handleAddNewCannedReplyBase({
+		const res = await handleAddNewCannedReplyBase({
 			content: editorData,
 			createdBy: createdBy,
 			departmentId: departmentId,
@@ -112,8 +112,18 @@ const NewCannedReplyDialog = (
 			// dispatchActions,
 		})
 
-		setOpen(false)
-		dispatch(setIsLoadingSomething(false))
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: createdBy,
+				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],
+				target: {
+					isForUser: false,
+					isForAdmin: true,
+				},
+				// forceRefetch: true
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	return (
@@ -195,14 +205,10 @@ const NewCannedReplyDialog = (
 						(trim(description) === "")
 						|| (trim(editorData) === "")
 						|| (trim(editorData) === "\\")
-						|| isLoadingSomething
 					}
 					onClick={handleAddNewCannedReply}
 				>
-					{isLoadingSomething
-						? <>Add &nbsp;<CircularProgress size={16} /></>
-						: "Add"
-					}
+					Add
 				</Button>
 			</DialogActions>
 		</Dialog>

@@ -28,12 +28,12 @@ import PropTypes from "prop-types"
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-import { Box, Button, CircularProgress, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { trim } from "lodash"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
@@ -44,12 +44,9 @@ import {
 	TYPE
 } from "@redux/slices/firestoreApiConstants"
 
-import { setIsLoadingSomething } from "@redux/slices/uiSettings"
-
 import {
 	getAuth,
 	getTextEditor,
-	getUiSettings
 } from "@redux/selectors"
 
 import {
@@ -63,7 +60,9 @@ import { addNewNotification } from "@helpers/realtimeApi"
 import {
 	CODE,
 	DATE_FORMAT,
+	USERGROUP,
 } from "@helpers/constants"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 //ASSETS
 
@@ -78,14 +77,23 @@ import {
 const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 	const theme = useTheme()
 	dayjs.extend(relativeTime)
-	const dispatch = useDispatch()
+	// const dispatch = useDispatch()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { isAdminURL } = useAdmin()
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [updateTicket] = useUpdateTicketMutation()
-	const { isLoadingSomething } = useSelector(getUiSettings)
+
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
 
 	const handleCancelTicketNote = () => {
 		console.log("Cancel")
@@ -96,10 +104,10 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 	const trimEditorData = trim(editorData)
 
 	const handleSaveTicketNote = async () => {
-		dispatch(setIsLoadingSomething(true))
+		setOpen(false)
 
 		const res = await updateTicket([{
-			username: currentUser.username,
+			username: ticket.username,
 			tid: ticket.tid,
 			note: {
 				content: editorData,
@@ -108,7 +116,7 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 			}
 		}])
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			//prepare notification content
 			const notisContent = {
 				actionType: ACTIONS.UPDATE_TICKET,
@@ -122,10 +130,14 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 				department => department.did === ticket.departmentId
 			)
 
-			const receivers = (currentUser.username !== ticket.username)
-				? [ticket.username]
-				: (latestStaffInCharge.assignee)
+			//If assignee is empty, then, all department's members will get notification
+			//If currentUser !== assignee, then, assignee will get a notification
+			const receivers = (latestStaffInCharge.assignee)
+				? (latestStaffInCharge.assignee !== currentUser.username)
 					? [latestStaffInCharge.assignee]
+					: []
+				: (departmentDetails.availableForAll)
+					? allAdminProfiles.map(profile => profile.username)
 					: departmentDetails.members
 
 			const invalidatesTags = {
@@ -139,9 +151,6 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 
 			await addNewNotification(receivers, notisContent, invalidatesTags)
 		}
-
-		setOpen(false)
-		dispatch(setIsLoadingSomething(false))
 	}
 
 	return (
@@ -164,11 +173,14 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 				</DialogTitle>
 
 				<DialogContent sx={{ mt: 2 }}>
+
 					<Box sx={{
+						pl: { xs: 1, sm: 4 },
+						py: 1, mb: 3,
 						width: { sm: "500px", md: "650px", lg: "700px" }
 					}}>
 						<TextEditor
-							defaultValue=""
+							value={ticket.note.content}
 							placeholder="Write anything you want... this is a note field of the ticket"
 						/>
 					</Box>
@@ -187,25 +199,25 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 							size="small"
 							variant="outlined"
 							onClick={handleCancelTicketNote}
-							sx={{ px: 3, minWidth: "100px" }}
+							sx={{ px: 3, mr: 2, minWidth: "100px" }}
 						>
 							Cancel
 						</Button>
 
 						<Button
 							size="small"
+							variant="contained"
+							color="primary"
 							onClick={handleSaveTicketNote}
 							sx={{ px: 4, minWidth: "100px" }}
 							disabled={
-								isLoadingSomething
+								isLoadingAllAdminProfiles
 								|| trimEditorData === ""
 								|| trimEditorData === "\\"
 								|| trimEditorData === trim(ticket.note.content)
 							}
 						>
-							{isLoadingSomething
-								? <>Saving... &nbsp; <CircularProgress size={16} /></>
-								: "Save"}
+							Save
 						</Button>
 					</div>
 				</DialogActions>

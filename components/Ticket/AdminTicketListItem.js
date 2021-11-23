@@ -41,6 +41,7 @@ import { getStaffInCharge } from "@helpers/utils"
 import { setRedirect } from "@redux/slices/redirect"
 import { getAuth, getUiSettings } from "@redux/selectors"
 import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
+import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
 
 import {
 	DATE_FORMAT,
@@ -63,8 +64,6 @@ import {
 	setSelectedStatusRaw,
 	setSelectedTickets
 } from "@redux/slices/uiSettings"
-
-import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
 
 //ASSETS
 import { CheckBoxNewIcon } from "../svgIcon"
@@ -97,7 +96,25 @@ export const UserTicketListEmpty = ({ message }) => {
 			>
 				{message}
 			</Typography>
+
+			<Box
+				sx={{
+					borderRadius: "0.5rem",
+					"&:hover": { backgroundColor: "action.hover" },
+				}}
+			>
+				<Typography
+					sx={{
+						p: 3,
+						minWidth: { xs: "none", md: 0 /*this property is important*/ },
+					}}
+				>
+					{message}
+				</Typography>
+			</Box>
 		</Box>
+
+
 	)
 }
 UserTicketListEmpty.propTypes = { message: PropTypes.string }
@@ -163,6 +180,7 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 	)
 }
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
+
 
 const TicketDateTime = ({ ticket }) => {
 
@@ -489,7 +507,9 @@ export const TicketNote = ({ ticket }) => {
 				arrow
 				placement="top"
 				title={
-					<div>show note here: {ticket?.note?.content}</div>
+					(ticket?.note?.content)
+						? ticket?.note?.content.substring(0, 500)
+						: "Note is empty"
 				}
 			>
 				<Chip
@@ -512,12 +532,12 @@ export const TicketNote = ({ ticket }) => {
 					}}
 				/>
 			</Tooltip>
+
 			<TicketNoteDialog
 				ticket={ticket}
 				departments={departments}
 				open={openNoteDialog}
-				// setOpen={setOpenNoteDialog}
-				setOpen={() => { }}
+				setOpen={setOpenNoteDialog}
 			/>
 		</>
 	)

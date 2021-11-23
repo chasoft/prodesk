@@ -51,6 +51,7 @@ import { addNewNotification } from "@helpers/realtimeApi"
  *****************************************************************/
 
 export const handleCloseTicketBase = async ({
+	allAdminProfiles,
 	currentUser,
 	departments,
 	ticket,
@@ -82,7 +83,9 @@ export const handleCloseTicketBase = async ({
 			? [ticket.username]
 			: (latestStaffInCharge.assignee)
 				? [latestStaffInCharge.assignee]
-				: departmentDetails.members
+				: (departmentDetails.availableForAll)
+					? allAdminProfiles.map(profile => profile.username)
+					: departmentDetails.members
 
 		const invalidatesTags = {
 			trigger: currentUser.username,
@@ -103,7 +106,7 @@ export const handleCloseTicketBase = async ({
 
 //TODO: Show a dialog to get customer's feedback (satisfaction)
 //When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
-const TicketActionButtons = ({ ticket }) => {
+const TicketActionButtons = ({ ticket, allAdminProfiles }) => {
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
@@ -116,6 +119,7 @@ const TicketActionButtons = ({ ticket }) => {
 	const handleCloseTicket = async () => {
 		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
 		await handleCloseTicketBase({
+			allAdminProfiles,
 			currentUser,
 			departments,
 			ticket,
@@ -133,7 +137,7 @@ const TicketActionButtons = ({ ticket }) => {
 				disabled={ticket.status === STATUS_FILTER.CLOSED || isLoadingDepartments}
 				variant="outlined"
 				sx={{
-					px: 4,
+					minWidth: "100px",
 					visibility: { xs: "hidden", sm: "visible" }
 				}}
 				startIcon={<CloseIcon />}
@@ -160,6 +164,9 @@ const TicketActionButtons = ({ ticket }) => {
 		</Box>
 	)
 }
-TicketActionButtons.propTypes = { ticket: PropTypes.object }
+TicketActionButtons.propTypes = {
+	allAdminProfiles: PropTypes.array,
+	ticket: PropTypes.object,
+}
 
 export default TicketActionButtons

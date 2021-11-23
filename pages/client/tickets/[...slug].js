@@ -35,7 +35,7 @@ import { useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getAuth } from "@redux/selectors"
 import { getLayout } from "@layout/ClientLayout"
-import { REDIRECT_URL } from "@helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import TicketReplies from "@components/Ticket/TicketReplies"
 import TicketContent from "@components/Ticket/TicketContent"
 import useUiSettings from "@helpers/useUiSettings"
@@ -47,6 +47,7 @@ import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcr
 import HomeIcon from "@mui/icons-material/Home"
 import ErrorIcon from "@mui/icons-material/Error"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -66,6 +67,16 @@ function SingleTicket() {
 		isLoading: isLoadingTickets
 	} = useGetTicketsForUserQuery(currentUser.username)
 
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
+
 	useUiSettings({
 		title: "Title",
 		background: {
@@ -78,7 +89,7 @@ function SingleTicket() {
 	//Note: `tickets` is array of object => [{}]
 	const ticket = tickets?.find(i => i.tid === slug[1])
 
-	if (isLoadingTickets) {
+	if (isLoadingTickets || isLoadingAllAdminProfiles) {
 		return (
 			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 				<Box sx={{
@@ -133,9 +144,17 @@ function SingleTicket() {
 
 			{(!isLoadingTickets && ticket !== undefined) ?
 				<>
-					<TicketContent ticket={ticket} />
+					<TicketContent
+						allAdminProfiles={allAdminProfiles}
+						ticket={ticket}
+					/>
+
 					<TicketReplies ticket={ticket} />
-					<TicketActionButtons ticket={ticket} />
+
+					<TicketActionButtons
+						ticket={ticket}
+						allAdminProfiles={allAdminProfiles}
+					/>
 				</> : null}
 
 		</Container >

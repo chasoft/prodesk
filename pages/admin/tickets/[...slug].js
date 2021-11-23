@@ -35,7 +35,7 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
 import TicketContent from "@components/Ticket/TicketContent"
-import { REDIRECT_URL } from "@helpers/constants"
+import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import TicketReplies from "@components/Ticket/TicketReplies"
 import TicketActionButtons from "@components/Ticket/TicketCloseReplyButtons"
 import { useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
@@ -45,6 +45,7 @@ import IconBreadcrumbs, { BreadcrumbsBox } from "@components/BackEnd/IconBreadcr
 import HomeIcon from "@mui/icons-material/Home"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import ErrorIcon from "@mui/icons-material/Error"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -63,6 +64,16 @@ function AdminSingleTicket() {
 		isLoading: isLoadingTickets
 	} = useGetTicketsForAdminQuery(undefined)
 
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
+
 	useUiSettings({
 		title: "Title",
 		background: {
@@ -75,7 +86,7 @@ function AdminSingleTicket() {
 	//tickets = {tid: {}, tid: {}}
 	const ticket = tickets ? tickets[slug[1]] : undefined
 
-	if (isLoadingTickets) {
+	if (isLoadingTickets || isLoadingAllAdminProfiles) {
 		return (
 			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 				<Box sx={{
@@ -132,9 +143,15 @@ function AdminSingleTicket() {
 
 			{(isLoadingTickets === false && ticket !== undefined)
 				? <>
-					<TicketContent ticket={ticket} />
+					<TicketContent
+						allAdminProfiles={allAdminProfiles}
+						ticket={ticket}
+					/>
 					<TicketReplies ticket={ticket} />
-					<TicketActionButtons ticket={ticket} />
+					<TicketActionButtons
+						allAdminProfiles={allAdminProfiles}
+						ticket={ticket}
+					/>
 				</>
 				: null}
 

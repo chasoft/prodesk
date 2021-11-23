@@ -227,7 +227,7 @@ const StepperControlButtons = () => {
 					department => department.did === raw.selectedDepartmentId
 				) ?? {}
 
-				let receivers =
+				const receivers =
 					(selectedDepartment?.availableForAll)
 						? allAdminProfiles.map(profile => profile.username)
 						: selectedDepartment.members

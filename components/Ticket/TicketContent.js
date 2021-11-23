@@ -92,7 +92,7 @@ MenuItemStyled.propTypes = {
 	children: PropTypes.node
 }
 
-const PopupMenu = ({ ticket }) => {
+const PopupMenu = ({ ticket, allAdminProfiles }) => {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -119,6 +119,7 @@ const PopupMenu = ({ ticket }) => {
 		enqueueSnackbar("Ticket closed successfully", { variant: "success" })
 
 		await handleCloseTicketBase({
+			allAdminProfiles,
 			currentUser,
 			departments,
 			ticket,
@@ -180,6 +181,7 @@ const PopupMenu = ({ ticket }) => {
 }
 
 PopupMenu.propTypes = {
+	allAdminProfiles: PropTypes.array,
 	ticket: PropTypes.object
 }
 
@@ -217,7 +219,7 @@ TicketCreatedAt.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TicketContent({ ticket }) {
+function TicketContent({ ticket, allAdminProfiles }) {
 	const { currentUser } = useSelector(getAuth)
 	const profile = useGetProfileByUsername(ticket.username)
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
@@ -289,7 +291,10 @@ function TicketContent({ ticket }) {
 						createdAt={ticket.createdAt}
 						sx={{ display: { xs: "none", sm: "flex" } }}
 					/>
-					<PopupMenu ticket={ticket} />
+					<PopupMenu
+						allAdminProfiles={allAdminProfiles}
+						ticket={ticket}
+					/>
 				</Box>
 
 			</Box>
@@ -350,6 +355,7 @@ function TicketContent({ ticket }) {
 	)
 }
 TicketContent.propTypes = {
+	allAdminProfiles: PropTypes.array,
 	ticket: PropTypes.object
 }
 

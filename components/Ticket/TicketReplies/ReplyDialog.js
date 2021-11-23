@@ -72,6 +72,7 @@ import {
 	DATE_FORMAT,
 	REDIRECT_URL,
 	STATUS_FILTER,
+	USERGROUP,
 } from "@helpers/constants"
 
 //ASSETS
@@ -79,6 +80,7 @@ import AddIcon from "@mui/icons-material/Add"
 import { setRedirect } from "@redux/slices/redirect"
 import Battery30Icon from "@mui/icons-material/Battery30"
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -89,6 +91,7 @@ export const handleSubmitReplyBase = async ({
 	content,
 	currentUser,
 	departmentDetails,
+	allAdminProfiles,
 	ticket,
 }) => {
 	if (currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED) return
@@ -137,7 +140,9 @@ export const handleSubmitReplyBase = async ({
 			? [ticket.username]
 			: (latestStaffInCharge.assignee)
 				? [latestStaffInCharge.assignee]
-				: departmentDetails.members
+				: (departmentDetails.availableForAll)
+					? allAdminProfiles.map(profile => profile.username)
+					: departmentDetails.members
 
 		const invalidatesTags = {
 			trigger: currentUser.username,
@@ -172,6 +177,16 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 	const [addTicketReply] = useAddTicketReplyMutation()
 	const { isLoadingSomething } = useSelector(getUiSettings)
 	const [justCopied, setJustCopied] = useState(false)
+
+	const {
+		userList: allAdminProfiles = [],
+		// isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
 
 	const {
 		data: departments = [],
@@ -221,6 +236,7 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 			content: editorData,
 			currentUser,
 			departmentDetails,
+			allAdminProfiles,
 			ticket,
 		})
 
@@ -250,7 +266,7 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 
 				<DialogContent sx={{ mt: 2 }}>
 					<Box sx={{
-						pl: 4, py: 3, border: "1px solid #F0F0F0",
+						pl: { xs: 1, sm: 4 }, py: 3, border: "1px solid #F0F0F0",
 						width: { sm: "500px", md: "650px", lg: "700px" }
 					}}>
 						<TextEditor
