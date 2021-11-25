@@ -39,9 +39,13 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { getStaffInCharge } from "@helpers/utils"
 import { setRedirect } from "@redux/slices/redirect"
-import { getAuth, getUiSettings } from "@redux/selectors"
 import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
 import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
+
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
 
 import {
 	DATE_FORMAT,
@@ -180,7 +184,6 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 	)
 }
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
-
 
 const TicketDateTime = ({ ticket }) => {
 
@@ -630,10 +633,10 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 					"&>#date-time": { marginRight: isSelected ? "-16px" : "30px" },
 					"&:hover": {
 						cursor: "pointer",
-						backgroundColor: isSelected
-							? (theme) =>
-								alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-							: "action.hover",
+						backgroundColor:
+							isSelected
+								? (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+								: "action.hover",
 						transition: "background-color 200ms cubic-bezier(0.4, 0, 0.2, 1)",
 						"&>#ticket-selector": { display: "block" },
 						"&>#date-time": { marginRight: "-16px" }

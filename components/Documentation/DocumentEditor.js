@@ -22,21 +22,46 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 
 // MATERIAL-UI
-import { Box, CircularProgress, InputBase } from "@mui/material"
+import { Box, InputBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { random, trim } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../common/TextEditor"
-import DocumentTemplate from "./DocumentTemplate"
-import { getAuth, getDocsCenter, getTextEditor } from "./../../redux/selectors"
-import { setEditorData, setEditorDefaultData, setEditorDataHeadings } from "./../../redux/slices/textEditor"
-import { useGetDocContentQuery, useGetDocsQuery, useUpdateDocContentMutation, useUpdateDocMutation } from "./../../redux/slices/firestoreApi"
+import TextEditor from "@components/common/TextEditor"
+import DocumentTemplate from "@components/Documentation/DocumentTemplate"
+import { CircularProgressBox } from "@components/common"
+
+import useGetDoc from "@helpers/useGetDocs"
+import useLocalComponentCache from "@helpers/useLocalComponentCache"
+
+import {
+	DATE_FORMAT,
+} from "@helpers/constants"
+
+import {
+	getAuth,
+	getDocsCenter,
+	getTextEditor
+} from "@redux/selectors"
+
+import {
+	setEditorData,
+	setEditorDefaultData,
+	setEditorDataHeadings
+} from "@redux/slices/textEditor"
+
+import {
+	useGetDocContentQuery,
+	useUpdateDocContentMutation,
+	useUpdateDocMutation
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
 
@@ -62,33 +87,37 @@ const DocumentEditor = () => {
 	const { currentUser } = useSelector(getAuth)
 	const { activeDocId } = useSelector(getDocsCenter)
 	// Get all required data from database
-	const { docItem } = useGetDocsQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			docItem: data?.find((post) => post.docId === activeDocId) ?? {},
-		})
-	})
-	const docItemContent = useGetDocContentQuery(activeDocId)
+	const {
+		data: docItem,
+		isLoading: isLoadingDocItem
+	} = useGetDoc(activeDocId)
+
+	const {
+		data: docItemContent = {},
+		isLoading: isLoadingDocItemContent
+	} = useGetDocContentQuery(activeDocId)
 	//
 	const { editorData, editorDefaultData } = useSelector(getTextEditor)
-	const [title, setTitle] = useState("")
-	const [description, setDescription] = useState("")
+
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache({
+		title: docItem?.title,
+		description: docItem?.description
+	})
 
 	/*
 		Effect, to update status of mounted controls
 	*/
 
 	useEffect(() => {
-		setTitle(docItem.title)
-		setDescription(docItem.description)
-	}, [docItem.title, docItem.description, activeDocId])
-
-	useEffect(() => {
-		const text = docItemContent?.data?.text + " ".repeat(random(20))
+		const text = docItemContent?.text + " ".repeat(random(20))
 		reduxBatch(() => {
 			dispatch(setEditorData(text))
 			dispatch(setEditorDefaultData(text))
 		})
-	}, [dispatch, docItemContent?.data?.text])
+	}, [dispatch, docItemContent?.text])
 
 	useEffect(() => {
 		const headings = editorRef?.current?.getHeadings() ?? []
@@ -96,6 +125,10 @@ const DocumentEditor = () => {
 	}, [dispatch, editorData])
 
 	if (docItem === undefined) return null
+
+	dayjs.extend(relativeTime)
+
+	const isEmptyContent = !trim(editorData) || trim(editorData) === "\\"
 
 	//fix bug
 	// if (prevActiveDocId !== activeDocId) {
@@ -107,7 +140,7 @@ const DocumentEditor = () => {
 	// }
 
 	return (
-		<Box sx={{
+		<Box id="DocumentEditor" sx={{
 			display: "flex",
 			flexDirection: "column",
 			backgroundColor: "#FFF",
@@ -117,19 +150,19 @@ const DocumentEditor = () => {
 		}}>
 			<InputBase
 				id="doc-title" placeholder="Page title" variant="outlined"
-				value={title}
-				onChange={(e) => setTitle(e.target.value)}
+				value={localCache.title}
+				onChange={(e) => setLocalCache(e.target.value, "title")}
 				sx={{
 					fontSize: { xs: "1.5rem", md: "1.75rem" },
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
 				}}
 				onBlur={() => {
-					if (title !== docItem.title) {
+					if (localCache.title !== docItem.title) {
 						const newDocMeta = {
 							docId: docItem.docId,	//must be included
 							type: docItem.type,		//must be included
-							title: title,
+							title: localCache.title,
 							updatedBy: currentUser.username,
 						}
 						updateDoc({
@@ -143,20 +176,20 @@ const DocumentEditor = () => {
 
 			{/* {Max 200 characters} */}
 			<InputBase
-				id="doc-title" placeholder="Page description (optional)" variant="outlined"
-				value={description}
-				onChange={(e) => setDescription(e.target.value)}
+				id="doc-description" placeholder="Page description (optional)" variant="outlined"
+				value={localCache.description}
+				onChange={(e) => setLocalCache(e.target.value, "description")}
 				multiline={true}
 				sx={{
 					fontSize: "1rem", fontWeight: "bold",
 					lineHeight: "2rem"
 				}}
 				onBlur={() => {
-					if (description !== docItem.description) {
+					if (localCache.description !== docItem.description) {
 						const newDocMeta = {
 							docId: docItem.docId,	//must be included
 							type: docItem.type,		//must be included
-							description: description,
+							description: localCache.description,
 							updatedBy: currentUser.username,
 						}
 						updateDoc({
@@ -167,49 +200,58 @@ const DocumentEditor = () => {
 				}}
 			/>
 
-			<Box sx={{
+			<Box id="doc-content" sx={{
 				my: 2,
 				borderTop: "1px solid transparent",
 				borderColor: "divider"
 			}} />
 
-			{docItemContent.isLoading
-				? <Box sx={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					minHeight: "200px"
-				}}>
-					<CircularProgress />
-				</Box>
-				: <TextEditor
-					ref={editorRef}
-					value={editorDefaultData}
-					placeholder="Enter your content here..."
-					onBlur={() => {
-						/*******************************
-						 * TODO: !! Bug here
-						 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
-						 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
-						 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
-						 */
-						if (trim(editorData) !== trim(docItemContent.data.text)) {
-							const newDocMeta = {
-								docId: docItem.docId,	//must be included
-								updatedBy: currentUser.username,
+			{isLoadingDocItemContent || isLoadingDocItem
+				? <CircularProgressBox />
+				: <>
+					<TextEditor
+						ref={editorRef}
+						value={editorDefaultData}
+						placeholder="Enter your content here..."
+						onBlur={() => {
+							/*******************************
+							 * TODO: !! Bug here
+							 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
+							 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
+							 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
+							 */
+							if (trim(editorData) !== trim(docItemContent.text)) {
+								const newDocMeta = {
+									docId: docItem.docId,	//must be included
+									updatedBy: currentUser.username,
+								}
+								updateDocContent({
+									docItem: newDocMeta,
+									content: { text: editorData }
+								})
+
+								console.log("Updated doc's content", editorData)
 							}
-							updateDocContent({
-								docItem: newDocMeta,
-								content: { text: editorData }
-							})
+						}}
+					/>
 
-							console.log("Updated doc's content", editorData)
-						}
-					}}
-				/>}
+					{!isEmptyContent &&
+						<Typography sx={{
+							mt: 3,
+							fontSize: "0.8rem",
+							color: "text.secondary",
+							marginTop: "auto"
+						}}>
+							Created at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.createdBy}
+							{(docItem.createdAt !== docItem.updatedAt) &&
+								<span style={{ display: "block" }}>
+									Updated at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.updatedBy}&nbsp;
+									<span style={{ fontStyle: "italic" }}>({dayjs(docItem.updatedAt).fromNow()})</span>
+								</span>}
+						</Typography>}
+				</>}
 
-			{(!trim(editorData) || trim(editorData) === "\\")
-				&& <DocumentTemplate />}
+			{isEmptyContent && <DocumentTemplate />}
 
 		</Box>
 	)

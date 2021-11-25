@@ -27,15 +27,26 @@ import { useState } from "react"
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 import { useDeepCompareEffect } from "react-use"
-import { filter, findIndex, groupBy, orderBy, pickBy } from "lodash"
+import { countBy, filter, groupBy, orderBy, pickBy } from "lodash"
 
 //PROJECT IMPORT
 import useUserSettings from "./useUserSettings"
+import { getStaffInCharge } from "@helpers/utils"
 import { getAuth, getUiSettings } from "@redux/selectors"
-import { useGetDepartmentsQuery, useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
-import { SETTINGS_NAME, STATUS_FILTER, TICKET_INBOXES } from "./constants"
 import { setTicketCounter } from "@redux/slices/uiSettings"
-import { getStaffInCharge } from "./utils"
+
+import {
+	SETTINGS_NAME,
+	STATUS_FILTER,
+	TICKET_INBOXES,
+	USERGROUP
+} from "@helpers/constants"
+
+import {
+	useGetDepartmentsQuery,
+	useGetTicketsForAdminQuery
+} from "@redux/slices/firestoreApi"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -43,11 +54,32 @@ import { getStaffInCharge } from "./utils"
 
 export default function useFilteredTicketsForAdmin() {
 	const dispatch = useDispatch()
-	const [res, setRes] = useState([])
+	const [res, setRes] = useState({
+		tickets: [],
+		counter: 0
+	})
 	const { currentUser } = useSelector(getAuth)
 	const [availableTicketsByInbox, setAvailableTicketsByInbox] = useState({})
-	const { data: departments = {}, isLoading: isLoadingDepartment } = useGetDepartmentsQuery(undefined)
-	const { data: tickets = {}, isLoading: isLoadingTickets } = useGetTicketsForAdminQuery(undefined)
+
+	const {
+		data: departments = [],
+		isLoading: isLoadingDepartment
+	} = useGetDepartmentsQuery(undefined)
+
+	const {
+		data: tickets = [],
+		isLoading: isLoadingTickets
+	} = useGetTicketsForAdminQuery(undefined)
+
+	const {
+		userList: allAdminProfiles = [],
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
 
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
@@ -70,7 +102,9 @@ export default function useFilteredTicketsForAdmin() {
 			admin => all tickets
 			others
 				-> based on user.permissions.department
-				-> based on ticket.staffInCharge.assignee
+				-> based on ticket.staffInCharge.assignee 
+				-> 	or: is department is availableForAll, 
+					then check if username included in the AdminList
 		*/
 		let availableTickets = tickets
 
@@ -78,12 +112,20 @@ export default function useFilteredTicketsForAdmin() {
 			availableTickets = filter(
 				tickets,
 				(ticket) => {
+
 					const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
-					const departmentIndex = findIndex(
-						departments, department => department.did === ticket.departmentId
-					)
+
+					const departmentDetails = departments.find(
+						department => department.did === ticket.departmentId
+					) ?? {}
+
 					return latestStaffInCharge.assignee === currentUser.username
-						|| (departments[departmentIndex].members.includes(currentUser.username))
+						|| (departmentDetails.members.includes(currentUser.username))
+						|| (
+							departmentDetails.availableForAll
+							&& allAdminProfiles
+								.map(profile => profile.username)
+								.includes(currentUser.username))
 				}
 			)
 		}
@@ -129,11 +171,19 @@ export default function useFilteredTicketsForAdmin() {
 		})
 
 		//for AdminTicketFilters
+		//calculating number of not-yet-closed tickets
+		//(we do not count closed tickets)
+
+		const startedCounter = countBy(started, t => t.status)
+		const mineCounter = countBy(mine, t => t.status)
+		const assignedCounter = countBy(assigned, t => t.status)
+		const unassignedCounter = countBy(unassigned, t => t.status)
+
 		dispatch(setTicketCounter({
-			[TICKET_INBOXES.STARTED]: started.length,
-			[TICKET_INBOXES.MINE]: mine.length,
-			[TICKET_INBOXES.ASSIGNED]: assigned.length,
-			[TICKET_INBOXES.UNASSIGNED]: unassigned.length,
+			[TICKET_INBOXES.STARTED]: started.length - (startedCounter[STATUS_FILTER.CLOSED] ?? 0),
+			[TICKET_INBOXES.MINE]: mine.length - (mineCounter[STATUS_FILTER.CLOSED] ?? 0),
+			[TICKET_INBOXES.ASSIGNED]: assigned.length - (assignedCounter[STATUS_FILTER.CLOSED] ?? 0),
+			[TICKET_INBOXES.UNASSIGNED]: unassigned.length - (unassignedCounter[STATUS_FILTER.CLOSED] ?? 0),
 		}))
 	}, [dispatch, tickets, currentUser.username, hasAdminPermissions])
 
@@ -156,7 +206,10 @@ export default function useFilteredTicketsForAdmin() {
 		//group by department | status (default) | priority
 		const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])
 
-		setRes(Object.entries(filteredGroupedByStatus))
+		setRes({
+			tickets: Object.entries(filteredGroupedByStatus),
+			counter: filteredSorted.length
+		})
 	}, [
 		availableTicketsByInbox,
 		filteredByInbox,
@@ -169,7 +222,7 @@ export default function useFilteredTicketsForAdmin() {
 		currentUser.username,
 	])
 
-	if (isLoadingTickets || isLoadingDepartment) { return ({ data: [], isLoading: true }) }
+	if (isLoadingTickets || isLoadingDepartment || isLoadingAllAdminProfiles) { return ({ data: [], isLoading: true }) }
 
-	return ({ data: res, isLoading: false })
+	return ({ data: res.tickets, counter: res.counter, isLoading: false })
 }

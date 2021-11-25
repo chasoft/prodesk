@@ -47,7 +47,8 @@ import {
 	TicketUser,
 	TicketPriority,
 	TicketReplyCount,
-	TicketStatus
+	TicketStatus,
+	TicketNote
 } from "@components/Ticket/AdminTicketListItem"
 
 import { getAuth } from "@redux/selectors"
@@ -349,6 +350,8 @@ function TicketContent({ ticket, allAdminProfiles }) {
 					username={latestStaffInCharge.assignee}
 					title={(currentUser.username === latestStaffInCharge.assignee) ? "Ticket Supporter (it's you)" : "Ticket Supporter"}
 				/>
+
+				<TicketNote ticket={ticket} />
 			</Box>
 
 		</Paper>

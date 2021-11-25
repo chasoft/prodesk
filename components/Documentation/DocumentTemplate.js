@@ -32,13 +32,18 @@ import { random } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { useUpdateDocContentMutation } from "@redux/slices/firestoreApi"
+
+import {
+	getAuth,
+	getDocsCenter
+} from "@redux/selectors"
+
 
 //ASSETS
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined"
-import { useUpdateDocContentMutation } from "../../redux/slices/firestoreApi"
-import { getAuth, getDocsCenter } from "../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *

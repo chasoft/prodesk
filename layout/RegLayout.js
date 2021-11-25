@@ -27,17 +27,18 @@ import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
 // MATERIAL-UI
-import { Avatar, Box, CircularProgress, Container, Typography } from "@mui/material"
+import { Avatar, Box, Container, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import Footer from "@components/common/Footer"
-import { getRootLayout } from "./RootLayout"
+import { getRootLayout } from "@layout/RootLayout"
 import { getUiSettings } from "@redux/selectors"
 import { setflexDirection } from "@redux/slices/uiSettings"
 import { useGetInstallStatusQuery } from "@redux/slices/firestoreApi"
+import { CircularProgressBox } from "@components/common"
 
 /*****************************************************************
  * INIT                                                          *
@@ -47,7 +48,10 @@ const SideImage = ({ imageUrl = null, children }) => {
 	return (
 		<Box sx={{
 			backgroundRepeat: "no-repeat",
-			backgroundColor: (theme) => theme.palette.mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
+			backgroundColor: (theme) =>
+				(theme.palette.mode === "light")
+					? theme.palette.grey[50]
+					: theme.palette.grey[900],
 			backgroundSize: "cover",
 			backgroundPosition: "center",
 			width: { xs: "40%", xl: "500px" },
@@ -166,18 +170,9 @@ function RegLayout({ children }) {
 	}
 
 	//But if not yet got the finall query result, let's wait
-	if (isLoading || (installStatus?.isInstalled !== true)) {
-		return (
-			<div style={{
-				display: "flex",
-				minHeight: "100vh",
-				alignItems: "center",
-				justifyContent: "center",
-			}}>
-				<CircularProgress />
-			</div>
-		)
-	}
+	if (isLoading || (installStatus?.isInstalled !== true))
+		return <CircularProgressBox minHeight="100vh" />
+
 
 	//You are good to go to sign up/sign in pages
 	return (

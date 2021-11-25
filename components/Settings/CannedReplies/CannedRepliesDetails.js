@@ -165,10 +165,11 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 
 				<Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
 					Created at {dayjs(selectedCannedReply.createdAt).format(DATE_FORMAT.LONG)} by {selectedCannedReply.createdBy}
-					<span style={{ display: "block" }}>
-						Updated at {dayjs(selectedCannedReply.createdAt).format(DATE_FORMAT.LONG)} by {selectedCannedReply.updatedBy}&nbsp;
-						<span style={{ fontStyle: "italic" }}>({dayjs(selectedCannedReply.updatedAt).fromNow()})</span>
-					</span>
+					{(selectedCannedReply.createdAt !== selectedCannedReply.updatedAt) &&
+						<span style={{ display: "block" }}>
+							Updated at {dayjs(selectedCannedReply.createdAt).format(DATE_FORMAT.LONG)} by {selectedCannedReply.updatedBy}&nbsp;
+							<span style={{ fontStyle: "italic" }}>({dayjs(selectedCannedReply.updatedAt).fromNow()})</span>
+						</span>}
 				</Typography>
 
 			</SettingsContentDetails>

@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, CircularProgress, FormControlLabel, Switch } from "@mui/material"
+import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, FormControlLabel, Switch } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -37,6 +37,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { cloneDeep, find, filter, some, isEqual } from "lodash"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
 import ConfirmDialog from "@components/common/ConfirmDialog"
 import { SubCatItem } from "@components/Settings/Tickets/CategoriesAddNew"
 
@@ -179,8 +180,9 @@ const CategoriesDetails = ({ backBtnClick }) => {
 
 	return (
 		<>
-			{isLoading ? <div><CircularProgress /></div> :
-				<>
+			{isLoading
+				? <CircularProgressBox />
+				: <>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
 						rightButton={

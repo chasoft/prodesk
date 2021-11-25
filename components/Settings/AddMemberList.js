@@ -103,7 +103,15 @@ const AddMemberList = ({ departmentName, members, children }) => {
 						{[1, 2, 3, 4, 5, 6, 7, 8].map((value) => {
 							const labelId = `checkbox-list-secondary-label-${value}`
 							return (
-								<ListItem key={value} button style={{ backgroundColor: (checked.indexOf(value) !== -1) ? "#F5F5F5" : "" }}>
+								<ListItem
+									button
+									key={value}
+									sx={{
+										backgroundColor:
+											(checked.indexOf(value) !== -1)
+												? "#F5F5F5"
+												: ""
+									}}>
 									<ListItemAvatar>
 										<Avatar
 											alt={`Avatar n°${value + 1}`}

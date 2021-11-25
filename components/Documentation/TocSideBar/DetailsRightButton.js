@@ -49,7 +49,10 @@ const DetailsRightButton = ({ handleOpen }) => (
 		sx={{
 			fill: (theme) => theme.palette.grey[500],
 			my: 0.5, mr: 1,
-			cursor: "pointer"
+			cursor: "pointer",
+			":hover": {
+				fill: (theme) => theme.palette.primary.main
+			}
 		}}
 		onClick={(e) => {
 			e.stopPropagation()

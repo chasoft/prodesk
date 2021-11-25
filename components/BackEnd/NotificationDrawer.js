@@ -49,6 +49,7 @@ import { readAllNotifications, readNotification, removeNotifications } from "@he
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 import SettingsIcon from "@mui/icons-material/Settings"
+import { replyLinkBuilder } from "@helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -173,32 +174,15 @@ NotisItemContainer.propTypes = {
 	children: PropTypes.node.isRequired,
 }
 
-export const notisLinkBuilder = (isAdminURL, notisContent) => {
-	let Url = ""
-
-	switch (notisContent.actionType) {
-		case ACTIONS.ADD_TICKET_REPLY:
-		case ACTIONS.ADD_TICKET:
-		case ACTIONS.UPDATE_TICKET:
-			Url = `${isAdminURL ? "/admin" : "/client"}/tickets/${notisContent.link}`
-			break
-		case ACTIONS.NEW_ASSIGNMENT:
-			Url = notisContent.link
-			break
-		default:
-			console.log("default of NotisItemLink")
-	}
-
-	if (notisContent.actionType === ACTIONS.ADD_TICKET_REPLY)
-		Url = Url + "#" + notisContent.trid
-
-	return Url
-}
-
 const NotisItemLink = ({ notisContent }) => {
 	const { isAdminURL } = useAdmin()
 
-	const link = notisLinkBuilder(isAdminURL, notisContent)
+	const link = replyLinkBuilder({
+		isAdminURL,
+		actionType: notisContent.actionType,
+		slug: notisContent.slug,
+		trid: notisContent.trid
+	})
 
 	return (
 		<Link

@@ -123,7 +123,7 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 				iconURL: currentUser.photoURL,
 				title: currentUser.username + " just updated ticket note",
 				description: ticket.subject,
-				link: ticket.slug,
+				slug: ticket.slug,
 			}
 
 			const departmentDetails = departments.find(
@@ -186,7 +186,7 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 					</Box>
 
 					{ticket.note.content
-						? <Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>
+						? <Typography sx={{ mt: 2, fontSize: "0.8rem", color: "text.secondary" }}>
 							Updated at {dayjs(ticket.note.updatedAt).format(DATE_FORMAT.LONG)} by {ticket.note.updatedBy}&nbsp;
 							<span style={{ fontStyle: "italic" }}>({dayjs(ticket.note.updatedAt).fromNow()})</span>
 						</Typography> : null}

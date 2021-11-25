@@ -218,7 +218,7 @@ const StepperControlButtons = () => {
 					iconURL: currentUser.photoURL,
 					title: currentUser.username + " just opened new ticket",
 					description: subject,
-					link: slug,
+					slug,
 				}
 
 				//Determine who will receive notifications

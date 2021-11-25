@@ -32,20 +32,33 @@ import { some } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
+import useTicketCategories from "@helpers/useTicketCategories"
 import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import CategoriesAddNew from "@components/Settings/Tickets/CategoriesAddNew"
 import CategoriesDetails from "@components/Settings/Tickets/CategoriesDetails"
 import CategoriesOverview from "@components/Settings/Tickets/CategoriesOverview"
-import { getLayout, TICKET_SETTINGS_NAMES } from "@components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
+
+import {
+	getLayout,
+	TICKET_SETTINGS_NAMES
+} from "@components/Settings/InnerLayoutTickets"
+
+import {
+	ListItem,
+	ListTitle,
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader,
+	SettingsList
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import InfoIcon from "@mui/icons-material/Info"
 import BusinessIcon from "@mui/icons-material/Business"
-import useTicketCategories from "../../../../helpers/useTicketCategories"
 
 /*****************************************************************
  * INIT                                                          *
@@ -117,14 +130,7 @@ function TicketSettingsCategory() {
 					<ListTitle>{(categories?.length > 0) ? "Available categories" : "No available category"}</ListTitle>
 
 					{isLoading
-						? <Box sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: "100px"
-						}}>
-							<CircularProgress />
-						</Box>
+						? <CircularProgressBox minHeight="100px" />
 						: categories.map((category) => (
 							<ListItem
 								key={category.catId}
@@ -143,15 +149,7 @@ function TicketSettingsCategory() {
 
 				<SettingsContent showContent={showContent}>
 
-					{isLoading &&
-						<Box sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: "200px"
-						}}>
-							<CircularProgress />
-						</Box>}
+					{isLoading && <CircularProgressBox minHeight="200px" />}
 
 					{(!isLoading && activeSettingPanel === CATEGORY_PAGES.OVERVIEW)
 						&& <CategoriesOverview backBtnClick={setShowContent} />}

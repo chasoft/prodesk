@@ -32,15 +32,33 @@ import { some } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
 import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 import CannedRepliesGroup from "@components/Settings/CannedReplies/CannedRepliesGroup"
 import CannedRepliesAddNew from "@components/Settings/CannedReplies/CannedRepliesAddNew"
-import { getLayout, TICKET_SETTINGS_NAMES } from "@components/Settings/InnerLayoutTickets"
 import CannedRepliesOverview from "@components/Settings/CannedReplies/CannedRepliesOverview"
-import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "@redux/slices/uiSettings"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
+
+import {
+	getLayout,
+	TICKET_SETTINGS_NAMES
+} from "@components/Settings/InnerLayoutTickets"
+
+import {
+	setActiveSettingPanel,
+	setIsAddNewPanel,
+	setSelectedCrid
+} from "@redux/slices/uiSettings"
+
+import {
+	ListItem,
+	ListTitle,
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader,
+	SettingsList
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -150,14 +168,7 @@ function TicketSettingsCannedReply() {
 					<ListTitle>Available groups</ListTitle>
 
 					{isLoadingDepartments
-						? <Box sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: "100px"
-						}}>
-							<CircularProgress />
-						</Box>
+						? <CircularProgressBox minHeight="100px" />
 						: departments.map((department) => (
 							<ListItem
 								key={department.did}

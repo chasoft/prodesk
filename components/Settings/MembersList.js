@@ -26,7 +26,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Box, Button, Checkbox, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { isEqual, sortBy } from "lodash"
@@ -35,6 +35,8 @@ import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
+
 import { setRedirect } from "@redux/slices/redirect"
 import { getUiSettings } from "@redux/selectors"
 
@@ -100,15 +102,7 @@ export const AddMembersDialog = ({ open, members, addMemberCallback, handleClose
 		>
 			<DialogTitle sx={{ fontSize: "1.5em", fontWeight: 500 }}>Add members</DialogTitle>
 			<DialogContent>
-				{isLoadingSupporterList &&
-					<Box sx={{
-						display: "flex",
-						height: "200px",
-						alignItems: "center",
-						justifyContent: "center",
-					}}>
-						<CircularProgress />
-					</Box>}
+				{isLoadingSupporterList && <CircularProgressBox />}
 
 				{(!isLoadingSupporterList && supporterList.length === 0) &&
 					<DialogContentText>
@@ -224,18 +218,8 @@ const MembersList = ({ members, addMemberCallback }) => {
 		setMemberProfiles(verifiedMembers)
 	}, [administrativeUsers, membersCache])
 
-	if (isLoadingStaffList) {
-		return (
-			<Box sx={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-				minHeight: "50px"
-			}}>
-				<CircularProgress />
-			</Box>
-		)
-	}
+	if (isLoadingStaffList)
+		return <CircularProgressBox minHeight="50px" />
 
 	return <>
 		<Typography variant="caption">

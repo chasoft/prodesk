@@ -43,70 +43,83 @@ import DetailsRightButton from "./DetailsRightButton"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarItemBase = React.forwardRef(({ active, onClick, handleOpen, sx, additionalButton, showDetailsButton = true, children }, ref) => {
-	return (
-		<ButtonBase
-			ref={ref}
-			onClick={(e) => {
-				e.stopPropagation()
-				onClick()
-			}}
-			sx={{
-				display: "block", width: "100%", textAlign: "left",
-			}}
-		>
-			<Box
+const TocSideBarItemBase = React.forwardRef(
+	(
+		{
+			active,
+			additionalButton,
+			children,
+			handleOpen,
+			onClick,
+			showDetailsButton = true,
+			sx
+		},
+		ref
+	) => {
+		return (
+			<ButtonBase
+				ref={ref}
+				onClick={(e) => {
+					e.stopPropagation()
+					onClick()
+				}}
 				sx={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					backgroundColor: active ? "#FFF" : "transparent",
-					borderTop: "1px solid transparent",
-					borderBottom: "1px solid transparent",
-					borderColor: active ? "divider" : "transparent",
-					color: active ? "primary.main" : "initial",
-					":hover": {
-						backgroundColor: "action.hover",
-						color: "primary.main"
-					},
-					"&>div": {
-						"&>#popper-trigger": { visibility: "hidden" },
-						"&>#detailsRightButton": { visibility: "hidden" },
-					},
-					":hover>div": {
-						"&>#popper-trigger": { visibility: "visible" },
-						"&>#detailsRightButton": { visibility: "visible" },
-					},
-					...sx
+					display: "block", width: "100%", textAlign: "left",
 				}}
 			>
-				<Box sx={{ ml: 2, flexGrow: 1 }}>
-					{children}
-				</Box>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						backgroundColor: active ? "#FFF" : "transparent",
+						borderTop: "1px solid transparent",
+						borderBottom: "1px solid transparent",
+						borderColor: active ? "divider" : "transparent",
+						color: active ? "primary.main" : "initial",
+						":hover": {
+							backgroundColor: "action.hover",
+							color: "primary.main"
+						},
+						"&>div": {
+							"&>#popper-trigger": { visibility: "hidden" },
+							"&>#detailsRightButton": { visibility: "hidden" },
+						},
+						":hover>div": {
+							"&>#popper-trigger": { visibility: "visible" },
+							"&>#detailsRightButton": { visibility: "visible" },
+						},
+						...sx
+					}}
+				>
+					<Box sx={{ ml: 2, flexGrow: 1 }}>
+						{children}
+					</Box>
 
-				<Box sx={{
-					display: "flex",
-					alignItems: "center",
-				}}>
-					{additionalButton}
-					{showDetailsButton && <DetailsRightButton handleOpen={handleOpen} />}
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+					}}>
+						{additionalButton}
+						{showDetailsButton && <DetailsRightButton handleOpen={handleOpen} />}
+					</Box>
 				</Box>
-			</Box>
-		</ButtonBase>
-	)
-})
+			</ButtonBase>
+		)
+	}
+)
 
 TocSideBarItemBase.displayName = "TocSideBarItemBase"
 
 TocSideBarItemBase.propTypes = {
 	active: PropTypes.bool,
-	onClick: PropTypes.func,
-	handleOpen: PropTypes.func,
-	sx: PropTypes.object,
 	additionalButton: PropTypes.node,
-	showDetailsButton: PropTypes.bool,
 	children: PropTypes.node,
-	otherProps: PropTypes.any
+	handleOpen: PropTypes.func,
+	onClick: PropTypes.func,
+	otherProps: PropTypes.any,
+	showDetailsButton: PropTypes.bool,
+	sx: PropTypes.object
 }
 
 export default TocSideBarItemBase

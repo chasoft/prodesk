@@ -26,7 +26,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Grid, IconButton, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -36,9 +36,11 @@ import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
 import MembersList from "@components/Settings/MembersList"
 import ConfirmDialog from "@components/common/ConfirmDialog"
 import SettingsSwitch from "@components/common/SettingsSwitch"
+import useLocalComponentCache from "@helpers/useLocalComponentCache"
 
 import {
 	SettingsContentActionBar,
@@ -96,7 +98,10 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	} = useGetDepartmentsQuery(undefined)
 
 	//Local memory
-	const [localCache, setLocalCache] = useState({
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache({
 		isPublic: true,
 		name: "",
 		description: "",
@@ -116,17 +121,6 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	}, [departments, activeSettingPanel, isLoadingDepartments])
 
 	console.log("Department Details", { selectedDepartment }, { localCache })
-
-	const handleUpdateDetails = (value, key, toggle = false) => {
-		setLocalCache((prevState) => {
-			return {
-				...prevState,
-				[key]: toggle
-					? !prevState[key]
-					: value
-			}
-		})
-	}
 
 	const handleDeleteDepartment = async (confirmed) => {
 		if (confirmed === false) return
@@ -188,14 +182,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	return (
 		<>
 			{(isLoadingDepartments || isLoadingCannedReplies)
-				? <Box sx={{
-					display: "flex",
-					height: "300px",
-					alignItems: "center",
-					justifyContent: "center",
-				}}>
-					<CircularProgress />
-				</Box>
+				? <CircularProgressBox minHeight="300px" />
 				: <>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
@@ -237,7 +224,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 								<TextField
 									value={localCache.name}
 									onChange={(e) => {
-										handleUpdateDetails(e.target.value, "name")
+										setLocalCache(e.target.value, "name")
 									}}
 									label="Name of the department"
 									placeholder="eg. Sales, Accounting..."
@@ -249,7 +236,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 								<TextField
 									value={localCache.description}
 									onChange={(e) => {
-										handleUpdateDetails(e.target.value, "description")
+										setLocalCache(e.target.value, "description")
 									}}
 									label="Department description (Optional)"
 									fullWidth
@@ -260,7 +247,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 									title="Public"
 									state={localCache.isPublic}
 									setState={() => {
-										handleUpdateDetails(undefined, "isPublic", true)
+										setLocalCache(undefined, "isPublic", true)
 									}}
 									stateDescription={["For internal use only", "Available for all users"]}
 									description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
@@ -271,7 +258,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 									title="All staffs/agents"
 									state={localCache.availableForAll}
 									setState={() => {
-										handleUpdateDetails(undefined, "availableForAll", true)
+										setLocalCache(undefined, "availableForAll", true)
 									}}
 									stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
 									description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
@@ -281,7 +268,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 								<MembersList
 									members={localCache.members}
 									addMemberCallback={
-										(members) => handleUpdateDetails(members, "members")
+										(members) => setLocalCache(members, "members")
 									}
 								/>
 								<div style={{ height: "2rem" }}></div>

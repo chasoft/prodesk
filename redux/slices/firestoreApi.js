@@ -31,7 +31,9 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 import { ACTIONS, TYPE } from "./firestoreApiConstants"
 import fireStoreBaseQuery from "./firestoreApiBaseQuery"
 import { fix_datetime_list, fix_datetime_single } from "@helpers/firebase"
-import { STATUS_FILTER } from "@helpers/constants"
+import { DOC_TYPE, STATUS_FILTER } from "@helpers/constants"
+import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "@redux/slices/docsCenter"
+import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
 
 /*****************************************************************
  * INIT                                                          *
@@ -213,6 +215,18 @@ export const firestoreApi = createApi({
 						(draft) => { draft.push(body.docItem) }
 					)
 				)
+
+				if (body.docItem.type === DOC_TYPE.DOC) {
+					dispatch(setActiveDocId(body.docItem.docId))
+					dispatch(setShowTocSideBarDetails(false))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				} else {
+					console.log("setActiveDocIdOfTocSideBarDetails@firestoreApi = ", { docItem: body.docItem })
+					dispatch(setActiveDocId(null))
+					dispatch(setShowTocSideBarDetails(true))
+					dispatch(setActiveDocIdOfTocSideBarDetails(body.docItem.docId))
+				}
+
 				try { await queryFulfilled }
 				catch { patchResult.undo() }
 			},
@@ -232,7 +246,10 @@ export const firestoreApi = createApi({
 						(draft) => {
 							//Update docItem
 							let obj = draft.find(e => e.docId === body.docItem.docId)
-							Object.assign(obj, body.docItem)
+							Object.assign(obj, {
+								...body.docItem,
+								updatedAt: dayjs().valueOf()
+							})
 							//Update affectedItems
 							body.affectedItems.forEach((affectedItem) => {
 								let obj = draft.find(e => e.docId === affectedItem.docId)

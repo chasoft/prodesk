@@ -26,17 +26,17 @@ import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { getDocsCenter } from "@redux/selectors"
 import TocSideBarItemBase from "./TocSideBarItemBase"
 
 //ASSETS
 import LaunchIcon from "@mui/icons-material/Launch"
-import { useSelector } from "react-redux"
-import { getDocsCenter } from "../../../redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -50,10 +50,13 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 	return (
 		<TocSideBarItemBase
-			onClick={() => window.open(url, "_blank")}
+			onClick={handleOpen}
 			handleOpen={handleOpen}
 			sx={{
-				backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "action.hover" : "transparent",
+				backgroundColor:
+					(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+						? "action.hover"
+						: "transparent",
 			}}
 		>
 			<Box sx={{
@@ -69,9 +72,20 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 				}
 			}}>
 				<Typography>{children}</Typography>
-				<LaunchIcon sx={{
-					fontSize: "1.2rem", color: "grey.500", mx: 1
-				}} />
+				<Tooltip arrow title={url ? url : "Empty"} placement="top">
+					<a href={url} target="_blank" rel="noopener noreferrer">
+						<LaunchIcon
+							sx={{
+								mx: 1,
+								color: "grey.500",
+								fontSize: "1.2rem",
+								":hover": {
+									fill: (theme) => theme.palette.primary.main
+								}
+							}}
+						/>
+					</a>
+				</Tooltip>
 			</Box>
 		</TocSideBarItemBase>
 	)

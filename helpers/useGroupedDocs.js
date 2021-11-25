@@ -36,17 +36,21 @@ import { useGetDocsQuery } from "@redux/slices/firestoreApi"
  *****************************************************************/
 
 export default function useGroupedDocs() {
-	const { data, isLoading } = useGetDocsQuery(undefined)
-	const prevData = usePrevious(data)
+	const {
+		data: docs = [],
+		isLoading: isLoadingDocs
+	} = useGetDocsQuery(undefined)
+
+	const prevData = usePrevious(docs)
 	//we use useRef here because, later we change the value
 	//and, this hook will not be re-render,
 	const groupedDocs = useRef()
 
-	if (isLoading) { return ({ data: [], isLoading: true }) }
+	if (isLoadingDocs) { return ({ data: [], isLoading: true }) }
 
-	if (isEqual(prevData, data) === false) {
+	if (isEqual(prevData, docs) === false) {
 		//step 0: sort the docs list
-		const sortedDocs = sortBy(data, ["category", "subcategory", "title"])
+		const sortedDocs = sortBy(docs, ["category", "subcategory", "title"])
 		//step 1: group by cat
 		const groupByCat = groupBy(sortedDocs, (i) => i.category)
 		//step 2: group by SubCat

@@ -72,7 +72,7 @@ export const handleCloseTicketBase = async ({
 			iconURL: currentUser.photoURL,
 			title: currentUser.username + " just closed a ticket",
 			description: ticket.subject,
-			link: ticket.slug,
+			slug: ticket.slug,
 		}
 
 		const departmentDetails = departments.find(

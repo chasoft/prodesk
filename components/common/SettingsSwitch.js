@@ -42,29 +42,41 @@ import { FormControlLabel, Switch, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SettingsSwitch = ({ title, state, setState, stateDescription, description }) => {
+const SettingsSwitch = ({
+	title,
+	state,
+	setState,
+	stateDescription,
+	description
+}) => {
 	return (
 		<>
-			<Typography variant="caption" style={{ display: "block" }}>{title}</Typography>
+			{title &&
+				<Typography variant="caption" style={{ display: "block" }}>
+					{title}
+				</Typography>}
+
 			<FormControlLabel
 				control={
 					<Switch
 						checked={state}
-						onChange={() => setState()}
+						onChange={(e) => setState(e.target.checked)}
 						name="checkedB"
 						color="primary"
 					/>
 				}
 				label={stateDescription[state ? 1 : 0]}
 			/>
-			<Typography
-				sx={{
-					color: "grey.600",
-					fontSize: "0.75rem"
-				}}
-			>
-				{description}
-			</Typography>
+
+			{description &&
+				<Typography
+					sx={{
+						color: "grey.600",
+						fontSize: "0.75rem"
+					}}
+				>
+					{description}
+				</Typography>}
 		</>
 	)
 }

@@ -31,6 +31,7 @@ import { Avatar, Box, Button, IconButton, MenuItem, Typography, ListItemText, Li
 
 //THIRD-PARTY]
 import dayjs from "dayjs"
+import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
 import relativeTime from "dayjs/plugin/relativeTime"
 import CopyToClipboard from "react-copy-to-clipboard"
@@ -78,6 +79,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import DescriptionIcon from "@mui/icons-material/Description"
 import useMenuContainer from "@components/common/useMenuContainer"
 import NewCannedReplyDialog from "./NewCannedReplyDialog"
+import { useRouter } from "next/router"
 
 /*****************************************************************
  * INIT                                                          *
@@ -119,9 +121,13 @@ const ReplyItemPopupMenu = (
 		setEditMode,
 		setOpenConfirmDialog,
 		setOpenNewCannedReplyDialog,
+		trid,
 		sx
 	}
 ) => {
+
+	const router = useRouter()
+	const { enqueueSnackbar } = useSnackbar()
 
 	const [
 		MenuContainer,
@@ -156,8 +162,16 @@ const ReplyItemPopupMenu = (
 				placement="bottom-end"
 				transformOrigin="right top"
 			>
-				<CopyToClipboard text="">
-					<MenuItem onClick={() => { /* TODO: generate link for replyItem */ }}>
+				<CopyToClipboard
+					text={
+						//TODO: the link is not full, still missing the domain name
+						router.asPath + "#" + trid
+					}
+					onCopy={() => {
+						enqueueSnackbar("Link copied", { variant: "info" })
+					}}
+				>
+					<MenuItem>
 						<ListItemIcon>
 							<LinkIcon fontSize="small" />
 						</ListItemIcon>
@@ -195,6 +209,7 @@ ReplyItemPopupMenu.propTypes = {
 	setEditMode: PropTypes.func.isRequired,
 	setOpenConfirmDialog: PropTypes.func.isRequired,
 	setOpenNewCannedReplyDialog: PropTypes.func.isRequired,
+	trid: PropTypes.string.isRequired,
 	sx: PropTypes.object,
 }
 
@@ -285,9 +300,10 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmen
 			...(!isFirst && { borderTop: "1px solid", borderColor: "divider" }),
 			...(editMode && { backgroundColor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity) }),
 			":hover": {
-				backgroundColor: editMode
-					? (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
-					: "action.hover",
+				backgroundColor:
+					editMode
+						? (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity)
+						: "action.hover",
 				transition: "background-color 500ms cubic-bezier(0.4, 0, 0.2, 1)",
 			},
 		}}>
@@ -337,6 +353,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmen
 						setEditMode={setEditMode}
 						setOpenConfirmDialog={setOpenConfirmDialog}
 						setOpenNewCannedReplyDialog={setOpenNewCannedReplyDialog}
+						trid={replyItem.trid}
 					/> : null}
 			</Box>
 
@@ -356,6 +373,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmen
 							setEditMode={setEditMode}
 							setOpenConfirmDialog={setOpenConfirmDialog}
 							setOpenNewCannedReplyDialog={setOpenNewCannedReplyDialog}
+							trid={replyItem.trid}
 						/> : null}
 				</Box>
 

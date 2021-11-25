@@ -27,14 +27,15 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, ButtonBase, CircularProgress, Grid, Typography } from "@mui/material"
+import { Box, ButtonBase, Grid, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { findKey } from "lodash"
 
 //PROJECT IMPORT
-import useGroupedDocs from "../../helpers/useGroupedDocs"
-import { DOC_TYPE, RESERVED_KEYWORDS } from "./../../helpers/constants"
+import { CircularProgressBox } from "@components/common"
+import useGroupedDocs from "@helpers/useGroupedDocs"
+import { DOC_TYPE, RESERVED_KEYWORDS } from "@helpers/constants"
 
 //ASSETS
 import LaunchIcon from "@mui/icons-material/Launch"
@@ -100,7 +101,7 @@ function Category() {
 			<Box sx={{ padding: { xs: 3, md: 8 } }}>
 
 				{isLoading
-					? <div><CircularProgress /></div>
+					? <CircularProgressBox />
 					: docsList.map((cat, idx) => (
 						<Box key={cat[0]} sx={{ mt: idx > 1 ? 3 : 0 }}>
 							<Typography

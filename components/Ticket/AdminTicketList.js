@@ -545,9 +545,7 @@ const DeleteTicketsButton = () => {
 				callback={handleDeleteTicket}
 				maxWidth="md"
 			>
-				<Box sx={{
-					display: "flex",
-				}}>
+				<Box sx={{ display: "flex" }}>
 					<DeleteIcon color="warning" sx={{
 						width: 60,
 						height: 60,
@@ -682,6 +680,7 @@ function AdminTicketList() {
 
 	const {
 		data: tickets = [],
+		counter,
 		isLoading: isLoadingTickets
 	} = useFilteredTicketsForAdmin()
 
@@ -818,8 +817,8 @@ function AdminTicketList() {
 					</Typography>
 				</Box>}
 
-			{(tickets.length > 0) &&
-				tickets.map((group) => (
+			{(tickets.length > 0)
+				? tickets.map((group) => (
 					<Box key={group[0]} sx={{ mb: 4 }}>
 
 						<Paper elevation={2} >
@@ -834,7 +833,13 @@ function AdminTicketList() {
 						</Paper>
 
 					</Box>
-				))}
+				)) : null}
+
+			{(counter > 0)
+				? <Typography>
+					{`Total ${counter} ${counter === 1 ? "ticket is" : "tickets are"} listed.`}
+				</Typography>
+				: null}
 		</Box>
 	)
 }

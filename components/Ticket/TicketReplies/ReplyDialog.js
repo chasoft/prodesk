@@ -132,8 +132,8 @@ export const handleSubmitReplyBase = async ({
 				? `${currentUser.displayName} just replied his/her ticket`
 				: `${currentUser.displayName} just replied your ticket`,
 			description: ticket.subject,
-			link: ticket.slug,
-			trid: trid
+			slug: ticket.slug,
+			trid
 		}
 
 		const receivers = (currentUser.username !== ticket.username)

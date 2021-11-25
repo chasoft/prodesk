@@ -24,7 +24,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Chip, Typography, IconButton, Tooltip, CircularProgress } from "@mui/material"
+import { Box, Chip, Typography, IconButton, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import { cloneDeep } from "lodash"
@@ -34,6 +34,7 @@ import { useDispatch } from "react-redux"
 import useTicketCategories from "@helpers/useTicketCategories"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useUpdateCategoryMutation } from "@redux/slices/firestoreApi"
+import { CircularProgressBox } from "@components/common"
 
 import {
 	SettingsContentHeader,
@@ -60,13 +61,8 @@ const CategoriesOverview = ({ backBtnClick }) => {
 	const [updateCategory] = useUpdateCategoryMutation()
 	const { data: categories, isLoading } = useTicketCategories()
 
-	if (isLoading) {
-		return (
-			<div style={{ display: "flex", alignItems: "center" }} >
-				<CircularProgress />
-			</div>
-		)
-	}
+	if (isLoading)
+		return <CircularProgressBox />
 
 	const handleSetDefault = async (e, category) => {
 		e.stopPropagation()
@@ -105,14 +101,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 
 			{isLoading ?
 				<SettingsContentDetails>
-					<Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
+					<CircularProgressBox />
 				</SettingsContentDetails>
 				: categories.map((category) => (
 					<Box

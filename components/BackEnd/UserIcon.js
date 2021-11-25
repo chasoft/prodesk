@@ -35,7 +35,15 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox"
  *****************************************************************/
 
 const UserIcon = () => {
-	const [PopupContainer, open, anchorRef, { handleToggle, handleClose }] = usePopupContainer()
+	const [
+		PopupContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = usePopupContainer()
 
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()

@@ -280,6 +280,7 @@ export const SETTINGS_NAME = {
 	/* USER */
 
 	/* DOCUMENTATION */
+	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
 
 	/* BLOG */
 

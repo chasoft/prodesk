@@ -519,16 +519,24 @@ async function fireStoreBaseQuery(args) {
 			try {
 				const batch = writeBatch(db)
 				batch.set(
-					doc(db, COLLECTION.DOCS, args.body.docItem.docId),
+					doc(db,
+						COLLECTION.DOCS, args.body.docItem.docId),
 					{
 						...args.body.docItem,
 						createdAt: serverTimestamp(),
 						updatedAt: serverTimestamp()
 					}
 				)
+
 				if (args.body.docItem.type === DOC_TYPE.DOC)
-					batch.set(doc(db, COLLECTION.DOCS, args.body.docItem.docId, "content", "current"), { text: "" })
+					batch.set(
+						doc(db, COLLECTION.DOCS,
+							args.body.docItem.docId,
+							"content", "current"),
+						{ text: "" }
+					)
 				await batch.commit()
+
 				return {
 					data: {
 						code: CODE.SUCCESS,

@@ -406,6 +406,7 @@ function TicketReplies({ ticket }) {
 					ticketUsername={ticket.username}
 					ticketStatus={ticket.status}
 					departmentId={ticket.departmentId}
+					trid={replyItem.trid}
 					isFirst={idx === 0}
 				/>
 			)}

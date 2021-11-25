@@ -22,25 +22,25 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useMemo } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, ButtonBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch, useSelector } from "react-redux"
-import { filter } from "lodash"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import AddNewPopupMenu from "./AddNewPopupMenu"
-import { DOCS_ADD } from "../../../helpers/constants"
-import { getDocsCenter } from "../../../redux/selectors"
+import { DOCS_ADD } from "@helpers/constants"
+import { getDocsCenter } from "@redux/selectors"
+import useGetDoc from "@helpers/useGetDocs"
+
+import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined"
-import { firestoreApi, useGetDocsQuery } from "../../../redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -100,23 +100,20 @@ TocSideBarActionItem.propTypes = {
 const TocSideBarActionsGroup = () => {
 	const { activeDocId } = useSelector(getDocsCenter)
 
-	const { targetDocItem } = useGetDocsQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			targetDocItem: data?.find((post) => post.docId === activeDocId) ?? {},
-		})
-	})
+	const [
+		AddNewPopupMenu,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = useAddNewDocumentationPopupMenu()
 
-	// const targetDocItem = useMemo(() => {
-	// 	if (isDocsListEmpty
-	// 		|| !allDocsRaw.data
-	// 		|| activeDocId === null
-	// 	)
-	// 		return {}
-
-	// 	const filteredArray = filter(allDocsRaw.data, (i) => i.docId === activeDocId)
-	// 	if (filteredArray.length === 0) return {}
-	// 	return filteredArray[0]
-	// }, [allDocsRaw, activeDocId, isDocsListEmpty])
+	const {
+		data: targetDocItem,
+		isLoading: isLoadingTargetDocItem
+	} = useGetDoc(activeDocId)
 
 	return (
 		<Box
@@ -126,8 +123,20 @@ const TocSideBarActionsGroup = () => {
 				borderColor: "divider"
 			}}
 		>
+			{!isLoadingTargetDocItem &&
+				<TocSideBarActionItem
+					onClick={handleToggle}
+					ItemIcon={AddIcon}
+					ref={anchorRef}
+				>
+					New
+				</TocSideBarActionItem>}
+
 			<AddNewPopupMenu
-				placement="right"
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				targetDocItem={targetDocItem}
 				actions={
 					(activeDocId === null)
 						? [DOCS_ADD.CATEGORY]
@@ -138,12 +147,8 @@ const TocSideBarActionsGroup = () => {
 							DOCS_ADD.EXTERNAL
 						]
 				}
-				targetDocItem={targetDocItem}
-			>
-				<TocSideBarActionItem onClick={() => {/* empty for this case */ }} ItemIcon={AddIcon}>
-					New
-				</TocSideBarActionItem>
-			</AddNewPopupMenu>
+				placement="right"
+			/>
 
 			<TocSideBarActionItem
 				ItemIcon={FolderOutlinedIcon}

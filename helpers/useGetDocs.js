@@ -22,53 +22,66 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import PropTypes from "prop-types"
-import React, { forwardRef } from "react"
-
-// MATERIAL-UI
-// import { Box, ButtonBase, Typography } from "@mui/material"
+import { useRef } from "react"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
+import { usePrevious } from "react-use"
 
 //PROJECT IMPORT
-
-//ASSETS
-import AddIcon from "@mui/icons-material/Add"
+import { useGetDocsQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+export default function useGetDoc(docId) {
+	const {
+		data: docs = [],
+		isLoading: isLoadingDocs
+	} = useGetDocsQuery(undefined)
 
-const TocSideBarAddNew = forwardRef(({ handleToggle }, ref) => {
-	return (
-		<AddIcon
-			ref={ref}
-			id="detailsRightButton" size="small"
-			fontSize="small"
-			sx={{
-				fill: (theme) => theme.palette.grey[500],
-				my: 0.5, mr: 1,
-				cursor: "pointer",
-				":hover": {
-					fill: (theme) => theme.palette.primary.main
-				}
-			}}
-			onClick={(e) => {
-				e.stopPropagation()
-				handleToggle()
-			}}
-		/>
-	)
-})
+	const foundDoc = useRef(undefined)
+	const prevDocs = usePrevious(docs)
+	const prevDocId = usePrevious(docId)
 
-TocSideBarAddNew.displayName = "TocSideBarAddNew"
+	if (isLoadingDocs) return {
+		data: foundDoc.current,
+		isLoading: true
+	}
 
-TocSideBarAddNew.propTypes = {
-	handleToggle: PropTypes.func,
+	if (isEqual(prevDocs, docs) === false || docId !== prevDocId) {
+		foundDoc.current = docs.find((doc) => doc.docId === docId)
+		console.log("useGetDoc => changed", { prevDocId, docId })
+	}
+
+	return {
+		data: foundDoc.current,
+		isLoading: false
+	}
 }
 
-export default TocSideBarAddNew
+// export default function useGetDoc(docId) {
+// 	const [foundDoc, setFoundDoc] = useState(undefined)
+
+// 	const {
+// 		data: docs = [],
+// 		isLoading: isLoadingDocs
+// 	} = useGetDocsQuery(undefined)
+
+// 	useDeepCompareEffect(() => {
+// 		setFoundDoc(docs.find((doc) => doc.docId === docId))
+// 		console.log("useGetDoc - changed", { docId, docs })
+
+// 	}, [docId, docs])
+
+// 	if (isLoadingDocs) return {
+// 		data: undefined,
+// 		isLoading: true
+// 	}
+
+// 	return {
+// 		data: foundDoc,
+// 		isLoading: false
+// 	}
+// }

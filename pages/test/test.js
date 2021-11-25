@@ -2,32 +2,22 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import Link from "next/link"
-import React, { useCallback, useState } from "react"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Grid, Typography, Box, TextField, Container, Autocomplete, CircularProgress } from "@mui/material"
+import { Button, Box, TextField, Container, Autocomplete, Chip, Checkbox } from "@mui/material"
 
 //THIRD-PARTY
-import { serverTimestamp } from "firebase/firestore"
-import { useDispatch } from "react-redux"
-import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
+import { nanoid } from "nanoid"
+import { filter } from "lodash"
 
 //PROJECT IMPORT
-import { getLayout } from "./../../layout/BlankLayout"
-import ColorPicker from "./../../components/common/ColorPicker"
-import { getPlainTextFromMarkDown } from "./../../helpers/utils"
 
 //ASSETS
-import { ImportIcon, ExportPdfIcon, NewDocIcon } from "./../../components/common/SvgIcons"
-import { nanoid } from "nanoid"
-import { DOC_TYPE } from "../../helpers/constants"
-import { db } from "../../helpers/firebase"
-import { doc, getDoc } from "@firebase/firestore"
-
-
 import dayjs from "dayjs"
-import { useGetTicketsQuery } from "../../redux/slices/firestoreApi"
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
+
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
@@ -47,57 +37,111 @@ const top100Films = [
  *****************************************************************/
 
 export default function TestPage() {
-	const [value, setValue] = useState("")
-	const [selected, setSelected] = useState([])
+	const [inputText, setInputText] = useState("")
 
+	/*
+		{
+			key: <nanoid()>
+			name: <string>
+		}
+	*/
+	const [availableTags, setAvailableTags] = useState([])
 
-	const [onInputChangeValue, setOnInputChangeValue] = useState("")
 	const [onChangeValue, setOnChangeValue] = useState("")
 
-	const { data, isLoading } = useGetTicketsQuery("hello")
+	const [onInputChangeValue, setOnInputChangeValue] = useState("")
 
-	const a = dayjs().valueOf()
-
-	console.log({ a })
-
-	console.log(dayjs(a).format("MMMM D, YYYY h:mm A"))
+	const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+	const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 	return (
 		<Container sx={{ marginTop: 10 }}>
 			<Autocomplete
+				id="tags-input"
 				multiple
-				options={top100Films}
-				getOptionLabel={(option) => option.title}
-				id="tags-standard"
-				renderInput={(params) => (
-					<TextField
-						{...params}
-						variant="standard"
-						label="Multiple values"
-						value={value}
-						onChange={(e) => { setValue(e.target.value) }}
-						placeholder="Favorites"
-					/>
-				)}
+				disableCloseOnSelect
+				limitTags={4}
+				options={availableTags}
+				getOptionLabel={(option) => option.name}
+				renderOption={(props, option, { selected }) => {
+					console.log({ props })
+					return (
+						<li {...props}>
+							<Checkbox
+								icon={icon}
+								checkedIcon={checkedIcon}
+								style={{ marginRight: 8 }}
+								checked={selected}
+							/>
+							{option.name}
+						</li>
+					)
+				}}
+				renderInput={(params) => {
+					console.log("renderInput", { params })
+					return (
+						<TextField
+							{...params}
+							variant="standard"
+							label="Tags"
+							value={inputText}
+							onChange={(e) => { setInputText(e.target.value) }}
+							onKeyPress={(e) => {
+								if (e.key === "Enter") {
+									setAvailableTags(p => {
+										if (p.findIndex(i => i.name === inputText) !== -1) return p
+										return [...p, { name: inputText, key: nanoid() }]
+									})
+									setInputText("")
+								}
+							}}
+							placeholder="Enter your tag"
+						/>
+					)
+				}}
+
+				renderTags={(tagValue, getTagProps) =>
+					tagValue.map((option, index) => (
+						<Chip
+							key={index}
+							label={option.name}
+							{...getTagProps({ index })}
+							onDelete={(e) => {
+								console.log({ e })
+								setAvailableTags(p => {
+									console.log({ p })
+									const a = filter(p, i => i.name !== option.name)
+									return a
+								})
+							}}
+						/>
+					))
+				}
 
 				onInputChange={(event, value, reason) => {
 					setOnInputChangeValue({ value, reason })
 				}}
 
 				onChange={(event, value, reason) => {
-					setOnChangeValue({ value, reason })
+					setAvailableTags(value)
 				}}
-				value={selected}
+
+				value={availableTags}
 			/>
 			<Box sx={{ mt: 25, p: 5, backgroundColor: "silver" }}>
 				onInputChangeValue: {JSON.stringify(onInputChangeValue)}
 			</Box>
 			<Box sx={{ p: 5, backgroundColor: "blue", color: "white" }}>
 				onChangeValue: {JSON.stringify(onChangeValue)}
+
+			</Box>
+			<Box sx={{ p: 5, backgroundColor: "blue", color: "white" }}>
+				TextField (onChange): {JSON.stringify(inputText)}
 			</Box>
 
+
 			<Button onClick={() => {
-				setSelected(["hello", "world"])
+				setAvailableTags(["hello", "world"])
 			}}>
 				Set Default Value
 			</Button>
@@ -113,10 +157,6 @@ export default function TestPage() {
 
 			</Box>
 
-			<Box>
-
-				{isLoading && JSON.stringify({ data })}
-			</Box>
 
 		</Container >
 	)

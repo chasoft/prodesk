@@ -25,13 +25,14 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
 import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
@@ -39,8 +40,20 @@ import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 import DepartmentsAddNew from "@components/Settings/Tickets/DepartmentsAddNew"
 import DepartmentsDetails from "@components/Settings/Tickets/DepartmentsDetails"
 import DepartmentsOverview from "@components/Settings/Tickets/DepartmentsOverview"
-import { getLayout, TICKET_SETTINGS_NAMES } from "@components/Settings/InnerLayoutTickets"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
+
+import {
+	getLayout,
+	TICKET_SETTINGS_NAMES
+} from "@components/Settings/InnerLayoutTickets"
+
+import {
+	ListItem,
+	ListTitle,
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader,
+	SettingsList
+} from "@components/Settings/SettingsPanel"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -113,14 +126,7 @@ function TicketSettingsDepartment() {
 					<ListTitle>{(departments?.length > 0) ? "Available departments" : "No available department"}</ListTitle>
 
 					{isLoadingDepartments
-						? <Box sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: "100px"
-						}}>
-							<CircularProgress />
-						</Box>
+						? <CircularProgressBox minHeight="100px" />
 						: departments.map((department) => (
 							<ListItem
 								key={department.did}
@@ -140,14 +146,7 @@ function TicketSettingsDepartment() {
 				<SettingsContent showContent={showContent}>
 
 					{isLoadingDepartments
-						? <Box sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							minHeight: "200px"
-						}}>
-							<CircularProgress />
-						</Box>
+						? <CircularProgress minHeight="200px" />
 						: (activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
 						&& <DepartmentsOverview backBtnClick={setShowContent} />}
 

@@ -23,7 +23,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, FormControlLabel, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, FormControlLabel, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -42,10 +42,10 @@ import {
 
 //PROJECT IMPORT
 import { CODE } from "@helpers/constants"
-import useTicketCategories from "@helpers/useTicketCategories"
-import { requestSilentRefetching } from "@helpers/realtimeApi"
-
 import { TYPE } from "@redux/slices/firestoreApiConstants"
+import { CircularProgressBox } from "@components/common"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+import useTicketCategories from "@helpers/useTicketCategories"
 
 import {
 	getAuth,
@@ -268,14 +268,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 
 			<SettingsContentDetails>
 				{isLoadingCategories
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
+					? <CircularProgressBox />
 					: <Grid container spacing={2}>
 						<Grid item xs={12}>
 							<TextField

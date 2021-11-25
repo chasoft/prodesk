@@ -1,3 +1,5 @@
+import { ACTIONS } from "@redux/slices/firestoreApiConstants"
+
 /**
  * Very simple func to extract plain-text from Markdown text
  * @param {*} md Markdown text
@@ -67,46 +69,24 @@ export const getStaffInCharge = (staffInCharge) => {
 		}
 }
 
-/*****************************************************************
- * Utilities functions to deal with
- * combining many items into 1 firebase document
- ****************************************************************/
+export const replyLinkBuilder = ({ isAdminURL, actionType, slug, trid }) => {
+	let Url = ""
 
-// const F_ACTIONS = {
-// 	ADD: "add",
-// 	UPDATE: "update",
-// 	UPDATE_ALL: "update_all",
-// 	DELETE: "delete",
-// }
+	switch (actionType) {
+		case ACTIONS.ADD_TICKET_REPLY:
+		case ACTIONS.ADD_TICKET:
+		case ACTIONS.UPDATE_TICKET:
+			Url = `${isAdminURL ? "/admin" : "/client"}/tickets/${slug}`
+			break
+		case ACTIONS.NEW_ASSIGNMENT:
+			Url = slug
+			break
+		default:
+			console.log("ops, why default when using replyLinkBuilder")
+	}
 
-/**
- *
- * @param {array of objects} items
- * @param {string} action ["add", "update", "delete"]
- * @param {object} item
- * @param {string} key ["", <key>]
- * @param {string} target ["", <key>]
- */
-// export function fdoc(items, action, item, key, target) {
-// 	switch (action) {
-// 		case F_ACTIONS.ADD:
-// 			//add new item into the list
-// 			items.push(item)
+	if (actionType === ACTIONS.ADD_TICKET_REPLY)
+		Url = Url + "#" + trid
 
-// 			if 
-
-
-
-// 			break
-// 		case F_ACTIONS.UPDATE:
-
-// 			break
-// 		case F_ACTIONS.UPDATE_ALL:
-
-// 			break
-// 		case F_ACTIONS.DELETE:
-
-// 			break
-// 		default:
-// 	}
-// }
+	return Url
+}

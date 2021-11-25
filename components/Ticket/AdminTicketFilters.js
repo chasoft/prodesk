@@ -22,8 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
+import React from "react"
 import PropTypes from "prop-types"
-import React, { useMemo } from "react"
 import { Badge, Box, Button, CircularProgress, FormControl, FormControlLabel, FormGroup, InputAdornment, MenuItem, OutlinedInput, Select, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
@@ -100,6 +100,8 @@ export const TICKET_INBOXES_LIST = [
 const FilterTicketInbox = () => {
 	const dispatch = useDispatch()
 	const { ticketCounter, filteredByInbox } = useSelector(getUiSettings)
+
+	console.log({ ticketCounter })
 
 	const handleChangeInbox = (e, filteredByInbox) => {
 		if (filteredByInbox) {
@@ -213,9 +215,9 @@ export const FilterTicketStatus = () => {
 	const handleSelectTicketStatus = (e) => {
 		dispatch(setSelectedStatusRaw({ [e.target.name]: e.target.checked }))
 	}
-	const statusCount = useMemo(() => Object.entries(filteredByStatusRaw).reduce(
+	const statusCount = Object.entries(filteredByStatusRaw).reduce(
 		(count, current) => count + (current[1] ? 1 : 0), 0
-	), [filteredByStatusRaw])
+	)
 
 	return (
 		<>

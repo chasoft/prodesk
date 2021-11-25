@@ -29,13 +29,15 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TocSideBarItemBase from "./TocSideBarItemBase"
 import TocSideBarAddNew from "./TocSideBarAddNew"
-import { DOCS_ADD } from "../../../helpers/constants"
-import { useSelector } from "react-redux"
-import { getDocsCenter } from "../../../redux/selectors"
+import TocSideBarItemBase from "./TocSideBarItemBase"
+
+import { DOCS_ADD } from "@helpers/constants"
+import { getDocsCenter } from "@redux/selectors"
+import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 
 //ASSETS
 
@@ -49,24 +51,50 @@ import { getDocsCenter } from "../../../redux/selectors"
 
 const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+
+	const [
+		AddNewPopupMenu,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = useAddNewDocumentationPopupMenu()
+
 	return (
 		<>
 			<TocSideBarItemBase
 				onClick={handleOpen}
 				handleOpen={handleOpen}
-				additionalButton={
-					<TocSideBarAddNew
-						targetDocItem={targetDocItem}
-						actions={[
-							DOCS_ADD.DOC,
-							DOCS_ADD.EXTERNAL,
-							DOCS_ADD.SUB_CATEGORY,
-							DOCS_ADD.CATEGORY,
-						]}
-					/>
-				}
 				showDetailsButton={false}
-				sx={{ backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "action.hover" : "initial" }}
+				additionalButton={
+					<>
+						<TocSideBarAddNew
+							ref={anchorRef}
+							handleToggle={handleToggle}
+						/>
+						<AddNewPopupMenu
+							open={open}
+							anchorRef={anchorRef}
+							handleClose={handleClose}
+							targetDocItem={targetDocItem}
+							placement="bottom-start"
+							actions={[
+								DOCS_ADD.DOC,
+								DOCS_ADD.EXTERNAL,
+								DOCS_ADD.SUB_CATEGORY,
+								DOCS_ADD.CATEGORY,
+							]}
+						/>
+					</>
+				}
+				sx={{
+					backgroundColor:
+						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+							? "action.hover"
+							: "initial"
+				}}
 			>
 				<Typography sx={{
 					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "grey.500",

@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, Collapse, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip } from "@mui/material"
+import { Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -69,6 +69,7 @@ import SaveIcon from "@mui/icons-material/Save"
 import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
+import { CircularProgressBox } from "@components/common"
 
 /*****************************************************************
  * INIT                                                          *
@@ -119,14 +120,7 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 				</Box>
 
 				{isLoading
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "100px"
-					}}>
-						<CircularProgress />
-					</Box>
+					? <CircularProgressBox minHeight="100px" />
 					: (labels.length === 0)
 						? <div>Label list is empty</div>
 						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
@@ -349,14 +343,7 @@ const PageLabels = ({ backBtnClick }) => {
 
 			<SettingsContentDetails>
 				{isLoading
-					? <Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
+					? <CircularProgressBox />
 					: (labels.length === 0)
 						? <Box sx={{
 							py: 3,

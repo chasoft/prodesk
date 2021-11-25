@@ -53,8 +53,8 @@ import {
 
 import { CODE } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
-
 import { DEPARTMENT_PAGES } from "@pages/admin/settings/tickets/department"
+import useLocalComponentCache from "@helpers/useLocalComponentCache"
 
 //PROJECT IMPORT
 
@@ -71,25 +71,16 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 	const [addDepartment] = useAddDepartmentMutation()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
-	//Local memory
-	const [localCache, setLocalCache] = useState({
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache({
 		isPublic: true,
 		name: "",
 		description: "",
 		members: [],
 		availableForAll: false
 	})
-
-	const handleSetLocalCache = (value, key, toggle = false) => {
-		setLocalCache((prevState) => {
-			return {
-				...prevState,
-				[key]: toggle
-					? !prevState[key]
-					: value
-			}
-		})
-	}
 
 	const handleAddNewDepartment = async () => {
 		//Do not allow departments have the same name
@@ -144,7 +135,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							placeholder="eg. Sales, Accounting..."
 							value={localCache.name}
 							onChange={(e) =>
-								handleSetLocalCache(e.target.value, "name")
+								setLocalCache(e.target.value, "name")
 							}
 							fullWidth
 						/>
@@ -155,7 +146,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							placeholder="eg. For general questions"
 							value={localCache.description}
 							onChange={(e) => {
-								handleSetLocalCache(e.target.value, "description")
+								setLocalCache(e.target.value, "description")
 							}}
 							fullWidth
 						/>
@@ -165,7 +156,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							title="Public"
 							state={localCache.isPublic}
 							setState={() => {
-								handleSetLocalCache(undefined, "isPublic", true)
+								setLocalCache(undefined, "isPublic", true)
 							}}
 							stateDescription={["For internal use only", "Available for all users"]}
 							description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
@@ -176,7 +167,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							title="All staffs/agents"
 							state={localCache.availableForAll}
 							setState={() => {
-								handleSetLocalCache(undefined, "availableForAll", true)
+								setLocalCache(undefined, "availableForAll", true)
 							}}
 							stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
 							description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
@@ -186,7 +177,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 						<MembersList
 							members={localCache.members}
 							addMemberCallback={
-								(members) => handleSetLocalCache(members, "members")
+								(members) => setLocalCache(members, "members")
 							}
 						/>
 					</Grid>

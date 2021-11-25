@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, CircularProgress, IconButton, Tooltip, Typography } from "@mui/material"
+import { Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY]
 import { filter, size } from "lodash"
@@ -34,9 +34,11 @@ import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import ConfirmDialog from "@components/common/ConfirmDialog"
-import CannedRepliesList from "@components/Settings/CannedReplies/CannedRepliesList"
+import { CircularProgressBox } from "@components/common"
+import { FullCannedReplySwitch } from "./CannedRepliesAddNew"
 import CannedRepliesDetails from "@components/Settings/CannedReplies/CannedRepliesDetails"
+import CannedRepliesList from "@components/Settings/CannedReplies/CannedRepliesList"
+import ConfirmDialog from "@components/common/ConfirmDialog"
 
 import {
 	SettingsContentDetails,
@@ -58,7 +60,6 @@ import {
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { FullCannedReplySwitch } from "./CannedRepliesAddNew"
 
 
 /*****************************************************************
@@ -139,14 +140,7 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 					{currentDepartment.name}
 				</SettingsContentHeader>
 				<SettingsContentDetails>
-					<Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "300px"
-					}}>
-						<CircularProgress />
-					</Box>
+					<CircularProgressBox minHeight="300px" />
 				</SettingsContentDetails>
 			</>
 		)

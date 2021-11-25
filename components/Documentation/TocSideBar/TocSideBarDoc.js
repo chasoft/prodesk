@@ -29,11 +29,11 @@ import PropTypes from "prop-types"
 import { Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
-import { useSelector } from "react-redux"
-import { getDocsCenter } from "../../../redux/selectors"
+import { getDocsCenter } from "@redux/selectors"
 
 //ASSETS
 
@@ -53,7 +53,9 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 			onClick={onClick}
 			handleOpen={handleOpen}
 			sx={{
-				color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId || active) ? "primary.main" : "initial"
+				color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId || active)
+					? "primary.main"
+					: "initial"
 			}}
 		>
 			<Typography>{children}</Typography>

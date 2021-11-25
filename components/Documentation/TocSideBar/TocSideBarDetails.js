@@ -22,29 +22,57 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { styled } from "@mui/material/styles"
-import { Box, Button, IconButton, Typography, ToggleButtonGroup, ToggleButton, Tooltip, TextField, FormControlLabel, Switch } from "@mui/material"
+import { Autocomplete, Box, Button, Checkbox, Chip, FormControlLabel, IconButton, Switch, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { filter } from "lodash"
-import { useSelector } from "react-redux"
+import dayjs from "dayjs"
 import slugify from "react-slugify"
+import { filter, isEqual } from "lodash"
+import { useSelector } from "react-redux"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
-import useAppSettings from "../../../helpers/useAppSettings"
-import { DOC_STATUS, DOC_TYPE, SETTINGS_NAME } from "../../../helpers/constants"
-import { getUiSettings, getDocsCenter, getAuth } from "./../../../redux/selectors"
-import { RightMenuItemAddNewDoc, RightMenuItemDelete, RightMenuItemExportPDF, RightMenuItemImport } from "./../DocumentTocSideBar"
-import { useGetDocsQuery, useUpdateDocMutation, useUpdateAppSettingsMutation } from "../../../redux/slices/firestoreApi"
+import useGetDoc from "@helpers/useGetDocs"
+import useAppSettings from "@helpers/useAppSettings"
+import { CircularProgressBox } from "@components/common"
+import SettingsSwitch from "@components/common/SettingsSwitch"
+import useLocalComponentCache from "@helpers/useLocalComponentCache"
+
+import {
+	DATE_FORMAT,
+	DOC_STATUS,
+	DOC_TYPE,
+	SETTINGS_NAME
+} from "@helpers/constants"
+
+import {
+	getUiSettings,
+	getDocsCenter,
+	getAuth
+} from "@redux/selectors"
+
+import {
+	RightMenuItemAddNewDoc,
+	RightMenuItemDelete,
+	RightMenuItemExportPDF,
+	RightMenuItemImport
+} from "@components/Documentation/DocumentTocSideBar"
+
+import {
+	useGetDocsQuery,
+	useUpdateDocMutation,
+	useUpdateAppSettingsMutation
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
-import PublishOutlinedIcon from "@mui/icons-material/PublishOutlined"
-import DraftsOutlinedIcon from "@mui/icons-material/DraftsOutlined"
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
 
 /*****************************************************************
  * INIT                                                          *
@@ -66,38 +94,98 @@ const InputBaseStyled = (props) => <TextField
 	{...props}
 />
 
-const PublishStatus = ({ setStatus, ...otherProps }) => (
-	<ToggleButtonGroup
-		exclusive
-		size="small"
-		onChange={(event, selectedStatus) => {
-			if (selectedStatus) {
-				setStatus(selectedStatus)
-			}
-		}}
-		{...otherProps}
-	>
-		<ToggleButton value={DOC_STATUS.DRAFT}>
-			<Tooltip title="Draft" placement="top">
-				<DraftsOutlinedIcon />
-			</Tooltip>
-		</ToggleButton>
-		<ToggleButton value={DOC_STATUS.PUBLISHED}>
-			<Tooltip title="Publish" placement="top">
-				<PublishOutlinedIcon />
-			</Tooltip>
-		</ToggleButton>
-	</ToggleButtonGroup>
-)
-PublishStatus.propTypes = { setStatus: PropTypes.func }
-
-const Tags = () => {
+const PublishStatusSwitch = ({ status, setStatus }) => {
+	const isPublished = status === DOC_STATUS.PUBLISHED
+	dayjs.extend(relativeTime)
 	return (
-		<Typography>will implement later</Typography>
+		<SettingsSwitch
+			state={isPublished}
+			setState={(status) => {
+				if (status)
+					setStatus(DOC_STATUS.PUBLISHED)
+				else
+					setStatus(DOC_STATUS.DRAFT)
+			}}
+			stateDescription={["DRAFT", "PUBLISHED"]}
+		/>
 	)
 }
+PublishStatusSwitch.propTypes = {
+	status: PropTypes.string.isRequired,
+	setStatus: PropTypes.func.isRequired,
+}
 
-const CancelSaveButtons = ({ saveAction, handleClose }) => (
+const Tags = ({ tags, setTags }) => {
+	const [inputText, setInputText] = useState("")
+	const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
+	const checkedIcon = <CheckBoxIcon fontSize="small" />
+
+	console.log({ tags })
+	return (
+		<Autocomplete
+			id="tags-input"
+			multiple
+			disableCloseOnSelect
+			limitTags={3}
+			options={tags}
+			getOptionLabel={(option) => option}
+			value={tags}
+			noOptionsText="Enter to add new tag"
+			style={{ maxWidth: 336 }}
+			renderOption={(props, tag, { selected }) =>
+				<li {...props}>
+					<Checkbox
+						icon={icon}
+						checkedIcon={checkedIcon}
+						style={{ marginRight: 8 }}
+						checked={selected}
+					/>
+					{tag}
+				</li>}
+			renderInput={(params) =>
+				<TextField
+					{...params}
+					variant="standard"
+					value={inputText}
+					onChange={(e) => {
+						e.stopPropagation()
+						setInputText(e.target.value)
+					}}
+					onKeyPress={(e) => {
+						e.stopPropagation()
+						if (e.key === "Enter") {
+							if (tags.includes(inputText) === false)
+								setTags([...tags, inputText].sort(), "tags")
+							setInputText("")
+						}
+					}}
+				/>}
+			renderTags={(tags, getTagProps) =>
+				tags.map((selectedTag, index) => (
+					<Chip
+						key={index}
+						label={selectedTag}
+						{...getTagProps({ index })}
+						onDelete={(e) => {
+							e.stopPropagation()
+							const tagIndex = tags.findIndex(tag => tag === selectedTag)
+							const newTags = [...tags]
+							newTags.splice(tagIndex, 1)
+							setTags(newTags, "tags")
+						}}
+					/>
+				))
+			}
+			onChange={(event, value) => { setTags(value, "tags") }}
+		/>
+	)
+}
+Tags.propTypes = {
+	tags: PropTypes.array.isRequired,
+	setTags: PropTypes.func.isRequired
+}
+
+const CancelSaveButtons = ({ isModified, saveAction, handleClose }) => (
 	<Box sx={{
 		display: "flex",
 		justifyContent: "space-between",
@@ -109,27 +197,26 @@ const CancelSaveButtons = ({ saveAction, handleClose }) => (
 			onClick={() => { handleClose() }}
 			variant="outlined"
 			color="primary"
-			sx={{ px: 3 }}
+			sx={{ px: 3, minWidth: "100px" }}
 		>
 			Cancel
 		</Button>
 		<Button
-			onClick={() => {
-				saveAction()
-				handleClose()
-			}}
-			type="submit"
+			// type="submit"
 			variant="contained"
 			color="primary"
-			sx={{ px: 3 }}
+			disabled={!isModified}
+			sx={{ px: 3, minWidth: "100px" }}
+			onClick={() => { saveAction() }}
 		>
 			Save
 		</Button>
 	</Box>
 )
 CancelSaveButtons.propTypes = {
-	saveAction: PropTypes.func,
-	handleClose: PropTypes.func
+	isModified: PropTypes.bool.isRequired,
+	saveAction: PropTypes.func.isRequired,
+	handleClose: PropTypes.func.isRequired
 }
 
 /**
@@ -145,21 +232,55 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 
 	const { currentUser } = useSelector(getAuth)
 
-	const [slug, setSlug] = useState(docItem.slug)
-	const [name, setName] = useState(
-		docItem.type === DOC_TYPE.CATEGORY
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache({
+		title: docItem.title,
+		slug: docItem.slug,
+		name: docItem.type === DOC_TYPE.CATEGORY
 			? docItem.category
-			: docItem.subcategory
-	)
-	const [description, setDescription] = useState(docItem.description)
+			: docItem.subcategory,
+		description: docItem.description
+	})
 
-	useEffect(() => {
-		setSlug(docItem.slug)
-		setName(docItem.type === DOC_TYPE.CATEGORY
-			? docItem.category
-			: docItem.subcategory)
-		setDescription(docItem.description)
-	}, [docItem.slug, docItem.category, docItem.subcategory, docItem.type, docItem.description])
+	const isModified =
+		docItem.title !== localCache.title
+		|| docItem.slug !== localCache.slug
+		|| docItem.description !== localCache.description
+
+	const handleSaveCategoryDetails = async () => {
+		//prepare the affectedItems
+		const affectedItems = filter(
+			allDocsRaw.data,
+			(docItem.type === DOC_TYPE.CATEGORY)
+				? { category: docItem.category }
+				: { category: docItem.category, subcategory: docItem.subcategory }
+		)
+
+		//prepare the data
+		const newCategoryOrSubCatMeta = {
+			docId: docItem.docId,
+			type: docItem.type,
+			title: localCache.title,
+			slug: localCache.slug,
+			description: localCache.description,
+			updatedBy: currentUser.username,
+			...(
+				docItem.type === DOC_TYPE.CATEGORY
+					? { category: localCache.name }
+					: { subcategory: localCache.name }
+			),
+		}
+
+		console.log("newCategoryOrSubCatMeta", newCategoryOrSubCatMeta)
+
+		//update DB
+		updateDoc({
+			docItem: newCategoryOrSubCatMeta,
+			affectedItems
+		})
+	}
 
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
@@ -168,11 +289,11 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			</TypographyHeader>
 			<InputBaseStyled
 				id={(docItem.type === DOC_TYPE.CATEGORY) ? "cat-title" : "subcat-title"}
-				value={name}
+				value={localCache.name}
 				onChange={(e) => {
-					setName(e.target.value)
+					setLocalCache(e.target.value, "name")
 					if (autoGenerateSlugFromTitle) {
-						setSlug(slugify(e.target.value))
+						setLocalCache(slugify(e.target.value), "slug")
 					}
 				}}
 			/>
@@ -198,8 +319,9 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 				/>
 			</Box>
 			<InputBaseStyled
-				id="cat-slug" value={slug}
-				onChange={(e) => setSlug(e.target.value)}
+				id="cat-slug"
+				value={localCache.slug}
+				onChange={(e) => setLocalCache(e.target.value, "slug")}
 				disabled={autoGenerateSlugFromTitle}
 				sx={{
 					...(autoGenerateSlugFromTitle && {
@@ -213,47 +335,18 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 				Description
 			</TypographyHeader>
 			<InputBaseStyled
-				id="cat-description" value={description}
+				id="cat-description" value={localCache.description}
 				multiline={true}
 				minRows={3}
 				onChange={
-					(e) => setDescription(e.target.value)
+					(e) => setLocalCache(e.target.value, "description")
 				}
 			/>
 
 			<CancelSaveButtons
+				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={() => {
-					//prepare the affectedItems
-					const affectedItems = filter(
-						allDocsRaw.data,
-						(docItem.type === DOC_TYPE.CATEGORY)
-							? { category: docItem.category }
-							: { category: docItem.category, subcategory: docItem.subcategory }
-					)
-
-					//prepare the data
-					const newCategoryOrSubCatMeta = {
-						docId: docItem.docId,
-						type: docItem.type,
-						...(
-							docItem.type === DOC_TYPE.CATEGORY
-								? { category: name }
-								: { subcategory: name }
-						),
-						slug: slug,
-						description: description,
-						updatedBy: currentUser.username,
-					}
-
-					console.log("newCategoryOrSubCatMeta", newCategoryOrSubCatMeta)
-
-					//update DB
-					updateDoc({
-						docItem: newCategoryOrSubCatMeta,
-						affectedItems
-					})
-				}}
+				saveAction={handleSaveCategoryDetails}
 			/>
 		</form>
 	)
@@ -267,39 +360,66 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [updateDoc] = useUpdateDocMutation()
 
-	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
+	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
-	const [slug, setSlug] = useState(docItem.slug)
-	// const [tags, setTags] = useState(docItem.tags)
-	const [title, setTitle] = useState(docItem.title)
-	const [status, setStatus] = useState(docItem.status)
-	const [description, setDescription] = useState(docItem.description)
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache(docItem)
 
-	useEffect(() => {
-		setSlug(docItem.slug)
-		// setTags(docItem.tags)
-		setTitle(docItem.title)
-		setStatus(docItem.status)
-		setDescription(docItem.description)
-	}, [docItem.slug, docItem.title, docItem.status, docItem.description])
+	const isModified =
+		docItem.title !== localCache.title
+		|| docItem.slug !== localCache.slug
+		|| !isEqual(docItem.tags, localCache.tags)
+		|| docItem.status !== localCache.status
+
+	const handleSaveDocDetails = async () => {
+		//prepare the data
+		const newDocMeta = {
+			docId: docItem.docId, 	//must be included
+			type: docItem.type,		//must be included
+			title: localCache.title,
+			slug: localCache.slug,
+			description: localCache.description,
+			status: localCache.status,
+			tags: localCache.tags,
+			updatedBy: currentUser.username,
+			...(
+				(docItem.status !== localCache.status
+					&& localCache.status === DOC_STATUS.PUBLISHED)
+					? {
+						status: DOC_STATUS.PUBLISHED,
+						publishedBy: currentUser.username,
+						publishedDate: dayjs().valueOf()
+					}
+					: {
+						status: DOC_STATUS.DRAFT,
+						publishedBy: "",
+						publishedDate: 0
+					}
+			)
+		}
+
+		//update DB
+		updateDoc({
+			docItem: newDocMeta,
+			affectedItems: [/* no affectedItems! */]
+		})
+	}
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault()
-			}}
-		>
+		<form onSubmit={(e) => { e.preventDefault() }}>
 			<TypographyHeader sx={{ mb: 1 }}>
 				Title
 			</TypographyHeader>
 			<InputBaseStyled
 				id="doc-title"
-				value={title}
+				value={localCache.title}
 				onChange={(e) => {
-					setTitle(e.target.value)
+					setLocalCache(e.target.value, "title")
 					if (autoGenerateSlugFromTitle) {
-						setSlug(slugify(e.target.value))
+						setLocalCache(slugify(e.target.value), "slug")
 					}
 				}}
 			/>
@@ -325,8 +445,8 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 				/>
 			</Box>
 			<InputBaseStyled
-				id="doc-slug" value={slug}
-				onChange={(e) => setSlug(e.target.value)}
+				id="doc-slug" value={localCache.slug}
+				onChange={(e) => setLocalCache(e.target.value, "slug")}
 				disabled={autoGenerateSlugFromTitle}
 				sx={{
 					...(autoGenerateSlugFromTitle && {
@@ -339,36 +459,38 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 				Tags
 			</TypographyHeader>
-			<Tags />
 
-			<Box sx={{ display: "flex", justifyContent: "space-between" }}>
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Status
-				</TypographyHeader>
-				<PublishStatus value={status} setStatus={setStatus} />
+			<Tags
+				tags={localCache?.tags ?? []}
+				setTags={setLocalCache}
+			/>
+
+			<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
+				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+					<TypographyHeader sx={{ mt: 1, mb: 1 }}>
+						Status
+					</TypographyHeader>
+
+					<PublishStatusSwitch
+						status={localCache.status}
+						setStatus={(status) => setLocalCache(status, "status")}
+					/>
+				</Box>
+				{(localCache.status === DOC_STATUS.PUBLISHED) &&
+					<Typography variant="caption" sx={{
+						textAlign: "right",
+						fontSize: "0.8rem",
+						color: "text.secondary",
+					}}>
+						Published at {dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).format(DATE_FORMAT.LONG)}<br />
+						by {localCache.publishedBy ? localCache.publishedBy : currentUser.username}<br />
+						<span style={{ fontStyle: "italic" }}>({dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).fromNow()})</span>
+					</Typography>}
 			</Box>
-
 			<CancelSaveButtons
+				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={() => {
-					//prepare the data
-					const newDocMeta = {
-						docId: docItem.docId, 	//must be included
-						type: docItem.type,		//must be included
-						title: title,
-						slug: slug,
-						description: description,
-						status: status,
-						// tags: tags,
-						updatedBy: currentUser.username,
-					}
-
-					//update DB
-					updateDoc({
-						docItem: newDocMeta,
-						affectedItems: [/* no affectedItems! */]
-					})
-				}}
+				saveAction={handleSaveDocDetails}
 			/>
 		</form>
 	)
@@ -382,34 +504,62 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 	const [updateDoc] = useUpdateDocMutation()
 
-	const [url, setUrl] = useState(docItem.url)
-	// const [tags, setTags] = useState(docItem.tags)
-	const [title, setTitle] = useState(docItem.title)
-	const [status, setStatus] = useState(docItem.status)
-	const [description, setDescription] = useState(docItem.description)
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache(docItem)
 
-	useEffect(() => {
-		setUrl(docItem.url)
-		// setTags(docItem.tags)
-		setTitle(docItem.title)
-		setStatus(docItem.status)
-		setDescription(docItem.description)
-	}, [docItem.url, docItem.title, docItem.status, docItem.description])
+	const isModified =
+		docItem.title !== localCache.title
+		|| docItem.url !== localCache.url
+		|| docItem.description !== localCache.description
+		|| !isEqual(docItem.tags, localCache.tags)
+		|| docItem.status !== localCache.status
+
+	const handleSaveExternalDetails = async () => {
+		//prepare the data
+		const newExternalMeta = {
+			docId: docItem.docId, //must included here
+			type: docItem.type,
+			title: localCache.title,
+			url: localCache.url,
+			description: localCache.description,
+			status: localCache.status,
+			tags: localCache.tags,
+			updatedBy: currentUser.username,
+			...(
+				(docItem.status !== localCache.status
+					&& localCache.status === DOC_STATUS.PUBLISHED)
+					? {
+						status: DOC_STATUS.PUBLISHED,
+						publishedBy: currentUser.username,
+						publishedDate: dayjs().valueOf()
+					}
+					: {
+						status: DOC_STATUS.DRAFT,
+						publishedBy: "",
+						publishedAt: 0
+					}
+			)
+		}
+
+		//update DB
+		await updateDoc({
+			docItem: newExternalMeta,
+			affectedItems: [/* no affectedItems */]
+		})
+	}
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault()
-			}}
-		>
+		<form onSubmit={(e) => { e.preventDefault() }}>
 			<TypographyHeader sx={{ mb: 1 }}>
 				Title
 			</TypographyHeader>
 			<InputBaseStyled
 				id="external-title"
-				value={title}
+				value={localCache.title}
 				onChange={
-					(e) => setTitle(e.target.value)
+					(e) => setLocalCache(e.target.value, "title")
 				}
 			/>
 
@@ -417,9 +567,9 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 				url
 			</TypographyHeader>
 			<InputBaseStyled
-				id="external-url" value={url}
+				id="external-url" value={localCache.url}
 				onChange={
-					(e) => setUrl(e.target.value)
+					(e) => setLocalCache(e.target.value, "url")
 				}
 			/>
 
@@ -427,47 +577,50 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 				Description
 			</TypographyHeader>
 			<InputBaseStyled
-				id="external-description" value={description}
+				id="external-description" value={localCache.description}
 				multiline={true}
 				minRows={3}
 				onChange={
-					(e) => setDescription(e.target.value)
+					(e) => setLocalCache(e.target.value, "description")
 				}
 			/>
 
 			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 				Tags
 			</TypographyHeader>
-			<Tags />
 
-			<Box sx={{ display: "flex", justifyContent: "space-between" }}>
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Status
-				</TypographyHeader>
-				<PublishStatus value={status} setStatus={setStatus} />
+			<Tags
+				tags={localCache?.tags ?? []}
+				setTags={setLocalCache}
+			/>
+
+			<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
+				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+					<TypographyHeader sx={{ mt: 1, mb: 1 }}>
+						Status
+					</TypographyHeader>
+
+					<PublishStatusSwitch
+						status={localCache.status}
+						setStatus={(status) => setLocalCache(status, "status")}
+					/>
+				</Box>
+				{(localCache.status === DOC_STATUS.PUBLISHED) &&
+					<Typography variant="caption" sx={{
+						textAlign: "right",
+						fontSize: "0.8rem",
+						color: "text.secondary",
+					}}>
+						Published at {dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).format(DATE_FORMAT.LONG)}<br />
+						by {localCache.publishedBy ? localCache.publishedBy : currentUser.username}<br />
+						<span style={{ fontStyle: "italic" }}>({dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).fromNow()})</span>
+					</Typography>}
 			</Box>
 
 			<CancelSaveButtons
+				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={() => {
-					//prepare the data
-					const newExternalMeta = {
-						docId: docItem.docId, //must included here
-						type: docItem.type,
-						title: title,
-						url: url,
-						description: description,
-						status: status,
-						// tags: tags,
-						updatedBy: currentUser.username,
-					}
-
-					//update DB
-					updateDoc({
-						docItem: newExternalMeta,
-						affectedItems: [/* no affectedItems */]
-					})
-				}}
+				saveAction={handleSaveExternalDetails}
 			/>
 		</form>
 	)
@@ -484,21 +637,24 @@ DetailsFormExternal.propTypes = {
 
 const TocSideBarDetails = ({ handleClose }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
-	const { isSideBarExpanded, sideBarLeft, showTocSideBarDetails } = useSelector(getUiSettings)
 
-	const { docItem } = useGetDocsQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			docItem: data?.find((post) => post.docId === activeDocIdOfTocSideBarDetails),
-		})
-	})
+	const {
+		isSideBarExpanded,
+		sideBarLeft,
+		showTocSideBarDetails
+	} = useSelector(getUiSettings)
 
-	if (docItem === undefined) return null
+	const {
+		data: docItem,
+		isLoading: isLoadingDocItem
+	} = useGetDoc(activeDocIdOfTocSideBarDetails)
 
-	console.log("docItem", docItem)
+	console.log("TocSideBarDetails => activeDocIdOfTocSideBarDetails", activeDocIdOfTocSideBarDetails)
+	console.log("TocSideBarDetails => docItem", docItem)
 
 	return (
 		<>
-			<Box sx={{
+			<Box id="TocSideBarDetails" sx={{
 				position: "fixed",
 				zIndex: 150,
 				display: "flex",
@@ -510,12 +666,13 @@ const TocSideBarDetails = ({ handleClose }) => {
 				backgroundColor: "#FFF",
 				borderRight: "1px solid",
 				borderColor: "divider",
-				...(showTocSideBarDetails ?
-					{
+				...(showTocSideBarDetails
+					? {
 						opacity: 1,
 						visibility: "visible",
 						transition: "opacity 0.5s, visibility 0 0.5s" //!! invalid property
-					} : {
+					}
+					: {
 						opacity: 0,
 						visibility: "hidden",
 						transition: "opacity 0.5s, visibility 0.5s" //!! invalid property
@@ -530,49 +687,76 @@ const TocSideBarDetails = ({ handleClose }) => {
 					borderBottom: "1px solid transparent",
 					borderColor: "divider",
 				}}>
-					<TypographyHeader>{docItem.type}</TypographyHeader>
+					<TypographyHeader>{docItem?.type}</TypographyHeader>
 					<IconButton onClick={() => { handleClose() }}>
 						<ArrowBackIcon />
 					</IconButton>
 				</Box>
 
-				<Box sx={{
-					mx: 3, pt: 3, pb: 3,
-					borderBottom: "1px solid transparent",
-					borderColor: "divider",
-				}}>
+				{isLoadingDocItem
+					? <CircularProgressBox />
+					: (docItem !== undefined)
+						? <>
+							<Box sx={{
+								mx: 3, pt: 3, pb: 3,
+								borderColor: "divider",
+								borderBottom: "1px solid transparent",
+							}}>
 
-					{(docItem.type === DOC_TYPE.CATEGORY
-						|| docItem.type === DOC_TYPE.SUBCATEGORY) &&
-						<DetailsFormCategory docItem={docItem} handleClose={handleClose} />}
+								{(docItem.type === DOC_TYPE.CATEGORY
+									|| docItem.type === DOC_TYPE.SUBCATEGORY) &&
+									<DetailsFormCategory docItem={docItem} handleClose={handleClose} />}
 
-					{(docItem.type === DOC_TYPE.EXTERNAL) &&
-						<DetailsFormExternal docItem={docItem} handleClose={handleClose} />}
+								{(docItem.type === DOC_TYPE.EXTERNAL) &&
+									<DetailsFormExternal docItem={docItem} handleClose={handleClose} />}
 
-					{(docItem.type === DOC_TYPE.DOC) &&
-						<DetailsFormDoc docItem={docItem} handleClose={handleClose} />}
+								{(docItem.type === DOC_TYPE.DOC) &&
+									<DetailsFormDoc docItem={docItem} handleClose={handleClose} />}
 
-				</Box>
+							</Box>
 
-				<Box sx={{ mt: 3 }}>
+							<Box sx={{ mt: 3 }}>
 
-					<RightMenuItemAddNewDoc targetDocItem={docItem} sx={{ px: 3 }} />
-					<RightMenuItemImport targetDocItem={docItem} sx={{ px: 3 }} />
+								<RightMenuItemAddNewDoc
+									sx={{ px: 3 }}
+									targetDocItem={docItem}
+								/>
 
-					{(docItem.type === DOC_TYPE.CATEGORY) &&
-						<RightMenuItemDelete targetDocItem={docItem} title="Delete this category" sx={{ px: 3 }} />}
+								<RightMenuItemImport
+									sx={{ px: 3 }}
+									targetDocItem={docItem}
+								/>
 
-					{(docItem.type === DOC_TYPE.SUBCATEGORY) &&
-						<RightMenuItemDelete targetDocItem={docItem} title="Delete this sub-category" sx={{ px: 3 }} />}
+								{(docItem.type === DOC_TYPE.CATEGORY) &&
+									<RightMenuItemDelete
+										targetDocItem={docItem}
+										title="Delete this category"
+										sx={{ px: 3 }}
+									/>}
 
-					{(docItem.type === DOC_TYPE.DOC) &&
-						<RightMenuItemExportPDF targetDocItem={docItem} sx={{ px: 3 }} />}
+								{(docItem.type === DOC_TYPE.SUBCATEGORY) &&
+									<RightMenuItemDelete
+										sx={{ px: 3 }}
+										targetDocItem={docItem}
+										title="Delete this sub-category"
+									/>}
 
-					{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
-						<RightMenuItemDelete targetDocItem={docItem} sx={{ px: 3 }} />}
+								{(docItem.type === DOC_TYPE.DOC) &&
+									<RightMenuItemExportPDF
+										sx={{ px: 3 }}
+										targetDocItem={docItem}
+									/>}
 
-				</Box>
-			</Box >
+								{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
+									<RightMenuItemDelete
+										sx={{ px: 3 }}
+										targetDocItem={docItem}
+									/>}
+
+							</Box>
+						</>
+						: null}
+			</Box>
 
 			{/* This is the backdrop when TocSideBarDetails showed */}
 			<Box
@@ -580,7 +764,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 				sx={{
 					position: "fixed",
 					zIndex: 149,
-					display: open ? "block" : "none",
+					display: showTocSideBarDetails ? "block" : "none",
 					left: `${sideBarLeft + 300}px`,
 					minWidth: "100%",
 					height: "100%",

@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useCallback, useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 // import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, CircularProgress } from "@mui/material"
+import { Box } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
@@ -39,11 +39,28 @@ import TocSideBarDoc from "./TocSideBarDoc"
 import TocSideBarExternal from "./TocSideBarExternal"
 import TocSideBarCategory from "./TocSideBarCategory"
 import TocSideBarSubCategory from "./TocSideBarSubCategory"
-import { setShowTocSideBarDetails, setSideBarLeft } from "./../../../redux/slices/uiSettings"
-import { getDocsCenter } from "../../../redux/selectors"
-import { DOC_TYPE, RESERVED_KEYWORDS } from "./../../../helpers/constants"
-import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "../../../redux/slices/docsCenter"
-import useGroupedDocs from "../../../helpers/useGroupedDocs"
+
+import useGroupedDocs from "@helpers/useGroupedDocs"
+import { CircularProgressBox } from "@components/common"
+
+import {
+	getDocsCenter,
+} from "@redux/selectors"
+
+import {
+	setShowTocSideBarDetails,
+	setSideBarLeft
+} from "@redux/slices/uiSettings"
+
+import {
+	DOC_TYPE,
+	RESERVED_KEYWORDS
+} from "@helpers/constants"
+
+import {
+	setActiveDocId,
+	setActiveDocIdOfTocSideBarDetails
+} from "@redux/slices/docsCenter"
 
 //ASSETS
 
@@ -51,27 +68,21 @@ import useGroupedDocs from "../../../helpers/useGroupedDocs"
  * INIT                                                          *
  *****************************************************************/
 
-const HiddenBgFixBug = () => <Box sx={{
-	position: "fixed",
-	zIndex: 1,
-	display: "flex",
-	alignItems: "stretch",
-	left: 0,
-	minWidth: "700px",
-	height: "100%",
-	backgroundColor: "#F0F0F0",
-	...(open ?
-		{
-			opacity: 1,
-			visibility: "visible",
-			transition: "0.5s opacity, 0 0.5s visibility"
-		} : {
-			opacity: 0,
-			visibility: "hidden",
-			transition: "0.5s opacity, 0.5s visibility"
-		}
-	)
-}} />
+const HiddenBgFixBug = () => {
+	return (<Box id="HiddenBgFixBug" sx={{
+		position: "fixed",
+		zIndex: 1,
+		display: "flex",
+		alignItems: "stretch",
+		left: 0,
+		minWidth: "700px",
+		height: "100%",
+		backgroundColor: "#F0F0F0",
+		opacity: 1,
+		visibility: "visible",
+		transition: "0.5s opacity, 0 0.5s visibility"
+	}} />)
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -80,30 +91,40 @@ const HiddenBgFixBug = () => <Box sx={{
 const TocSideBar = () => {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
-	const { data: docsList, isLoading } = useGroupedDocs()
+
+	const {
+		data: docs,
+		isLoading: isLoadingDocs
+	} = useGroupedDocs()
+
 	const { activeDocId } = useSelector(getDocsCenter)
 
-	const handleCloseDetails = useCallback(() => {
+	const handleCloseDetails = () => {
 		reduxBatch(() => {
+			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setActiveDocIdOfTocSideBarDetails(null))
 		})
-	}, [dispatch])
+	}
 
-	const handleOpenDetails = useCallback((docId) => {
+	const handleOpenDetails = (docId) => {
 		reduxBatch(() => {
+			if (activeDocId !== docId) {
+				dispatch(setActiveDocId(null))
+			}
+			console.log("handleOpenDetails => docId", docId)
 			dispatch(setShowTocSideBarDetails(true))
 			dispatch(setActiveDocIdOfTocSideBarDetails(docId))
 		})
-		console.log("docId", docId)
-	}, [dispatch])
+	}
 
-	const loadDocContent = useCallback((docId) => {
+	const loadDocContent = (docId) => {
 		reduxBatch(() => {
 			dispatch(setActiveDocId(docId))
+			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setActiveDocIdOfTocSideBarDetails(null))
 		})
-	}, [dispatch])
+	}
 
 	useEffect(() => {
 		const updateSideBarLeft = () => {
@@ -116,13 +137,18 @@ const TocSideBar = () => {
 		updateSideBarLeft()
 		window.addEventListener("resize", updateSideBarLeft)
 		return () => window.removeEventListener("resize", updateSideBarLeft)
-	}, [dispatch, sideBarRef?.current?.clientWidth, sideBarRef?.current?.offsetLeft])
+	}, [
+		dispatch,
+		sideBarRef?.current?.clientWidth,
+		sideBarRef?.current?.offsetLeft
+	])
 
 	return (
 		<>
 			<Box
+				id="TocSideBar"
 				ref={sideBarRef}
-				onClick={() => handleCloseDetails()}
+				onClick={handleCloseDetails}
 				sx={{
 					display: { xs: "none", md: "flex" },
 					flexDirection: { flexDirection: "column" },
@@ -135,9 +161,9 @@ const TocSideBar = () => {
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
-					{isLoading
-						? <div><CircularProgress /></div>
-						: docsList.map((cat) => {
+					{isLoadingDocs
+						? <CircularProgressBox />
+						: docs.map((cat) => {
 							/* Category Level */
 							return (
 								<TocSideBarCategory
@@ -155,7 +181,6 @@ const TocSideBar = () => {
 										//Draw items at root level of Category
 										if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 											return subcat[1].map((item) => {
-												console.log("item.type", item.type, item.docId)
 												if (item.type === DOC_TYPE.DOC)
 													return (
 														<TocSideBarDoc

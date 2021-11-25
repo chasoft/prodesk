@@ -22,53 +22,41 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import PropTypes from "prop-types"
-import React, { forwardRef } from "react"
-
-// MATERIAL-UI
-// import { Box, ButtonBase, Typography } from "@mui/material"
+import React, { useState } from "react"
 
 //THIRD-PARTY
+import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
-
-//ASSETS
-import AddIcon from "@mui/icons-material/Add"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+export default function useLocalComponentCache(arrayObject) {
 
-const TocSideBarAddNew = forwardRef(({ handleToggle }, ref) => {
-	return (
-		<AddIcon
-			ref={ref}
-			id="detailsRightButton" size="small"
-			fontSize="small"
-			sx={{
-				fill: (theme) => theme.palette.grey[500],
-				my: 0.5, mr: 1,
-				cursor: "pointer",
-				":hover": {
-					fill: (theme) => theme.palette.primary.main
-				}
-			}}
-			onClick={(e) => {
-				e.stopPropagation()
-				handleToggle()
-			}}
-		/>
-	)
-})
+	const [cache, setCache] = useState(arrayObject)
 
-TocSideBarAddNew.displayName = "TocSideBarAddNew"
+	useDeepCompareEffect(() => {
+		setCache(arrayObject)
+	}, [arrayObject])
 
-TocSideBarAddNew.propTypes = {
-	handleToggle: PropTypes.func,
+	const handlers = React.useMemo(
+		() => ({
+			setLocalCache: (value, key, toggle = false) => {
+				setCache((prevState) => {
+					return {
+						...prevState,
+						[key]: toggle
+							? !prevState[key]
+							: value
+					}
+				})
+			}
+		}), [])
+
+	return {
+		localCache: cache,
+		handlers
+	}
 }
-
-export default TocSideBarAddNew

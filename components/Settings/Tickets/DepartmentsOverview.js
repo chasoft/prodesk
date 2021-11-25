@@ -24,7 +24,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Avatar, Box, Chip, CircularProgress, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, Chip, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useDispatch } from "react-redux"
@@ -105,14 +105,7 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 
 			{isLoading ?
 				<SettingsContentDetails>
-					<Box sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						minHeight: "200px"
-					}}>
-						<CircularProgress />
-					</Box>
+					<CircularProgressBox />
 				</SettingsContentDetails>
 				: departments.map((department) => (
 					<Box

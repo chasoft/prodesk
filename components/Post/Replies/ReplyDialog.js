@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
@@ -34,10 +34,15 @@ import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import TextEditor from "./../../common/TextEditor"
-import { LearnMoreAdvancedTextEditor } from "./../../common"
-import { getAuth, getTextEditor, getUiSettings } from "../../../redux/selectors"
-import { useAddTicketReplyMutation } from "../../../redux/slices/firestoreApi"
+import TextEditor from "@components/common/TextEditor"
+import { LearnMoreAdvancedTextEditor } from "@components/common"
+import { useAddTicketReplyMutation } from "@redux/slices/firestoreApi"
+
+import {
+	getAuth,
+	getTextEditor,
+	getUiSettings
+} from "@redux/selectors"
 
 //ASSETS
 
@@ -59,14 +64,14 @@ const ReplyDialog = ({ children }) => {
 	const { editorData } = useSelector(getTextEditor)
 	const [addTicketReply] = useAddTicketReplyMutation()
 
-	const handleClose = useCallback(() => { setOpen(false) }, [])
-	const handleClickOpen = useCallback(() => { setOpen(true) }, [])
-	const loadLocalStorage = useCallback(() => { return localStorage.getItem("NewReply") ?? "" }, [])
+	const handleClose = () => { setOpen(false) }
+	const handleClickOpen = () => { setOpen(true) }
+	const loadLocalStorage = () => { return localStorage.getItem("NewReply") ?? "" }
 
-	const handleGetEditorData = useCallback((data) => {
+	const handleGetEditorData = (data) => {
 		localStorage.setItem("NewReply", data)
 		console.log(data)
-	}, [])
+	}
 
 	const handleCancelReply = () => {
 		setOpen(false)

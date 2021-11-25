@@ -43,17 +43,21 @@ export const docItemNewDoc = (targetDocItem, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		docId: docId,
-		type: DOC_TYPE.DOC,
 		category: targetDocItem.category,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
-		title: `Document ${docId} #${incNumber}`,
-		description: "",
-		slug: `document-${docId}-${incNumber}`,
-		tags: [],
-		status: DOC_STATUS.DRAFT,
 		createdBy: username,
+		description: "",
+		docId: docId,
+		//
+		slug: `document-${docId.substring(0, 3)}-${incNumber}`,
+		status: DOC_STATUS.DRAFT,
+		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		tags: [],
+		title: `Document #${incNumber}`,
+		type: DOC_TYPE.DOC,
 		updatedBy: username,
+		//
+		publishedBy: "",
+		publishedDate: 0,
 	}
 }
 
@@ -67,17 +71,21 @@ export const docItemNewExternal = (targetDocItem, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		docId: docId,
-		type: DOC_TYPE.EXTERNAL,
 		category: targetDocItem.category,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
-		url: "",
-		title: `External link ${docId} #${incNumber}`,
-		description: "",
-		tags: [],
-		status: DOC_STATUS.DRAFT,
 		createdBy: username,
+		description: "",
+		docId: docId,
+		//
+		status: DOC_STATUS.DRAFT,
+		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		tags: [],
+		title: `External link ${docId.substring(0, 3)} #${incNumber}`,
+		type: DOC_TYPE.EXTERNAL,
 		updatedBy: username,
+		url: "",
+		//
+		publishedBy: "",
+		publishedDate: 0,
 	}
 }
 
@@ -91,14 +99,19 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		docId: docId,
-		type: DOC_TYPE.SUBCATEGORY,
 		category: targetDocItem.category,
-		subcategory: `SubCategory ${docId} #${incNumber}`,
-		slug: `subcategory-${docId}-${incNumber}`,
-		description: "",
 		createdBy: username,
+		description: "",
+		docId: docId,
+		//
+		slug: `subcategory-${docId.substring(0, 3)}-${incNumber}`,
+		subcategory: `SubCategory #${incNumber}`,
+		tags: [],
+		type: DOC_TYPE.SUBCATEGORY,
 		updatedBy: username,
+		//
+		publishedBy: "",
+		publishedDate: 0,
 	}
 }
 
@@ -112,13 +125,18 @@ export const docItemNewCategory = (username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		docId: docId,
-		type: DOC_TYPE.CATEGORY,
-		category: `Category ${docId} #${incNumber}`,
-		slug: `category-${docId}-${incNumber}`,
-		description: "",
+		category: `Category #${incNumber}`,
 		createdBy: username,
+		description: "",
+		docId: docId,
+		//
+		slug: `category-${docId.substring(0, 3)}-${incNumber}`,
+		tags: [],
+		type: DOC_TYPE.CATEGORY,
 		updatedBy: username,
+		//
+		publishedBy: "",
+		publishedDate: 0,
 	}
 }
 

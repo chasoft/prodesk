@@ -22,31 +22,56 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { forwardRef } from "react"
+import React, { useState, forwardRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, List, ListItemButton, Typography, ListItemAvatar, ListItemText } from "@mui/material"
 
 //THIRD-PARTY
 import { filter } from "lodash"
+import { useSnackbar } from "notistack"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { DOC_TYPE } from "./../../helpers/constants"
-import { getTextEditor, getDocsCenter, getAuth } from "./../../redux/selectors"
-import { setShowTocSideBarDetails } from "../../redux/slices/uiSettings"
-import { docItemNewDoc } from "./../../helpers/firebase/docs"
-import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "./../../redux/slices/docsCenter"
+import useGetDoc from "@helpers/useGetDocs"
+import { docItemNewDoc } from "@helpers/firebase/docs"
+import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+
+import {
+	DOC_TYPE,
+	DOCS_ADD,
+	RESERVED_KEYWORDS
+} from "@helpers/constants"
+
+import {
+	getAuth,
+	getDocsCenter,
+	getTextEditor,
+	getUiSettings
+} from "@redux/selectors"
+
+import {
+	setActiveDocId,
+	setActiveDocIdOfTocSideBarDetails
+} from "@redux/slices/docsCenter"
+
+import {
+	useAddDocMutation,
+	useGetDocsQuery,
+	useDeleteDocMutation,
+	useGetDocContentQuery
+} from "@redux/slices/firestoreApi"
 
 //ASSETS
-import { ExportPdfIcon } from "./../common/SvgIcons"
+import DeleteIcon from "@mui/icons-material/Delete"
+import { ExportPdfIcon } from "@components/common/SvgIcons"
 import PostAddIcon from "@mui/icons-material/PostAdd"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
 import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
-import { useSnackbar } from "notistack"
-import { useAddDocMutation, useGetDocsQuery, useDeleteDocMutation } from "../../redux/slices/firestoreApi"
+import { CircularProgressBox } from "@components/common"
 
 /*****************************************************************
  * INIT                                                          *
@@ -124,21 +149,25 @@ RightMenuItemBase.propTypes = {
 }
 
 export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
-	const { currentUser } = useSelector(getAuth)
-	const [addDoc] = useAddDocMutation()
 	const dispatch = useDispatch()
+	const [addDoc] = useAddDocMutation()
+	const { currentUser } = useSelector(getAuth)
 	return (
 		<RightMenuItemBase
 			Icon={<PostAddIcon />} sx={{ ...sx }}
 			onClick={async () => {
-				//Add new document
+				//Prepare skeleton document
 				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-				const res = await addDoc({ docItem: docItem })
-				//Open new created document
-				reduxBatch(() => {
-					dispatch(setActiveDocId(res.id))
-					dispatch(setActiveDocIdOfTocSideBarDetails(null))
-				})
+
+				//UI
+				// reduxBatch(() => {
+				// 	dispatch(setActiveDocId(docItem.docId))
+				// 	dispatch(setShowTocSideBarDetails(false))
+				// 	dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				// })
+
+				//add new document to DB
+				await addDoc({ docItem: docItem })
 			}}
 		>
 			New Document
@@ -185,89 +214,308 @@ RightMenuItemExportPDF.propTypes = {
 }
 
 export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => {
+	const dispatch = useDispatch()
 	const allDocsRaw = useGetDocsQuery(undefined)
 	const [deleteDoc] = useDeleteDocMutation()
 	const { enqueueSnackbar } = useSnackbar()
-	const dispatch = useDispatch()
+	const { isSmallScreen } = useSelector(getUiSettings)
+
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+
+	const {
+		data: docItemContent = {},
+		isLoading: isLoadingDocItemContent
+	} = useGetDocContentQuery(targetDocItem.docId)
+
+	const handleDeleteDocItem = async (confirmed) => {
+		if (confirmed === false) return
+
+		if (targetDocItem.type === DOC_TYPE.CATEGORY) {
+			const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category })
+			if (affectedItems.length > 1) {
+				enqueueSnackbar("Can not delete selected category! Please delete/move all data out of it first!", { variant: "error" })
+				return
+			}
+
+			try {
+				//update Redux first
+				reduxBatch(() => {
+					dispatch(setActiveDocId(null))
+					dispatch(setShowTocSideBarDetails(false))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				})
+
+				//update DB
+				await deleteDoc({ docItem: targetDocItem })
+			} catch (e) {
+				throw new Error("Something wrong when trying to delete your selected category!")
+			}
+		}
+
+		if (targetDocItem.type === DOC_TYPE.SUBCATEGORY) {
+
+			const affectedItems = filter(
+				allDocsRaw.data,
+				{
+					category: targetDocItem.category,
+					subcategory: targetDocItem.subcategory
+				}
+			)
+
+			if (affectedItems.length > 1) {
+				enqueueSnackbar("Can not delete selected sub-category! Please delete/move all data out of it first!", { variant: "error" })
+				return
+			}
+
+			try {
+				//update Redux first
+				reduxBatch(() => {
+					dispatch(setActiveDocId(null))
+					dispatch(setShowTocSideBarDetails(false))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				})
+
+				//update DB
+				await deleteDoc({ docItem: targetDocItem })
+			} catch (e) {
+				throw new Error("Something wrong when trying to delete your selected sub-category!")
+			}
+		}
+
+		if (targetDocItem.type === DOC_TYPE.EXTERNAL) {
+			try {
+				//update Redux first
+				reduxBatch(() => {
+					dispatch(setActiveDocId(null))
+					dispatch(setShowTocSideBarDetails(false))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				})
+
+				//update DB
+				await deleteDoc({ docItem: targetDocItem })
+			} catch (e) {
+				throw new Error("Something wrong when trying to delete your selected external link!")
+			}
+		}
+
+		if (targetDocItem.type === DOC_TYPE.DOC) {
+			try {
+				//update Redux first
+				reduxBatch(() => {
+					dispatch(setActiveDocId(null))
+					dispatch(setShowTocSideBarDetails(false))
+					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+				})
+
+				//update DB
+				await deleteDoc({ docItem: targetDocItem })
+			} catch (e) {
+				throw new Error("Something wrong when trying to delete your selected document!")
+			}
+		}
+	}
+
 	return (
-		<RightMenuItemBase
-			Icon={<DeleteOutlinedIcon />} sx={{ ...sx }}
-			onClick={async () => {
-				if (targetDocItem.type === DOC_TYPE.CATEGORY) {
-					const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category })
-					if (affectedItems.length > 1) {
-						enqueueSnackbar("Can not delete selected category! Please delete/move all data out of it first!", { variant: "error" })
-						return
-					}
+		<>
+			<RightMenuItemBase
+				Icon={<DeleteOutlinedIcon />} sx={{ ...sx }}
+				onClick={() => setOpenConfirmDialog(true)}
+			>
+				{title}
+			</RightMenuItemBase>
 
-					try {
-						//update Redux first
-						reduxBatch(() => {
-							dispatch(setActiveDocId(null))
-							dispatch(setActiveDocIdOfTocSideBarDetails(null))
-						})
+			<ConfirmDialog
+				okButtonText="Delete"
+				color="warning"
+				open={openConfirmDialog}
+				setOpen={setOpenConfirmDialog}
+				callback={handleDeleteDocItem}
+			>
+				<Box sx={{ display: "flex" }}>
+					<DeleteIcon color="warning" sx={{
+						width: 60,
+						height: 60,
+						mr: 2,
+						display: { xs: "none", sm: "block" }
+					}} />
+					<Box sx={{
+						display: "flex",
+						flexDirection: "column"
+					}}>
+						<Box sx={{
+							display: "flex",
+							alignItems: "center",
+							mb: 2
+						}}>
+							<DeleteIcon color="warning" sx={{
+								width: 60,
+								height: 60,
+								mr: 2,
+								display: { xs: "block", sm: "none" }
+							}} />
+							<Typography variant="body2" sx={{ lineHeight: isSmallScreen ? 1.5 : 2 }}>
+								Are you sure you want to delete this {targetDocItem.type.toLowerCase()}?
+							</Typography>
+						</Box>
 
-						//update DB
-						await deleteDoc({ docItem: targetDocItem })
-					} catch (e) {
-						throw new Error("Something wrong when trying to delete your selected category!")
-					}
-				}
+						<List sx={{
+							width: "100%",
+							bgcolor: "background.paper",
+							mb: 2,
+						}}>
 
-				if (targetDocItem.type === DOC_TYPE.SUBCATEGORY) {
-					const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category, subcategory: targetDocItem.subcategory })
-					if (affectedItems.length > 1) {
-						enqueueSnackbar("Can not delete selected sub-category! Please delete/move all data out of it first!", { variant: "error" })
-						return
-					}
+							{(targetDocItem.type === DOC_TYPE.CATEGORY) &&
+								<ListItemButton
+									alignItems="flex-start"
+									sx={{
+										borderTop: "1px solid transparent",
+										borderBottom: "1px solid transparent",
+										borderColor: "warning.main",
+									}}
+								>
+									<ListItemAvatar>
+										<DOCS_ADD.CATEGORY.icon />
+									</ListItemAvatar>
+									<ListItemText
+										primary={
+											<Typography variant="h3" sx={{
+												my: 0,
+												fontWeight: 500,
+												color: "grey.800"
+											}}>
+												{targetDocItem.category}
+											</Typography>
+										}
+									/>
+								</ListItemButton>}
 
-					try {
-						//update Redux first
-						reduxBatch(() => {
-							dispatch(setActiveDocId(null))
-							dispatch(setActiveDocIdOfTocSideBarDetails(null))
-						})
+							{(targetDocItem.type === DOC_TYPE.SUBCATEGORY) &&
+								<ListItemButton
+									alignItems="flex-start"
+									sx={{
+										borderTop: "1px solid transparent",
+										borderBottom: "1px solid transparent",
+										borderColor: "warning.main",
+									}}
+								>
+									<ListItemAvatar>
+										<DOCS_ADD.SUB_CATEGORY.icon />
+									</ListItemAvatar>
+									<ListItemText
+										primary={
+											<Typography variant="h3" sx={{
+												my: 0,
+												fontWeight: 500,
+												color: "grey.800"
+											}}>
+												{targetDocItem.subcategory}
+											</Typography>
+										}
+										secondary={
+											<Typography sx={{
+												fontWeight: 500,
+												color: "grey.700"
+											}}>
+												a member of {targetDocItem.category}
+											</Typography>
+										}
+									/>
+								</ListItemButton>}
 
-						//update DB
-						await deleteDoc({ docItem: targetDocItem })
-					} catch (e) {
-						throw new Error("Something wrong when trying to delete your selected sub-category!")
-					}
-				}
+							{(targetDocItem.type === DOC_TYPE.EXTERNAL) &&
+								<ListItemButton
+									alignItems="flex-start"
+									sx={{
+										borderTop: "1px solid transparent",
+										borderBottom: "1px solid transparent",
+										borderColor: "warning.main",
+									}}
+								>
+									<ListItemAvatar>
+										<DOCS_ADD.EXTERNAL.icon />
+									</ListItemAvatar>
+									<ListItemText
+										primary={
+											<Typography variant="h3" sx={{
+												my: 0,
+												fontWeight: 500,
+												color: "grey.800"
+											}}>
+												{targetDocItem.title}
+											</Typography>
+										}
+										secondary={
+											<Typography sx={{
+												fontWeight: 500,
+												color: "grey.700"
+											}}>
+												a member of
+												{(targetDocItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN)
+													? targetDocItem.subcategory
+													: targetDocItem.category}
+											</Typography>
+										}
+									/>
+								</ListItemButton>}
 
-				if (targetDocItem.type === DOC_TYPE.EXTERNAL) {
-					try {
-						//update Redux first
-						reduxBatch(() => {
-							dispatch(setActiveDocId(null))
-							dispatch(setActiveDocIdOfTocSideBarDetails(null))
-						})
+							{(targetDocItem.type === DOC_TYPE.DOC) &&
+								<ListItemButton
+									alignItems="flex-start"
+									sx={{
+										borderTop: "1px solid transparent",
+										borderBottom: "1px solid transparent",
+										borderColor: "warning.main",
+									}}
+								>
+									<ListItemAvatar>
+										<DOCS_ADD.DOC.icon />
+									</ListItemAvatar>
+									<ListItemText
+										primary={
+											<>
+												<Typography variant="h3" sx={{
+													my: 0,
+													fontWeight: 500,
+													color: "grey.800"
+												}}>
+													{targetDocItem?.title}
+												</Typography>
+												<Typography sx={{
+													mb: 1.5,
+													fontWeight: 500,
+													color: "grey.700"
+												}}>
+													a member of
+													{(targetDocItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN)
+														? targetDocItem?.subcategory
+														: targetDocItem?.category}
+												</Typography>
+											</>
+										}
+										secondary={
+											isLoadingDocItemContent
+												? <CircularProgressBox minHeight="32px" />
+												: <Typography
+													component="span"
+													variant="body2"
+													color="text.primary"
+													sx={{ display: "inline" }}
+												>
+													{docItemContent?.text?.substring(0, 100)}
+												</Typography>
+										}
+									/>
+								</ListItemButton>}
 
-						//update DB
-						await deleteDoc({ docItem: targetDocItem })
-					} catch (e) {
-						throw new Error("Something wrong when trying to delete your selected external link!")
-					}
-				}
+						</List>
 
-				if (targetDocItem.type === DOC_TYPE.DOC) {
-					try {
-						//update Redux first
-						reduxBatch(() => {
-							dispatch(setActiveDocId(null))
-							dispatch(setActiveDocIdOfTocSideBarDetails(null))
-						})
-
-						//update DB
-						await deleteDoc({ docItem: targetDocItem })
-					} catch (e) {
-						throw new Error("Something wrong when trying to delete your selected document!")
-					}
-				}
-			}}
-		>
-			{title}
-		</RightMenuItemBase>
+						<Typography sx={{ lineHeight: 2 }}>
+							Please note that this action can not be undo.
+						</Typography>
+					</Box>
+				</Box>
+			</ConfirmDialog>
+		</>
 	)
 }
 RightMenuItemDelete.propTypes = {
@@ -286,6 +534,7 @@ export const RightMenuItemMore = ({ sx }) => {
 				/* This is to show TocSideBarDetails of current Doc */
 				reduxBatch(() => {
 					dispatch(setShowTocSideBarDetails(true))
+					console.log("RightMenuItemMore => activeDocId = ", activeDocId)
 					dispatch(setActiveDocIdOfTocSideBarDetails(activeDocId))
 				})
 			}}
@@ -306,11 +555,10 @@ const DocumentTocSideBar = () => {
 	const { activeDocId } = useSelector(getDocsCenter)
 	const { editorDataHeadings } = useSelector(getTextEditor)
 
-	const { activeDoc } = useGetDocsQuery(undefined, {
-		selectFromResult: ({ data }) => ({
-			activeDoc: data?.find((post) => post.docId === activeDocId) ?? {},
-		})
-	})
+	const {
+		data: activeDoc,
+		isLoading: isLoadingActiveDoc
+	} = useGetDoc(activeDocId)
 
 	return (
 		<Box sx={{
@@ -321,7 +569,9 @@ const DocumentTocSideBar = () => {
 			backgroundColor: "#FFF",
 		}}>
 
-			{(activeDocId !== null) &&
+			{isLoadingActiveDoc && <CircularProgressBox />}
+
+			{(activeDocId !== null && !isLoadingActiveDoc) &&
 				<div style={{ position: "sticky", top: "80px" }}>
 
 					<Box sx={{

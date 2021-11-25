@@ -129,13 +129,11 @@ const TextEditor = React.forwardRef((props, ref) => {
 		}, [currentUser.username, storageDestination]
 	)
 
-	const doImageUpload = useCallback(
-		async (file) => {
-			const imageURL = await uploaderPromise(file)
-			setUploading(false)
-			return imageURL
-		}, [uploaderPromise]
-	)
+	const doImageUpload = async (file) => {
+		const imageURL = await uploaderPromise(file)
+		setUploading(false)
+		return imageURL
+	}
 
 	return (
 		<>

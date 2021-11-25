@@ -26,14 +26,15 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, AvatarGroup, CircularProgress } from "@mui/material"
-import { useDeepCompareEffect } from "react-use"
-import useProfilesGroup from "../../helpers/useProfilesGroup"
-import { USERGROUP } from "../../helpers/constants"
+import { Avatar, AvatarGroup } from "@mui/material"
 
 //THIRD-PARTY
+import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
+import { USERGROUP } from "@helpers/constants"
+import { CircularProgressBox } from "@components/common"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 //ASSETS
 
@@ -55,9 +56,7 @@ function AvatarList({ members }) {
 	}, [staffList, members])
 
 	if (isLoadingStaffList)
-		return (
-			<CircularProgress />
-		)
+		return <CircularProgressBox minHeight="50px" />
 
 	return (
 		<AvatarGroup max={3}>
