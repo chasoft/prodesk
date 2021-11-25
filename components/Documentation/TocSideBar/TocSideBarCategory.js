@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, Collapse, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector } from "react-redux"
@@ -40,16 +40,56 @@ import { DOCS_ADD } from "@helpers/constants"
 import { getDocsCenter } from "@redux/selectors"
 
 //ASSETS
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+export const CollapseIconButton = ({ expanded, onClick }) => {
+	if (expanded) {
+		return (
+			<ArrowDropDownIcon
+				id="detailsRightButton"
+				sx={{
+					fill: (theme) => theme.palette.grey[500],
+					cursor: "pointer",
+					":hover": {
+						fill: (theme) => theme.palette.primary.main
+					}
+				}}
+				onClick={onClick}
+			/>
+		)
+	}
+
+	return (
+		<ArrowDropUpIcon
+			id="detailsRightButton"
+			sx={{
+				fill: (theme) => theme.palette.grey[500],
+				cursor: "pointer",
+				":hover": {
+					fill: (theme) => theme.palette.primary.main
+				}
+			}}
+			onClick={onClick}
+		/>
+	)
+}
+CollapseIconButton.propTypes = {
+	expanded: PropTypes.bool.isRequired,
+	onClick: PropTypes.func.isRequired
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
+	const [expanded, setExpanded] = useState(false)
+
 	const [
 		AddNewPopupMenu,
 		open,
@@ -66,11 +106,18 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 		<div id={targetDocItem.slug}>
 			<TocSideBarItemBase
 				id={targetDocItem.slug + "-button"}
-				onClick={handleOpen}
+				onClick={() => {
+					setExpanded(p => !p)
+					handleOpen()
+				}}
 				handleOpen={handleOpen}
 				showDetailsButton={false}
 				additionalButton={
 					<>
+						<CollapseIconButton
+							expanded={expanded}
+							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
+						/>
 						<TocSideBarAddNew
 							ref={anchorRef}
 							handleToggle={handleToggle}
@@ -116,7 +163,9 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 				borderLeft: "1px solid transparent",
 				borderColor: "divider",
 			}}>
-				{children}
+				<Collapse in={expanded}>
+					{children}
+				</Collapse>
 			</Box>
 		</div>
 	)

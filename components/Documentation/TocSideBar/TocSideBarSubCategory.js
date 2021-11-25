@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Typography } from "@mui/material"
+import { Box, Collapse, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector } from "react-redux"
@@ -37,6 +37,7 @@ import TocSideBarItemBase from "./TocSideBarItemBase"
 
 import { DOCS_ADD } from "@helpers/constants"
 import { getDocsCenter } from "@redux/selectors"
+import { CollapseIconButton } from "@components/Documentation/TocSideBar/TocSideBarCategory"
 import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 
 //ASSETS
@@ -50,6 +51,7 @@ import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBa
  *****************************************************************/
 
 const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) => {
+	const [expanded, setExpanded] = useState(true)
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	const [
@@ -66,11 +68,18 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 		<div id={targetDocItem.slug}>
 			<TocSideBarItemBase
 				id={targetDocItem.slug + "-button"}
-				onClick={handleOpen}
+				onClick={() => {
+					setExpanded(p => !p)
+					handleOpen()
+				}}
 				handleOpen={handleOpen}
 				showDetailsButton={false}
 				additionalButton={
 					<>
+						<CollapseIconButton
+							expanded={expanded}
+							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
+						/>
 						<TocSideBarAddNew
 							ref={anchorRef}
 							handleToggle={handleToggle}
@@ -111,9 +120,9 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 				borderColor: "divider",
 				ml: 2
 			}}>
-
-				{children}
-
+				<Collapse in={expanded}>
+					{children}
+				</Collapse>
 			</Box>
 		</div>
 	)
