@@ -42,12 +42,12 @@ import { realtimeDB } from "./firebase"
 import { getUiSettings } from "@redux/selectors"
 import { CODE, STATUS_FILTER } from "@helpers/constants"
 import { useRequestRefetchingMutation } from "@redux/slices/firestoreApi"
+import { ACTIONS } from "@redux/slices/firestoreApiConstants"
 
 //ASSETS
 import CloseIcon from "@mui/icons-material/Close"
 import VisibilityIcon from "@mui/icons-material/Visibility"
-import { ACTIONS } from "@redux/slices/firestoreApiConstants"
-import { notisLinkBuilder } from "@components/BackEnd/NotificationDrawer"
+import { replyLinkBuilder } from "@helpers/utils"
 
 /*****************************************************************
  * INIT                                                          *
@@ -105,7 +105,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 			notisRef,
 			async (data) => {
 				if (data.val().hasBeenShowed === false) {
-					const link = notisLinkBuilder(isAdminURL, data.val().content)
+					const link = replyLinkBuilder(isAdminURL, data.val().content)
 					enqueueSnackbar(
 						data.val().content.title,
 						{

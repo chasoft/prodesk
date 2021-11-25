@@ -63,8 +63,9 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 	] = useAddNewDocumentationPopupMenu()
 
 	return (
-		<>
+		<div id={targetDocItem.slug}>
 			<TocSideBarItemBase
+				id={targetDocItem.slug + "-button"}
 				onClick={handleOpen}
 				handleOpen={handleOpen}
 				showDetailsButton={false}
@@ -105,7 +106,7 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 				</Typography>
 			</TocSideBarItemBase>
 
-			<Box sx={{
+			<Box id={targetDocItem.slug + "-children"} sx={{
 				borderLeft: "1px solid transparent",
 				borderColor: "divider",
 				ml: 2
@@ -114,7 +115,7 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 				{children}
 
 			</Box>
-		</>
+		</div>
 	)
 }
 TocSideBarSubCategory.propTypes = {

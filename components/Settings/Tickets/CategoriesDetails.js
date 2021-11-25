@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, FormControlLabel, Switch } from "@mui/material"
+import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, FormControlLabel, Switch, Collapse } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -64,6 +64,7 @@ import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
+import { TransitionGroup } from "react-transition-group"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -245,15 +246,17 @@ const CategoriesDetails = ({ backBtnClick }) => {
 
 							<Grid item xs={12}>
 								<Typography color="grey.600" sx={{ mb: 1 }}>Sub-Categories</Typography>
-								{subCategories.map((subCat) => (
-									<SubCatItem
-										key={subCat.name}
-										currentItem={subCat}
-										list={subCategories}
-										setList={setSubCategories}
-									/>
-								))}
-
+								<TransitionGroup>
+									{subCategories.map((subCat) => (
+										<Collapse key={subCat.name}>
+											<SubCatItem
+												currentItem={subCat}
+												list={subCategories}
+												setList={setSubCategories}
+											/>
+										</Collapse>
+									))}
+								</TransitionGroup>
 							</Grid>
 
 							<Grid item xs={12}>

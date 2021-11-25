@@ -63,8 +63,9 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	return (
-		<div>
+		<div id={targetDocItem.slug}>
 			<TocSideBarItemBase
+				id={targetDocItem.slug + "-button"}
 				onClick={handleOpen}
 				handleOpen={handleOpen}
 				showDetailsButton={false}
@@ -111,7 +112,7 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 				</Typography>
 			</TocSideBarItemBase>
 
-			<Box sx={{
+			<Box id={targetDocItem.slug + "-children"} sx={{
 				borderLeft: "1px solid transparent",
 				borderColor: "divider",
 			}}>

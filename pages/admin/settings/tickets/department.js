@@ -146,7 +146,7 @@ function TicketSettingsDepartment() {
 				<SettingsContent showContent={showContent}>
 
 					{isLoadingDepartments
-						? <CircularProgress minHeight="200px" />
+						? <CircularProgressBox minHeight="200px" />
 						: (activeSettingPanel === DEPARTMENT_PAGES.OVERVIEW)
 						&& <DepartmentsOverview backBtnClick={setShowContent} />}
 

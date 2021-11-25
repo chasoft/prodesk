@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"

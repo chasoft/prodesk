@@ -72,7 +72,7 @@ const useFilteredTicketsForUser = () => {
 			const filteredStatus = filter(filtered_1, i => selectedStatus.includes(i.status))
 
 			//sort the list - descensing by `createdAt`
-			const filteredSorted = orderBy(filteredStatus, ["updatedAt"])
+			const filteredSorted = orderBy(filteredStatus, ["updatedAt"], ["desc"])
 
 			//group by department | status (default) | priority
 			const filteredGroupedByStatus = groupBy(filteredSorted, i => i[filteredGroupBy])

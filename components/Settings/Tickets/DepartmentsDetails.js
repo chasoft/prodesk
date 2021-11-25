@@ -32,7 +32,6 @@ import { Box, Button, Grid, IconButton, TextField, Tooltip, Typography } from "@
 import dayjs from "dayjs"
 import { useSnackbar } from "notistack"
 import { filter, isEqual, some } from "lodash"
-import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -90,37 +89,19 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	} = useGetCannedRepliesQuery(undefined)
 
 	const { activeSettingPanel } = useSelector(getUiSettings)
-	const [selectedDepartment, setSelectedDepartment] = useState({})
 
 	const {
 		data: departments = [],
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
+	const selectedDepartment = departments.find(department => department.name === activeSettingPanel)
+
 	//Local memory
 	const {
 		localCache,
 		handlers: { setLocalCache }
-	} = useLocalComponentCache({
-		isPublic: true,
-		name: "",
-		description: "",
-		members: [],
-		availableForAll: true
-	})
-
-	//Re-render
-	useDeepCompareEffect(() => {
-		if (isLoadingDepartments === false && departments.length > 0) {
-			const activeDepartment = departments.find(
-				department => department.name === activeSettingPanel
-			) ?? {}
-			setSelectedDepartment(activeDepartment)
-			setLocalCache(activeDepartment)
-		}
-	}, [departments, activeSettingPanel, isLoadingDepartments])
-
-	console.log("Department Details", { selectedDepartment }, { localCache })
+	} = useLocalComponentCache(selectedDepartment)
 
 	const handleDeleteDepartment = async (confirmed) => {
 		if (confirmed === false) return
@@ -138,10 +119,23 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 		//get newList of department
 		const newList = filter(departments, department => department.did !== selectedDepartment.did)
-		await deleteDepartment({
+		const res = await deleteDepartment({
 			departmentItem: { did: selectedDepartment.did },
 			fullList: newList
 		})
+
+		//broadcast refetching-request
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: currentUser.username,
+				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
 	}
 
 	const handleUpdateDepartment = async () => {

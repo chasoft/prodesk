@@ -171,7 +171,6 @@ const TocSideBar = () => {
 									title={cat[0]}
 									handleOpen={() => {
 										handleOpenDetails(cat[1]["undefined"][0].docId)
-										// console.log("Category clicked")
 									}}
 									targetDocItem={cat[1]["undefined"][0]}
 								>
@@ -180,32 +179,36 @@ const TocSideBar = () => {
 
 										//Draw items at root level of Category
 										if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
-											return subcat[1].map((item) => {
-												if (item.type === DOC_TYPE.DOC)
-													return (
-														<TocSideBarDoc
-															key={item.docId}
-															onClick={() => { loadDocContent(item.docId) }}
-															active={item.docId === activeDocId}
-															handleOpen={() => handleOpenDetails(item.docId)}
-															targetDocItem={{ docId: item.docId }}
-														>
-															{item.title}
-														</TocSideBarDoc>
-													)
+											return (
+												<div id={cat[1]["undefined"][0].slug + "-root"}>
+													{subcat[1].map((item) => {
+														if (item.type === DOC_TYPE.DOC)
+															return (
+																<TocSideBarDoc
+																	key={item.docId}
+																	onClick={() => { loadDocContent(item.docId) }}
+																	active={item.docId === activeDocId}
+																	handleOpen={() => handleOpenDetails(item.docId)}
+																	targetDocItem={{ docId: item.docId }}
+																>
+																	{item.title}
+																</TocSideBarDoc>
+															)
 
-												if (item.type === DOC_TYPE.EXTERNAL)
-													return (
-														<TocSideBarExternal
-															key={item.docId}
-															url={item.url}
-															handleOpen={() => handleOpenDetails(item.docId)}
-															targetDocItem={{ docId: item.docId }}
-														>
-															{item.title}
-														</TocSideBarExternal>
-													)
-											})
+														if (item.type === DOC_TYPE.EXTERNAL)
+															return (
+																<TocSideBarExternal
+																	key={item.docId}
+																	url={item.url}
+																	handleOpen={() => handleOpenDetails(item.docId)}
+																	targetDocItem={{ docId: item.docId }}
+																>
+																	{item.title}
+																</TocSideBarExternal>
+															)
+													})}
+												</div>
+											)
 										}
 
 										//bypass undefined item which represent/hold category's info

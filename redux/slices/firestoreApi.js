@@ -371,7 +371,7 @@ export const firestoreApi = createApi({
 			transformResponse: (response) => {
 				const res = []
 				forEach(response, v => { res.push(v) })
-				return orderBy(res, ["department"])
+				return orderBy(res, ["name"])
 			},
 		}),
 
@@ -448,7 +448,7 @@ export const firestoreApi = createApi({
 			transformResponse: (response) => {
 				const res = []
 				forEach(response, v => { res.push(v) })
-				return orderBy(res, ["description"])
+				return orderBy(res, ["updatedAt"], ["desc"])
 			},
 		}),
 

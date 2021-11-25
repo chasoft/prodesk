@@ -70,6 +70,7 @@ import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { CircularProgressBox } from "@components/common"
+import { TransitionGroup } from "react-transition-group"
 
 /*****************************************************************
  * INIT                                                          *
@@ -182,7 +183,6 @@ export const SubCatItem = ({ currentItem, labels }) => {
 		}}>
 
 			<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-
 
 				<Collapse timeout={{ enter: 600 }} in={!showColorTable} sx={{
 					display: "flex", alignItems: "center", flexGrow: 1
@@ -353,13 +353,15 @@ const PageLabels = ({ backBtnClick }) => {
 						}}>
 							Label list is empty
 						</Box>
-						: labels.map((label) =>
-							<SubCatItem
-								key={label.lid}
-								currentItem={label}
-								labels={labels}
-							/>
-						)
+						: <TransitionGroup>
+							{labels.map((label) =>
+								<Collapse key={label.lid}>
+									<SubCatItem
+										currentItem={label}
+										labels={labels}
+									/>
+								</Collapse>)}
+						</TransitionGroup>
 				}
 			</SettingsContentDetails>
 		</>

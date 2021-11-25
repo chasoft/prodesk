@@ -52,7 +52,9 @@ const TocSideBarItemBase = React.forwardRef(
 			handleOpen,
 			onClick,
 			showDetailsButton = true,
-			sx
+			sx,
+			...otherProps
+
 		},
 		ref
 	) => {
@@ -66,6 +68,7 @@ const TocSideBarItemBase = React.forwardRef(
 				sx={{
 					display: "block", width: "100%", textAlign: "left",
 				}}
+				{...otherProps}
 			>
 				<Box
 					sx={{

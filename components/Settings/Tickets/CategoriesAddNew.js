@@ -23,7 +23,7 @@ import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, FormControlLabel, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Collapse, FormControlLabel, Grid, IconButton, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -66,6 +66,7 @@ import {
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
+import { TransitionGroup } from "react-transition-group"
 
 /*****************************************************************
  * INIT                                                          *
@@ -282,15 +283,17 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 
 						<Grid item xs={12}>
 							<Typography color="grey.600" sx={{ mb: 1 }}>Sub-Categories</Typography>
-							{subCategories.map((subCat) => (
-								<SubCatItem
-									key={subCat.name}
-									currentItem={subCat}
-									list={subCategories}
-									setList={setSubCategories}
-								/>
-							))}
-
+							<TransitionGroup>
+								{subCategories.map((subCat) => (
+									<Collapse key={subCat.name}>
+										<SubCatItem
+											currentItem={subCat}
+											list={subCategories}
+											setList={setSubCategories}
+										/>
+									</Collapse>
+								))}
+							</TransitionGroup>
 						</Grid>
 
 						<Grid item xs={12}>
