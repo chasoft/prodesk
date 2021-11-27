@@ -28,8 +28,7 @@ import React from "react"
 import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { random } from "lodash"
-import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { useUpdateDocContentMutation } from "@redux/slices/firestoreApi"
@@ -39,11 +38,10 @@ import {
 	getDocsCenter
 } from "@redux/selectors"
 
-
 //ASSETS
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined"
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined"
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined"
 
 /*****************************************************************
  * INIT                                                          *
@@ -121,9 +119,19 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  *****************************************************************/
 
 const DocumentTemplate = () => {
-	const [updateDocContent] = useUpdateDocContentMutation()
+
 	const { currentUser } = useSelector(getAuth)
 	const { activeDocId } = useSelector(getDocsCenter)
+	const [updateDocContent] = useUpdateDocContentMutation()
+
+	const handleSelectDocTemplate = async (templateContent) => {
+		await updateDocContent({
+			docId: activeDocId,
+			updatedBy: currentUser.username,
+			content: { text: templateContent }
+		})
+	}
+
 	return (
 		<Box sx={{ mt: 6 }}>
 			<Typography sx={{
@@ -140,17 +148,7 @@ const DocumentTemplate = () => {
 					<Grid item xs={12} sm={6} key={idx}>
 						<Paper
 							elevation={0}
-							onClick={async () => {
-								console.log("before update:", template.content)
-								const res = await updateDocContent({
-									docItem: {
-										docId: activeDocId,
-										updatedBy: currentUser.username
-									},
-									content: { text: template.content }
-								})
-								console.log(res.data)
-							}}
+							onClick={() => handleSelectDocTemplate(template.content)}
 							sx={{
 								p: 3,
 								border: "1px solid transparent",

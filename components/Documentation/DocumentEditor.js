@@ -59,8 +59,8 @@ import {
 
 import {
 	useGetDocContentQuery,
+	useUpdateDocMutation,
 	useUpdateDocContentMutation,
-	useUpdateDocMutation
 } from "@redux/slices/firestoreApi"
 
 //ASSETS
@@ -157,45 +157,47 @@ const DocumentEditor = () => {
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
 				}}
-				onBlur={() => {
+				onBlur={async () => {
 					if (localCache.title !== docItem.title) {
 						const newDocMeta = {
 							docId: docItem.docId,	//must be included
-							type: docItem.type,		//must be included
 							title: localCache.title,
 							updatedBy: currentUser.username,
 						}
-						updateDoc({
+						await updateDoc({
 							docItem: newDocMeta,
-							affectedItems: [/* no affectedItems! */]
+							affectedItems: []
 						})
-						console.log("onBlur->Title")
+						console.log("onBlur -> update doc's Title")
 					}
 				}}
 			/>
 
 			{/* {Max 200 characters} */}
 			<InputBase
-				id="doc-description" placeholder="Page description (optional)" variant="outlined"
+				id="doc-description"
+				variant="outlined"
+				placeholder="Page description (optional)"
 				value={localCache.description}
 				onChange={(e) => setLocalCache(e.target.value, "description")}
 				multiline={true}
 				sx={{
-					fontSize: "1rem", fontWeight: "bold",
+					fontSize: "1rem",
+					fontWeight: "500",
 					lineHeight: "2rem"
 				}}
-				onBlur={() => {
+				onBlur={async () => {
 					if (localCache.description !== docItem.description) {
 						const newDocMeta = {
 							docId: docItem.docId,	//must be included
-							type: docItem.type,		//must be included
 							description: localCache.description,
 							updatedBy: currentUser.username,
 						}
-						updateDoc({
+						await updateDoc({
 							docItem: newDocMeta,
-							affectedItems: [/* no affectedItems! */]
+							affectedItems: []
 						})
+						console.log("onBlur -> update doc's description")
 					}
 				}}
 			/>
@@ -213,7 +215,7 @@ const DocumentEditor = () => {
 						ref={editorRef}
 						value={editorDefaultData}
 						placeholder="Enter your content here..."
-						onBlur={() => {
+						onBlur={async () => {
 							/*******************************
 							 * TODO: !! Bug here
 							 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
@@ -221,12 +223,9 @@ const DocumentEditor = () => {
 							 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
 							 */
 							if (trim(editorData) !== trim(docItemContent.text)) {
-								const newDocMeta = {
-									docId: docItem.docId,	//must be included
+								await updateDocContent({
+									docId: docItem.docId,
 									updatedBy: currentUser.username,
-								}
-								updateDocContent({
-									docItem: newDocMeta,
 									content: { text: editorData }
 								})
 
@@ -237,7 +236,7 @@ const DocumentEditor = () => {
 
 					{!isEmptyContent &&
 						<Typography sx={{
-							mt: 3,
+							pt: 12,
 							fontSize: "0.8rem",
 							color: "text.secondary",
 							marginTop: "auto"

@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { styled } from "@mui/material/styles"
-import { Autocomplete, Box, Button, Checkbox, Chip, FormControlLabel, IconButton, Switch, TextField, Typography } from "@mui/material"
+import { Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, FormControlLabel, IconButton, Switch, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -35,6 +35,7 @@ import slugify from "react-slugify"
 import { filter, isEqual } from "lodash"
 import { useSelector } from "react-redux"
 import relativeTime from "dayjs/plugin/relativeTime"
+import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
 import useGetDoc from "@helpers/useGetDocs"
@@ -120,7 +121,6 @@ const Tags = ({ tags, setTags }) => {
 	const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
 	const checkedIcon = <CheckBoxIcon fontSize="small" />
 
-	console.log({ tags })
 	return (
 		<Autocomplete
 			id="tags-input"
@@ -154,7 +154,7 @@ const Tags = ({ tags, setTags }) => {
 					onKeyPress={(e) => {
 						e.stopPropagation()
 						if (e.key === "Enter") {
-							if (tags.includes(inputText) === false)
+							if (tags.includes(inputText) === false && !!inputText)
 								setTags([...tags, inputText].sort(), "tags")
 							setInputText("")
 						}
@@ -183,6 +183,38 @@ const Tags = ({ tags, setTags }) => {
 Tags.propTypes = {
 	tags: PropTypes.array.isRequired,
 	setTags: PropTypes.func.isRequired
+}
+
+const PublishStatusSection = ({ localCache, setLocalCache }) => {
+	const { currentUser } = useSelector(getAuth)
+	return (
+		<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
+			<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+				<TypographyHeader sx={{ mt: 1, mb: 1 }}>
+					Status
+				</TypographyHeader>
+
+				<PublishStatusSwitch
+					status={localCache.status}
+					setStatus={(status) => setLocalCache(status, "status")}
+				/>
+			</Box>
+			{(localCache.status === DOC_STATUS.PUBLISHED) &&
+				<Typography variant="caption" sx={{
+					textAlign: "right",
+					fontSize: "0.8rem",
+					color: "text.secondary",
+				}}>
+					Published at {dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).format(DATE_FORMAT.LONG)}<br />
+					by {localCache.publishedBy ? localCache.publishedBy : currentUser.username}<br />
+					<span style={{ fontStyle: "italic" }}>({dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).fromNow()})</span>
+				</Typography>}
+		</Box>
+	)
+}
+PublishStatusSection.propTypes = {
+	localCache: PropTypes.object.isRequired,
+	setLocalCache: PropTypes.func.isRequired
 }
 
 const CancelSaveButtons = ({ isModified, saveAction, handleClose }) => (
@@ -219,129 +251,160 @@ CancelSaveButtons.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
-/**
- * 	Category || Sub-Category, use the same DetailsForm as below
- *  for they are all the same data fields
- */
 const DetailsFormCategory = ({ docItem, handleClose }) => {
-	const allDocsRaw = useGetDocsQuery(undefined)
-	const [updateDoc] = useUpdateDocMutation()
-
-	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
-	const [updateAppSettings] = useUpdateAppSettingsMutation()
-
 	const { currentUser } = useSelector(getAuth)
+
+	const [updateDoc] = useUpdateDocMutation()
+	const [updateAppSettings] = useUpdateAppSettingsMutation()
+	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
+		data: allDocs = [],
+		isLoading: isLoadingAllDocs
+	} = useGetDocsQuery(undefined)
 
 	const {
 		localCache,
 		handlers: { setLocalCache }
-	} = useLocalComponentCache({
-		title: docItem.title,
-		slug: docItem.slug,
-		name: docItem.type === DOC_TYPE.CATEGORY
-			? docItem.category
-			: docItem.subcategory,
-		description: docItem.description
-	})
+	} = useLocalComponentCache(docItem)
 
 	const isModified =
-		docItem.title !== localCache.title
+		docItem.category !== localCache.category
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
+		|| docItem.tags !== localCache.tags
+		|| docItem.status !== localCache.status
 
 	const handleSaveCategoryDetails = async () => {
-		//prepare the affectedItems
-		const affectedItems = filter(
-			allDocsRaw.data,
-			(docItem.type === DOC_TYPE.CATEGORY)
-				? { category: docItem.category }
-				: { category: docItem.category, subcategory: docItem.subcategory }
-		)
-
-		//prepare the data
-		const newCategoryOrSubCatMeta = {
-			docId: docItem.docId,
-			type: docItem.type,
-			title: localCache.title,
-			slug: localCache.slug,
-			description: localCache.description,
-			updatedBy: currentUser.username,
-			...(
-				docItem.type === DOC_TYPE.CATEGORY
-					? { category: localCache.name }
-					: { subcategory: localCache.name }
-			),
+		//If user modify item.category, then, we will have affected items
+		let affectedItems = []
+		let affectedItemsData = {}
+		if (docItem.category !== localCache.category) {
+			affectedItems = filter(
+				allDocs,
+				(item) =>
+					item.category === docItem.category
+					&& item.docId !== docItem.docId	//not included current editing item
+			)
+			affectedItemsData = { category: localCache.category }
 		}
 
-		console.log("newCategoryOrSubCatMeta", newCategoryOrSubCatMeta)
+		//new data for current editing item
+		const updatedDocItem = {
+			docId: docItem.docId,
+			//
+			slug: localCache.slug,
+			tags: localCache.tags,
+			category: localCache.category,
+			description: localCache.description,
+			//
+			updatedBy: currentUser.username,
+			//
+			...(
+				(docItem.status !== localCache.status
+					&& localCache.status === DOC_STATUS.PUBLISHED)
+					? {
+						status: DOC_STATUS.PUBLISHED,
+						publishedBy: currentUser.username,
+						publishedDate: dayjs().valueOf()
+					}
+					: {
+						status: DOC_STATUS.DRAFT,
+						publishedBy: "",
+						publishedDate: 0
+					}
+			)
+		}
 
-		//update DB
-		updateDoc({
-			docItem: newCategoryOrSubCatMeta,
-			affectedItems
+		console.log("updatedDocItem for Cat", { updatedDocItem }, { affectedItems })
+
+		await updateDoc({
+			docItem: updatedDocItem,
+			affectedItems,
+			affectedItemsData
 		})
 	}
 
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
-			<TypographyHeader sx={{ mb: 1 }}>
-				Title
-			</TypographyHeader>
-			<InputBaseStyled
-				id={(docItem.type === DOC_TYPE.CATEGORY) ? "cat-title" : "subcat-title"}
-				value={localCache.name}
-				onChange={(e) => {
-					setLocalCache(e.target.value, "name")
-					if (autoGenerateSlugFromTitle) {
-						setLocalCache(slugify(e.target.value), "slug")
-					}
-				}}
-			/>
-
-			<Box sx={{
-				display: "flex",
-				justifyContent: "space-between",
-				alignItems: "center",
-				mt: 2
-			}}>
-				<TypographyHeader sx={{ flexGrow: 1 }}>
-					Slug
+			<PerfectScrollbar
+				component="div"
+				options={{ suppressScrollX: true }}
+				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+			>
+				<TypographyHeader sx={{ mb: 1 }}>
+					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
 				</TypographyHeader>
-				<FormControlLabel label="Auto-generate" labelPlacement="start"
-					control={<Switch
-						checked={autoGenerateSlugFromTitle}
-						onChange={() => {
-							updateAppSettings({
-								[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-							})
-						}}
-					/>}
+				<InputBaseStyled
+					id="cat-title"
+					value={localCache.category}
+					onChange={(e) => {
+						setLocalCache(e.target.value, "category")
+						if (autoGenerateSlugFromTitle) {
+							setLocalCache(slugify(e.target.value), "slug")
+						}
+					}}
 				/>
-			</Box>
-			<InputBaseStyled
-				id="cat-slug"
-				value={localCache.slug}
-				onChange={(e) => setLocalCache(e.target.value, "slug")}
-				disabled={autoGenerateSlugFromTitle}
-				sx={{
-					...(autoGenerateSlugFromTitle && {
-						backgroundColor: "action.hover",
-						borderRadius: "0.25rem"
-					})
-				}}
-			/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Description
-			</TypographyHeader>
-			<InputBaseStyled
-				id="cat-description" value={localCache.description}
-				multiline={true}
-				minRows={3}
-				onChange={
-					(e) => setLocalCache(e.target.value, "description")
-				}
-			/>
+				<Box sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mt: 2
+				}}>
+					<TypographyHeader sx={{ flexGrow: 1 }}>
+						Slug
+					</TypographyHeader>
+					<FormControlLabel label="Auto-generate" labelPlacement="start"
+						control={<Switch
+							checked={autoGenerateSlugFromTitle}
+							onChange={() => {
+								updateAppSettings({
+									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+								})
+							}}
+						/>}
+					/>
+				</Box>
+				<InputBaseStyled
+					id="cat-slug"
+					value={localCache.slug}
+					onChange={(e) => setLocalCache(e.target.value, "slug")}
+					disabled={autoGenerateSlugFromTitle}
+					sx={{
+						...(autoGenerateSlugFromTitle && {
+							backgroundColor: "action.hover",
+							borderRadius: "0.25rem"
+						})
+					}}
+				/>
+
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Description
+				</TypographyHeader>
+				<InputBaseStyled
+					id="cat-description" value={localCache.description}
+					multiline={true}
+					minRows={3}
+					onChange={
+						(e) => setLocalCache(e.target.value, "description")
+					}
+				/>
+
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Tags
+				</TypographyHeader>
+				<Tags
+					tags={localCache.tags}
+					setTags={setLocalCache}
+				/>
+
+				<PublishStatusSection
+					localCache={localCache}
+					setLocalCache={setLocalCache}
+				/>
+
+			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
@@ -352,6 +415,175 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 	)
 }
 DetailsFormCategory.propTypes = {
+	docItem: PropTypes.object,
+	handleClose: PropTypes.func
+}
+
+const DetailsFormSubCategory = ({ docItem, handleClose }) => {
+	const { currentUser } = useSelector(getAuth)
+
+	const [updateDoc] = useUpdateDocMutation()
+	const [updateAppSettings] = useUpdateAppSettingsMutation()
+	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
+		data: allDocs = [],
+		isLoading: isLoadingAllDocs
+	} = useGetDocsQuery(undefined)
+
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache(docItem)
+
+	const isModified =
+		docItem.subcategory !== localCache.subcategory
+		|| docItem.slug !== localCache.slug
+		|| docItem.description !== localCache.description
+		|| docItem.tags !== localCache.tags
+		|| docItem.status !== localCache.status
+
+	const handleSaveSubCategoryDetails = async () => {
+		//If user modify item.subcategory, then, we will have affected items
+		let affectedItems = []
+		let affectedItemsData = {}
+		if (docItem.subcategory !== localCache.subcategory) {
+			affectedItems = filter(
+				allDocs,
+				(item) =>
+					item.category === docItem.category
+					&& item.subcategory === docItem.subcategory
+					&& item.docId !== docItem.docId	//not included current editing item
+			)
+			affectedItemsData = { subcategory: localCache.subcategory }
+		}
+
+		//new data for current editing item
+		const updatedDocItem = {
+			docId: docItem.docId,	//must included
+			//
+			slug: localCache.slug,
+			tags: localCache.tags,
+			subcategory: localCache.subcategory,
+			description: localCache.description,
+			//
+			updatedBy: currentUser.username,
+			//
+			...(
+				(docItem.status !== localCache.status
+					&& localCache.status === DOC_STATUS.PUBLISHED)
+					? {
+						status: DOC_STATUS.PUBLISHED,
+						publishedBy: currentUser.username,
+						publishedDate: dayjs().valueOf()
+					}
+					: {
+						status: DOC_STATUS.DRAFT,
+						publishedBy: "",
+						publishedDate: 0
+					}
+			)
+		}
+
+		console.log("updatedDocItem for SubCat", { updatedDocItem }, { affectedItems })
+
+		await updateDoc({
+			docItem: updatedDocItem,
+			affectedItems,
+			affectedItemsData
+		})
+	}
+
+	return (
+		<form onSubmit={(e) => { e.preventDefault() }}>
+			<PerfectScrollbar
+				component="div"
+				options={{ suppressScrollX: true }}
+				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+			>
+				<TypographyHeader sx={{ mb: 1 }}>
+					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
+				</TypographyHeader>
+				<InputBaseStyled
+					id="cat-title"
+					value={localCache.subcategory}
+					onChange={(e) => {
+						setLocalCache(e.target.value, "subcategory")
+						if (autoGenerateSlugFromTitle) {
+							setLocalCache(slugify(e.target.value), "slug")
+						}
+					}}
+				/>
+
+				<Box sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mt: 2
+				}}>
+					<TypographyHeader sx={{ flexGrow: 1 }}>
+						Slug
+					</TypographyHeader>
+					<FormControlLabel label="Auto-generate" labelPlacement="start"
+						control={<Switch
+							checked={autoGenerateSlugFromTitle}
+							onChange={() => {
+								updateAppSettings({
+									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+								})
+							}}
+						/>}
+					/>
+				</Box>
+				<InputBaseStyled
+					id="cat-slug"
+					value={localCache.slug}
+					onChange={(e) => setLocalCache(e.target.value, "slug")}
+					disabled={autoGenerateSlugFromTitle}
+					sx={{
+						...(autoGenerateSlugFromTitle && {
+							backgroundColor: "action.hover",
+							borderRadius: "0.25rem"
+						})
+					}}
+				/>
+
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Description
+				</TypographyHeader>
+				<InputBaseStyled
+					id="cat-description" value={localCache.description}
+					multiline={true}
+					minRows={3}
+					onChange={
+						(e) => setLocalCache(e.target.value, "description")
+					}
+				/>
+
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Tags
+				</TypographyHeader>
+				<Tags
+					tags={localCache.tags}
+					setTags={setLocalCache}
+				/>
+
+				<PublishStatusSection
+					localCache={localCache}
+					setLocalCache={setLocalCache}
+				/>
+
+			</PerfectScrollbar>
+
+			<CancelSaveButtons
+				isModified={isModified}
+				handleClose={handleClose}
+				saveAction={handleSaveSubCategoryDetails}
+			/>
+		</form>
+	)
+}
+DetailsFormSubCategory.propTypes = {
 	docItem: PropTypes.object,
 	handleClose: PropTypes.func
 }
@@ -378,13 +610,14 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 		//prepare the data
 		const newDocMeta = {
 			docId: docItem.docId, 	//must be included
-			type: docItem.type,		//must be included
+			//
 			title: localCache.title,
 			slug: localCache.slug,
 			description: localCache.description,
-			status: localCache.status,
 			tags: localCache.tags,
+			//
 			updatedBy: currentUser.username,
+			//
 			...(
 				(docItem.status !== localCache.status
 					&& localCache.status === DOC_STATUS.PUBLISHED)
@@ -402,7 +635,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 		}
 
 		//update DB
-		updateDoc({
+		await updateDoc({
 			docItem: newDocMeta,
 			affectedItems: [/* no affectedItems! */]
 		})
@@ -410,83 +643,72 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
-			<TypographyHeader sx={{ mb: 1 }}>
-				Title
-			</TypographyHeader>
-			<InputBaseStyled
-				id="doc-title"
-				value={localCache.title}
-				onChange={(e) => {
-					setLocalCache(e.target.value, "title")
-					if (autoGenerateSlugFromTitle) {
-						setLocalCache(slugify(e.target.value), "slug")
-					}
-				}}
-			/>
-
-			<Box sx={{
-				display: "flex",
-				justifyContent: "space-between",
-				alignItems: "center",
-				mt: 2
-			}}>
-				<TypographyHeader sx={{ flexGrow: 1 }}>
-					Slug
+			<PerfectScrollbar
+				component="div"
+				options={{ suppressScrollX: true }}
+				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+			>
+				<TypographyHeader sx={{ mb: 1 }}>
+					Title
 				</TypographyHeader>
-				<FormControlLabel label="Auto-generate" labelPlacement="start"
-					control={<Switch
-						checked={autoGenerateSlugFromTitle}
-						onChange={() => {
-							updateAppSettings({
-								[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-							})
-						}}
-					/>}
+				<InputBaseStyled
+					id="doc-title"
+					value={localCache.title}
+					onChange={(e) => {
+						setLocalCache(e.target.value, "title")
+						if (autoGenerateSlugFromTitle) {
+							setLocalCache(slugify(e.target.value), "slug")
+						}
+					}}
 				/>
-			</Box>
-			<InputBaseStyled
-				id="doc-slug" value={localCache.slug}
-				onChange={(e) => setLocalCache(e.target.value, "slug")}
-				disabled={autoGenerateSlugFromTitle}
-				sx={{
-					...(autoGenerateSlugFromTitle && {
-						backgroundColor: "action.hover",
-						borderRadius: "0.25rem"
-					})
-				}}
-			/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Tags
-			</TypographyHeader>
-
-			<Tags
-				tags={localCache?.tags ?? []}
-				setTags={setLocalCache}
-			/>
-
-			<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
-				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-					<TypographyHeader sx={{ mt: 1, mb: 1 }}>
-						Status
+				<Box sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mt: 2
+				}}>
+					<TypographyHeader sx={{ flexGrow: 1 }}>
+						Slug
 					</TypographyHeader>
-
-					<PublishStatusSwitch
-						status={localCache.status}
-						setStatus={(status) => setLocalCache(status, "status")}
+					<FormControlLabel label="Auto-generate" labelPlacement="start"
+						control={<Switch
+							checked={autoGenerateSlugFromTitle}
+							onChange={() => {
+								updateAppSettings({
+									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+								})
+							}}
+						/>}
 					/>
 				</Box>
-				{(localCache.status === DOC_STATUS.PUBLISHED) &&
-					<Typography variant="caption" sx={{
-						textAlign: "right",
-						fontSize: "0.8rem",
-						color: "text.secondary",
-					}}>
-						Published at {dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).format(DATE_FORMAT.LONG)}<br />
-						by {localCache.publishedBy ? localCache.publishedBy : currentUser.username}<br />
-						<span style={{ fontStyle: "italic" }}>({dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).fromNow()})</span>
-					</Typography>}
-			</Box>
+				<InputBaseStyled
+					id="doc-slug" value={localCache.slug}
+					onChange={(e) => setLocalCache(e.target.value, "slug")}
+					disabled={autoGenerateSlugFromTitle}
+					sx={{
+						...(autoGenerateSlugFromTitle && {
+							backgroundColor: "action.hover",
+							borderRadius: "0.25rem"
+						})
+					}}
+				/>
+
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Tags
+				</TypographyHeader>
+				<Tags
+					tags={localCache?.tags ?? []}
+					setTags={setLocalCache}
+				/>
+
+				<PublishStatusSection
+					localCache={localCache}
+					setLocalCache={setLocalCache}
+				/>
+
+			</PerfectScrollbar>
+
 			<CancelSaveButtons
 				isModified={isModified}
 				handleClose={handleClose}
@@ -520,13 +742,14 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 		//prepare the data
 		const newExternalMeta = {
 			docId: docItem.docId, //must included here
-			type: docItem.type,
-			title: localCache.title,
+			//
 			url: localCache.url,
-			description: localCache.description,
-			status: localCache.status,
 			tags: localCache.tags,
+			title: localCache.title,
+			description: localCache.description,
+			//
 			updatedBy: currentUser.username,
+			//
 			...(
 				(docItem.status !== localCache.status
 					&& localCache.status === DOC_STATUS.PUBLISHED)
@@ -552,70 +775,58 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
-			<TypographyHeader sx={{ mb: 1 }}>
-				Title
-			</TypographyHeader>
-			<InputBaseStyled
-				id="external-title"
-				value={localCache.title}
-				onChange={
-					(e) => setLocalCache(e.target.value, "title")
-				}
-			/>
+			<PerfectScrollbar
+				component="div"
+				options={{ suppressScrollX: true }}
+				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+			>
+				<TypographyHeader sx={{ mb: 1 }}>
+					Title
+				</TypographyHeader>
+				<InputBaseStyled
+					id="external-title"
+					value={localCache.title}
+					onChange={
+						(e) => setLocalCache(e.target.value, "title")
+					}
+				/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				url
-			</TypographyHeader>
-			<InputBaseStyled
-				id="external-url" value={localCache.url}
-				onChange={
-					(e) => setLocalCache(e.target.value, "url")
-				}
-			/>
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					url
+				</TypographyHeader>
+				<InputBaseStyled
+					id="external-url" value={localCache.url}
+					onChange={
+						(e) => setLocalCache(e.target.value, "url")
+					}
+				/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Description
-			</TypographyHeader>
-			<InputBaseStyled
-				id="external-description" value={localCache.description}
-				multiline={true}
-				minRows={3}
-				onChange={
-					(e) => setLocalCache(e.target.value, "description")
-				}
-			/>
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Description
+				</TypographyHeader>
+				<InputBaseStyled
+					id="external-description" value={localCache.description}
+					multiline={true}
+					minRows={3}
+					onChange={
+						(e) => setLocalCache(e.target.value, "description")
+					}
+				/>
 
-			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-				Tags
-			</TypographyHeader>
+				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+					Tags
+				</TypographyHeader>
+				<Tags
+					tags={localCache?.tags ?? []}
+					setTags={setLocalCache}
+				/>
 
-			<Tags
-				tags={localCache?.tags ?? []}
-				setTags={setLocalCache}
-			/>
+				<PublishStatusSection
+					localCache={localCache}
+					setLocalCache={setLocalCache}
+				/>
 
-			<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
-				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-					<TypographyHeader sx={{ mt: 1, mb: 1 }}>
-						Status
-					</TypographyHeader>
-
-					<PublishStatusSwitch
-						status={localCache.status}
-						setStatus={(status) => setLocalCache(status, "status")}
-					/>
-				</Box>
-				{(localCache.status === DOC_STATUS.PUBLISHED) &&
-					<Typography variant="caption" sx={{
-						textAlign: "right",
-						fontSize: "0.8rem",
-						color: "text.secondary",
-					}}>
-						Published at {dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).format(DATE_FORMAT.LONG)}<br />
-						by {localCache.publishedBy ? localCache.publishedBy : currentUser.username}<br />
-						<span style={{ fontStyle: "italic" }}>({dayjs(localCache.publishedDate ? localCache.publishedDate : undefined).fromNow()})</span>
-					</Typography>}
-			</Box>
+			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
@@ -649,8 +860,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 		isLoading: isLoadingDocItem
 	} = useGetDoc(activeDocIdOfTocSideBarDetails)
 
-	console.log("TocSideBarDetails => activeDocIdOfTocSideBarDetails", activeDocIdOfTocSideBarDetails)
-	console.log("TocSideBarDetails => docItem", docItem)
+	console.log("TocSideBarDetails", { docItem })
 
 	return (
 		<>
@@ -703,14 +913,16 @@ const TocSideBarDetails = ({ handleClose }) => {
 								borderBottom: "1px solid transparent",
 							}}>
 
-								{(docItem.type === DOC_TYPE.CATEGORY
-									|| docItem.type === DOC_TYPE.SUBCATEGORY) &&
+								{docItem.type === DOC_TYPE.CATEGORY &&
 									<DetailsFormCategory docItem={docItem} handleClose={handleClose} />}
 
-								{(docItem.type === DOC_TYPE.EXTERNAL) &&
+								{docItem.type === DOC_TYPE.SUBCATEGORY &&
+									<DetailsFormSubCategory docItem={docItem} handleClose={handleClose} />}
+
+								{docItem.type === DOC_TYPE.EXTERNAL &&
 									<DetailsFormExternal docItem={docItem} handleClose={handleClose} />}
 
-								{(docItem.type === DOC_TYPE.DOC) &&
+								{docItem.type === DOC_TYPE.DOC &&
 									<DetailsFormDoc docItem={docItem} handleClose={handleClose} />}
 
 							</Box>

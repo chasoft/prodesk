@@ -551,95 +551,82 @@ async function fireStoreBaseQuery(args) {
 				})
 			}
 
-		case ACTIONS.UPDATE_DOC:
+		case ACTIONS.UPDATE_DOC:	// args.body: {docItem, affectedItems<[...]>, affectedItemsData}
 			try {
-				if (args.body.docItem.type === DOC_TYPE.EXTERNAL || args.body.docItem.type === DOC_TYPE.DOC) {
-					await updateDoc(
-						doc(db, COLLECTION.DOCS, args.body.docItem.docId),
-						{
-							...args.body.docItem,
-							updatedAt: serverTimestamp()
-						}
+				const batch = writeBatch(db)
+				batch.update(
+					doc(db, COLLECTION.DOCS, args.body.docItem.docId),
+					{
+						...args.body.docItem,
+						updatedAt: serverTimestamp()
+					}
+				)
+				args.body.affectedItems.forEach((affectedItem) => {
+					batch.update(
+						doc(db, COLLECTION.DOCS, affectedItem.docId),
+						args.body.affectedItemsData
 					)
-					return {
-						data: {
-							code: CODE.SUCCESS,
-							action: ACTIONS.UPDATE_DOC,
-							id: args.body.docItem.docId,
-							message: "Doc or External link updated successfully"
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.CATEGORY) {
-					const batch = writeBatch(db)
-					args.body.affectedItems.forEach((affectedItem) => {
-						batch.update(
-							doc(db, COLLECTION.DOCS, affectedItem.docId),
-							{
-								...(affectedItem.type === DOC_TYPE.CATEGORY)
-									? { ...args.body.docItem, updatedAt: serverTimestamp() }
-									: { category: args.body.docItem.category },
-								updatedAt: serverTimestamp()
-							}
-						)
-					})
-					await batch.commit()
-					return {
-						data: {
-							code: CODE.SUCCESS,
-							action: ACTIONS.UPDATE_DOC,
-							id: args.body.docItem.docId,
-							message: "category updated successfully"
-						}
-					}
-				}
-
-				if (args.body.docItem.type === DOC_TYPE.SUBCATEGORY) {
-					const batch = writeBatch(db)
-					args.body.affectedItems.forEach((affectedItem) => {
-						batch.update(
-							doc(db, COLLECTION.DOCS, affectedItem.docId),
-							{
-								...(affectedItem.type === DOC_TYPE.SUBCATEGORY)
-									? { ...args.body.docItem, updatedAt: serverTimestamp() }
-									: { subcategory: args.body.docItem.subcategory },
-								updatedAt: serverTimestamp()
-							}
-						)
-					})
-					await batch.commit()
-					return {
-						data: {
-							code: CODE.SUCCESS,
-							action: ACTIONS.UPDATE_DOC,
-							id: args.body.docItem.docId,
-							message: "SubCategory updated successfully"
-						}
-					}
-				}
-			} catch (e) {
-				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC, e, {
-					id: args.body.docItem.docId
 				})
+				await batch.commit()
+				return {
+					data: {
+						code: CODE.SUCCESS,
+						action: ACTIONS.UPDATE_DOC,
+						message: "documentItem updated successfully"
+					}
+				}
 			}
-			break
+			catch (e) {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC, e, null)
+			}
 
-		case ACTIONS.UPDATE_DOC_CONTENT:	//body: {docItem, content: object}
+		case ACTIONS.UPDATE_DOC_DND:
+			// args.body: {docItem, affectedItems<[...]>, affectedItemsData}
+			try {
+				const batch = writeBatch(db)
+				batch.update(
+					doc(db, COLLECTION.DOCS, args.body.docItem.docId),
+					{
+						...args.body.docItem,
+						updatedAt: serverTimestamp()
+					}
+				)
+				args.body.affectedItems.forEach((affectedItem) => {
+					batch.update(
+						doc(db, COLLECTION.DOCS, affectedItem.docId),
+						args.body.affectedItemsData
+					)
+				})
+				await batch.commit()
+				return {
+					data: {
+						code: CODE.SUCCESS,
+						action: ACTIONS.UPDATE_DOC_DND,
+						message: "documentItem updated successfully"
+					}
+				}
+			}
+			catch (e) {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC_DND, e, null)
+			}
+
+		case ACTIONS.UPDATE_DOC_CONTENT:	//body: {docId, updatedBy, content: object}
 			try {
 				const batch = writeBatch(db)
 				batch.update(
 					doc(db,
-						COLLECTION.DOCS, args.body.docItem.docId,
+						COLLECTION.DOCS, args.body.docId,
 						"content", "current"
 					),
 					args.body.content
 				)
 				batch.update(
-					doc(db, COLLECTION.DOCS, args.body.docItem.docId),
+					doc(db,
+						COLLECTION.DOCS, args.body.docId
+					),
 					{
 						updatedAt: serverTimestamp(),
-						updatedBy: args.body.docItem.updatedBy,
+						updatedBy: args.body.updatedBy,
 					}
 				)
 				await batch.commit()
@@ -647,13 +634,13 @@ async function fireStoreBaseQuery(args) {
 					data: {
 						code: CODE.SUCCESS,
 						action: ACTIONS.UPDATE_DOC_CONTENT,
-						id: args.body.docItem.docId,
+						id: args.body.docId,
 						message: "DocContent updated successfully"
 					}
 				}
 			} catch (e) {
 				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC_CONTENT, e, {
-					id: args.body.docItem.docId
+					id: args.body.docId
 				})
 			}
 		case ACTIONS.DELETE_DOC:
@@ -939,7 +926,7 @@ async function fireStoreBaseQuery(args) {
 			}
 		case ACTIONS.UPDATE_CANNED_REPLY:
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db, COLLECTION.SETTINGS, "canned-replies"),
 					{
 						[args.body.crid]: args.body
@@ -1020,7 +1007,7 @@ async function fireStoreBaseQuery(args) {
 			}
 		case ACTIONS.UPDATE_LABEL:
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db, COLLECTION.SETTINGS, "labels"),
 					{
 						[args.body.lid]: args.body
@@ -1110,7 +1097,11 @@ async function fireStoreBaseQuery(args) {
 					: { [args.body.categoryItem.catId]: args.body.categoryItem }
 
 				console.log({ updatedItems })
-				await updateDoc(doc(db, COLLECTION.SETTINGS, "categories"), updatedItems)
+
+				await updateDoc(
+					doc(db, COLLECTION.SETTINGS, "categories"),
+					updatedItems
+				)
 				return {
 					data: {
 						code: CODE.SUCCESS,
@@ -1633,7 +1624,7 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTIONS.UPDATE_PAGE:	//body: {...pageItem}
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db, COLLECTION.PAGES, args.body.pid),
 					{
 						...args.body,
@@ -1779,7 +1770,7 @@ async function fireStoreBaseQuery(args) {
 
 		case ACTIONS.UPDATE_BLOG_POST:	//body: {...blogItem}
 			try {
-				updateDoc(
+				await updateDoc(
 					doc(db, COLLECTION.BLOG, args.body.bid),
 					{
 						...args.body,

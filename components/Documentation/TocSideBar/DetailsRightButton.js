@@ -48,7 +48,7 @@ const DetailsRightButton = ({ handleOpen }) => (
 		fontSize="small"
 		sx={{
 			fill: (theme) => theme.palette.grey[500],
-			my: 0.5, mr: 1,
+			my: 0.5, mr: 1.75,
 			cursor: "pointer",
 			":hover": {
 				fill: (theme) => theme.palette.primary.main

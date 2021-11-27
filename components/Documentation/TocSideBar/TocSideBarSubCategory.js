@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -30,15 +30,27 @@ import { Box, Collapse, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector } from "react-redux"
+import { useDrag, useDrop } from "react-dnd"
 
 //PROJECT IMPORT
 import TocSideBarAddNew from "./TocSideBarAddNew"
 import TocSideBarItemBase from "./TocSideBarItemBase"
 
-import { DOCS_ADD } from "@helpers/constants"
-import { getDocsCenter } from "@redux/selectors"
+import { moveDocItem } from "@components/Documentation/TocSideBar"
 import { CollapseIconButton } from "@components/Documentation/TocSideBar/TocSideBarCategory"
 import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
+
+import { useUpdateDocMutation } from "@redux/slices/firestoreApi"
+
+import {
+	getAuth,
+	getDocsCenter
+} from "@redux/selectors"
+
+import {
+	DOCS_ADD,
+	DOC_TYPE
+} from "@helpers/constants"
 
 //ASSETS
 
@@ -51,6 +63,36 @@ import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBa
  *****************************************************************/
 
 const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) => {
+	const ref = useRef(null)
+	const [updateDoc] = useUpdateDocMutation()
+	const { currentUser } = useSelector(getAuth)
+
+	const [{ canDrop, isOver }, drop] = useDrop(() => ({
+		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL, DOC_TYPE.SUBCATEGORY],
+		drop: () => targetDocItem,
+		collect: (monitor) => ({
+			isOver: monitor.isOver(),
+			canDrop: monitor.canDrop(),
+		}),
+	}))
+
+	const [{ isDragging }, drag] = useDrag(() => ({
+		type: DOC_TYPE.SUBCATEGORY,
+		item: targetDocItem,
+		end: (item, monitor) => {
+			const dropResult = monitor.getDropResult()
+			if (item && dropResult) {
+				//item => sourceItem
+				//dropResult => targetItem
+				moveDocItem(item, dropResult, updateDoc, currentUser.username)
+			}
+		},
+		collect: (monitor) => ({
+			isDragging: monitor.isDragging(),
+			handlerId: monitor.getHandlerId(),
+		}),
+	}))
+
 	const [expanded, setExpanded] = useState(true)
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
@@ -64,9 +106,14 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 		}
 	] = useAddNewDocumentationPopupMenu()
 
+	drag(drop(ref))
+	const isActive = canDrop && isOver
+	const opacity = isDragging ? 0.4 : 1
+
 	return (
 		<div id={targetDocItem.slug}>
 			<TocSideBarItemBase
+				ref={ref}
 				id={targetDocItem.slug + "-button"}
 				onClick={() => {
 					setExpanded(p => !p)
@@ -76,10 +123,6 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 				showDetailsButton={false}
 				additionalButton={
 					<>
-						<CollapseIconButton
-							expanded={expanded}
-							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
-						/>
 						<TocSideBarAddNew
 							ref={anchorRef}
 							handleToggle={handleToggle}
@@ -97,13 +140,20 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 								DOCS_ADD.CATEGORY,
 							]}
 						/>
+						<CollapseIconButton
+							expanded={expanded}
+							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
+						/>
 					</>
 				}
 				sx={{
+					border: "2px solid transparent",
 					backgroundColor:
 						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
 							? "action.hover"
-							: "initial"
+							: "initial",
+					opacity,
+					...(isActive ? { border: "2px solid #1976d2", borderTop: "2px solid #004aab" } : {})
 				}}
 			>
 				<Typography sx={{

@@ -36,11 +36,16 @@ import { Provider } from "react-redux"
 import { SnackbarProvider } from "notistack"
 import { CacheProvider } from "@emotion/react"
 import { configureStore } from "@reduxjs/toolkit"
-// import { setupListeners } from "@reduxjs/toolkit/query"
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 
 //PROJECT IMPORT
 import rootReducer from "@redux/slices"
+import { firestoreApi } from "@redux/slices/firestoreApi"
+
 import { theme } from "@components/theme"
+import PageTransition from "@components/PageTransition"
+
 import createEmotionCache from "@helpers/createEmotionCache"
 
 /*****************************************************************
@@ -49,8 +54,6 @@ import createEmotionCache from "@helpers/createEmotionCache"
 
 import "@styles/globals.css"
 import "./../public/css/nprogress.css"
-import PageTransition from "@components/PageTransition"
-import { firestoreApi } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
@@ -95,21 +98,23 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 			</Head>
 			<Provider store={store}>
 				<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<SnackbarProvider
-						anchorOrigin={{
-							vertical: "bottom",
-							horizontal: "right",
-						}}
-						maxSnack={3}
-					>
-						{getLayout(
-							<PageTransition location={router.pathname}>
-								<CssBaseline />
-								<Component {...pageProps} />
-							</PageTransition>
-						)}
-					</SnackbarProvider>
+					<DndProvider backend={HTML5Backend}>
+						<CssBaseline />
+						<SnackbarProvider
+							anchorOrigin={{
+								vertical: "bottom",
+								horizontal: "right",
+							}}
+							maxSnack={3}
+						>
+							{getLayout(
+								<PageTransition location={router.pathname}>
+									<CssBaseline />
+									<Component {...pageProps} />
+								</PageTransition>
+							)}
+						</SnackbarProvider>
+					</DndProvider>
 				</ThemeProvider>
 			</Provider>
 		</CacheProvider>

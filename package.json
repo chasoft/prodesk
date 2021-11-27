@@ -35,6 +35,8 @@
 		"react": "17.0.2",
 		"react-copy-to-clipboard": "^5.0.4",
 		"react-device-detect": "^2.1.2",
+		"react-dnd": "^14.0.4",
+		"react-dnd-html5-backend": "^14.0.2",
 		"react-dom": "17.0.2",
 		"react-icons": "^4.2.0",
 		"react-perfect-scrollbar": "^1.5.8",
@@ -42,7 +44,7 @@
 		"react-slugify": "^2.1.0",
 		"react-transition-group": "^4.4.2",
 		"react-use": "^17.3.1",
-		"rich-markdown-editor": "^11.18.12",
+		"rich-markdown-editor": "^11.19.4",
 		"styled-components": "^5.3.1",
 		"styled-icons": "^10.43.0",
 		"yup": "^0.32.9"

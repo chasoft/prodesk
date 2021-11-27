@@ -228,7 +228,6 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 			fullList
 		})
 
-		//broadcast refetching-request
 		if (res?.data.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,

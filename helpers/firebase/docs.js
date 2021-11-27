@@ -23,6 +23,7 @@
  *****************************************************************/
 
 //THIRD-PARTY
+import dayjs from "dayjs"
 import { uniqueId } from "lodash"
 import { nanoid } from "nanoid"
 
@@ -58,6 +59,8 @@ export const docItemNewDoc = (targetDocItem, username) => {
 		//
 		publishedBy: "",
 		publishedDate: 0,
+		//
+		position: dayjs().valueOf()
 	}
 }
 
@@ -86,6 +89,8 @@ export const docItemNewExternal = (targetDocItem, username) => {
 		//
 		publishedBy: "",
 		publishedDate: 0,
+		//
+		position: dayjs().valueOf()
 	}
 }
 
@@ -104,6 +109,7 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
 		description: "",
 		docId: docId,
 		//
+		status: DOC_STATUS.DRAFT,
 		slug: `subcategory-${docId.substring(0, 3)}-${incNumber}`,
 		subcategory: `SubCategory #${incNumber}`,
 		tags: [],
@@ -112,6 +118,8 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
 		//
 		publishedBy: "",
 		publishedDate: 0,
+		//
+		position: dayjs().valueOf()
 	}
 }
 
@@ -130,6 +138,7 @@ export const docItemNewCategory = (username) => {
 		description: "",
 		docId: docId,
 		//
+		status: DOC_STATUS.DRAFT,
 		slug: `category-${docId.substring(0, 3)}-${incNumber}`,
 		tags: [],
 		type: DOC_TYPE.CATEGORY,
@@ -137,6 +146,8 @@ export const docItemNewCategory = (username) => {
 		//
 		publishedBy: "",
 		publishedDate: 0,
+		//
+		position: dayjs().valueOf()
 	}
 }
 

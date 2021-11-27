@@ -49,11 +49,11 @@ import {
 	TYPE
 } from "@redux/slices/firestoreApiConstants"
 
-import { setIsLoadingSomething } from "@redux/slices/uiSettings"
+// import { setIsLoadingSomething } from "@redux/slices/uiSettings"
 
 import {
 	getAuth,
-	getTextEditor,
+	// getTextEditor,
 	getUiSettings
 } from "@redux/selectors"
 
@@ -166,17 +166,20 @@ export const handleSubmitReplyBase = async ({
  *****************************************************************/
 
 const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
-	const theme = useTheme()
 	dayjs.extend(relativeTime)
+
+	const theme = useTheme()
 	const dispatch = useDispatch()
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { isAdminURL } = useAdmin()
 	const { currentUser } = useSelector(getAuth)
-	const { editorData } = useSelector(getTextEditor)
+
 	const [addTicketReply] = useAddTicketReplyMutation()
 	const { isLoadingSomething } = useSelector(getUiSettings)
 	const [justCopied, setJustCopied] = useState(false)
+
+	const [replyEditorData, setReplyEditorData] = useState("")
 
 	const {
 		userList: allAdminProfiles = [],
@@ -215,11 +218,11 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 			&& cannedReply.full === false
 	)
 
-	const loadLocalStorage = () => localStorage.getItem("NewReply") ?? ""
-	const getEditorData = (data) => { localStorage.setItem("NewReply", data) }
+	const getEditorData = (data) => { setReplyEditorData(data) }
+
 	const handleCancelReply = () => {
 		setShowReplyDialog(false)
-		localStorage.removeItem("NewReply")
+		setReplyEditorData("")
 	}
 
 	const departmentDetails = departments.find(
@@ -229,20 +232,16 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 
 	const handleSubmitReply = async () => {
-		dispatch(setIsLoadingSomething(true))
-
+		setShowReplyDialog(false)
 		await handleSubmitReplyBase({
 			addTicketReply,
-			content: editorData,
+			content: replyEditorData,
 			currentUser,
 			departmentDetails,
 			allAdminProfiles,
 			ticket,
 		})
-
-		localStorage.removeItem("NewReply")
-		setShowReplyDialog(false)
-		dispatch(setIsLoadingSomething(false))
+		setReplyEditorData("")
 	}
 
 	return (
@@ -270,7 +269,6 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 						width: { sm: "500px", md: "650px", lg: "700px" }
 					}}>
 						<TextEditor
-							defaultValue={loadLocalStorage()}
 							placeholder="Provides as many details as possible..."
 							onChange={getEditorData}
 						/>
@@ -302,8 +300,7 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 								onClick={handleSubmitReply}
 								sx={{ px: 4, minWidth: "100px" }}
 								disabled={
-									loadLocalStorage() < 10
-									|| size(editorData) < 10
+									replyEditorData.length < 10
 									|| isLoadingDepartments
 									|| isLoadingSomething
 								}

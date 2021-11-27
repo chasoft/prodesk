@@ -52,6 +52,7 @@ const TocSideBarItemBase = React.forwardRef(
 			handleOpen,
 			onClick,
 			showDetailsButton = true,
+			published = true,
 			sx,
 			...otherProps
 
@@ -66,7 +67,9 @@ const TocSideBarItemBase = React.forwardRef(
 					onClick()
 				}}
 				sx={{
-					display: "block", width: "100%", textAlign: "left",
+					display: "block",
+					width: "100%",
+					textAlign: "left",
 				}}
 				{...otherProps}
 			>
@@ -95,7 +98,11 @@ const TocSideBarItemBase = React.forwardRef(
 						...sx
 					}}
 				>
-					<Box sx={{ ml: 2, flexGrow: 1 }}>
+					<Box sx={{
+						ml: 2,
+						flexGrow: 1,
+						...(published ? {} : { textDecoration: "underline silver dotted" })
+					}}>
 						{children}
 					</Box>
 
@@ -122,6 +129,7 @@ TocSideBarItemBase.propTypes = {
 	onClick: PropTypes.func,
 	otherProps: PropTypes.any,
 	showDetailsButton: PropTypes.bool,
+	published: PropTypes.bool,
 	sx: PropTypes.object
 }
 

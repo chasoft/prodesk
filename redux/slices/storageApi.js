@@ -24,7 +24,7 @@
 
 
 //THIRD-PARTY
-import { createApi } from "@reduxjs/toolkit/query/react"
+// import { createApi } from "@reduxjs/toolkit/query/react"
 
 //PROJECT IMPORT
 
@@ -32,27 +32,27 @@ import { createApi } from "@reduxjs/toolkit/query/react"
  * INIT                                                          *
  *****************************************************************/
 
-export const storageApi = createApi({
-	reducerPath: "storageApi",
-	tagTypes: ["uploads"],
-	baseQuery: (args, { signal, dispatch, getState }, extraOptions) => {
-		// if (args === "allDocs") {
-		// 	console.log("aaaaaaaaaaaaaaaaaaaaa")
-		// 	return { data: [{ hello: "ALL__World" }] }
-		// }
+// export const storageApi = createApi({
+// 	reducerPath: "storageApi",
+// 	tagTypes: ["uploads"],
+// 	baseQuery: (args, { signal, dispatch, getState }, extraOptions) => {
+// 		// if (args === "allDocs") {
+// 		// 	console.log("aaaaaaaaaaaaaaaaaaaaa")
+// 		// 	return { data: [{ hello: "ALL__World" }] }
+// 		// }
 
-		// console.log("only single")
-		return { data: [{ hello: "world" }] }
-	},
-	endpoints: (builder) => ({
-		uploadImage: builder.query({
-			query: () => "allDocs",
-			providesTags: () => [{ type: "Documentation", id: "allDocs" }],
-			// transformResponse: (response) => {
-			// 	response[0].hello = "world0"
-			// }
-		}),
-	}),
-})
+// 		// console.log("only single")
+// 		return { data: [{ hello: "world" }] }
+// 	},
+// 	endpoints: (builder) => ({
+// 		uploadImage: builder.query({
+// 			query: () => "allDocs",
+// 			providesTags: () => [{ type: "Documentation", id: "allDocs" }],
+// 			// transformResponse: (response) => {
+// 			// 	response[0].hello = "world0"
+// 			// }
+// 		}),
+// 	}),
+// })
 
-export const { useGetDocsQuery, useGetDocQuery } = storageApi
+// export const { useGetDocsQuery, useGetDocQuery } = storageApi

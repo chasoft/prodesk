@@ -188,6 +188,7 @@ export const firestoreApi = createApi({
 					:
 					[{ type: TYPE.DOCS, id: "LIST" }]
 			},
+			// transformResponse: (response) => orderBy(fix_datetime_list(response), ["position"])
 			transformResponse: (response) => fix_datetime_list(response)
 		}),
 
@@ -233,10 +234,13 @@ export const firestoreApi = createApi({
 		}),
 
 		updateDoc: builder.mutation({
-			query: (body) => ({ action: ACTIONS.UPDATE_DOC, body }), // body: {docItem, affectedItems<[...]>}
+			// body: {docItem, affectedItems<[...]>, affectedItemsData}
+			query: (body) => ({ action: ACTIONS.UPDATE_DOC, body }),
 			invalidatesTags: (result, error, body) => {
-				console.log("invalidatesTags", [{ type: TYPE.DOCS, id: body.docItem.docId }])
-				return [{ type: TYPE.DOCS, id: body.docItem.docId }]
+				return [
+					{ type: TYPE.DOCS, id: body.docItem.docId },
+					...body.affectedItems.map((item) => ({ type: TYPE.DOCS, id: item.docId }))
+				]
 			},
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
@@ -263,21 +267,52 @@ export const firestoreApi = createApi({
 			},
 		}),
 
+		updateDocDnd: builder.mutation({
+			// body: {docItem, affectedItems<[...]>, affectedItemsData}
+			query: (body) => ({ action: ACTIONS.UPDATE_DOC, body }),
+			invalidatesTags: (result, error, body) => {
+				return [
+					{ type: TYPE.DOCS, id: body.docItem.docId },
+					...body.affectedItems.map((item) => ({ type: TYPE.DOCS, id: item.docId }))
+				]
+			}
+		}),
+
 		updateDocContent: builder.mutation({
-			query: (body) => ({ action: ACTIONS.UPDATE_DOC_CONTENT, body }), //body: {docItem: object, content: { text: <string> } }
-			invalidatesTags: (result, error, arg) => [{ type: TYPE.DOCS, id: arg.docItem.docId.concat("_content") }],
+			//body: {docId, updatedBy, content: { text: <string> } }
+			query: (body) => ({ action: ACTIONS.UPDATE_DOC_CONTENT, body }),
+			invalidatesTags: (result, error, body) => [{ type: TYPE.DOCS, id: body.docId.concat("_content") }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
+
+				const patchContent = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTIONS.GET_CONTENT,
-						body.docItem.docId.concat("_content"),
+						body.docId.concat("_content"),
 						(draft) => {
 							Object.assign(draft, body.content)
 						}
 					)
 				)
+
+				const patchItem = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTIONS.GET_DOCS,
+						undefined,
+						(draft) => {
+							let obj = draft.find(e => e.docId === body.docId)
+							Object.assign(obj, {
+								updatedBy: body.updatedBy,
+								updatedAt: dayjs().valueOf()
+							})
+						}
+					)
+				)
+
 				try { await queryFulfilled }
-				catch { patchResult.undo() }
+				catch {
+					patchItem.undo()
+					patchContent.undo()
+				}
 			},
 		}),
 
@@ -1246,6 +1281,7 @@ export const {
 	//
 	useAddDocMutation,
 	useUpdateDocMutation,
+	useUpdateDocDndMutation,
 	useUpdateDocContentMutation,
 	useDeleteDocMutation,
 

@@ -48,17 +48,32 @@ export default function useGroupedDocs() {
 
 	if (isLoadingDocs) { return ({ data: [], isLoading: true }) }
 
+	console.log("useGetDocsQuery => ", { docs })
+
 	if (isEqual(prevData, docs) === false) {
 		//step 0: sort the docs list
-		const sortedDocs = sortBy(docs, ["category", "subcategory", "title"])
+		// const sortedDocs = sortBy(docs, ["category", "subcategory", "title"])
+		const sortedDocs = sortBy(docs, ["category", "position"])
+
 		//step 1: group by cat
 		const groupByCat = groupBy(sortedDocs, (i) => i.category)
+
+		console.log({ groupByCat })
+
 		//step 2: group by SubCat
 		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
 			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
 		})
+
 		groupedDocs.current = Object.entries(groupByCatAndSub)
+
+		console.log({ "group": groupedDocs.current })
 	}
 
-	return ({ data: groupedDocs.current, isLoading: false })
+	return (
+		{
+			data: groupedDocs.current,
+			isLoading: false
+		}
+	)
 }

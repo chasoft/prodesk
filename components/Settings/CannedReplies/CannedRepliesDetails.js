@@ -23,19 +23,22 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React from "react"
 
 // MATERIAL-UI
 import { Box, Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { useDeepCompareEffect } from "react-use"
+import { isEqual } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
 import { CircularProgressBox } from "@components/common"
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import useLocalComponentCache from "@helpers/useLocalComponentCache"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 import {
 	DepartmentSelect,
@@ -47,13 +50,20 @@ import {
 	SettingsContentDetails
 } from "@components/Settings/SettingsPanel"
 
-import { CODE, DATE_FORMAT } from "@helpers/constants"
-import { requestSilentRefetching } from "@helpers/realtimeApi"
+import {
+	CODE,
+	DATE_FORMAT
+} from "@helpers/constants"
 
-import { setEditorData } from "@redux/slices/textEditor"
-import { getAuth, getTextEditor } from "@redux/selectors"
-import { TYPE } from "@redux/slices/firestoreApiConstants"
-import { setActiveSettingPanel, setIsAddNewPanel, setSelectedCrid } from "@redux/slices/uiSettings"
+import {
+	getAuth,
+} from "@redux/selectors"
+
+import {
+	setActiveSettingPanel,
+	setIsAddNewPanel,
+	setSelectedCrid
+} from "@redux/slices/uiSettings"
 
 import {
 	useGetDepartmentsQuery,
@@ -69,45 +79,30 @@ import {
 //TODO: add bigger option to show bigger text-editor
 
 const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
+	const dispatch = useDispatch()
+	const { currentUser } = useSelector(getAuth)
+	const [updateCannedReply] = useUpdateCannedReplyMutation()
+
 	const {
 		data: departments,
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
-	const { currentUser } = useSelector(getAuth)
-	const { editorData } = useSelector(getTextEditor)
+	const {
+		localCache,
+		handlers: { setLocalCache }
+	} = useLocalComponentCache(selectedCannedReply)
 
-	const [content, setContent] = useState("")
-	const [description, setDescription] = useState("")
-	const [departmentId, setDepartmentId] = useState("")
-
-	const [updateCannedReply] = useUpdateCannedReplyMutation()
-
-	const isModified = (selectedCannedReply.content !== editorData
-		|| selectedCannedReply.departmentId !== departmentId
-		|| selectedCannedReply.description !== description
-		|| isFullCannedReply !== selectedCannedReply?.full)
-
-	const dispatch = useDispatch()
-
-	useDeepCompareEffect(() => {
-		setContent(selectedCannedReply.content)
-		setDepartmentId(selectedCannedReply.departmentId)
-		setDescription(selectedCannedReply.description)
-		dispatch(setEditorData(selectedCannedReply.content))
-	}, [selectedCannedReply])
+	const isModified = !isEqual(selectedCannedReply, localCache) || selectedCannedReply.full !== isFullCannedReply
 
 	const handleUpdateCannedReply = async () => {
 		const updatedContent = {
-			...selectedCannedReply,
-			departmentId: departmentId,
-			description: description,
-			content: editorData,
+			...localCache,
 			full: isFullCannedReply,
 			updatedBy: currentUser.username,
 			updatedAt: dayjs().valueOf()
 		}
-		dispatch(setActiveSettingPanel(departmentId))
+		dispatch(setActiveSettingPanel(localCache.departmentId))
 		const res = await updateCannedReply(updatedContent)
 
 		if (res?.data.code === CODE.SUCCESS) {
@@ -131,6 +126,10 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 		})
 	}
 
+	const handleTextEditorOnChange = (data) => {
+		setLocalCache(data, "content")
+	}
+
 	return (
 		<>
 			<SettingsContentDetails sx={{
@@ -141,25 +140,26 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 				{isLoadingDepartments
 					? <CircularProgressBox minHeight="50px" />
 					: <DepartmentSelect
-						departmentId={departmentId}
+						departmentId={localCache.departmentId}
 						departments={departments}
 						handleSelectDepartment={((e) => {
-							setDepartmentId(e.target.value)
+							setLocalCache(e.target.value, "departmentId")
 						})}
 					/>}
 
 				<Box sx={{ py: 2 }}>
 					<DescriptionTextField
-						description={description}
+						description={localCache.description}
 						handleSetDescription={(e) => {
-							setDescription(e.target.value)
+							setLocalCache(e.target.value, "description")
 						}}
 					/>
 				</Box>
 
 				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #f0f0f0" }}>
 					<TextEditor
-						value={content}
+						value={selectedCannedReply.content}
+						onChange={handleTextEditorOnChange}
 					/>
 				</Box>
 

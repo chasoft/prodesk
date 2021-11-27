@@ -153,7 +153,7 @@ export const handleAddNewCannedReplyBase = async ({
 	description,
 	isFullCannedReply,
 	//
-	dispatchActions = () => { },
+	dispatchActions,
 	addCannedReply
 }) => {
 	const crid = nanoid()
@@ -169,7 +169,7 @@ export const handleAddNewCannedReplyBase = async ({
 		updatedAt: dayjs().valueOf(),
 	}
 
-	dispatchActions()
+	if (typeof dispatchActions === "function") dispatchActions()
 
 	const res = await addCannedReply(newCannedReply)
 
@@ -205,13 +205,6 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [addCannedReply] = useAddCannedReplyMutation()
-
-	//empty dependency on purpose
-	//we only want to check length of departments only once
-	// useEffect(() => {
-	// 	if (departments.length === 1)
-	// 		setDepartmentId(departments[0].did)
-	// }, [])
 
 	const handleCancel = () => {
 		dispatch(setIsAddNewPanel(false))

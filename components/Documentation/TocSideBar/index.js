@@ -40,7 +40,9 @@ import TocSideBarExternal from "./TocSideBarExternal"
 import TocSideBarCategory from "./TocSideBarCategory"
 import TocSideBarSubCategory from "./TocSideBarSubCategory"
 
+import { TYPE } from "@redux/slices/firestoreApiConstants"
 import useGroupedDocs from "@helpers/useGroupedDocs"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { CircularProgressBox } from "@components/common"
 
 import {
@@ -53,6 +55,7 @@ import {
 } from "@redux/slices/uiSettings"
 
 import {
+	CODE,
 	DOC_TYPE,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
@@ -84,6 +87,336 @@ const HiddenBgFixBug = () => {
 	}} />)
 }
 
+/**
+ * Move documents (used by drag-n-drop feature)
+ * @param {object} sourceItem 
+ * @param {object} targetItem 
+ */
+export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) => {
+
+	/**************************************************************
+	 * 1. TARGET IS A TYPE OF CATEGORY
+	 **************************************************************/
+
+	/* 1A: DOC_TYPE.CATEGORY >>> DOC_TYPE.CATEGORY  */
+	// => sourceItem.position = targetItem.position - 1
+	//    note: only 1 affected item
+	if (sourceItem.type === DOC_TYPE.CATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
+
+		if (sourceItem.position > targetItem.position) return
+
+		const newSourceData = {
+			docId: sourceItem.docId,
+			position: targetItem.position - 100,
+		}
+
+		const res = await updateDoc({
+			docItem: newSourceData,
+			affectedItems: []
+		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: username,
+				tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+				target: {
+					isForUser: false,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
+
+		console.log({ sourceItem, targetItem, newSourceData })
+	}
+
+	/* 1B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.CATEGORY  */
+	// if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
+	// 	// 1B.1: if source.category === target.category => NOTHING TO CHANGE
+	// 	// 1B.2: if source.category !== target.category
+	// 	// => source.category = target.category
+	// 	// 	  note: 1 or many affected items
+	// 	if (sourceItem.category !== targetItem.category) {
+
+	// 		const affectedItems = filter(
+	// 			unGroupedDocs,
+	// 			(doc) => {
+	// 				return doc.category === sourceItem.category
+	// 					&& doc.subcategory === sourceItem.subcategory
+	// 					&& doc.docId !== sourceItem.docId
+	// 			}
+	// 		)
+
+	// 		const newSourceData = {
+	// 			docId: sourceItem.docId,
+	// 			category: targetItem.category,
+	// 		}
+
+	// 		const res = await updateDocDnd({
+	// 			docItem: newSourceData,
+	// 			affectedItems: affectedItems,
+	// 			affectedItemsData: {
+	// 				category: targetItem.category
+	// 			}
+	// 		})
+
+	// 		if (res?.data.code === CODE.SUCCESS) {
+	// 			const invalidatesTags = {
+	// 				trigger: username,
+	// 				tag: [
+	// 					{ type: TYPE.DOCS, id: sourceItem.docId },
+	// 					...(affectedItems.map(item => ({ type: TYPE.DOCS, id: item.docId })))
+	// 				],
+	// 				target: {
+	// 					isForUser: false,
+	// 					isForAdmin: true,
+	// 				}
+	// 			}
+	// 			await requestSilentRefetching(invalidatesTags)
+	// 		}
+
+	// 		console.log({ sourceItem, targetItem, newSourceData, affectedItems, unGroupedDocs })
+	// 	}
+
+	// }
+
+	/* 1C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.CATEGORY  */
+	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.CATEGORY) {
+		// 1C.1: if source.category === target.category && source.subcategory === RESERVED_KEYWORDS.CAT_CHILDREN
+		// => NOTHING TO CHANGE
+		// 1C.2: if source.category === target.category && source.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN
+		// => source.subcategory = RESERVED_KEYWORDS.CAT_CHILDREN
+		//    note: only 1 affected item
+		if (sourceItem.category === targetItem.category && sourceItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN) {
+			const newSourceData = {
+				docId: sourceItem.docId,
+				subcategory: RESERVED_KEYWORDS.CAT_CHILDREN,
+				position: targetItem.position - 5000
+			}
+
+			const res = await updateDoc({
+				docItem: newSourceData,
+				affectedItems: []
+			})
+
+			if (res?.data.code === CODE.SUCCESS) {
+				const invalidatesTags = {
+					trigger: username,
+					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+					target: {
+						isForUser: false,
+						isForAdmin: true,
+					}
+				}
+				await requestSilentRefetching(invalidatesTags)
+			}
+
+			console.log({ sourceItem, targetItem, newSourceData })
+		}
+
+		// 1C.3: if source.category !== target.category
+		// => source.category = target.category
+		// => source.subcategory = RESERVED_KEYWORDS.CAT_CHILDREN
+		//    note: only 1 affected item
+		if (sourceItem.category !== targetItem.category) {
+			const newSourceData = {
+				docId: sourceItem.docId,
+				category: targetItem.category,
+				subcategory: RESERVED_KEYWORDS.CAT_CHILDREN,
+				position: targetItem.position - 5000
+			}
+
+			const res = await updateDoc({
+				docItem: newSourceData,
+				affectedItems: []
+			})
+
+			if (res?.data.code === CODE.SUCCESS) {
+				const invalidatesTags = {
+					trigger: username,
+					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+					target: {
+						isForUser: false,
+						isForAdmin: true,
+					}
+				}
+				await requestSilentRefetching(invalidatesTags)
+			}
+
+			console.log({ sourceItem, targetItem, newSourceData })
+		}
+	}
+
+	/**************************************************************
+	 * 2. TARGET IS A TYPE OF SUBCATEGORY
+	 **************************************************************/
+
+	/* 2A: DOC_TYPE.CATEGORY >>> DOC_TYPE.SUBCATEGORY  */
+	// => NOTHING TO CHANGE
+	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
+	// if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY) {
+	// 	// 2B.1 if source.category === target.category
+	// 	// => NOTHING TO CHANGE
+	// 	// 2B.2 if source.category !== target.category
+	// 	// => source.category = target.category
+	// 	// => source.position = target.position - 1
+	// 	//    note: 1 or many affected items
+	// 	if (sourceItem.category !== targetItem.category) {
+
+	// 		const affectedItems = filter(
+	// 			unGroupedDocs,
+	// 			(doc) => {
+	// 				return doc.category === sourceItem.category
+	// 					&& doc.subcategory === sourceItem.subcategory
+	// 					&& doc.docId !== sourceItem.docId
+	// 			}
+	// 		)
+
+	// 		const newSourceData = {
+	// 			docId: sourceItem.docId,
+	// 			category: targetItem.category,
+	// 			position: targetItem.position - 100,
+	// 		}
+
+	// 		const res = await updateDocDnd({
+	// 			docItem: newSourceData,
+	// 			affectedItems: affectedItems,
+	// 			affectedItemsData: {
+	// 				category: targetItem.category
+	// 			}
+	// 		})
+
+	// 		if (res?.data.code === CODE.SUCCESS) {
+	// 			const invalidatesTags = {
+	// 				trigger: username,
+	// 				tag: [
+	// 					{ type: TYPE.DOCS, id: sourceItem.docId },
+	// 					...(affectedItems.map(item => ({ type: TYPE.DOCS, id: item.docId })))
+	// 				],
+	// 				target: {
+	// 					isForUser: false,
+	// 					isForAdmin: true,
+	// 				}
+	// 			}
+	// 			await requestSilentRefetching(invalidatesTags)
+	// 		}
+
+	// 		console.log({ sourceItem, targetItem, newSourceData, affectedItems, unGroupedDocs })
+	// }
+	// }
+
+	/* 2C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.SUBCATEGORY  */
+	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.SUBCATEGORY) {
+		// 2C.1: if source.category === target.category && source.subcategory === target.subcategory
+		// => NOTHING TO CHANGE
+		// 2C.2: if source.category === target.category && source.subcategory !== target.subcategory
+		// => source.subcategory = target.subcategory
+		//    note: only 1 affected item
+		if (sourceItem.category === targetItem.category && sourceItem.subcategory !== targetItem.subcategory) {
+			const newSourceData = {
+				docId: sourceItem.docId,
+				subcategory: targetItem.subcategory,
+			}
+
+			const res = await updateDoc({
+				docItem: newSourceData,
+				affectedItems: []
+			})
+
+			if (res?.data.code === CODE.SUCCESS) {
+				const invalidatesTags = {
+					trigger: username,
+					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+					target: {
+						isForUser: false,
+						isForAdmin: true,
+					}
+				}
+				await requestSilentRefetching(invalidatesTags)
+			}
+
+			console.log({ sourceItem, targetItem, newSourceData })
+		}
+
+		// 2C.3: if source.category !== target.category
+		// => source.category = target.category
+		// => source.subcategory = target.subcategory
+		//    note: only 1 affected item
+		if (sourceItem.category !== targetItem.category) {
+			const newSourceData = {
+				docId: sourceItem.docId,
+				category: targetItem.category,
+				subcategory: targetItem.subcategory,
+			}
+
+			const res = await updateDoc({
+				docItem: newSourceData,
+				affectedItems: []
+			})
+
+			if (res?.data.code === CODE.SUCCESS) {
+				const invalidatesTags = {
+					trigger: username,
+					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+					target: {
+						isForUser: false,
+						isForAdmin: true,
+					}
+				}
+				await requestSilentRefetching(invalidatesTags)
+			}
+
+			console.log({ sourceItem, targetItem, newSourceData })
+		}
+	}
+
+	/**************************************************************
+	 * 3. TARGET IS A TYPE OF DOC || EXTERNAL
+	 **************************************************************/
+
+	/* 3A: DOC_TYPE.CATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
+	// => NOTHING TO CHANGE
+	/* 3B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
+	// => NOTHING TO CHANGE
+	/* 3C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
+	// => source.category = target.category
+	// => source.subcategory = target.subcategory
+	// => source.position = target.position - 1
+	//    note: only 1 affected item
+	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL)
+		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL)) {
+
+		//no need to change the order, when it is already ok
+		if (sourceItem.position < targetItem.position) return
+
+		const newSourceData = {
+			docId: sourceItem.docId,
+			category: targetItem.category,
+			subcategory: targetItem.subcategory,
+			position: targetItem.position - 100
+		}
+
+		const res = await updateDoc({
+			docItem: newSourceData,
+			affectedItems: []
+		})
+
+		if (res?.data.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: username,
+				tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
+				target: {
+					isForUser: false,
+					isForAdmin: true,
+				}
+			}
+			await requestSilentRefetching(invalidatesTags)
+		}
+
+		console.log({ sourceItem, targetItem, newSourceData })
+	}
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
@@ -93,7 +426,7 @@ const TocSideBar = () => {
 	const sideBarRef = useRef(null)
 
 	const {
-		data: docs,
+		data: docs = [],	//grouped docs
 		isLoading: isLoadingDocs
 	} = useGroupedDocs()
 
@@ -161,7 +494,7 @@ const TocSideBar = () => {
 				}}
 			>
 				<div style={{ position: "sticky", top: "80px" }}>
-					{isLoadingDocs
+					{(isLoadingDocs)
 						? <CircularProgressBox />
 						: docs.map((cat) => {
 							/* Category Level */
@@ -180,7 +513,10 @@ const TocSideBar = () => {
 										//Draw items at root level of Category
 										if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 											return (
-												<div id={cat[1]["undefined"][0].slug + "-root"}>
+												<div
+													id={cat[1]["undefined"][0].slug + "-root"}
+													key={cat[1]["undefined"][0].slug + "-root"}
+												>
 													{subcat[1].map((item) => {
 														if (item.type === DOC_TYPE.DOC)
 															return (
@@ -189,7 +525,7 @@ const TocSideBar = () => {
 																	onClick={() => { loadDocContent(item.docId) }}
 																	active={item.docId === activeDocId}
 																	handleOpen={() => handleOpenDetails(item.docId)}
-																	targetDocItem={{ docId: item.docId }}
+																	targetDocItem={item}
 																>
 																	{item.title}
 																</TocSideBarDoc>
@@ -201,7 +537,7 @@ const TocSideBar = () => {
 																	key={item.docId}
 																	url={item.url}
 																	handleOpen={() => handleOpenDetails(item.docId)}
-																	targetDocItem={{ docId: item.docId }}
+																	targetDocItem={item}
 																>
 																	{item.title}
 																</TocSideBarExternal>
@@ -240,7 +576,7 @@ const TocSideBar = () => {
 																onClick={() => { loadDocContent(item.docId) }}
 																active={item.docId === activeDocId}
 																handleOpen={() => handleOpenDetails(item.docId)}
-																targetDocItem={{ docId: item.docId }}
+																targetDocItem={item}
 															>
 																{item.title}
 															</TocSideBarDoc>
@@ -252,7 +588,7 @@ const TocSideBar = () => {
 																key={item.docId}
 																url={item.url}
 																handleOpen={() => handleOpenDetails(item.docId)}
-																targetDocItem={{ docId: item.docId }}
+																targetDocItem={item}
 															>
 																{item.title}
 															</TocSideBarExternal>
@@ -279,6 +615,5 @@ const TocSideBar = () => {
 		</>
 	)
 }
-// TocSideBar.propTypes = { dataSource: PropTypes.array }
 
 export default TocSideBar

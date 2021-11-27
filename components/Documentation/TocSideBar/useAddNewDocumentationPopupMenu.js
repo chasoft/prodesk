@@ -313,7 +313,6 @@ const AddNewPopupMenu = ({ open, anchorRef, handleClose, targetDocItem, actions,
 		</Popper>
 	)
 }
-
 AddNewPopupMenu.propTypes = {
 	open: PropTypes.bool,
 	anchorRef: PropTypes.any,

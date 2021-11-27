@@ -38,6 +38,7 @@ export const ACTIONS = {
 	GET_CONTENT: "getDocContent",
 	ADD_DOC: "addDoc",
 	UPDATE_DOC: "updateDoc",
+	UPDATE_DOC_DND: "updateDocDnd",
 	UPDATE_DOC_CONTENT: "updateDocContent",
 	DELETE_DOC: "deleteDoc",
 

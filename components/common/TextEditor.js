@@ -135,6 +135,14 @@ const TextEditor = React.forwardRef((props, ref) => {
 		return imageURL
 	}
 
+	const handleOnChange = (aFunctionToGetEditorData) => {
+		if (isFunction(onChange)) {
+			onChange(aFunctionToGetEditorData())
+		} else {
+			dispatch(setEditorData(aFunctionToGetEditorData()))
+		}
+	}
+
 	return (
 		<>
 			<Editor
@@ -142,11 +150,7 @@ const TextEditor = React.forwardRef((props, ref) => {
 				scrollTo={scrollTo}
 				readOnly={readOnly}
 				defaultValue={defaultValue}
-				onChange={(funcGetData) => {
-					const data = funcGetData()
-					if (isFunction(onChange)) onChange(data)
-					dispatch(setEditorData(data))
-				}}
+				onChange={handleOnChange}
 				uploadImage={doImageUpload}
 				onShowToast={(message, type) => { enqueueSnackbar(message, { variant: type }) }}
 				theme={EditorLightTheme}
