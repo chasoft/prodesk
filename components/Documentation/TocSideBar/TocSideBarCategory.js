@@ -169,7 +169,7 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	drag(drop(ref))
 
 	const isActive = canDrop && isOver
-	const isNotActive = !canDrop && isOver
+	// const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
 	return (
@@ -215,8 +215,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 							? "action.hover"
 							: "initial",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2" } : {}),
-					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
+					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {}),
+					// ...(isNotActive ? { backgroundColor: "error.light", color: "error.contrastText" } : {}),
 				}}
 			>
 				<Typography sx={{
@@ -224,9 +224,11 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 					ml: -2, mr: 0,
 					textTransform: "uppercase",
 					color:
-						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-							? "primary.main"
-							: "grey.500",
+						isActive
+							? "primary.contrastText"
+							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+								? "primary.main"
+								: "grey.500",
 					fontWeight: "bold",
 					":hover": { color: "primary.main" },
 				}}>

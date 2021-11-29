@@ -330,7 +330,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
 			>
 				<TypographyHeader sx={{ mb: 1 }}>
 					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
@@ -499,7 +499,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
 			>
 				<TypographyHeader sx={{ mb: 1 }}>
 					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
@@ -646,7 +646,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 430px)", paddingRight: "2px" }}
 			>
 				<TypographyHeader sx={{ mb: 1 }}>
 					Title
@@ -778,7 +778,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 250px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
 			>
 				<TypographyHeader sx={{ mb: 1 }}>
 					Title
@@ -906,7 +906,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 				{isLoadingDocItem
 					? <CircularProgressBox />
 					: (docItem !== undefined)
-						? <>
+						? <div>
 							<Box sx={{
 								mx: 3, pt: 3, pb: 3,
 								borderColor: "divider",
@@ -927,7 +927,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 							</Box>
 
-							<Box sx={{ mt: 3 }}>
+							<Box>
 
 								<RightMenuItemAddNewDoc
 									sx={{ px: 3 }}
@@ -941,6 +941,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 								{(docItem.type === DOC_TYPE.CATEGORY) &&
 									<RightMenuItemDelete
+										id="RightMenuItemDelete-category"
 										targetDocItem={docItem}
 										title="Delete this category"
 										sx={{ px: 3 }}
@@ -948,6 +949,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 								{(docItem.type === DOC_TYPE.SUBCATEGORY) &&
 									<RightMenuItemDelete
+										id="RightMenuItemDelete-subcategory"
 										sx={{ px: 3 }}
 										targetDocItem={docItem}
 										title="Delete this sub-category"
@@ -961,12 +963,13 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 								{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
 									<RightMenuItemDelete
+										id="RightMenuItemDelete-document"
 										sx={{ px: 3 }}
 										targetDocItem={docItem}
 									/>}
 
 							</Box>
-						</>
+						</div>
 						: null}
 			</Box>
 

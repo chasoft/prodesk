@@ -112,7 +112,7 @@ const DocumentEditor = () => {
 	*/
 
 	useEffect(() => {
-		const text = docItemContent?.text + " ".repeat(random(20))
+		const text = docItemContent?.text ?? "" + " ".repeat(random(20))
 		reduxBatch(() => {
 			dispatch(setEditorData(text))
 			dispatch(setEditorDefaultData(text))
@@ -139,6 +139,50 @@ const DocumentEditor = () => {
 	// 	})
 	// }
 
+	const handleUpdateTitleOnBlur = async () => {
+		if (localCache.title !== docItem.title) {
+			const newDocMeta = {
+				docId: docItem.docId,	//must be included
+				title: localCache.title,
+				updatedBy: currentUser.username,
+			}
+			await updateDoc({
+				docItem: newDocMeta,
+				affectedItems: []
+			})
+		}
+	}
+
+	const handleUpdateDescriptionOnBlur = async () => {
+		if (localCache.description !== docItem.description) {
+			const newDocMeta = {
+				docId: docItem.docId,	//must be included
+				description: localCache.description,
+				updatedBy: currentUser.username,
+			}
+			await updateDoc({
+				docItem: newDocMeta,
+				affectedItems: []
+			})
+		}
+	}
+
+	const handleUpdateContentOnBlur = async () => {
+		/*******************************
+		 * TODO: !! Bug here
+		 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
+		 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
+		 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
+		 */
+		if (trim(editorData) !== trim(docItemContent.text)) {
+			await updateDocContent({
+				docId: docItem.docId,
+				updatedBy: currentUser.username,
+				content: { text: editorData }
+			})
+		}
+	}
+
 	return (
 		<Box id="DocumentEditor" sx={{
 			display: "flex",
@@ -157,20 +201,7 @@ const DocumentEditor = () => {
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
 				}}
-				onBlur={async () => {
-					if (localCache.title !== docItem.title) {
-						const newDocMeta = {
-							docId: docItem.docId,	//must be included
-							title: localCache.title,
-							updatedBy: currentUser.username,
-						}
-						await updateDoc({
-							docItem: newDocMeta,
-							affectedItems: []
-						})
-						console.log("onBlur -> update doc's Title")
-					}
-				}}
+				onBlur={handleUpdateTitleOnBlur}
 			/>
 
 			{/* {Max 200 characters} */}
@@ -186,20 +217,7 @@ const DocumentEditor = () => {
 					fontWeight: "500",
 					lineHeight: "2rem"
 				}}
-				onBlur={async () => {
-					if (localCache.description !== docItem.description) {
-						const newDocMeta = {
-							docId: docItem.docId,	//must be included
-							description: localCache.description,
-							updatedBy: currentUser.username,
-						}
-						await updateDoc({
-							docItem: newDocMeta,
-							affectedItems: []
-						})
-						console.log("onBlur -> update doc's description")
-					}
-				}}
+				onBlur={handleUpdateDescriptionOnBlur}
 			/>
 
 			<Box id="doc-content" sx={{
@@ -213,25 +231,9 @@ const DocumentEditor = () => {
 				: <>
 					<TextEditor
 						ref={editorRef}
-						value={editorDefaultData}
+						value={editorDefaultData ?? ""}
 						placeholder="Enter your content here..."
-						onBlur={async () => {
-							/*******************************
-							 * TODO: !! Bug here
-							 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
-							 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
-							 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
-							 */
-							if (trim(editorData) !== trim(docItemContent.text)) {
-								await updateDocContent({
-									docId: docItem.docId,
-									updatedBy: currentUser.username,
-									content: { text: editorData }
-								})
-
-								console.log("Updated doc's content", editorData)
-							}
-						}}
+						onBlur={handleUpdateContentOnBlur}
 					/>
 
 					{!isEmptyContent &&

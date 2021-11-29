@@ -149,7 +149,6 @@ RightMenuItemBase.propTypes = {
 }
 
 export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
-	const dispatch = useDispatch()
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 	return (
@@ -158,15 +157,8 @@ export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
 			onClick={async () => {
 				//Prepare skeleton document
 				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-
-				//UI
-				// reduxBatch(() => {
-				// 	dispatch(setActiveDocId(docItem.docId))
-				// 	dispatch(setShowTocSideBarDetails(false))
-				// 	dispatch(setActiveDocIdOfTocSideBarDetails(null))
-				// })
-
 				//add new document to DB
+				//dispatch actions are all moved to inside addDoc() function
 				await addDoc({ docItem: docItem })
 			}}
 		>
@@ -318,7 +310,8 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 	return (
 		<>
 			<RightMenuItemBase
-				Icon={<DeleteOutlinedIcon />} sx={{ ...sx }}
+				Icon={<DeleteOutlinedIcon />}
+				sx={{ ...sx }}
 				onClick={() => setOpenConfirmDialog(true)}
 			>
 				{title}

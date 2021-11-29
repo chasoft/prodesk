@@ -151,8 +151,8 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 							? "action.hover"
 							: "transparent",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2" } : {}),
-					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
+					...(isActive ? { backgroundColor: "primary.light" } : {}),
+					...(isNotActive ? { backgroundColor: "error.light" } : {}),
 				}}
 			>
 				<Box sx={{
@@ -160,7 +160,13 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 					justifyContent: "space-between",
 					alignItems: "center",
 					flexGrow: 2,
-					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "initial",
+					color: isActive
+						? "primary.contrastText"
+						: isNotActive
+							? "error.contrastText"
+							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+								? "primary.main"
+								: "initial",
 					":hover": {
 						"&>svg": {
 							color: "grey.700"

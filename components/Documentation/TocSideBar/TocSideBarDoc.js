@@ -135,8 +135,8 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 						? "primary.main"
 						: "initial",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2" } : {}),
-					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
+					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {}),
+					...(isNotActive ? { backgroundColor: "error.light", color: "error.contrastText" } : {}),
 				}}
 			>
 				<Typography>{children}</Typography>

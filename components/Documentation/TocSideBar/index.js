@@ -102,7 +102,7 @@ export const isValidDnD = (sourceItem, targetItem) => {
 
 	/* 1A: DOC_TYPE.CATEGORY >>> DOC_TYPE.CATEGORY  */
 	if (sourceItem.type === DOC_TYPE.CATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
-		if (sourceItem.position < targetItem.position) return false
+		// if (sourceItem.position < targetItem.position) return false
 		return true
 	}
 
@@ -128,7 +128,7 @@ export const isValidDnD = (sourceItem, targetItem) => {
 	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY) {
 		if (sourceItem.category !== targetItem.category) return false
-		if (sourceItem.position < targetItem.position) return false
+		// if (sourceItem.position < targetItem.position) return false
 		return true
 	}
 
@@ -153,8 +153,8 @@ export const isValidDnD = (sourceItem, targetItem) => {
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL)
 		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL)) {
 
-		if (sourceItem.category === targetItem.category && sourceItem.subcategory === targetItem.subcategory)
-			if (sourceItem.position < targetItem.position) return false
+		// if (sourceItem.category === targetItem.category && sourceItem.subcategory === targetItem.subcategory)
+		// if (sourceItem.position < targetItem.position) return false
 
 		return true
 	}
@@ -175,11 +175,11 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	//    note: only 1 affected item
 	if (sourceItem.type === DOC_TYPE.CATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
 
-		if (sourceItem.position < targetItem.position) return
-
 		const newSourceData = {
 			docId: sourceItem.docId,
-			position: targetItem.position - 1,
+			position: (sourceItem.position < targetItem.position)
+				? targetItem.position + 1
+				: targetItem.position - 1,
 		}
 
 		const res = await updateDoc({
@@ -198,8 +198,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 			}
 			await requestSilentRefetching(invalidatesTags)
 		}
-
-		console.log({ sourceItem, targetItem, newSourceData })
 	}
 
 	/* 1B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.CATEGORY  */
@@ -282,8 +280,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 				}
 				await requestSilentRefetching(invalidatesTags)
 			}
-
-			console.log({ sourceItem, targetItem, newSourceData })
 		}
 
 		// 1C.3: if source.category !== target.category
@@ -328,11 +324,11 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 		// 2B.1 if source.category === target.category
 		if (sourceItem.category === targetItem.category) {
 
-			if (sourceItem.position < targetItem.position) return
-
 			const newSourceData = {
 				docId: sourceItem.docId,
-				position: targetItem.position - 1,
+				position: (sourceItem.position < targetItem.position)
+					? targetItem.position + 1
+					: targetItem.position - 1,
 			}
 
 			const res = await updateDoc({
@@ -351,8 +347,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 				}
 				await requestSilentRefetching(invalidatesTags)
 			}
-
-			console.log({ sourceItem, targetItem, newSourceData })
 		}
 		// 	// => NOTHING TO CHANGE
 		// 	// 2B.2 if source.category !== target.category
@@ -430,8 +424,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 				}
 				await requestSilentRefetching(invalidatesTags)
 			}
-
-			console.log({ sourceItem, targetItem, newSourceData })
 		}
 
 		// 2C.3: if source.category !== target.category
@@ -461,8 +453,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 				}
 				await requestSilentRefetching(invalidatesTags)
 			}
-
-			console.log({ sourceItem, targetItem, newSourceData })
 		}
 	}
 
@@ -482,14 +472,13 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL)
 		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL)) {
 
-		//no need to change the order, when it is already ok
-		if (sourceItem.position < targetItem.position) return
-
 		const newSourceData = {
 			docId: sourceItem.docId,
 			category: targetItem.category,
 			subcategory: targetItem.subcategory,
-			position: targetItem.position - 1
+			position: (sourceItem.position < targetItem.position)
+				? targetItem.position + 1
+				: targetItem.position - 1
 		}
 
 		const res = await updateDoc({
@@ -508,8 +497,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 			}
 			await requestSilentRefetching(invalidatesTags)
 		}
-
-		console.log({ sourceItem, targetItem, newSourceData })
 	}
 }
 
@@ -713,7 +700,9 @@ const TocSideBar = () => {
 					{/* <TocSideBarActionsGroup /> */}
 				</Box>
 			</PerfectScrollbar>
+
 			<HiddenBgFixBug />
+
 			<TocSideBarDetails handleClose={handleCloseDetails} />
 		</>
 	)

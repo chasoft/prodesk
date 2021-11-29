@@ -179,12 +179,18 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 							? "action.hover"
 							: "initial",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2" } : {}),
-					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
+					...(isActive ? { backgroundColor: "primary.light" } : {}),
+					...(isNotActive ? { backgroundColor: "error.light" } : {}),
 				}}
 			>
 				<Typography sx={{
-					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId) ? "primary.main" : "grey.500",
+					color: isActive
+						? "primary.contrastText"
+						: isNotActive
+							? "error.contrastText"
+							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+								? "primary.main"
+								: "grey.500",
 					fontWeight: "bold",
 					":hover": { color: "primary.main" }
 				}}>
