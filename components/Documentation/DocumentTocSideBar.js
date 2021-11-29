@@ -38,6 +38,7 @@ import useGetDoc from "@helpers/useGetDocs"
 import { docItemNewDoc } from "@helpers/firebase/docs"
 import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
 import ConfirmDialog from "@components/common/ConfirmDialog"
+import { CircularProgressBox } from "@components/common"
 
 import {
 	DOC_TYPE,
@@ -71,7 +72,6 @@ import PostAddIcon from "@mui/icons-material/PostAdd"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
 import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
-import { CircularProgressBox } from "@components/common"
 
 /*****************************************************************
  * INIT                                                          *
@@ -148,26 +148,30 @@ RightMenuItemBase.propTypes = {
 	children: PropTypes.node
 }
 
-export const RightMenuItemAddNewDoc = ({ targetDocItem, sx }) => {
+export const RightMenuItemAddNewDoc = ({ category, subcategory, sx }) => {
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
+
+	const handleAddNewDoc = async () => {
+		//Prepare skeleton document
+		const docItem = docItemNewDoc(category, subcategory, currentUser.username)
+		//add new document to DB
+		//dispatch actions are all moved to inside addDoc() function
+		await addDoc({ docItem: docItem })
+	}
+
 	return (
 		<RightMenuItemBase
 			Icon={<PostAddIcon />} sx={{ ...sx }}
-			onClick={async () => {
-				//Prepare skeleton document
-				const docItem = docItemNewDoc(targetDocItem, currentUser.username)
-				//add new document to DB
-				//dispatch actions are all moved to inside addDoc() function
-				await addDoc({ docItem: docItem })
-			}}
+			onClick={handleAddNewDoc}
 		>
 			New Document
 		</RightMenuItemBase >
 	)
 }
 RightMenuItemAddNewDoc.propTypes = {
-	targetDocItem: PropTypes.object,
+	category: PropTypes.string,
+	subcategory: PropTypes.string,
 	sx: PropTypes.object
 }
 
@@ -572,7 +576,10 @@ const DocumentTocSideBar = () => {
 						borderColor: "divider",
 					}}>
 
-						<RightMenuItemAddNewDoc targetDocItem={activeDoc} />
+						<RightMenuItemAddNewDoc
+							category={activeDoc.category}
+							subcategory={activeDoc.subcategory}
+						/>
 						<RightMenuItemImport targetDocItem={activeDoc} />
 						<RightMenuItemExportPDF targetDocItem={activeDoc} />
 						<RightMenuItemMore />

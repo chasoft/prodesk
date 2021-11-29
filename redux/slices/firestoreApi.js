@@ -34,6 +34,7 @@ import { fix_datetime_list, fix_datetime_single } from "@helpers/firebase"
 import { DOC_TYPE, STATUS_FILTER } from "@helpers/constants"
 import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "@redux/slices/docsCenter"
 import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
+import { setEditorDefaultData } from "@redux/slices/textEditor"
 
 /*****************************************************************
  * INIT                                                          *
@@ -221,8 +222,8 @@ export const firestoreApi = createApi({
 					dispatch(setActiveDocId(body.docItem.docId))
 					dispatch(setShowTocSideBarDetails(false))
 					dispatch(setActiveDocIdOfTocSideBarDetails(null))
+					dispatch(setEditorDefaultData(""))
 				} else {
-					console.log("setActiveDocIdOfTocSideBarDetails@firestoreApi = ", { docItem: body.docItem })
 					dispatch(setActiveDocId(null))
 					dispatch(setShowTocSideBarDetails(true))
 					dispatch(setActiveDocIdOfTocSideBarDetails(body.docItem.docId))

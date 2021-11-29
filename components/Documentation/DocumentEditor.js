@@ -112,7 +112,7 @@ const DocumentEditor = () => {
 	*/
 
 	useEffect(() => {
-		const text = docItemContent?.text ?? "" + " ".repeat(random(20))
+		const text = (docItemContent?.text ?? "") + " ".repeat(random(20))
 		reduxBatch(() => {
 			dispatch(setEditorData(text))
 			dispatch(setEditorDefaultData(text))

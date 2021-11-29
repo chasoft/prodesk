@@ -931,7 +931,8 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 								<RightMenuItemAddNewDoc
 									sx={{ px: 3 }}
-									targetDocItem={docItem}
+									category={docItem.category}
+									subcategory={docItem.subcategory}
 								/>
 
 								<RightMenuItemImport
