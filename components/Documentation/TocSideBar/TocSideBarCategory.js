@@ -37,7 +37,7 @@ import TocSideBarAddNew from "./TocSideBarAddNew"
 import TocSideBarItemBase from "./TocSideBarItemBase"
 import useAddNewDocumentationPopupMenu from "./useAddNewDocumentationPopupMenu"
 import { useUpdateDocMutation } from "@redux/slices/firestoreApi"
-import { moveDocItem } from "@components/Documentation/TocSideBar"
+import { isValidDnD, moveDocItem } from "@components/Documentation/TocSideBar"
 
 import {
 	getAuth,
@@ -104,30 +104,54 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 
 	const [{ canDrop, isOver }, drop] = useDrop(() => ({
 		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL, DOC_TYPE.CATEGORY],
-		drop: () => targetDocItem,
+		canDrop: (item) => isValidDnD(item, targetDocItem),
+		drop: () => ({
+			type: targetDocItem.type,
+			position: targetDocItem.position,
+			docId: targetDocItem.docId,
+			category: targetDocItem.category,
+			subcategory: targetDocItem.subcategory,
+		}),
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
 			canDrop: monitor.canDrop(),
 		}),
-	}))
+	}), [
+		targetDocItem.type,
+		targetDocItem.position,
+		targetDocItem.docId,
+		targetDocItem.category,
+		targetDocItem.subcategory,
+	])
 
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: DOC_TYPE.CATEGORY,
-		item: targetDocItem,
+		item: () => ({
+			type: targetDocItem.type,
+			position: targetDocItem.position,
+			docId: targetDocItem.docId,
+			category: targetDocItem.category,
+			subcategory: targetDocItem.subcategory,
+		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult()
 			if (item && dropResult) {
 				//item => sourceItem
 				//dropResult => targetItem
 				moveDocItem(item, dropResult, updateDoc, currentUser.username)
-				console.log("TocSideBarCategory => drop")
 			}
 		},
 		collect: (monitor) => ({
 			isDragging: monitor.isDragging(),
 			handlerId: monitor.getHandlerId(),
 		}),
-	}))
+	}), [
+		targetDocItem.type,
+		targetDocItem.position,
+		targetDocItem.docId,
+		targetDocItem.category,
+		targetDocItem.subcategory,
+	])
 
 	const [expanded, setExpanded] = useState(true)
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
@@ -143,11 +167,13 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	] = useAddNewDocumentationPopupMenu()
 
 	drag(drop(ref))
+
 	const isActive = canDrop && isOver
+	const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
 	return (
-		<div id={targetDocItem.slug}>
+		<div id={targetDocItem.slug} style={{ order: targetDocItem.position, marginTop: "30px" }}>
 			<TocSideBarItemBase
 				ref={ref}
 				id={targetDocItem.slug + "-button"}
@@ -189,7 +215,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 							? "action.hover"
 							: "initial",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2", borderTop: "2px solid #004aab" } : {})
+					...(isActive ? { border: "2px solid #1976d2" } : {}),
+					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
 				}}
 			>
 				<Typography sx={{
@@ -212,7 +239,9 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 				borderColor: "divider",
 			}}>
 				<Collapse in={expanded}>
-					{children}
+					<div style={{ display: "flex", flexDirection: "column", }}>
+						{children}
+					</div>
 				</Collapse>
 			</Box>
 		</div>

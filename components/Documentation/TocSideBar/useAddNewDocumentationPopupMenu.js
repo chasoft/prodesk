@@ -156,14 +156,14 @@ PopupMenuItemAddCategory.propTypes = {
 	handleClose: PropTypes.func,
 }
 
-const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose }) => {
+const PopupMenuItemAddSubCategory = ({ actionType, category, handleClose }) => {
 	// const dispatch = useDispatch()
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
 	const handleAddSubCategory = async () => {
 		//Prepare skeleton sub-category
-		const docItem = docItemNewSubCategory(targetDocItem, currentUser.username)
+		const docItem = docItemNewSubCategory(category, currentUser.username)
 
 		//Open new created Sub-Category
 		handleClose()
@@ -185,18 +185,18 @@ const PopupMenuItemAddSubCategory = ({ actionType, targetDocItem, handleClose })
 }
 PopupMenuItemAddSubCategory.propTypes = {
 	actionType: PropTypes.object,
-	targetDocItem: PropTypes.object,
+	category: PropTypes.string,
 	handleClose: PropTypes.func,
 }
 
-const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }) => {
+const PopupMenuItemAddExternalLink = ({ actionType, category, subcategory, handleClose }) => {
 	// const dispatch = useDispatch()
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
 	const handleAddExternalLink = async () => {
 		//Prepare skeleton external link
-		const docItem = docItemNewExternal(targetDocItem, currentUser.username)
+		const docItem = docItemNewExternal(category, subcategory, currentUser.username)
 
 		handleClose()
 		// dispatch(setActiveDocIdOfTocSideBarDetails(docItem.docId))
@@ -217,18 +217,19 @@ const PopupMenuItemAddExternalLink = ({ actionType, targetDocItem, handleClose }
 }
 PopupMenuItemAddExternalLink.propTypes = {
 	actionType: PropTypes.object,
-	targetDocItem: PropTypes.object,
+	category: PropTypes.string,
+	subcategory: PropTypes.string,
 	handleClose: PropTypes.func,
 }
 
-const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
+const PopupMenuItemAddDoc = ({ actionType, category, subcategory, handleClose }) => {
 	// const dispatch = useDispatch()
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
 	const handleAddDoc = async () => {
 		//Prepare skeleton document
-		const docItem = docItemNewDoc(targetDocItem, currentUser.username)
+		const docItem = docItemNewDoc(category, subcategory, currentUser.username)
 
 		//Open new created document
 		handleClose()
@@ -252,7 +253,8 @@ const PopupMenuItemAddDoc = ({ actionType, targetDocItem, handleClose }) => {
 }
 PopupMenuItemAddDoc.propTypes = {
 	actionType: PropTypes.object,
-	targetDocItem: PropTypes.object,
+	category: PropTypes.string,
+	subcategory: PropTypes.string,
 	handleClose: PropTypes.func,
 }
 
@@ -283,14 +285,15 @@ const AddNewPopupMenu = ({ open, anchorRef, handleClose, targetDocItem, actions,
 									{(actionType.code === DOCS_ADD.SUB_CATEGORY.code) &&
 										<PopupMenuItemAddSubCategory
 											actionType={actionType}
-											targetDocItem={targetDocItem}
+											category={targetDocItem.category}
 											handleClose={handleClose}
 										/>}
 
 									{(actionType.code === DOCS_ADD.EXTERNAL.code) &&
 										<PopupMenuItemAddExternalLink
 											actionType={actionType}
-											targetDocItem={targetDocItem}
+											category={targetDocItem.category}
+											subcategory={targetDocItem.subcategory}
 											handleClose={handleClose}
 										/>}
 
@@ -298,7 +301,8 @@ const AddNewPopupMenu = ({ open, anchorRef, handleClose, targetDocItem, actions,
 									{(actionType.code === DOCS_ADD.DOC.code) &&
 										<PopupMenuItemAddDoc
 											actionType={actionType}
-											targetDocItem={targetDocItem}
+											category={targetDocItem.category}
+											subcategory={targetDocItem.subcategory}
 											handleClose={handleClose}
 										/>}
 

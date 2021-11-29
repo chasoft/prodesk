@@ -58,21 +58,18 @@ export default function useGroupedDocs() {
 		//step 1: group by cat
 		const groupByCat = groupBy(sortedDocs, (i) => i.category)
 
-		console.log({ groupByCat })
-
 		//step 2: group by SubCat
 		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
 			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
 		})
 
 		groupedDocs.current = Object.entries(groupByCatAndSub)
-
-		console.log({ "group": groupedDocs.current })
 	}
 
 	return (
 		{
 			data: groupedDocs.current,
+			// allDocs: docs,
 			isLoading: false
 		}
 	)

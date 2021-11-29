@@ -23,7 +23,6 @@
  *****************************************************************/
 
 //THIRD-PARTY
-import dayjs from "dayjs"
 import { uniqueId } from "lodash"
 import { nanoid } from "nanoid"
 
@@ -36,22 +35,23 @@ import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
 
 /**
  * Compose a new docItem object template for `new document`
- * @param {*} targetDocItem 
- * @param {*} username 
+ * @param {string} category
+ * @param {string} subcategory
+ * @param {string} username 
  * @returns docItem object
  */
-export const docItemNewDoc = (targetDocItem, username) => {
+export const docItemNewDoc = (category, subcategory, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: targetDocItem.category,
+		category: category,
 		createdBy: username,
 		description: "",
 		docId: docId,
 		//
 		slug: `document-${docId.substring(0, 3)}-${incNumber}`,
 		status: DOC_STATUS.DRAFT,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		subcategory: subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
 		tags: [],
 		title: `Document #${incNumber}`,
 		type: DOC_TYPE.DOC,
@@ -60,27 +60,28 @@ export const docItemNewDoc = (targetDocItem, username) => {
 		publishedBy: "",
 		publishedDate: 0,
 		//
-		position: dayjs().valueOf()
+		position: 9999
 	}
 }
 
 /**
  * Compose a new docItem object template for `new external link`
- * @param {*} targetDocItem
- * @param {*} username
+ * @param {string} category
+ * @param {string} subcategory
+ * @param {string} username
  * @returns docItem object
  */
-export const docItemNewExternal = (targetDocItem, username) => {
+export const docItemNewExternal = (category, subcategory, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: targetDocItem.category,
+		category: category,
 		createdBy: username,
 		description: "",
 		docId: docId,
 		//
 		status: DOC_STATUS.DRAFT,
-		subcategory: targetDocItem.subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		subcategory: subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
 		tags: [],
 		title: `External link ${docId.substring(0, 3)} #${incNumber}`,
 		type: DOC_TYPE.EXTERNAL,
@@ -90,28 +91,28 @@ export const docItemNewExternal = (targetDocItem, username) => {
 		publishedBy: "",
 		publishedDate: 0,
 		//
-		position: dayjs().valueOf()
+		position: 9999
 	}
 }
 
 /**
  * Compose a new docItem object template for `new external sub-category`
- * @param {*} targetDocItem
- * @param {*} username
+ * @param {string} category
+ * @param {string} username
  * @returns docItem object
  */
-export const docItemNewSubCategory = (targetDocItem, username) => {
+export const docItemNewSubCategory = (category, username, customName) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: targetDocItem.category,
+		category: category,
 		createdBy: username,
 		description: "",
 		docId: docId,
 		//
 		status: DOC_STATUS.DRAFT,
 		slug: `subcategory-${docId.substring(0, 3)}-${incNumber}`,
-		subcategory: `SubCategory #${incNumber}`,
+		subcategory: customName ?? `SubCategory #${incNumber}`,
 		tags: [],
 		type: DOC_TYPE.SUBCATEGORY,
 		updatedBy: username,
@@ -119,7 +120,7 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
 		publishedBy: "",
 		publishedDate: 0,
 		//
-		position: dayjs().valueOf()
+		position: 9999
 	}
 }
 
@@ -129,11 +130,11 @@ export const docItemNewSubCategory = (targetDocItem, username) => {
  * @param {*} username
  * @returns docItem object
  */
-export const docItemNewCategory = (username) => {
+export const docItemNewCategory = (username, customName) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: `Category #${incNumber}`,
+		category: customName ?? `Category #${incNumber}`,
 		createdBy: username,
 		description: "",
 		docId: docId,
@@ -147,7 +148,7 @@ export const docItemNewCategory = (username) => {
 		publishedBy: "",
 		publishedDate: 0,
 		//
-		position: dayjs().valueOf()
+		position: 9999
 	}
 }
 

@@ -116,9 +116,9 @@ const TocSideBarActionsGroup = () => {
 	} = useGetDoc(activeDocId)
 
 	return (
-		<Box
+		<Box id="TocSideBarActionsGroup"
 			sx={{
-				mt: 3,
+				mt: 8,
 				borderTop: "1px solid transparent",
 				borderColor: "divider"
 			}}

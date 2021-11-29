@@ -36,7 +36,7 @@ import { useDrag, useDrop } from "react-dnd"
 import TocSideBarAddNew from "./TocSideBarAddNew"
 import TocSideBarItemBase from "./TocSideBarItemBase"
 
-import { moveDocItem } from "@components/Documentation/TocSideBar"
+import { isValidDnD, moveDocItem } from "@components/Documentation/TocSideBar"
 import { CollapseIconButton } from "@components/Documentation/TocSideBar/TocSideBarCategory"
 import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 
@@ -69,16 +69,35 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 
 	const [{ canDrop, isOver }, drop] = useDrop(() => ({
 		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL, DOC_TYPE.SUBCATEGORY],
-		drop: () => targetDocItem,
+		canDrop: (item) => isValidDnD(item, targetDocItem),
+		drop: () => ({
+			type: targetDocItem.type,
+			position: targetDocItem.position,
+			docId: targetDocItem.docId,
+			category: targetDocItem.category,
+			subcategory: targetDocItem.subcategory,
+		}),
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
 			canDrop: monitor.canDrop(),
 		}),
-	}))
+	}), [
+		targetDocItem.type,
+		targetDocItem.position,
+		targetDocItem.docId,
+		targetDocItem.category,
+		targetDocItem.subcategory,
+	])
 
 	const [{ isDragging }, drag] = useDrag(() => ({
 		type: DOC_TYPE.SUBCATEGORY,
-		item: targetDocItem,
+		item: () => ({
+			type: targetDocItem.type,
+			position: targetDocItem.position,
+			docId: targetDocItem.docId,
+			category: targetDocItem.category,
+			subcategory: targetDocItem.subcategory,
+		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult()
 			if (item && dropResult) {
@@ -91,7 +110,13 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 			isDragging: monitor.isDragging(),
 			handlerId: monitor.getHandlerId(),
 		}),
-	}))
+	}), [
+		targetDocItem.type,
+		targetDocItem.position,
+		targetDocItem.docId,
+		targetDocItem.category,
+		targetDocItem.subcategory,
+	])
 
 	const [expanded, setExpanded] = useState(true)
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
@@ -108,10 +133,11 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 
 	drag(drop(ref))
 	const isActive = canDrop && isOver
+	const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
 	return (
-		<div id={targetDocItem.slug}>
+		<div id={targetDocItem.slug} style={{ order: targetDocItem.position }}>
 			<TocSideBarItemBase
 				ref={ref}
 				id={targetDocItem.slug + "-button"}
@@ -153,7 +179,8 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 							? "action.hover"
 							: "initial",
 					opacity,
-					...(isActive ? { border: "2px solid #1976d2", borderTop: "2px solid #004aab" } : {})
+					...(isActive ? { border: "2px solid #1976d2" } : {}),
+					...(isNotActive ? { border: "2px solid #8B0000" } : {}),
 				}}
 			>
 				<Typography sx={{
@@ -168,13 +195,15 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 			<Box id={targetDocItem.slug + "-children"} sx={{
 				borderLeft: "1px solid transparent",
 				borderColor: "divider",
-				ml: 2
+				ml: 2,
 			}}>
 				<Collapse in={expanded}>
-					{children}
+					<div style={{ display: "flex", flexDirection: "column" }}>
+						{children}
+					</div>
 				</Collapse>
 			</Box>
-		</div>
+		</div >
 	)
 }
 TocSideBarSubCategory.propTypes = {
