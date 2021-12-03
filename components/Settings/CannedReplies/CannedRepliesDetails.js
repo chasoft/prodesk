@@ -48,7 +48,7 @@ import {
 import {
 	SettingsContentActionBar,
 	SettingsContentDetails
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import {
 	CODE,

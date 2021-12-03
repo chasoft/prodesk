@@ -29,7 +29,7 @@ import { Box, Button, CircularProgress, Paper, Step, StepContent, StepLabel, Ste
 
 //THIRD-PARTY
 import { size } from "lodash"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import slugify from "react-slugify"
 import { useDeepCompareEffect } from "react-use"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"

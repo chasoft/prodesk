@@ -15,13 +15,13 @@ import Editor from "rich-markdown-editor"
 import { useSnackbar } from "notistack"
 
 //PROJECT IMPORT
-import { getRootLayout } from "./../../layout/RootLayout"
-import { imageUploader, STATE_CHANGED, storage } from "./../../helpers/firebase"
+import { getRootLayout } from "@layout/RootLayout"
+import { imageUploader, STATE_CHANGED, storage } from "@helpers/firebase"
 import { useSelector } from "react-redux"
-import { getAuth } from "./../../redux/selectors"
-import { nanoid } from "nanoid"
-import Gallery from "./../../components/Gallery"
-import AuthCheck from "./../../components/AuthCheck"
+import { getAuth } from "@redux/selectors"
+import nanoid from "@helpers/nanoid"
+import Gallery from "@components/Gallery"
+import AuthCheck from "@components/AuthCheck"
 
 //ASSETS
 import DescriptionIcon from "@mui/icons-material/Description"

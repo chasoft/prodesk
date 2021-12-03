@@ -34,7 +34,7 @@ import { findKey } from "lodash"
 
 //PROJECT IMPORT
 import { CircularProgressBox } from "@components/common"
-import useGroupedDocs from "@helpers/useGroupedDocs"
+import { useGetDocsGrouped } from "@helpers/useGetDocs"
 import { DOC_TYPE, RESERVED_KEYWORDS } from "@helpers/constants"
 
 //ASSETS
@@ -86,7 +86,7 @@ UiDocItem.propTypes = { item: PropTypes.object }
  *****************************************************************/
 
 function Category() {
-	const { data: docsList, isLoading } = useGroupedDocs()
+	const { data: docsList, isLoading } = useGetDocsGrouped()
 	console.log("docsList", docsList)
 
 	return (

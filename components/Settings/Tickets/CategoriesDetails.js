@@ -45,7 +45,7 @@ import {
 	SettingsContentActionBar,
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { getAuth, getUiSettings } from "@redux/selectors"

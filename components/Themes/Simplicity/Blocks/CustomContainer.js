@@ -18,59 +18,34 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
+import React from "react"
+import PropTypes from "prop-types"
 
-import { useRef } from "react"
-
-//THIRD-PARTY
-import { usePrevious } from "react-use"
-import { forEach, groupBy, isEqual, sortBy } from "lodash"
+//MATERIAL-UI
+import { Box } from "@mui/material"
 
 //PROJECT IMPORT
-import { useGetDocsQuery } from "@redux/slices/firestoreApi"
+
+/*****************************************************************
+ * CUSTOM COMPONENTS                                             *
+ *****************************************************************/
+
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGroupedDocs() {
-	const {
-		data: docs = [],
-		isLoading: isLoadingDocs
-	} = useGetDocsQuery(undefined)
-
-	const prevData = usePrevious(docs)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const groupedDocs = useRef()
-
-	if (isLoadingDocs) { return ({ data: [], isLoading: true }) }
-
-	console.log("useGetDocsQuery => ", { docs })
-
-	if (isEqual(prevData, docs) === false) {
-		//step 0: sort the docs list
-		// const sortedDocs = sortBy(docs, ["category", "subcategory", "title"])
-		const sortedDocs = sortBy(docs, ["category", "position"])
-
-		//step 1: group by cat
-		const groupByCat = groupBy(sortedDocs, (i) => i.category)
-
-		//step 2: group by SubCat
-		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
-			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
-		})
-
-		groupedDocs.current = Object.entries(groupByCatAndSub)
-	}
-
+export const CustomContainer = ({ children }) => {
 	return (
-		{
-			data: groupedDocs.current,
-			// allDocs: docs,
-			isLoading: false
-		}
+		<Box sx={{
+			maxWidth: "1142px",
+			margin: "0 auto",
+			width: { xs: "initial", lg: "90%" },
+		}}>
+			{children}
+		</Box>
 	)
+}
+CustomContainer.propTypes = {
+	children: PropTypes.node
 }

@@ -139,7 +139,7 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 					...(isNotActive ? { backgroundColor: "error.light", color: "error.contrastText" } : {}),
 				}}
 			>
-				<Typography>{children}</Typography>
+				<Typography> {targetDocItem.emoji} {children}</Typography>
 			</TocSideBarItemBase>
 		</div>
 	)

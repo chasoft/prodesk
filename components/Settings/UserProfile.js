@@ -22,11 +22,10 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import PropTypes from "prop-types"
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Avatar, Box, Button, Grid, TextField, Tooltip, Typography, IconButton, Autocomplete, Collapse, CircularProgress } from "@mui/material"
+import { Autocomplete, Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import * as yup from "yup"
@@ -43,10 +42,16 @@ import {
 } from "@components/common"
 
 import {
+	ContentDescription,
+	ContentGroup,
+	ContentRow,
+	EditButton,
 	SettingsContainer,
 	SettingsContent,
-	SettingsHeader
-} from "@components/Settings/SettingsPanel"
+	SettingsHeader,
+} from "@components/common/Settings"
+
+
 
 import { getAuth } from "@redux/selectors"
 import { loginSuccess } from "@redux/slices/auth"
@@ -56,156 +61,10 @@ import { getLayout } from "@layout/ClientLayout"
 import { changePassword } from "@helpers/firebase/user"
 
 //ASSETS
-import EditIcon from "@mui/icons-material/Edit"
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const ContentGroup = ({ title, children }) => {
-	return (
-		<Box sx={{
-			borderBottom: "1px solid transparent",
-			borderColor: "divider",
-			py: 4,
-		}}>
-			<Typography variant="button" sx={{ display: "block", px: 4 }}>{title}</Typography>
-			{children}
-		</Box>
-	)
-}
-ContentGroup.propTypes = { title: PropTypes.node, children: PropTypes.node }
-
-const ContentDescription = ({ children }) => {
-	return (
-		<Typography variant="caption" sx={{
-			display: "block",
-			px: 4,
-			py: 2,
-			color: "grey.600"
-		}}>
-			{children}
-		</Typography>
-	)
-}
-ContentDescription.propTypes = { children: PropTypes.node }
-
-const ContentRow = ({ title, tooltip, removePadding = false, children }) => {
-	return (
-		<Box sx={{
-			display: "flex",
-			flexDirection: { xs: "column", sm: "row" },
-			px: 4,
-			py: { xs: 2, sm: removePadding ? 0 : 1 },
-			":hover": {
-				backgroundColor: "action.hover"
-			},
-			transition: "height .3s cubic-bezier(0.4, 0, 0.2, 1)",
-		}}>
-			<Box sx={{
-				width: "201px",
-				display: "flex",
-				alignItems: "center"
-			}}>
-				<Typography variant="caption" color="grey.600">
-					{title}
-				</Typography>
-				{tooltip &&
-					<Tooltip arrow title={tooltip} placement="top">
-						<HelpOutlineIcon
-							sx={{
-								ml: 0.5,
-								cursor: "pointer",
-								fill: (theme) => theme.palette.grey[600],
-								fontSize: "1rem"
-							}}
-						/>
-					</Tooltip>}
-			</Box>
-			<Box sx={{ width: "100%" }}>
-				{children}
-			</Box>
-		</Box>
-	)
-}
-ContentRow.propTypes = {
-	title: PropTypes.node,
-	tooltip: PropTypes.string,
-	removePadding: PropTypes.bool,
-	children: PropTypes.node
-}
-
-const EditButton = ({ defaultState, saveAction, cancelAction = () => { }, isUpdating = false, canSave = true, children }) => {
-	const [isEditMode, setIsEditMode] = useState(false)
-	return (
-		<>
-			<Collapse in={!isEditMode}>
-				<Box sx={{
-					display: "flex",
-					alignItems: "center"
-				}}>
-					{defaultState}
-					<IconButton onClick={() => { setIsEditMode(true) }} disabled={isUpdating}>
-						<EditIcon fontSize="small" />
-					</IconButton>
-					{isUpdating && <CircularProgress size={16} />}
-				</Box>
-			</Collapse>
-
-			<Collapse in={isEditMode}>
-				<Box sx={{ width: "100%" }}>
-					<Box sx={{ pt: 3 }}>
-						{children}
-					</Box>
-					<Box sx={{
-						display: "flex",
-						justifyContent: "flex-end",
-						pb: 3, pt: 2, mt: 2,
-						borderTop: "1px solid transparent",
-						borderColor: "divider",
-					}}>
-						<Button
-							onClick={() => {
-								cancelAction()
-								setIsEditMode(false)
-							}}
-							variant="outlined"
-							color="primary"
-							size="small"
-							sx={{ px: 3 }}
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={() => {
-								saveAction()
-								setIsEditMode(false)
-							}}
-							type="submit"
-							variant="contained"
-							color="primary"
-							size="small"
-							sx={{ px: 3, ml: 2 }}
-							disabled={!canSave}
-						>
-							Save
-						</Button>
-					</Box>
-				</Box>
-			</Collapse>
-		</>
-	)
-}
-EditButton.propTypes = {
-	defaultState: PropTypes.node,
-	saveAction: PropTypes.func,
-	cancelAction: PropTypes.func,
-	isUpdating: PropTypes.bool,
-	canSave: PropTypes.bool,
-	children: PropTypes.node
-}
-
 const countries = [
 	{ code: "CN", label: "China" },
 	{ code: "US", label: "United States", suggested: true, },

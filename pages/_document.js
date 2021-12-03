@@ -23,7 +23,7 @@ import createEmotionServer from "@emotion/server/create-instance"
 import Document, { Html, Head, Main, NextScript } from "next/document"
 
 //PROJECT IMPORT
-import { theme } from "@components/theme"
+import { systemTheme } from "@components/Themes/systemTheme"
 import createEmotionCache from "@helpers/createEmotionCache"
 
 /*****************************************************************
@@ -36,7 +36,7 @@ export default class MyDocument extends Document {
 			<Html lang="en">
 				<Head>
 					{/* PWA primary color */}
-					<meta name="theme-color" content={theme.palette.primary.main} />
+					<meta name="theme-color" content={systemTheme.palette.primary.main} />
 					<link
 						rel="stylesheet"
 						href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap"

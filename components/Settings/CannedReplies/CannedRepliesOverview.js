@@ -37,7 +37,7 @@ import {
 	SettingsContentHelper,
 	SettingsContentHelperLearnMore,
 	SettingsContentHelperText
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 //ASSETS
 

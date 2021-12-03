@@ -30,7 +30,7 @@ import { useTheme } from "@mui/material/styles"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT

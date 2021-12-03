@@ -8,7 +8,7 @@ import React, { useState } from "react"
 import { Button, Box, TextField, Container, Autocomplete, Chip, Checkbox } from "@mui/material"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { filter } from "lodash"
 
 //PROJECT IMPORT

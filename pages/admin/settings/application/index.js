@@ -31,16 +31,33 @@ import { Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { REDIRECT_URL } from "@helpers/constants"
 import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
-import { ListItem, ListTitle, SettingsContainer, SettingsContent, SettingsContentDetails, SettingsContentHeader, SettingsContentHelper, SettingsContentHelperLearnMore, SettingsContentHelperText, SettingsHeader, SettingsList } from "@components/Settings/SettingsPanel"
+
+import {
+	getLayout,
+	APPLICATION_SETTINGS_NAMES
+} from "@components/Settings/InnerLayoutSettings"
+
+import {
+	ListItem,
+	ListTitle,
+	SettingsContainer,
+	SettingsContent,
+	SettingsContentDetails,
+	SettingsContentHeader,
+	SettingsContentHelper,
+	SettingsContentHelperLearnMore,
+	SettingsContentHelperText,
+	SettingsHeader,
+	SettingsList
+} from "@components/common/Settings"
 
 //ASSETS
 import InfoIcon from "@mui/icons-material/Info"
 import BusinessIcon from "@mui/icons-material/Business"
-import { REDIRECT_URL } from "../../../../helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *

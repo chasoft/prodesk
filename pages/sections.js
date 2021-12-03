@@ -23,69 +23,68 @@
  *****************************************************************/
 
 import React from "react"
-import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { FormControlLabel, Switch, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-
-//ASSETS
+import useAppSettings from "@helpers/useAppSettings"
+import { APP_SETTINGS } from "@helpers/constants"
+import { CircularProgressBox } from "@components/common"
+import { THEME_NAME } from "@components/Themes/themeInfo"
+import dynamic from "next/dynamic"
+import { getRootLayout } from "@layout/RootLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+//This is default Theme
+const ThemeSimplicitySections = dynamic(
+	() => import("./../components/Themes/Simplicity/sections"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
+
+const ThemeGoogle = dynamic(
+	() => import("./../components/Themes/Google"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
+
+const ThemeTraditional = dynamic(
+	() => import("./../components/Themes/Traditional"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SettingsSwitch = ({
-	title,
-	state,
-	setState,
-	stateDescription,
-	description
-}) => {
-	return (
-		<>
-			{title &&
-				<Typography variant="caption" style={{ display: "block" }}>
-					{title}
-				</Typography>}
+function Categories() {
+	const {
+		data: activeTheme,
+		isLoading: isLoadingActiveTheme
+	} = useAppSettings(APP_SETTINGS.activeTheme)
 
-			<FormControlLabel
-				control={
-					<Switch
-						checked={state}
-						onChange={(e) => setState(e.target.checked)}
-						name="checkedB"
-						color="primary"
-					/>
-				}
-				label={stateDescription[state ? 1 : 0]}
-			/>
+	if (isLoadingActiveTheme)
+		return <CircularProgressBox minHeight="70vh" />
 
-			{description &&
-				<Typography
-					sx={{
-						color: "grey.600",
-						fontSize: "0.75rem"
-					}}
-				>
-					{description}
-				</Typography>}
-		</>
-	)
-}
-SettingsSwitch.propTypes = {
-	title: PropTypes.string,
-	state: PropTypes.bool,
-	setState: PropTypes.func,
-	stateDescription: PropTypes.array,
-	description: PropTypes.string
+	switch (activeTheme) {
+		case THEME_NAME.themeGoogle:
+			return (
+				<ThemeGoogle />
+			)
+		case THEME_NAME.themeTraditional:
+			return (
+				<ThemeTraditional />
+			)
+		default:
+			return (
+				<ThemeSimplicitySections />
+			)
+	}
 }
 
-export default SettingsSwitch
+Categories.getLayout = getRootLayout
+
+export default Categories

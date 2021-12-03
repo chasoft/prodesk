@@ -45,7 +45,7 @@ const PopupContainer = ({ open, anchorRef, elevation, sx, handleClose, placement
 			placement={placement}
 			transition
 			disablePortal
-			style={{ zIndex: 1 }}
+			style={{ zIndex: 999 }}
 		>
 			{({ TransitionProps }) => (
 				<Grow {...TransitionProps} style={{ transformOrigin: transformOrigin }}>

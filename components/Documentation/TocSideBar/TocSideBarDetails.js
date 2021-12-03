@@ -22,29 +22,34 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import dynamic from "next/dynamic"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { styled } from "@mui/material/styles"
-import { Autocomplete, Box, Button, Checkbox, Chip, CircularProgress, FormControlLabel, IconButton, Switch, TextField, Typography } from "@mui/material"
+import { emphasize, styled } from "@mui/material/styles"
+import { Autocomplete, Avatar, Box, Button, Checkbox, Chip, CircularProgress, FormControl, FormControlLabel, IconButton, InputBase, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import dayjs from "dayjs"
-import slugify from "react-slugify"
 import { filter, isEqual } from "lodash"
+import { useDeepCompareEffect } from "react-use"
 import { useSelector } from "react-redux"
-import relativeTime from "dayjs/plugin/relativeTime"
+import dayjs from "dayjs"
 import PerfectScrollbar from "react-perfect-scrollbar"
+import relativeTime from "dayjs/plugin/relativeTime"
+import slugify from "react-slugify"
 
 //PROJECT IMPORT
-import useGetDoc from "@helpers/useGetDocs"
+import { useGetDoc } from "@helpers/useGetDocs"
 import useAppSettings from "@helpers/useAppSettings"
-import { CircularProgressBox } from "@components/common"
-import SettingsSwitch from "@components/common/SettingsSwitch"
+import { deleteFile, STORAGE_DESTINATION, useUploadFile } from "@helpers/storageApi"
+import { CircularProgressBox, LinearProgressWithLabel } from "@components/common"
+import { SettingsSwitch } from "@components/common/Settings"
+import usePopupContainer from "@components/common/usePopupContainer"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
 
 import {
+	CODE,
 	DATE_FORMAT,
 	DOC_STATUS,
 	DOC_TYPE,
@@ -60,8 +65,6 @@ import {
 import {
 	RightMenuItemAddNewDoc,
 	RightMenuItemDelete,
-	RightMenuItemExportPDF,
-	RightMenuItemImport
 } from "@components/Documentation/DocumentTocSideBar"
 
 import {
@@ -71,13 +74,33 @@ import {
 } from "@redux/slices/firestoreApi"
 
 //ASSETS
+import AddIcon from "@mui/icons-material/Add"
 import CheckBoxIcon from "@mui/icons-material/CheckBox"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
+import UploadIcon from "@mui/icons-material/Upload"
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined"
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
+
+const Picker = dynamic(
+	() => import("emoji-picker-react"),
+	{
+		loading: () => <CircularProgressBox minHeight="250px" sx={{ width: "278px" }} />,
+		ssr: false
+	}
+)
+
+const HexColorPicker = dynamic(
+	() => import("react-colorful").then((mod) => mod.HexColorPicker),
+	{
+		loading: () => <CircularProgressBox minHeight="200px" sx={{ width: "200px" }} />,
+		ssr: false
+	}
+)
 
 const TypographyHeader = styled(Typography)(({ theme }) => ({
 	fontWeight: 700,
@@ -85,15 +108,23 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 	color: theme.palette.grey[500]
 }))
 
-const InputBaseStyled = (props) => <TextField
-	fullWidth
-	variant="outlined"
-	sx={{
-		color: "grey.800",
-		borderColor: "divider",
-	}}
-	{...props}
-/>
+const InputBaseStyled = (props) => {
+	const [minRows, setMinRows] = useState(1)
+	return (
+		<TextField
+			fullWidth
+			variant="outlined"
+			minRows={minRows}
+			onBlur={() => setMinRows(1)}
+			onFocus={() => setMinRows(3)}
+			sx={{
+				color: "grey.800",
+				borderColor: "divider",
+			}}
+			{...props}
+		/>
+	)
+}
 
 const PublishStatusSwitch = ({ status, setStatus }) => {
 	const isPublished = status === DOC_STATUS.PUBLISHED
@@ -131,7 +162,6 @@ const Tags = ({ tags, setTags }) => {
 			getOptionLabel={(option) => option}
 			value={tags}
 			noOptionsText="Enter to add new tag"
-			style={{ maxWidth: 336 }}
 			renderOption={(props, tag, { selected }) =>
 				<li {...props}>
 					<Checkbox
@@ -251,12 +281,360 @@ CancelSaveButtons.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
+export const AddEmojiButton = ({ emoji, handleSelectEmoji, removeEmoji, flexDirection, children }) => {
+
+	const [
+		PopupContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = usePopupContainer()
+
+	const handleRemoveEmoji = () => {
+		if (emoji) {
+			removeEmoji()
+		}
+	}
+
+	return (
+		<>
+			<Box sx={{
+				display: "flex",
+				alignItems: "center",
+				flexDirection: flexDirection ?? "row"
+			}}>
+				{children}
+				<Box sx={{
+					display: "flex",
+					"& #removeEmojiBtn": {
+						display: "none"
+					},
+					":hover": {
+						"& #removeEmojiBtn": {
+							display: "block"
+						}
+					}
+				}}>
+					<Tooltip arrow title={emoji ? "Change Emoji" : "Add Emoji"} placement="top">
+						<IconButton
+							size="small"
+							sx={{ mx: 1 }}
+							ref={anchorRef}
+							onClick={handleToggle}
+						>
+							{emoji
+								? emoji
+								: <AddIcon sx={{ color: "silver" }} />}
+						</IconButton>
+					</Tooltip>
+
+					{emoji
+						&& <div id="removeEmojiBtn">
+							<Tooltip arrow title="Remove Emoji" placement="top">
+								<IconButton
+									size="small"
+									sx={{
+										position: "relative",
+										ml: -2,
+										mt: -0.5
+									}}
+									onClick={handleRemoveEmoji}
+								>
+									<RemoveCircleOutlineOutlinedIcon sx={{ fontSize: 24 }} />
+								</IconButton>
+							</Tooltip>
+						</div>}
+				</Box>
+			</Box>
+
+			<PopupContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				placement="bottom-start"
+				transformOrigin="top left"
+				elevation={1}
+			>
+
+				<Picker
+					onEmojiClick={(event, { emoji }) => {
+						handleSelectEmoji(emoji)
+						handleClose(event)
+					}}
+				/>
+
+			</PopupContainer>
+		</>
+	)
+}
+AddEmojiButton.propTypes = {
+	isLoading: PropTypes.bool,
+	emoji: PropTypes.string,
+	removeEmoji: PropTypes.func,
+	handleSelectEmoji: PropTypes.func,
+	flexDirection: PropTypes.string,
+	children: PropTypes.node
+}
+
+const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) => {
+	const [message, setMessage] = useState({ code: "", message: "" })
+	const [uploadFile, { uploading, progress }] = useUploadFile()
+
+	const [updateDoc] = useUpdateDocMutation()
+
+	const [
+		PopupContainer,
+		open,
+		anchorRef,
+		{
+			handleToggle,
+			handleClose
+		}
+	] = usePopupContainer()
+
+	useDeepCompareEffect(() => {
+		const timeoutId = setTimeout(() => { setMessage({ code: "none", message: "" }) }, 2000)
+		return function cleanup() {
+			clearTimeout(timeoutId)
+		}
+	}, [message])
+
+	const handleSelectAndUploadFile = async (e) => {
+		const file = e.target.files[0]
+
+		if (!file) return
+
+		if (file.size > 1024000) {
+			setMessage({
+				code: CODE.FAILED,
+				message: "File size cannot exceed more than 1MB"
+			})
+			return
+		}
+
+		// const extension = file.type.split("/")[1]
+		/*
+			Currently, i don't want to deal with searching files
+			then, I use fixed fileRef which distinguish by docId
+		*/
+		const extension = "png"
+		const photoURL = await uploadFile(
+			file,
+			`${STORAGE_DESTINATION.DOCS}/${docId}.${extension}`
+		)
+
+		await updateDoc({
+			docItem: {
+				docId,
+				photo: photoURL,
+				updatedBy: username
+			},
+			affectedItems: []
+		})
+	}
+
+	const handleRemovePhoto = async () => {
+		const res = await deleteFile(`/${STORAGE_DESTINATION.DOCS}/${docId}.png`)
+
+		setMessage({
+			code: res?.data?.code,
+			message: res?.data?.message,
+		})
+
+		await updateDoc({
+			docItem: {
+				docId,
+				photo: "",
+				updatedBy: username
+			},
+			affectedItems: []
+		})
+	}
+
+	return (
+		<>
+			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+				Photo
+			</TypographyHeader>
+			<Box sx={{
+				display: "flex",
+				my: 2,
+			}}>
+				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
+					width: "150px",
+					height: "100px",
+					mr: 2,
+					"& #removePhotoBtn": {
+						display: "none"
+					},
+					":hover #removePhotoBtn": {
+						display: "block"
+					}
+				}}>
+					<div>
+						<Avatar
+							variant="square"
+							src={photo ?? "/img/no-image.png"}
+							sx={{
+								position: "absolute",
+								width: 150,
+								height: 100,
+								"& >img": {
+									objectFit: "contain"
+								}
+							}}
+						/>
+
+						{photo && <IconButton
+							id="removePhotoBtn"
+							size="small"
+							variant="outlined"
+							disabled={photo === ""}
+							onClick={handleRemovePhoto}
+							sx={{
+								float: "right",
+								position: "relative"
+							}}
+						>
+							<RemoveCircleIcon sx={{ fontSize: 24 }} />
+						</IconButton>}
+					</div>
+
+					{uploading && <LinearProgressWithLabel
+						value={progress}
+						sx={{
+							marginTop: "auto",
+							marginBottom: "-25px",
+							"& > div > p": {
+								fontSize: "0.8rem",
+							}
+						}}
+					/>}
+				</Box>
+
+				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "space-between",
+					width: "fit-content",
+				}}>
+					<FormControl sx={{
+						"& [type=\"file\"]": {
+							display: "none"
+						}
+					}}>
+						<label
+							htmlFor="photo-file-upload"
+							style={{
+								border: "1px solid #ccc",
+								display: "inline-block",
+								padding: "6px 12px",
+								cursor: "pointer"
+							}}
+						>
+							<span style={{ display: "flex", alignItems: "center" }}>
+								<UploadIcon fontSize="small" /> &nbsp; Upload Photo
+							</span>
+						</label>
+						<input
+							id="photo-file-upload"
+							aria-describedby="my-helper-text"
+							type="file"
+							accept="image/*"
+							onChange={handleSelectAndUploadFile}
+						/>
+					</FormControl>
+
+					{photo
+						? <Box
+							ref={anchorRef}
+							onClick={handleToggle}
+							sx={{
+								mt: 2,
+								height: "20px",
+								backgroundColor: photoColor ?? "#D3D3D3",
+								flexGrow: 1,
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								borderRadius: "4px",
+								cursor: "pointer",
+								fontSize: "0.7rem",
+								border: "1px solid transparent",
+								borderColor: emphasize(photoColor ?? "#D3D3D3", 0.2)
+							}}
+						>
+
+							{photoColor
+								? <InputBase
+									value={photoColor ?? "#D3D3D3"}
+									onChange={(e) => { setPhotoColor(e.target.value ? e.target.value : "#FFFFFF") }}
+									sx={{
+										pl: 3,
+										textAlign: "center",
+										color: emphasize(photoColor ?? "#D3D3D3", 1)
+									}}
+								/>
+								: <span>
+									Click here to choose<br /> background color
+								</span>}
+
+						</Box> : null}
+
+				</Box>
+			</Box>
+
+			{message.code
+				? <Typography
+					color={
+						(message.code === CODE.FAILED)
+							? "error.main"
+							: "primary.main"}
+				>
+					{message.message}
+				</Typography>
+				: null}
+
+			<PopupContainer
+				open={open}
+				anchorRef={anchorRef}
+				handleClose={handleClose}
+				placement="top"
+				transformOrigin="bottom"
+				elevation={1}
+				sx={{ borderRadius: "8px" }}
+			>
+				<HexColorPicker
+					color={photoColor ?? "#D3D3D3"}
+					onChange={setPhotoColor}
+				/>
+			</PopupContainer>
+		</>
+	)
+}
+DocPhoto.propTypes = {
+	username: PropTypes.string.isRequired,
+	docId: PropTypes.string.isRequired,
+	photo: PropTypes.string,
+	photoColor: PropTypes.string,
+	setPhotoColor: PropTypes.func,
+}
+
 const DetailsFormCategory = ({ docItem, handleClose }) => {
 	const { currentUser } = useSelector(getAuth)
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
-	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
+		data: autoGenerateSlugFromTitle,
+		isLoading: isLoadingSettings
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
 		data: allDocs = [],
@@ -274,6 +652,8 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 		|| docItem.description !== localCache.description
 		|| docItem.tags !== localCache.tags
 		|| docItem.status !== localCache.status
+		|| docItem.emoji !== localCache.emoji
+		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveCategoryDetails = async () => {
 		//If user modify item.category, then, we will have affected items
@@ -297,6 +677,8 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			tags: localCache.tags,
 			category: localCache.category,
 			description: localCache.description,
+			emoji: localCache.emoji ?? "",
+			photoColor: localCache.photoColor ?? "",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -330,11 +712,18 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 340px)", paddingRight: "2px" }}
 			>
-				<TypographyHeader sx={{ mb: 1 }}>
-					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
-				</TypographyHeader>
+				<AddEmojiButton
+					emoji={localCache.emoji}
+					removeEmoji={() => setLocalCache("", "emoji")}
+					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
+				>
+					<TypographyHeader>
+						Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
+					</TypographyHeader>
+				</AddEmojiButton>
+
 				<InputBaseStyled
 					id="cat-title"
 					value={localCache.category}
@@ -350,21 +739,23 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 					display: "flex",
 					justifyContent: "space-between",
 					alignItems: "center",
-					mt: 2
+					mt: 2,
+					minHeight: "38px"
 				}}>
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					<FormControlLabel label="Auto-generate" labelPlacement="start"
-						control={<Switch
-							checked={autoGenerateSlugFromTitle}
-							onChange={() => {
-								updateAppSettings({
-									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-								})
-							}}
+					{!isLoadingSettings &&
+						<FormControlLabel label="Auto-generate" labelPlacement="start"
+							control={<Switch
+								checked={autoGenerateSlugFromTitle}
+								onChange={async () => {
+									await updateAppSettings({
+										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+									})
+								}}
+							/>}
 						/>}
-					/>
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -385,7 +776,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-description" value={localCache.description}
 					multiline={true}
-					minRows={3}
+					// minRows={3}
 					onChange={
 						(e) => setLocalCache(e.target.value, "description")
 					}
@@ -397,6 +788,16 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 				<Tags
 					tags={localCache.tags}
 					setTags={setLocalCache}
+				/>
+
+				<DocPhoto
+					username={currentUser.username}
+					docId={localCache.docId}
+					photo={localCache.photo}
+					photoColor={localCache.photoColor}
+					setPhotoColor={(color) => {
+						setLocalCache(color, "photoColor")
+					}}
 				/>
 
 				<PublishStatusSection
@@ -424,7 +825,12 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
-	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
+		data: autoGenerateSlugFromTitle,
+		isLoading: isLoadingSettings
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
 
 	const {
 		data: allDocs = [],
@@ -442,6 +848,8 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 		|| docItem.description !== localCache.description
 		|| docItem.tags !== localCache.tags
 		|| docItem.status !== localCache.status
+		|| docItem.emoji !== localCache.emoji
+		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveSubCategoryDetails = async () => {
 		//If user modify item.subcategory, then, we will have affected items
@@ -466,6 +874,8 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 			tags: localCache.tags,
 			subcategory: localCache.subcategory,
 			description: localCache.description,
+			emoji: localCache.emoji ?? "",
+			photoColor: localCache.photoColor ?? "",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -499,11 +909,18 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 340px)", paddingRight: "2px" }}
 			>
-				<TypographyHeader sx={{ mb: 1 }}>
-					Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
-				</TypographyHeader>
+				<AddEmojiButton
+					emoji={localCache.emoji}
+					removeEmoji={() => setLocalCache("", "emoji")}
+					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
+				>
+					<TypographyHeader>
+						Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
+					</TypographyHeader>
+				</AddEmojiButton>
+
 				<InputBaseStyled
 					id="cat-title"
 					value={localCache.subcategory}
@@ -519,21 +936,23 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 					display: "flex",
 					justifyContent: "space-between",
 					alignItems: "center",
-					mt: 2
+					mt: 2,
+					minHeight: "38px"
 				}}>
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					<FormControlLabel label="Auto-generate" labelPlacement="start"
-						control={<Switch
-							checked={autoGenerateSlugFromTitle}
-							onChange={() => {
-								updateAppSettings({
-									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-								})
-							}}
+					{!isLoadingSettings &&
+						<FormControlLabel label="Auto-generate" labelPlacement="start"
+							control={<Switch
+								checked={autoGenerateSlugFromTitle}
+								onChange={async () => {
+									await updateAppSettings({
+										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+									})
+								}}
+							/>}
 						/>}
-					/>
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -554,7 +973,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-description" value={localCache.description}
 					multiline={true}
-					minRows={3}
+					// minRows={3}
 					onChange={
 						(e) => setLocalCache(e.target.value, "description")
 					}
@@ -566,6 +985,16 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 				<Tags
 					tags={localCache.tags}
 					setTags={setLocalCache}
+				/>
+
+				<DocPhoto
+					username={currentUser.username}
+					docId={localCache.docId}
+					photo={localCache.photo}
+					photoColor={localCache.photoColor}
+					setPhotoColor={(color) => {
+						setLocalCache(color, "photoColor")
+					}}
 				/>
 
 				<PublishStatusSection
@@ -593,7 +1022,10 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const [updateDoc] = useUpdateDocMutation()
 
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
-	const autoGenerateSlugFromTitle = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+	const {
+		data: autoGenerateSlugFromTitle,
+		isLoading: isLoadingSettings
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
 		localCache,
@@ -605,6 +1037,8 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 		|| docItem.slug !== localCache.slug
 		|| !isEqual(docItem.tags, localCache.tags)
 		|| docItem.status !== localCache.status
+		|| docItem.emoji !== localCache.emoji
+		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveDocDetails = async () => {
 		//prepare the data
@@ -615,6 +1049,8 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			slug: localCache.slug,
 			description: localCache.description,
 			tags: localCache.tags,
+			emoji: localCache.emoji ?? "",
+			photoColor: localCache.photoColor ?? "",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -646,11 +1082,18 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 430px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 370px)", paddingRight: "2px" }}
 			>
-				<TypographyHeader sx={{ mb: 1 }}>
-					Title
-				</TypographyHeader>
+				<AddEmojiButton
+					emoji={localCache.emoji}
+					removeEmoji={() => setLocalCache("", "emoji")}
+					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
+				>
+					<TypographyHeader>
+						Title
+					</TypographyHeader>
+				</AddEmojiButton>
+
 				<InputBaseStyled
 					id="doc-title"
 					value={localCache.title}
@@ -666,21 +1109,23 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 					display: "flex",
 					justifyContent: "space-between",
 					alignItems: "center",
-					mt: 2
+					mt: 2,
+					minHeight: "38px"
 				}}>
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					<FormControlLabel label="Auto-generate" labelPlacement="start"
-						control={<Switch
-							checked={autoGenerateSlugFromTitle}
-							onChange={() => {
-								updateAppSettings({
-									[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-								})
-							}}
+					{!isLoadingSettings &&
+						<FormControlLabel label="Auto-generate" labelPlacement="start"
+							control={<Switch
+								checked={autoGenerateSlugFromTitle}
+								onChange={async () => {
+									await updateAppSettings({
+										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+									})
+								}}
+							/>}
 						/>}
-					/>
 				</Box>
 				<InputBaseStyled
 					id="doc-slug" value={localCache.slug}
@@ -697,9 +1142,20 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Tags
 				</TypographyHeader>
+
 				<Tags
 					tags={localCache?.tags ?? []}
 					setTags={setLocalCache}
+				/>
+
+				<DocPhoto
+					username={currentUser.username}
+					docId={localCache.docId}
+					photo={localCache.photo}
+					photoColor={localCache.photoColor}
+					setPhotoColor={(color) => {
+						setLocalCache(color, "photoColor")
+					}}
 				/>
 
 				<PublishStatusSection
@@ -737,6 +1193,8 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 		|| docItem.description !== localCache.description
 		|| !isEqual(docItem.tags, localCache.tags)
 		|| docItem.status !== localCache.status
+		|| docItem.emoji !== localCache.emoji
+		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveExternalDetails = async () => {
 		//prepare the data
@@ -747,6 +1205,8 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 			tags: localCache.tags,
 			title: localCache.title,
 			description: localCache.description,
+			emoji: localCache.emoji ?? "",
+			photoColor: localCache.photoColor ?? "",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -778,11 +1238,18 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 400px)", paddingRight: "2px" }}
+				style={{ height: "calc(100vh - 340px)", paddingRight: "2px" }}
 			>
-				<TypographyHeader sx={{ mb: 1 }}>
-					Title
-				</TypographyHeader>
+				<AddEmojiButton
+					emoji={localCache.emoji}
+					removeEmoji={() => setLocalCache("", "emoji")}
+					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
+				>
+					<TypographyHeader>
+						Title
+					</TypographyHeader>
+				</AddEmojiButton>
+
 				<InputBaseStyled
 					id="external-title"
 					value={localCache.title}
@@ -807,7 +1274,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="external-description" value={localCache.description}
 					multiline={true}
-					minRows={3}
+					// minRows={3}
 					onChange={
 						(e) => setLocalCache(e.target.value, "description")
 					}
@@ -819,6 +1286,16 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 				<Tags
 					tags={localCache?.tags ?? []}
 					setTags={setLocalCache}
+				/>
+
+				<DocPhoto
+					username={currentUser.username}
+					docId={localCache.docId}
+					photo={localCache.photo}
+					photoColor={localCache.photoColor}
+					setPhotoColor={(color) => {
+						setLocalCache(color, "photoColor")
+					}}
 				/>
 
 				<PublishStatusSection
@@ -935,10 +1412,10 @@ const TocSideBarDetails = ({ handleClose }) => {
 									subcategory={docItem.subcategory}
 								/>
 
-								<RightMenuItemImport
+								{/* <RightMenuItemImport
 									sx={{ px: 3 }}
 									targetDocItem={docItem}
-								/>
+								/> */}
 
 								{(docItem.type === DOC_TYPE.CATEGORY) &&
 									<RightMenuItemDelete
@@ -956,11 +1433,11 @@ const TocSideBarDetails = ({ handleClose }) => {
 										title="Delete this sub-category"
 									/>}
 
-								{(docItem.type === DOC_TYPE.DOC) &&
+								{/* {(docItem.type === DOC_TYPE.DOC) &&
 									<RightMenuItemExportPDF
 										sx={{ px: 3 }}
 										targetDocItem={docItem}
-									/>}
+									/>} */}
 
 								{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
 									<RightMenuItemDelete

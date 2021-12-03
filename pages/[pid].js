@@ -31,7 +31,7 @@ import { Container } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "@layout/ClientLayout"
+import { getLayout } from "@layout/EntryLayout"
 
 //ASSETS
 

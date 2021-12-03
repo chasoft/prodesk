@@ -38,14 +38,14 @@ import { useDispatch, useSelector } from "react-redux"
 import { CircularProgressBox } from "@components/common"
 import MembersList from "@components/Settings/MembersList"
 import ConfirmDialog from "@components/common/ConfirmDialog"
-import SettingsSwitch from "@components/common/SettingsSwitch"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
 
 import {
+	SettingsSwitch,
 	SettingsContentActionBar,
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 

@@ -28,7 +28,7 @@ import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Selec
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { trim } from "lodash"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -50,7 +50,7 @@ import {
 	SettingsContentActionBar,
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { CODE } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"

@@ -23,32 +23,65 @@
  *****************************************************************/
 
 import React from "react"
+import dynamic from "next/dynamic"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import useUiSettings from "@helpers/useUiSettings"
-import PromotedSearch from "@components/Themes/Google/PromotedSearch"
-import FrontAccordions from "@components/Themes/Google/FrontAccordions"
-import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
+import useAppSettings from "@helpers/useAppSettings"
+import { APP_SETTINGS } from "@helpers/constants"
+import { THEME_NAME } from "@components/Themes/themeInfo"
+import { CircularProgressBox } from "@components/common"
+import { getRootLayout } from "@layout/RootLayout"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
+
+//This is default Theme
+const ThemeSimplicity = dynamic(
+	() => import("./../components/Themes/Simplicity"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
+
+const ThemeGoogle = dynamic(
+	() => import("./../components/Themes/Google"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
+
+const ThemeTraditional = dynamic(
+	() => import("./../components/Themes/Traditional"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function Home() {
+	const {
+		data: activeTheme,
+		isLoading: isLoadingActiveTheme
+	} = useAppSettings(APP_SETTINGS.activeTheme)
 
-	useUiSettings({
-		activeTab: FRONT_PAGE_TABS_NAME.HOME,
-	})
+	if (isLoadingActiveTheme)
+		return <CircularProgressBox minHeight="70vh" />
 
-	return (
-		<>
-			<PromotedSearch />
-			<FrontAccordions />
-		</>
-	)
+	switch (activeTheme) {
+		case THEME_NAME.themeGoogle:
+			return (
+				<ThemeGoogle />
+			)
+		case THEME_NAME.themeTraditional:
+			return (
+				<ThemeTraditional />
+			)
+		default:
+			return (
+				<ThemeSimplicity />
+			)
+	}
 }
+Home.getLayout = getRootLayout
 
-Home.getLayout = getLayout
 export default Home

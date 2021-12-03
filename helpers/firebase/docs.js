@@ -24,7 +24,7 @@
 
 //THIRD-PARTY
 import { uniqueId } from "lodash"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 
 //PROJECT IMPORT
 import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
@@ -56,6 +56,8 @@ export const docItemNewDoc = (category, subcategory, username) => {
 		title: `Document #${incNumber}`,
 		type: DOC_TYPE.DOC,
 		updatedBy: username,
+		emoji: "",
+		photo: "",
 		//
 		publishedBy: "",
 		publishedDate: 0,
@@ -87,6 +89,8 @@ export const docItemNewExternal = (category, subcategory, username) => {
 		type: DOC_TYPE.EXTERNAL,
 		updatedBy: username,
 		url: "",
+		emoji: "",
+		photo: "",
 		//
 		publishedBy: "",
 		publishedDate: 0,
@@ -116,6 +120,8 @@ export const docItemNewSubCategory = (category, username, customName) => {
 		tags: [],
 		type: DOC_TYPE.SUBCATEGORY,
 		updatedBy: username,
+		emoji: "",
+		photo: "",
 		//
 		publishedBy: "",
 		publishedDate: 0,
@@ -144,6 +150,9 @@ export const docItemNewCategory = (username, customName) => {
 		tags: [],
 		type: DOC_TYPE.CATEGORY,
 		updatedBy: username,
+		emoji: "",
+		photo: "",
+		photoColor: "",
 		//
 		publishedBy: "",
 		publishedDate: 0,

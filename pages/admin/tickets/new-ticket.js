@@ -23,7 +23,6 @@
  *****************************************************************/
 
 import React, { useEffect } from "react"
-import useUiSettings from "./../../../helpers/useUiSettings"
 
 // MATERIAL-UI
 import { Box, Container, FormControl, Avatar, Select, Typography, ListItemText, MenuItem } from "@mui/material"
@@ -34,6 +33,7 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
 import useProfiles from "@helpers/useProfilesGroup"
 import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
 import { setEditorData } from "@redux/slices/textEditor"

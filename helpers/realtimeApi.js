@@ -31,7 +31,7 @@ import { Box, IconButton } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { usePrevious } from "react-use"
 import { useSelector } from "react-redux"
 import { countBy, forEach, filter, size, orderBy, random, isEqual } from "lodash"

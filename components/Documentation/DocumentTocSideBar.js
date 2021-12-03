@@ -34,7 +34,8 @@ import { useSnackbar } from "notistack"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import useGetDoc from "@helpers/useGetDocs"
+import { deleteFile, STORAGE_DESTINATION } from "@helpers/storageApi"
+import { useGetDoc } from "@helpers/useGetDocs"
 import { docItemNewDoc } from "@helpers/firebase/docs"
 import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
 import ConfirmDialog from "@components/common/ConfirmDialog"
@@ -67,11 +68,9 @@ import {
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { ExportPdfIcon } from "@components/common/SvgIcons"
 import PostAddIcon from "@mui/icons-material/PostAdd"
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
-import { Import as BiImport } from "@styled-icons/boxicons-regular/Import"
 
 /*****************************************************************
  * INIT                                                          *
@@ -175,39 +174,39 @@ RightMenuItemAddNewDoc.propTypes = {
 	sx: PropTypes.object
 }
 
-export const RightMenuItemImport = ({ targetDocItem, sx }) => {
-	return (
-		<RightMenuItemBase
-			Icon={<BiImport />} sx={{ ...sx }}
-			onClick={() => {
-				console.log("Import function not yet implemented")
-			}}
-		>
-			Import
-		</RightMenuItemBase>
-	)
-}
-RightMenuItemImport.propTypes = {
-	targetDocItem: PropTypes.object,
-	sx: PropTypes.object
-}
+// export const RightMenuItemImport = ({ targetDocItem, sx }) => {
+// 	return (
+// 		<RightMenuItemBase
+// 			Icon={<BiImport />} sx={{ ...sx }}
+// 			onClick={() => {
+// 				console.log("Import function not yet implemented")
+// 			}}
+// 		>
+// 			Import
+// 		</RightMenuItemBase>
+// 	)
+// }
+// RightMenuItemImport.propTypes = {
+// 	targetDocItem: PropTypes.object,
+// 	sx: PropTypes.object
+// }
 
-export const RightMenuItemExportPDF = ({ targetDocItem, sx }) => {
-	return (
-		<RightMenuItemBase
-			Icon={<ExportPdfIcon />} fontSize="small" sx={{ ...sx }}
-			onClick={() => {
-				console.log("Export function not yet implemented")
-			}}
-		>
-			Export as PDF
-		</RightMenuItemBase>
-	)
-}
-RightMenuItemExportPDF.propTypes = {
-	targetDocItem: PropTypes.object,
-	sx: PropTypes.object
-}
+// export const RightMenuItemExportPDF = ({ targetDocItem, sx }) => {
+// 	return (
+// 		<RightMenuItemBase
+// 			Icon={<ExportPdfIcon />} fontSize="small" sx={{ ...sx }}
+// 			onClick={() => {
+// 				console.log("Export function not yet implemented")
+// 			}}
+// 		>
+// 			Export as PDF
+// 		</RightMenuItemBase>
+// 	)
+// }
+// RightMenuItemExportPDF.propTypes = {
+// 	targetDocItem: PropTypes.object,
+// 	sx: PropTypes.object
+// }
 
 export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => {
 	const dispatch = useDispatch()
@@ -308,6 +307,11 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 			} catch (e) {
 				throw new Error("Something wrong when trying to delete your selected document!")
 			}
+		}
+
+		//related photo if existed
+		if (targetDocItem.photo) {
+			await deleteFile(`/${STORAGE_DESTINATION.DOCS}/${targetDocItem.docId}.png`)
 		}
 	}
 
@@ -580,8 +584,8 @@ const DocumentTocSideBar = () => {
 							category={activeDoc.category}
 							subcategory={activeDoc.subcategory}
 						/>
-						<RightMenuItemImport targetDocItem={activeDoc} />
-						<RightMenuItemExportPDF targetDocItem={activeDoc} />
+						{/* <RightMenuItemImport targetDocItem={activeDoc} /> */}
+						{/* <RightMenuItemExportPDF targetDocItem={activeDoc} /> */}
 						<RightMenuItemMore />
 
 					</Box>

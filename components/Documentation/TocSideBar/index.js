@@ -30,6 +30,8 @@ import { Box } from "@mui/material"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //THIRD-PARTY
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 import { findKey } from "lodash"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
@@ -42,7 +44,7 @@ import TocSideBarCategory from "./TocSideBarCategory"
 import TocSideBarSubCategory from "./TocSideBarSubCategory"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
-import useGroupedDocs from "@helpers/useGroupedDocs"
+import { useGetDocsGrouped } from "@helpers/useGetDocs"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { CircularProgressBox } from "@components/common"
 
@@ -67,6 +69,7 @@ import {
 	setActiveDocIdOfTocSideBarDetails
 } from "@redux/slices/docsCenter"
 import { docItemNewCategory, docItemNewSubCategory } from "@helpers/firebase/docs"
+import TocSideBarActionsGroup from "@components/Documentation/TocSideBar/TocSideBarActionsGroup"
 
 //ASSETS
 
@@ -512,7 +515,7 @@ const TocSideBar = () => {
 	const {
 		data: docs = [],	//grouped docs
 		isLoading: isLoadingDocs
-	} = useGroupedDocs()
+	} = useGetDocsGrouped()
 
 	const { activeDocId } = useSelector(getDocsCenter)
 
@@ -561,7 +564,8 @@ const TocSideBar = () => {
 	])
 
 	return (
-		<>
+		<DndProvider backend={HTML5Backend}>
+
 			<PerfectScrollbar
 				id="TocSideBar-PerfectScrollbar"
 				component="div"
@@ -584,7 +588,7 @@ const TocSideBar = () => {
 					}}
 				>
 					<div style={{ position: "sticky", display: "flex", flexDirection: "column" }}>
-						{(isLoadingDocs)
+						{isLoadingDocs
 							? <CircularProgressBox />
 							: docs.map((cat) => {
 								/* Category Level */
@@ -593,23 +597,21 @@ const TocSideBar = () => {
 									<TocSideBarCategory
 										key={catDetail.docId}
 										title={cat[0]}
-										handleOpen={() => {
-											handleOpenDetails(catDetail.docId)
-										}}
+										handleOpen={() => { handleOpenDetails(catDetail.docId) }}
 										targetDocItem={catDetail}
 									>
-										{Object.entries(cat[1]).map((subcat) => {
+										{Object.entries(cat[1]).map((subCat) => {
 											/* Contents of Category */
 
 											//Draw items at root level of Category
-											if (subcat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
+											if (subCat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 												return (
 													<div
 														id={catDetail.slug + "-root"}
 														key={catDetail.slug + "-root"}
 														style={{ order: -9999 }}
 													>
-														{subcat[1].map((item) => {
+														{subCat[1].map((item) => {
 															if (item.type === DOC_TYPE.DOC)
 																return (
 																	<TocSideBarDoc
@@ -640,12 +642,12 @@ const TocSideBar = () => {
 											}
 
 											//bypass undefined item which represent/hold category's info
-											if (subcat[0] === RESERVED_KEYWORDS.CAT) return null
+											if (subCat[0] === RESERVED_KEYWORDS.CAT) return null
 
 											//position of Sub-Category in the list
-											const subCatIndex = findKey(subcat[1], { type: DOC_TYPE.SUBCATEGORY })
+											const subCatIndex = findKey(subCat[1], { type: DOC_TYPE.SUBCATEGORY })
 
-											const subcatDetail = subcat[1][subCatIndex] ?? docItemNewSubCategory(currentUser.username, "Missing subcategory")
+											const subcatDetail = subCat[1][subCatIndex] ?? docItemNewSubCategory(currentUser.username, "Missing subcategory")
 
 											//Draw SubCategory
 											return (
@@ -657,7 +659,7 @@ const TocSideBar = () => {
 													}}
 													targetDocItem={subcatDetail}
 												>
-													{subcat[1].map((item, idx) => {
+													{subCat[1].map((item, idx) => {
 
 														//bypass position of the sub-category
 														if (idx == subCatIndex) return null
@@ -697,14 +699,15 @@ const TocSideBar = () => {
 							})}
 					</div>
 
-					{/* <TocSideBarActionsGroup /> */}
+					<TocSideBarActionsGroup />
 				</Box>
 			</PerfectScrollbar>
 
 			<HiddenBgFixBug />
 
 			<TocSideBarDetails handleClose={handleCloseDetails} />
-		</>
+
+		</DndProvider>
 	)
 }
 

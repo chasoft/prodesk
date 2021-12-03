@@ -22,33 +22,41 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useCallback, useRef } from "react"
+import { useRef } from "react"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { APP_SETTINGS_NAME } from "./constants"
+import { APP_SETTINGS } from "./constants"
+import { THEME_NAME } from "@components/Themes/themeInfo"
+
 import { useGetAppSettingsQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useAppSettings(query) {
-	const { data, isLoading } = useGetAppSettingsQuery(undefined)
+const defaultAppSettings = {
+	[APP_SETTINGS.autoGenerateSlugFromTitle]: true,
+	[APP_SETTINGS.activeTheme]: THEME_NAME.themeSimplicity
+}
 
-	const defaultAppSettings = useRef({
-		//List default application settings here
-		[APP_SETTINGS_NAME.autoGenerateSlugFromTitle]: true
-	})
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
-	//get a setting or all if no query provided
-	const getAppSettings = useCallback((settingName) => {
-		const warehouse = isLoading
-			? defaultAppSettings.current
-			: { ...defaultAppSettings.current, ...data }
-		return settingName ? warehouse[settingName] : warehouse
-	}, [data, isLoading])
+export default function useAppSettings(settingName) {
+	const {
+		data: _appSettings = {},
+		isLoading: isLoadingAppSettings
+	} = useGetAppSettingsQuery(undefined)
 
-	return getAppSettings(query)
+	const appSettings = useRef()
+
+	appSettings.current = { ...defaultAppSettings, ..._appSettings }
+
+	return {
+		data: appSettings.current[settingName] ?? false,
+		isLoading: isLoadingAppSettings
+	}
 }

@@ -1,7 +1,7 @@
 import { red } from "@mui/material/colors"
 import { createTheme } from "@mui/material"
 
-export const theme = createTheme({
+export const traditionalTheme = createTheme({
 	palette: {
 		primary: {
 			main: "#1a73e8",
@@ -138,5 +138,17 @@ export const theme = createTheme({
 		modal: 180,
 		snackbar: 190,
 		tooltip: 200,
-	}
+	},
+	breakpoints: {
+		values: {
+			xs: 0,
+			xss: 500,
+			sm: 600,
+			smm: 720,
+			md: 900,
+			mdd: 1024,
+			lg: 1200,
+			xl: 1536,
+		},
+	},
 })

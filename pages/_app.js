@@ -36,17 +36,13 @@ import { Provider } from "react-redux"
 import { SnackbarProvider } from "notistack"
 import { CacheProvider } from "@emotion/react"
 import { configureStore } from "@reduxjs/toolkit"
-import { DndProvider } from "react-dnd"
-import { HTML5Backend } from "react-dnd-html5-backend"
 
 //PROJECT IMPORT
-import rootReducer from "@redux/slices"
 import { firestoreApi } from "@redux/slices/firestoreApi"
-
-import { theme } from "@components/theme"
-import PageTransition from "@components/PageTransition"
-
 import createEmotionCache from "@helpers/createEmotionCache"
+import PageTransition from "@components/PageTransition"
+import rootReducer from "@redux/slices"
+import { systemTheme } from "@components/Themes/systemTheme"
 
 /*****************************************************************
  * STYLES                                                        *
@@ -79,7 +75,6 @@ Router.events.on("routeChangeError", () => NProgress.done())
  *****************************************************************/
 
 function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
-	const getLayout = Component.getLayout || ((page) => page)
 	const router = useRouter()
 
 	React.useEffect(() => {
@@ -90,15 +85,17 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 		}
 	}, [])
 
-	return <>
-		<CacheProvider value={emotionCache}>
-			<Head>
-				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
-				<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-			</Head>
-			<Provider store={store}>
-				<ThemeProvider theme={theme}>
-					<DndProvider backend={HTML5Backend}>
+	const getLayout = Component.getLayout || ((page) => page)
+
+	return (
+		<>
+			<CacheProvider value={emotionCache}>
+				<Head>
+					<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
+					<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+				</Head>
+				<Provider store={store}>
+					<ThemeProvider theme={systemTheme}>
 						<CssBaseline />
 						<SnackbarProvider
 							anchorOrigin={{
@@ -114,11 +111,11 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 								</PageTransition>
 							)}
 						</SnackbarProvider>
-					</DndProvider>
-				</ThemeProvider>
-			</Provider>
-		</CacheProvider>
-	</>
+					</ThemeProvider>
+				</Provider>
+			</CacheProvider>
+		</>
+	)
 }
 
 MyApp.propTypes = {

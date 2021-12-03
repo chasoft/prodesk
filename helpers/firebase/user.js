@@ -29,8 +29,8 @@ import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { auth, db } from "."
-import { COLLECTION } from "../../redux/slices/firestoreApiConstants"
+import { auth, db } from "@helpers/firebase"
+import { COLLECTION } from "@redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *

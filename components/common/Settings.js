@@ -22,21 +22,223 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
+import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Alert, Box, ButtonBase, Container, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
+import { Alert, Box, Button, ButtonBase, CircularProgress, Collapse, Container, FormControlLabel, IconButton, Paper, Switch, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
+
+//ASSETS
+import EditIcon from "@mui/icons-material/Edit"
 import LaunchIcon from "@mui/icons-material/Launch"
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline"
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
 
 /*****************************************************************
  * INIT                                                          *
+ *****************************************************************/
+
+export const SettingsSwitch = ({
+	title,
+	state,
+	setState,
+	stateDescription,
+	description
+}) => {
+	return (
+		<>
+			{title &&
+				<Typography variant="caption" style={{ display: "block" }}>
+					{title}
+				</Typography>}
+
+			<FormControlLabel
+				control={
+					<Switch
+						checked={state}
+						onChange={(e) => setState(e.target.checked)}
+						name="checkedB"
+						color="primary"
+					/>
+				}
+				label={stateDescription[state ? 1 : 0]}
+			/>
+
+			{description &&
+				<Typography
+					sx={{
+						color: "grey.600",
+						fontSize: "0.75rem"
+					}}
+				>
+					{description}
+				</Typography>}
+		</>
+	)
+}
+SettingsSwitch.propTypes = {
+	title: PropTypes.string,
+	state: PropTypes.bool,
+	setState: PropTypes.func,
+	stateDescription: PropTypes.array,
+	description: PropTypes.string
+}
+
+export const ContentGroup = ({ title, children }) => {
+	return (
+		<Box sx={{
+			borderBottom: "1px solid transparent",
+			borderColor: "divider",
+			py: 4,
+		}}>
+			<Typography variant="button" sx={{ display: "block", px: 4 }}>{title}</Typography>
+			{children}
+		</Box>
+	)
+}
+ContentGroup.propTypes = {
+	title: PropTypes.node,
+	children: PropTypes.node
+}
+
+export const ContentDescription = ({ children }) => {
+	return (
+		<Typography variant="caption" sx={{
+			display: "block",
+			px: 4,
+			py: 2,
+			color: "grey.600"
+		}}>
+			{children}
+		</Typography>
+	)
+}
+ContentDescription.propTypes = {
+	children: PropTypes.node
+}
+
+export const ContentRow = ({ title, tooltip, removePadding = false, children }) => {
+	return (
+		<Box sx={{
+			display: "flex",
+			flexDirection: { xs: "column", sm: "row" },
+			px: 4,
+			py: { xs: 2, sm: removePadding ? 0 : 1 },
+			":hover": {
+				backgroundColor: "action.hover"
+			},
+			transition: "height .3s cubic-bezier(0.4, 0, 0.2, 1)",
+		}}>
+			<Box sx={{
+				width: "201px",
+				display: "flex",
+				alignItems: "center"
+			}}>
+				<Typography variant="caption" color="grey.600">
+					{title}
+				</Typography>
+				{tooltip &&
+					<Tooltip arrow title={tooltip} placement="top">
+						<HelpOutlineIcon
+							sx={{
+								ml: 0.5,
+								cursor: "pointer",
+								fill: (theme) => theme.palette.grey[600],
+								fontSize: "1rem"
+							}}
+						/>
+					</Tooltip>}
+			</Box>
+			<Box sx={{ width: "100%" }}>
+				{children}
+			</Box>
+		</Box>
+	)
+}
+ContentRow.propTypes = {
+	title: PropTypes.node,
+	tooltip: PropTypes.string,
+	removePadding: PropTypes.bool,
+	children: PropTypes.node
+}
+
+export const EditButton = ({ defaultState, saveAction, cancelAction, isUpdating = false, canSave = true, children }) => {
+	const [isEditMode, setIsEditMode] = useState(false)
+	return (
+		<>
+			<Collapse in={!isEditMode}>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center"
+				}}>
+					{defaultState}
+					<IconButton onClick={() => { setIsEditMode(true) }} disabled={isUpdating}>
+						<EditIcon fontSize="small" />
+					</IconButton>
+					{isUpdating && <CircularProgress size={16} />}
+				</Box>
+			</Collapse>
+
+			<Collapse in={isEditMode}>
+				<Box sx={{ width: "100%" }}>
+					<Box sx={{ pt: 3 }}>
+						{children}
+					</Box>
+					<Box sx={{
+						display: "flex",
+						justifyContent: "flex-end",
+						pb: 3, pt: 2, mt: 2,
+						borderTop: "1px solid transparent",
+						borderColor: "divider",
+					}}>
+						<Button
+							onClick={() => {
+								if (typeof cancelAction === "function") { cancelAction() }
+								setIsEditMode(false)
+							}}
+							variant="outlined"
+							color="primary"
+							size="small"
+							sx={{ px: 3, minWidth: "100px" }}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={() => {
+								saveAction()
+								setIsEditMode(false)
+							}}
+							type="submit"
+							variant="contained"
+							color="primary"
+							size="small"
+							sx={{ px: 3, ml: 2, minWidth: "100px" }}
+							disabled={!canSave}
+						>
+							Save
+						</Button>
+					</Box>
+				</Box>
+			</Collapse>
+		</>
+	)
+}
+EditButton.propTypes = {
+	defaultState: PropTypes.node,
+	saveAction: PropTypes.func,
+	cancelAction: PropTypes.func,
+	isUpdating: PropTypes.bool,
+	canSave: PropTypes.bool,
+	children: PropTypes.node
+}
+
+/*****************************************************************
+ * SETTINGS PANEL                                                *
  *****************************************************************/
 
 export const ListTitle = ({ children }) => (
@@ -91,7 +293,10 @@ export const SettingsHeader = ({ children }) => (
 		marginBottom: "1rem"
 	}}
 	>{children}</Box>
-); SettingsHeader.propTypes = { children: PropTypes.node }
+)
+SettingsHeader.propTypes = {
+	children: PropTypes.node
+}
 
 export const SettingsContainer = ({ children }) => (
 	<Paper sx={{
@@ -100,7 +305,10 @@ export const SettingsContainer = ({ children }) => (
 		borderRadius: 2
 	}}
 	>{children}</Paper>
-); SettingsContainer.propTypes = { children: PropTypes.node }
+)
+SettingsContainer.propTypes = {
+	children: PropTypes.node
+}
 
 export const SettingsList = ({ showContent, sx, children }) => (
 	<Box
@@ -158,13 +366,21 @@ export const SettingsContent = ({ showContent = true, children }) => {
 			{children}
 		</Box>
 	)
-}; SettingsContent.propTypes = { showContent: PropTypes.bool, children: PropTypes.node }
+}
+SettingsContent.propTypes = {
+	showContent: PropTypes.bool,
+	children: PropTypes.node
+}
 
 export const SettingsContentDetails = ({ sx, children }) => (
 	<Container sx={{ py: { xs: 3, sm: 2 }, ...sx }}>
 		{children}
 	</Container>
-); SettingsContentDetails.propTypes = { sx: PropTypes.any, children: PropTypes.node }
+)
+SettingsContentDetails.propTypes = {
+	sx: PropTypes.any,
+	children: PropTypes.node
+}
 
 const ContentHeader = ({ children }) => (
 	<Box sx={{
@@ -177,7 +393,10 @@ const ContentHeader = ({ children }) => (
 		borderTopRightRadius: 8,
 		backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
 	}}> {children} </Box>
-); ContentHeader.propTypes = { children: PropTypes.node }
+)
+ContentHeader.propTypes = {
+	children: PropTypes.node
+}
 
 export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, rightButton, children }) => {
 	const theme = useTheme()
@@ -229,7 +448,10 @@ export const SettingsContentHelper = ({ children }) => (
 		borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
 		"& > div:last-child": { pt: 0 }
 	}}>{children}</Box>
-); SettingsContentHelper.propTypes = { children: PropTypes.node }
+)
+SettingsContentHelper.propTypes = {
+	children: PropTypes.node
+}
 
 const ContentHelperText = ({ children }) => (
 	<Box sx={{
@@ -241,7 +463,10 @@ const ContentHelperText = ({ children }) => (
 			marginTop: "0.5rem"
 		}
 	}}> {children} </Box>
-); ContentHelperText.propTypes = { children: PropTypes.node }
+)
+ContentHelperText.propTypes = {
+	children: PropTypes.node
+}
 
 export const SettingsContentHelperText = ({ children }) => (
 	<ContentHelperText>
@@ -249,7 +474,10 @@ export const SettingsContentHelperText = ({ children }) => (
 			{children}
 		</Typography>
 	</ContentHelperText>
-); SettingsContentHelperText.propTypes = { children: PropTypes.node }
+)
+SettingsContentHelperText.propTypes = {
+	children: PropTypes.node
+}
 
 export const SettingsContentHelperAlert = ({ severity, children }) => (
 	<ContentHelperText>
@@ -295,7 +523,11 @@ export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) =
 	}
 
 	return (
-		<span style={{ display: "inline-block", marginLeft: "5px" }} onClick={action}>
+		<Box
+			component="span"
+			onClick={action}
+			sx={{ display: "inline-block", ml: "5px" }}
+		>
 			<Box sx={{
 				display: "flex",
 				alignItems: "center",
@@ -307,10 +539,13 @@ export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) =
 			}}>
 				Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
 			</Box>
-		</span>
+		</Box>
 	)
 }
-SettingsContentHelperLearnMore.propTypes = { target: PropTypes.string, action: PropTypes.func }
+SettingsContentHelperLearnMore.propTypes = {
+	target: PropTypes.string,
+	action: PropTypes.func
+}
 
 export const SettingsContentActionBar = ({ children }) => (
 	<Box sx={{
@@ -328,4 +563,8 @@ export const SettingsContentActionBar = ({ children }) => (
 		borderBottomLeftRadius: 8,
 		borderBottomRightRadius: 8,
 	}}>{children}</Box>
-); SettingsContentActionBar.propTypes = { children: PropTypes.node }
+)
+
+SettingsContentActionBar.propTypes = {
+	children: PropTypes.node
+}

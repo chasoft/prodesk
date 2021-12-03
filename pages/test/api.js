@@ -32,10 +32,10 @@ import { Button, CircularProgress, TextField } from "@mui/material"
 //THIRD-PARTY
 import { forEach, groupBy, filter, sortBy, cloneDeep, uniqueId, update, findKey, omit, size } from "lodash"
 import { batch as reduxBatch, useDispatch } from "react-redux"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 
 //PROJECT IMPORT
-import { useGetDocsQuery, useGetDocQuery, useAddDocMutation } from "../../redux/slices/firestoreApi"
+import { useGetDocsQuery, useGetDocQuery, useAddDocMutation } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
  * INIT                                                          *

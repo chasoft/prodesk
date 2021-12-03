@@ -25,7 +25,7 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 // import { useDispatch } from "react-redux"
@@ -33,6 +33,7 @@ import { Container, Typography } from "@mui/material"
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
+import DocumentationSettings from "@components/Settings/DocumentationSettings"
 
 //ASSETS
 
@@ -45,7 +46,7 @@ import useUiSettings from "@helpers/useUiSettings"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function DocumentationSettings() {
+function AdminDocSettings() {
 
 	useUiSettings({
 		background: {
@@ -54,12 +55,12 @@ function DocumentationSettings() {
 	})
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Documentation Settings</Typography>
 
+			<DocumentationSettings />
 
 		</Container>
 	)
 }
 
-DocumentationSettings.getLayout = getLayout
-export default DocumentationSettings
+AdminDocSettings.getLayout = getLayout
+export default AdminDocSettings

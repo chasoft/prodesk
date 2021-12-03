@@ -27,48 +27,27 @@ import React, { useState, useCallback } from "react"
 import { ref as getStorageRef, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 
 // MATERIAL-UI
-import { Box, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { isFunction } from "lodash"
 import { useSnackbar } from "notistack"
 import Editor from "rich-markdown-editor"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { setEditorData } from "./../../redux/slices/textEditor"
-import { getAuth, getTextEditor } from "./../../redux/selectors"
-import { STATE_CHANGED, storage } from "./../../helpers/firebase"
-import { EditorLightTheme } from "./../Themes/Editor/defaultEditorTheme"
+import { setEditorData } from "@redux/slices/textEditor"
+import { getAuth, getTextEditor } from "@redux/selectors"
+import { STATE_CHANGED, storage } from "@helpers/firebase"
+import { EditorLightTheme } from "@components/Themes/Editor/defaultEditorTheme"
+import { STORAGE_DESTINATION } from "@helpers/storageApi"
+import { LinearProgressWithLabel } from "@components/common"
 
 //ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
-const STORAGE_DESTINATION = {
-	USER: "User", //ticket
-	BLOG: "Blog",
-	PAGES: "Pages",
-	DOCUMENTATION: "Documentation",
-	SETTINGS: "Settings"
-}
-
-const LinearProgressWithLabel = (props) => (
-	<Box display="flex" alignItems="center">
-		<Box width="100%" mr={1}>
-			<LinearProgress variant="determinate" {...props} />
-		</Box>
-		<Box minWidth={35}>
-			<Typography variant="body2" color="textSecondary">
-				{`${Math.round(props.value)}%`}
-			</Typography>
-		</Box>
-	</Box>
-)
-LinearProgressWithLabel.propTypes = { value: PropTypes.number.isRequired }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -171,7 +150,7 @@ TextEditor.propTypes = {
 		STORAGE_DESTINATION.USER,
 		STORAGE_DESTINATION.BLOG,
 		STORAGE_DESTINATION.PAGES,
-		STORAGE_DESTINATION.DOCUMENTATION,
+		STORAGE_DESTINATION.DOCS,
 		STORAGE_DESTINATION.SETTINGS
 	]),
 	onChange: PropTypes.func,

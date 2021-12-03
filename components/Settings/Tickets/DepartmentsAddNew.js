@@ -19,7 +19,7 @@
  ************************************************************************/
 
 
-import React, { useState } from "react"
+import React from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -28,19 +28,19 @@ import { Button, Grid, TextField } from "@mui/material"
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { some } from "lodash"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import MembersList from "@components/Settings/MembersList"
-import SettingsSwitch from "@components/common/SettingsSwitch"
 
 import {
+	SettingsSwitch,
 	SettingsContentActionBar,
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { getAuth } from "@redux/selectors"

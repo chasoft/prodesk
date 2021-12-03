@@ -28,7 +28,7 @@ import { Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogCont
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { useSelector } from "react-redux"
 import { filter, random, uniqueId } from "lodash"
 
@@ -49,7 +49,7 @@ import {
 	SettingsContentHelper,
 	SettingsContentHelperLearnMore,
 	SettingsContentHelperText
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import {
 	getAuth,

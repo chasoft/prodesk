@@ -27,7 +27,7 @@ import { Box, Button, Collapse, FormControlLabel, Grid, IconButton, Switch, Text
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
 import { useDispatch, useSelector } from "react-redux"
@@ -61,7 +61,7 @@ import {
 	SettingsContentActionBar,
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"

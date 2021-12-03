@@ -38,7 +38,7 @@ import {
 	SettingsContentHelper,
 	SettingsContentHelperText,
 	SettingsContentHelperLearnMore,
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"

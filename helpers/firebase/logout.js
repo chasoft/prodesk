@@ -28,8 +28,8 @@ import { signOut as signOutApp } from "firebase/auth"
 import { batch as reduxBatch } from "react-redux"
 
 //PROJECT IMPORT
-import { logoutSuccess } from "./../../redux/slices/auth"
-import { clearRedirectAfterLoginURL, setRedirect } from "./../../redux/slices/redirect"
+import { logoutSuccess } from "@redux/slices/auth"
+import { clearRedirectAfterLoginURL, setRedirect } from "@redux/slices/redirect"
 import { auth } from "."
 
 /*****************************************************************

@@ -34,7 +34,7 @@ import { useSelector } from "react-redux"
 //PROJECT IMPORT
 import { DOCS_ADD } from "@helpers/constants"
 import { getDocsCenter } from "@redux/selectors"
-import useGetDoc from "@helpers/useGetDocs"
+import { useGetDoc } from "@helpers/useGetDocs"
 
 import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 

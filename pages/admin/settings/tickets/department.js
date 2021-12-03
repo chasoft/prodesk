@@ -53,7 +53,7 @@ import {
 	SettingsContent,
 	SettingsHeader,
 	SettingsList
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"

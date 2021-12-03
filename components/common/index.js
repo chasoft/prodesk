@@ -27,22 +27,22 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Avatar, Box, CircularProgress, Collapse, Grid, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, Collapse, Grid, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import { REDIRECT_URL } from "@helpers/constants"
 
 //ASSETS
 import ExpandLessIcon from "@mui/icons-material/ExpandLess"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import { REDIRECT_URL } from "../../helpers/constants"
 
 /*****************************************************************
  * CONTENT                                                       *
  *****************************************************************/
 
-export function LearnMoreAdvancedTextEditor({ text, linkText }) {
+function LearnMoreAdvancedTextEditor({ text, linkText }) {
 	const innerText = text ?? "If you are not familiar with our advanced text editor, learn more"
 	const innerLinkText = linkText ?? "here"
 	return (
@@ -64,7 +64,7 @@ export function LearnMoreAdvancedTextEditor({ text, linkText }) {
 }
 LearnMoreAdvancedTextEditor.propTypes = { text: PropTypes.string, linkText: PropTypes.string }
 
-export function Copyright({ title = null, url = null }) {
+function Copyright({ title = null, url = null }) {
 	return (
 		<Typography color="textSecondary" align="center">
 			{"Copyright © "}
@@ -78,22 +78,23 @@ export function Copyright({ title = null, url = null }) {
 }
 Copyright.propTypes = { title: PropTypes.string, url: PropTypes.string }
 
-export const ForgotPasswordLink = () => {
+function ForgotPasswordLink() {
 	return <Typography><Link href="/forgot-password">Forgot password?</Link></Typography>
 }
 
-export const LoginLink = () => {
+function LoginLink() {
 	return <Typography>Already a member? <Link href={REDIRECT_URL.LOGIN}>Log in</Link></Typography>
 }
 
-export const SignUpLink = () => {
+function SignUpLink() {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-export const Logo = ({ isSmall = false, theme = "light", height = "30px", style = {} }) => {
+function Logo({ isSmall = false, theme = "light", height = "30px", style = {} }) {
 	if (isSmall) {
 		return (
 			<Link href="/" passHref>
+				{/* eslint-disable-next-line @next/next/no-img-element */}
 				<img
 					src={`/ProDesk-logo-${theme}-square.png`}
 					height={height} width={height}
@@ -106,6 +107,7 @@ export const Logo = ({ isSmall = false, theme = "light", height = "30px", style 
 
 	return (
 		<Link href="/" passHref>
+			{/* eslint-disable-next-line @next/next/no-img-element */}
 			<img
 				src={`/ProDesk-logo-${theme}.png`}
 				height={height} width={Math.round(height * 5.25).toString()}
@@ -122,7 +124,7 @@ Logo.propTypes = {
 	style: PropTypes.object
 }
 
-export const SimpleTogglePanel = ({ title, children, isExpanded = false }) => {
+function SimpleTogglePanel({ title, children, isExpanded = false }) {
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
 		<Box sx={{ marginTop: "0.5rem" }}>
@@ -151,7 +153,7 @@ SimpleTogglePanel.propTypes = {
 	children: PropTypes.any,
 }
 
-export const DefaultAvatarPanel = ({ size = 45, callback }) => {
+function DefaultAvatarPanel({ size = 45, callback }) {
 
 	const DefaultAvatarList = [
 		{ id: 0, alt: "Default Avatar", url: "/avatar/default.png" },
@@ -192,16 +194,57 @@ export const DefaultAvatarPanel = ({ size = 45, callback }) => {
 }
 DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }
 
-export const CircularProgressBox = ({ minHeight = "200px" }) => {
+function CircularProgressBox({ minHeight = "200px", sx }) {
 	return (
 		<Box sx={{
 			display: "flex",
 			alignItems: "center",
 			justifyContent: "center",
-			minHeight: { minHeight }
+			minHeight: { minHeight },
+			...sx
 		}}>
 			<CircularProgress />
 		</Box>
 	)
 }
-CircularProgressBox.propTypes = { minHeight: PropTypes.string }
+CircularProgressBox.propTypes = {
+	minHeight: PropTypes.string,
+	sx: PropTypes.object
+}
+
+function LinearProgressWithLabel(props) {
+	return (
+		<Box display="flex" alignItems="center" sx={{ ...props.sx }}>
+			<Box width="100%" mr={1}>
+				<LinearProgress variant="determinate" {...props} />
+			</Box>
+			<Box minWidth={35}>
+				<Typography variant="body2" color="textSecondary">
+					{`${Math.round(props.value)}%`}
+				</Typography>
+			</Box>
+		</Box>
+	)
+}
+LinearProgressWithLabel.propTypes = {
+	value: PropTypes.number.isRequired,
+	sx: PropTypes.object
+}
+
+export {
+	/********************************/
+	Logo,
+	Copyright,
+	LoginLink,
+	SignUpLink,
+	ForgotPasswordLink,
+	/********************************/
+	DefaultAvatarPanel,
+	/********************************/
+	LearnMoreAdvancedTextEditor,
+	/********************************/
+	CircularProgressBox,
+	LinearProgressWithLabel,
+	/********************************/
+	SimpleTogglePanel,
+}

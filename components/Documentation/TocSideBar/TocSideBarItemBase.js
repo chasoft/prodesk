@@ -101,7 +101,7 @@ const TocSideBarItemBase = React.forwardRef(
 					<Box sx={{
 						ml: 2,
 						flexGrow: 1,
-						...(published ? {} : { textDecoration: "underline silver dotted" })
+						...(published ? {} : { textDecoration: "underline #e97272 dotted" })
 					}}>
 						{children}
 					</Box>

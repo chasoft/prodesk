@@ -38,7 +38,7 @@ import TextEditor from "@components/common/TextEditor"
 import DocumentTemplate from "@components/Documentation/DocumentTemplate"
 import { CircularProgressBox } from "@components/common"
 
-import useGetDoc from "@helpers/useGetDocs"
+import { useGetDoc } from "@helpers/useGetDocs"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
 
 import {
@@ -68,7 +68,6 @@ import {
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
-
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -104,7 +103,7 @@ const DocumentEditor = () => {
 		handlers: { setLocalCache }
 	} = useLocalComponentCache({
 		title: docItem?.title,
-		description: docItem?.description
+		description: docItem?.description,
 	})
 
 	/*
@@ -190,7 +189,7 @@ const DocumentEditor = () => {
 			backgroundColor: "#FFF",
 			flexGrow: 1,
 			px: 5, py: 4,
-			zIndex: 10
+			zIndex: 149
 		}}>
 			<InputBase
 				id="doc-title" placeholder="Page title" variant="outlined"
@@ -205,6 +204,7 @@ const DocumentEditor = () => {
 			/>
 
 			{/* {Max 200 characters} */}
+
 			<InputBase
 				id="doc-description"
 				variant="outlined"
@@ -226,35 +226,37 @@ const DocumentEditor = () => {
 				borderColor: "divider"
 			}} />
 
-			{isLoadingDocItemContent || isLoadingDocItem
-				? <CircularProgressBox />
-				: <>
-					<TextEditor
-						ref={editorRef}
-						value={editorDefaultData ?? ""}
-						placeholder="Enter your content here..."
-						onBlur={handleUpdateContentOnBlur}
-					/>
+			{
+				isLoadingDocItemContent || isLoadingDocItem
+					? <CircularProgressBox />
+					: <>
+						<TextEditor
+							ref={editorRef}
+							value={editorDefaultData ?? ""}
+							placeholder="Enter your content here..."
+							onBlur={handleUpdateContentOnBlur}
+						/>
 
-					{!isEmptyContent &&
-						<Typography sx={{
-							pt: 12,
-							fontSize: "0.8rem",
-							color: "text.secondary",
-							marginTop: "auto"
-						}}>
-							Created at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.createdBy}
-							{(docItem.createdAt !== docItem.updatedAt) &&
-								<span style={{ display: "block" }}>
-									Updated at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.updatedBy}&nbsp;
-									<span style={{ fontStyle: "italic" }}>({dayjs(docItem.updatedAt).fromNow()})</span>
-								</span>}
-						</Typography>}
-				</>}
+						{!isEmptyContent &&
+							<Typography sx={{
+								pt: 12,
+								fontSize: "0.8rem",
+								color: "text.secondary",
+								marginTop: "auto"
+							}}>
+								Created at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.createdBy}
+								{(docItem.createdAt !== docItem.updatedAt) &&
+									<span style={{ display: "block" }}>
+										Updated at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.updatedBy}&nbsp;
+										<span style={{ fontStyle: "italic" }}>({dayjs(docItem.updatedAt).fromNow()})</span>
+									</span>}
+							</Typography>}
+					</>
+			}
 
 			{isEmptyContent && <DocumentTemplate />}
 
-		</Box>
+		</Box >
 	)
 }
 

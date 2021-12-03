@@ -173,7 +173,7 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 						}
 					}
 				}}>
-					<Typography>{children}</Typography>
+					<Typography>{targetDocItem.emoji} {children}</Typography>
 				</Box>
 			</TocSideBarItemBase>
 		</div>

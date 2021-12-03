@@ -42,7 +42,7 @@ import {
 	SettingsContentDetails,
 	SettingsContentHelperText,
 	SettingsContentHelperLearnMore,
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 //ASSETS
 import CheckBoxIcon from "@mui/icons-material/CheckBox"

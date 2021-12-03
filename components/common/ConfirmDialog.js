@@ -31,9 +31,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/
 //THIRD-PARTY
 import { isMobile } from "react-device-detect"
 import { useSelector } from "react-redux"
-import { getUiSettings } from "../../redux/selectors"
 
 //PROJECT IMPORT
+import { getUiSettings } from "@redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *

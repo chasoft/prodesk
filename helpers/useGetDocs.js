@@ -22,20 +22,27 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 
 //THIRD-PARTY
-import { isEqual } from "lodash"
-import { usePrevious } from "react-use"
+import { forEach, groupBy, isEqual, sortBy } from "lodash"
+import { useDeepCompareEffect, usePrevious } from "react-use"
 
 //PROJECT IMPORT
 import { useGetDocsQuery } from "@redux/slices/firestoreApi"
+import { DOC_TYPE } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function useGetDoc(docId) {
+/**
+ * get a single document based on docId
+ * Usage:
+ * 		- to open/view/edit a document (admin-side)
+ * 		- to show a document to end-user (theme-side)
+ */
+function useGetDoc(docId) {
 	const {
 		data: docs = [],
 		isLoading: isLoadingDocs
@@ -52,7 +59,6 @@ export default function useGetDoc(docId) {
 
 	if (isEqual(prevDocs, docs) === false || docId !== prevDocId) {
 		foundDoc.current = docs.find((doc) => doc.docId === docId)
-		console.log("useGetDoc => changed", { prevDocId, docId })
 	}
 
 	return {
@@ -61,27 +67,98 @@ export default function useGetDoc(docId) {
 	}
 }
 
-// export default function useGetDoc(docId) {
-// 	const [foundDoc, setFoundDoc] = useState(undefined)
+/**
+ * get all documents and group by Cat and Subcat,
+ * @param {array} slug
+ * @returns grouped docs
+ * @usage
+ * 		- for admin side leave the parameters empty
+ * 		- for public user, load grouped docs by category or subcat
+ */
+function useGetDocsGrouped(slug) {
+	const {
+		data: docs = [],
+		isLoading: isLoadingDocs
+	} = useGetDocsQuery(undefined)
 
-// 	const {
-// 		data: docs = [],
-// 		isLoading: isLoadingDocs
-// 	} = useGetDocsQuery(undefined)
+	const prevData = usePrevious(docs)
+	const prevSlug = usePrevious(slug)
+	//we use useRef here because, later we change the value
+	//and, this hook will not be re-render,
+	const groupedDocs = useRef()
 
-// 	useDeepCompareEffect(() => {
-// 		setFoundDoc(docs.find((doc) => doc.docId === docId))
-// 		console.log("useGetDoc - changed", { docId, docs })
+	if (isLoadingDocs) { return ({ data: [], isLoading: true }) }
 
-// 	}, [docId, docs])
+	if (isEqual(prevData, docs) === false || prevSlug !== slug) {
 
-// 	if (isLoadingDocs) return {
-// 		data: undefined,
-// 		isLoading: true
-// 	}
+		let filteredDocs = docs
 
-// 	return {
-// 		data: foundDoc,
-// 		isLoading: false
-// 	}
-// }
+		//get all valid docs
+		if (slug) {
+			//get parentDoc by docId provided in slug (the first 12 character of slug is docId)
+			const docParent = docs.find(doc => doc.docId === slug.substring(0, 12))
+
+			if (!docParent || ((docParent.type !== DOC_TYPE.CATEGORY) && (docParent.type !== DOC_TYPE.SUBCATEGORY))) {
+				return ({ data: [], isLoading: false })
+			}
+
+			if (docParent.type === DOC_TYPE.CATEGORY) {
+				filteredDocs = docs.filter(doc => doc.category === docParent.category)
+			}
+			if (docParent.type === DOC_TYPE.SUBCATEGORY) {
+				filteredDocs = docs.filter(
+					doc => doc.category === docParent.category &&
+						doc.subcategory === docParent.subcategory
+				)
+
+				return ({ data: filteredDocs, isLoading: false })
+			}
+		}
+
+		//first, we need to sort the docs by position
+		const sortedDocs = sortBy(filteredDocs, ["category", "subcategory", "position"])
+		//then, we group docs by cat and then by subCat
+		const groupByCat = groupBy(sortedDocs, (i) => i.category)
+		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
+			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
+		})
+
+		groupedDocs.current = Object.entries(groupByCatAndSub)
+	}
+
+	return (
+		{
+			data: groupedDocs.current,
+			isLoading: false
+		}
+	)
+}
+
+/**
+ * get a list of DOC_TYPE === CATEGORY || DOC_TYPE === SUB_CATEGORY
+ * Usage:
+ * 		- list categories (for Frontpage of theme)
+ */
+function useGetDocsCategoriesList() {
+	const [list, setList] = useState([])
+
+	const {
+		data: docs = [],
+		isLoading: isLoadingDocs
+	} = useGetDocsQuery(undefined)
+
+	useDeepCompareEffect(() => {
+		setList(docs.filter(doc => doc.type === DOC_TYPE.CATEGORY))
+	}, [docs])
+
+	return ({
+		data: list,
+		isLoading: isLoadingDocs
+	})
+}
+
+export {
+	useGetDoc,
+	useGetDocsGrouped,
+	useGetDocsCategoriesList,
+}

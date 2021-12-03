@@ -46,6 +46,7 @@ import {
 
 import {
 	DOCS_ADD,
+	DOC_STATUS,
 	DOC_TYPE
 } from "@helpers/constants"
 
@@ -178,11 +179,11 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 				ref={ref}
 				id={targetDocItem.slug + "-button"}
 				onClick={() => {
-					setExpanded(p => !p)
 					handleOpen()
 				}}
 				handleOpen={handleOpen}
 				showDetailsButton={false}
+				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
 				additionalButton={
 					<>
 						<TocSideBarAddNew
@@ -232,7 +233,7 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 					fontWeight: "bold",
 					":hover": { color: "primary.main" },
 				}}>
-					{title}
+					{targetDocItem.emoji} {title}
 				</Typography>
 			</TocSideBarItemBase>
 

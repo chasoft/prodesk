@@ -32,7 +32,7 @@ import { Box, ButtonBase, Grid, IconButton, Tooltip, Typography } from "@mui/mat
 
 
 //PROJECT IMPORT
-import { LINK_TYPE } from "./../../helpers/constants"
+import { LINK_TYPE } from "@helpers/constants"
 
 //ASSETS
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
@@ -106,8 +106,8 @@ function SingleCategory() {
 							}}
 						>
 							{DummyData.items.map((link, idx) => (
-								<Link href="/" key={idx}>
-									<li >
+								<Link href="/" key={idx} passHref>
+									<li>
 										<ButtonBase sx={{ textAlign: "left" }}>
 											{link.subject}
 										</ButtonBase>

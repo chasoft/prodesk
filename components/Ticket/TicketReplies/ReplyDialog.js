@@ -33,7 +33,7 @@ import { Box, Button, CircularProgress, Chip, Dialog, DialogActions, DialogConte
 //THIRD-PARTY
 import dayjs from "dayjs"
 import { size } from "lodash"
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 import { useDispatch, useSelector } from "react-redux"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { CopyToClipboard } from "react-copy-to-clipboard"

@@ -253,7 +253,8 @@ export const ACTION = {
 	CLEAR: "Clear",
 }
 
-export const APP_SETTINGS_NAME = {
+export const APP_SETTINGS = {
+	activeTheme: "activeTheme",
 	/* DOCUMENTATION */
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
 }

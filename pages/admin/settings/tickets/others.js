@@ -56,7 +56,7 @@ import {
 	SettingsContentHelperText,
 	SettingsHeader,
 	SettingsList
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 //ASSETS
 import LabelIcon from "@mui/icons-material/Label"

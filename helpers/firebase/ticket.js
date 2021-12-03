@@ -25,7 +25,7 @@
 import { serverTimestamp } from "firebase/firestore"
 
 //THIRD-PARTY
-import { nanoid } from "nanoid"
+import nanoid from "@helpers/nanoid"
 
 //PROJECT IMPORT
 import { db } from "."

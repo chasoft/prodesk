@@ -27,9 +27,9 @@
 //PROJECT IMPORT
 // import { auth } from "."
 // import { getUserProfile } from "./user"
-// import { loginSuccess } from "./../../redux/slices/auth"
+// import { loginSuccess } from "@redux/slices/auth"
 // import { REDIRECT_URL, USERGROUP } from "./../constants"
-// import { clearRedirect, setRedirect } from "./../../redux/slices/redirect"
+// import { clearRedirect, setRedirect } from "@redux/slices/redirect"
 
 /*****************************************************************
  * INIT                                                          *

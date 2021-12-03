@@ -27,6 +27,8 @@ import PropTypes from "prop-types"
 import { useRouter } from "next/router"
 import React, { useEffect } from "react"
 
+//MATERIAL-UI
+
 //THIRD-PARTY
 import { batch as reduxBatch, useDispatch } from "react-redux"
 
@@ -36,8 +38,17 @@ import { regAdminURL } from "@helpers/regex"
 import { ReduxRedirect } from "@components/AuthCheck"
 import { getUserProfile } from "@helpers/firebase/user"
 import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
-import { loginSuccess, logoutSuccess, loginTemp } from "@redux/slices/auth"
-import { setRedirect, clearRedirectAfterLoginURL } from "@redux/slices/redirect"
+
+import {
+	loginSuccess,
+	logoutSuccess,
+	loginTemp
+} from "@redux/slices/auth"
+
+import {
+	setRedirect,
+	clearRedirectAfterLoginURL
+} from "@redux/slices/redirect"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

@@ -43,7 +43,7 @@ import ConfirmDialog from "@components/common/ConfirmDialog"
 import {
 	SettingsContentDetails,
 	SettingsContentHeader
-} from "@components/Settings/SettingsPanel"
+} from "@components/common/Settings"
 
 import { CODE } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
