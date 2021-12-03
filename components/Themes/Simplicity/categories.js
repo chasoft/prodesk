@@ -235,7 +235,7 @@ const ThemeSimplicityCategories = ({ slug }) => {
 		isLoading: isLoadingDocs
 	} = useGetDocsGrouped(slug)
 
-	console.log("Render => ThemeSimplicityCategories", docs)
+	console.log("Render => ThemeSimplicityCategories", { docs })
 
 	if (isLoadingDocs)
 		return (

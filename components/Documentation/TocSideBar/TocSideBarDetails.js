@@ -683,18 +683,19 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 			updatedBy: currentUser.username,
 			//
 			...(
-				(docItem.status !== localCache.status
-					&& localCache.status === DOC_STATUS.PUBLISHED)
-					? {
-						status: DOC_STATUS.PUBLISHED,
-						publishedBy: currentUser.username,
-						publishedDate: dayjs().valueOf()
-					}
-					: {
-						status: DOC_STATUS.DRAFT,
-						publishedBy: "",
-						publishedDate: 0
-					}
+				docItem.status !== localCache.status
+					? localCache.status === DOC_STATUS.PUBLISHED
+						? {
+							status: DOC_STATUS.PUBLISHED,
+							publishedBy: currentUser.username,
+							publishedDate: dayjs().valueOf()
+						}
+						: {
+							status: DOC_STATUS.DRAFT,
+							publishedBy: "",
+							publishedAt: 0
+						}
+					: {}
 			)
 		}
 
@@ -880,18 +881,19 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 			updatedBy: currentUser.username,
 			//
 			...(
-				(docItem.status !== localCache.status
-					&& localCache.status === DOC_STATUS.PUBLISHED)
-					? {
-						status: DOC_STATUS.PUBLISHED,
-						publishedBy: currentUser.username,
-						publishedDate: dayjs().valueOf()
-					}
-					: {
-						status: DOC_STATUS.DRAFT,
-						publishedBy: "",
-						publishedDate: 0
-					}
+				docItem.status !== localCache.status
+					? localCache.status === DOC_STATUS.PUBLISHED
+						? {
+							status: DOC_STATUS.PUBLISHED,
+							publishedBy: currentUser.username,
+							publishedDate: dayjs().valueOf()
+						}
+						: {
+							status: DOC_STATUS.DRAFT,
+							publishedBy: "",
+							publishedAt: 0
+						}
+					: {}
 			)
 		}
 
@@ -1055,18 +1057,19 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			updatedBy: currentUser.username,
 			//
 			...(
-				(docItem.status !== localCache.status
-					&& localCache.status === DOC_STATUS.PUBLISHED)
-					? {
-						status: DOC_STATUS.PUBLISHED,
-						publishedBy: currentUser.username,
-						publishedDate: dayjs().valueOf()
-					}
-					: {
-						status: DOC_STATUS.DRAFT,
-						publishedBy: "",
-						publishedDate: 0
-					}
+				docItem.status !== localCache.status
+					? localCache.status === DOC_STATUS.PUBLISHED
+						? {
+							status: DOC_STATUS.PUBLISHED,
+							publishedBy: currentUser.username,
+							publishedDate: dayjs().valueOf()
+						}
+						: {
+							status: DOC_STATUS.DRAFT,
+							publishedBy: "",
+							publishedAt: 0
+						}
+					: {}
 			)
 		}
 
@@ -1211,18 +1214,19 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 			updatedBy: currentUser.username,
 			//
 			...(
-				(docItem.status !== localCache.status
-					&& localCache.status === DOC_STATUS.PUBLISHED)
-					? {
-						status: DOC_STATUS.PUBLISHED,
-						publishedBy: currentUser.username,
-						publishedDate: dayjs().valueOf()
-					}
-					: {
-						status: DOC_STATUS.DRAFT,
-						publishedBy: "",
-						publishedAt: 0
-					}
+				docItem.status !== localCache.status
+					? localCache.status === DOC_STATUS.PUBLISHED
+						? {
+							status: DOC_STATUS.PUBLISHED,
+							publishedBy: currentUser.username,
+							publishedDate: dayjs().valueOf()
+						}
+						: {
+							status: DOC_STATUS.DRAFT,
+							publishedBy: "",
+							publishedAt: 0
+						}
+					: {}
 			)
 		}
 

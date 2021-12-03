@@ -81,15 +81,15 @@ function useGetDocsGrouped(slug) {
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 
-	const prevData = usePrevious(docs)
-	const prevSlug = usePrevious(slug)
-	//we use useRef here because, later we change the value
-	//and, this hook will not be re-render,
-	const groupedDocs = useRef()
+	const [groupedDocs, setGroupedDocs] = useState([])
 
-	if (isLoadingDocs) { return ({ data: [], isLoading: true }) }
+	console.log("useGetDocsGrouped executed", { docs, slug, isLoadingDocs })
 
-	if (isEqual(prevData, docs) === false || prevSlug !== slug) {
+	useDeepCompareEffect(() => {
+
+		if (isLoadingDocs) return
+
+		console.log("useGetDocsGrouped ** effect", { docs, slug, isLoadingDocs })
 
 		let filteredDocs = docs
 
@@ -99,7 +99,9 @@ function useGetDocsGrouped(slug) {
 			const docParent = docs.find(doc => doc.docId === slug.substring(0, 12))
 
 			if (!docParent || ((docParent.type !== DOC_TYPE.CATEGORY) && (docParent.type !== DOC_TYPE.SUBCATEGORY))) {
-				return ({ data: [], isLoading: false })
+				console.log("useGetDocsGrouped ** effect ** ops not cat or subcat")
+				setGroupedDocs(filteredDocs)
+				return
 			}
 
 			if (docParent.type === DOC_TYPE.CATEGORY) {
@@ -110,8 +112,9 @@ function useGetDocsGrouped(slug) {
 					doc => doc.category === docParent.category &&
 						doc.subcategory === docParent.subcategory
 				)
-
-				return ({ data: filteredDocs, isLoading: false })
+				console.log("useGetDocsGrouped ** effect ** you requested subcat")
+				setGroupedDocs(filteredDocs)
+				return
 			}
 		}
 
@@ -123,13 +126,13 @@ function useGetDocsGrouped(slug) {
 			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
 		})
 
-		groupedDocs.current = Object.entries(groupByCatAndSub)
-	}
+		setGroupedDocs(Object.entries(groupByCatAndSub))
+	}, [docs, slug, isLoadingDocs])
 
 	return (
 		{
-			data: groupedDocs.current,
-			isLoading: false
+			data: groupedDocs,
+			isLoading: isLoadingDocs
 		}
 	)
 }
