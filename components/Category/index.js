@@ -133,7 +133,7 @@ function Category() {
 									<Grid container key={subcat[1][subCatIndex].docId}>
 										<Grid item sm={12} md={6}>
 
-											<Typography variant="h2" sx={{ pl: 2 }}>{subcat[1][subCatIndex].subcategory}</Typography>
+											<Typography variant="h2" sx={{ pl: 2 }}>{subcat[1][subCatIndex].subCategoryId}</Typography>
 
 											<Box sx={{ pl: 2 }}>
 												{subcat[1][subCatIndex].description}

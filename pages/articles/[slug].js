@@ -18,102 +18,82 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import Link from "next/link"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
 
-//MATERIAL-UI
-import { Box, IconButton } from "@mui/material"
+import React from "react"
+import { useRouter } from "next/router"
+import dynamic from "next/dynamic"
+
+// MATERIAL-UI
+// import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { Logo } from "@components/common"
-import { TopMenu } from "@components/Themes/Simplicity/Blocks/TopMenu"
+import { getRootLayout } from "@layout/RootLayout"
+import useAppSettings from "@helpers/useAppSettings"
+import { CircularProgressBox } from "@components/common"
+import { APP_SETTINGS } from "@helpers/constants"
+import { THEME_NAME } from "@components/Themes/themeInfo"
 
 //ASSETS
-import MenuIcon from "@mui/icons-material/Menu"
-import SearchIcon from "@mui/icons-material/Search"
-import { SignUpButton } from "@components/Themes/Simplicity/Buttons/SignUp"
-
-/*****************************************************************
- * CUSTOM COMPONENTS                                             *
- *****************************************************************/
 
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export const Header = () => {
-	return (
-		<Box
-			id="pageHeader"
-			component="header"
-			sx={{
-				position: "fixed",
-				display: "flex",
-				flexDirection: "column",
-				width: "100%",
-				zIndex: 9,
-				backgroundColor: "white"
-			}}
-		>
+const ThemeSimplicityArticles = dynamic(
+	() => import("../../components/Themes/Simplicity/articles"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
 
-			<Box id="header" sx={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "space-between",
-				width: "100%",
-				padding: { xs: "24px 24px", md: "24px 48px" }
-			}}>
-				<Box id="logo">
-					<Logo />
-				</Box>
-				<Box id="nav-wrapper">
-					<TopMenu />
-				</Box>
+const ThemeGoogle = dynamic(
+	() => import("../../components/Themes/Google"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
 
-				<Box id="header-signup-wrapper" sx={{
-					display: "flex",
-					alignItems: "center"
-				}}>
-					<Box id="search-wrapper header-search" sx={{ mr: 1 }}>
-						<form>
+const ThemeTraditional = dynamic(
+	() => import("../../components/Themes/Traditional"),
+	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+)
 
-						</form>
-						<IconButton size="small">
-							<SearchIcon />
-						</IconButton>
-					</Box>
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
 
-					<Box
-						id="icon-menu"
-						component="span"
-						sx={{
-							display: { xs: "block", md: "none" },
-							mr: 1
-						}}
-					>
-						<IconButton>
-							<MenuIcon />
-						</IconButton>
-					</Box>
+function SingleArticle() {
+	const router = useRouter()
+	const { slug } = router.query
 
-					<Link
-						id="header-signup"
-						component="a"
-						href="https://chasoft.net"
-						sx={{
-							display: { xs: "none", md: "block" },
-						}}
-						passHref
-					>
-						<SignUpButton>
-							Sign up
-						</SignUpButton>
-					</Link>
-				</Box>
-			</Box>
-		</Box>
-	)
+	const {
+		data: activeTheme,
+		isLoading: isLoadingActiveTheme
+	} = useAppSettings(APP_SETTINGS.activeTheme)
+
+	if (router.isFallback || !slug) return null
+
+	if (isLoadingActiveTheme)
+		return <CircularProgressBox minHeight="70vh" />
+
+	switch (activeTheme) {
+		case THEME_NAME.themeGoogle:
+			return (
+				<ThemeGoogle />
+			)
+		case THEME_NAME.themeTraditional:
+			return (
+				<ThemeTraditional />
+			)
+		default:
+			return (
+				<ThemeSimplicityArticles slug={slug} />
+			)
+	}
 }
+
+SingleArticle.getLayout = getRootLayout
+
+export default SingleArticle

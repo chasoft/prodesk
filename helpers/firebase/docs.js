@@ -27,7 +27,11 @@ import { uniqueId } from "lodash"
 import nanoid from "@helpers/nanoid"
 
 //PROJECT IMPORT
-import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
+import {
+	DOC_STATUS,
+	DOC_TYPE,
+	RESERVED_KEYWORDS
+} from "@helpers/constants"
 
 /*****************************************************************
  * UTILTIES FUNCTIONS                                            *
@@ -35,32 +39,32 @@ import { DOC_STATUS, DOC_TYPE, RESERVED_KEYWORDS } from "./../constants"
 
 /**
  * Compose a new docItem object template for `new document`
- * @param {string} category
- * @param {string} subcategory
+ * @param {string} categoryId
+ * @param {string} subCategoryId
  * @param {string} username 
  * @returns docItem object
  */
-export const docItemNewDoc = (category, subcategory, username) => {
+export const docItemNewDoc = (categoryId, subCategoryId, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: category,
+		docId: docId,
+		categoryId: categoryId,
+		subCategoryId: subCategoryId ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		type: DOC_TYPE.DOC,
+		//
 		createdBy: username,
 		description: "",
-		docId: docId,
-		//
-		slug: `document-${docId.substring(0, 3)}-${incNumber}`,
-		status: DOC_STATUS.DRAFT,
-		subcategory: subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
-		tags: [],
-		title: `Document #${incNumber}`,
-		type: DOC_TYPE.DOC,
-		updatedBy: username,
 		emoji: "",
 		photo: "",
-		//
+		photoColor: "#D3D3D3",
 		publishedBy: "",
 		publishedDate: 0,
+		slug: `document-${incNumber}`,
+		status: DOC_STATUS.DRAFT,
+		tags: [],
+		title: `Document #${incNumber}`,
+		updatedBy: username,
 		//
 		position: 9999
 	}
@@ -68,94 +72,96 @@ export const docItemNewDoc = (category, subcategory, username) => {
 
 /**
  * Compose a new docItem object template for `new external link`
- * @param {string} category
- * @param {string} subcategory
+ * @param {string} categoryId
+ * @param {string} subCategoryId
  * @param {string} username
  * @returns docItem object
  */
-export const docItemNewExternal = (category, subcategory, username) => {
+export const docItemNewExternal = (categoryId, subCategoryId, username) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: category,
+		docId: docId,
+		categoryId: categoryId,
+		subCategoryId: subCategoryId ?? RESERVED_KEYWORDS.CAT_CHILDREN,
+		type: DOC_TYPE.EXTERNAL,
+		//
 		createdBy: username,
 		description: "",
-		docId: docId,
-		//
+		emoji: "",
+		photo: "",
+		photoColor: "#D3D3D3",
+		publishedBy: "",
+		publishedDate: 0,
 		status: DOC_STATUS.DRAFT,
-		subcategory: subcategory ?? RESERVED_KEYWORDS.CAT_CHILDREN,
 		tags: [],
-		title: `External link ${docId.substring(0, 3)} #${incNumber}`,
-		type: DOC_TYPE.EXTERNAL,
+		title: `External link #${incNumber}`,
 		updatedBy: username,
 		url: "",
-		emoji: "",
-		photo: "",
-		//
-		publishedBy: "",
-		publishedDate: 0,
 		//
 		position: 9999
 	}
 }
 
 /**
- * Compose a new docItem object template for `new external sub-category`
- * @param {string} category
+ * Compose a new docItem object template for `new sub-category`
+ * @param {string} categoryId
  * @param {string} username
+ * @param {string} customName
  * @returns docItem object
  */
-export const docItemNewSubCategory = (category, username, customName) => {
+export const docItemNewSubCategory = (categoryId, username, customName) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: category,
+		docId: docId,
+		categoryId: categoryId,
+		subCategoryId: docId,	//this is a duplication of docId, used for grouping purpose
+		type: DOC_TYPE.SUBCATEGORY,
+		//
 		createdBy: username,
 		description: "",
-		docId: docId,
-		//
-		status: DOC_STATUS.DRAFT,
-		slug: `subcategory-${docId.substring(0, 3)}-${incNumber}`,
-		subcategory: customName ?? `SubCategory #${incNumber}`,
-		tags: [],
-		type: DOC_TYPE.SUBCATEGORY,
-		updatedBy: username,
 		emoji: "",
 		photo: "",
-		//
+		photoColor: "#D3D3D3",
 		publishedBy: "",
 		publishedDate: 0,
+		slug: `subcategory-${incNumber}`,
+		status: DOC_STATUS.DRAFT,
+		tags: [],
+		title: customName ?? `SubCategory #${incNumber}`,
+		updatedBy: username,
 		//
 		position: 9999
 	}
 }
 
 /**
- * Compose a new docItem object template for `new external category`
- * @param {*} targetDocItem
- * @param {*} username
+ * Compose a new docItem object template for `new category`
+ * @param {string} username
+ * @param {string} customName
  * @returns docItem object
  */
 export const docItemNewCategory = (username, customName) => {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
-		category: customName ?? `Category #${incNumber}`,
+		docId: docId,
+		categoryId: docId,	//this is a duplication of docId, used for grouping purpose
+		type: DOC_TYPE.CATEGORY,
+		//
 		createdBy: username,
 		description: "",
-		docId: docId,
-		//
-		status: DOC_STATUS.DRAFT,
-		slug: `category-${docId.substring(0, 3)}-${incNumber}`,
-		tags: [],
-		type: DOC_TYPE.CATEGORY,
-		updatedBy: username,
 		emoji: "",
 		photo: "",
-		photoColor: "",
-		//
+		photoColor: "#D3D3D3",
 		publishedBy: "",
 		publishedDate: 0,
+		slug: `category-${incNumber}`,
+		status: DOC_STATUS.DRAFT,
+		tags: [],
+		title: customName ?? `Category #${incNumber}`,
+		updatedBy: username,
 		//
 		position: 9999
 	}

@@ -147,13 +147,13 @@ RightMenuItemBase.propTypes = {
 	children: PropTypes.node
 }
 
-export const RightMenuItemAddNewDoc = ({ category, subcategory, sx }) => {
+export const RightMenuItemAddNewDoc = ({ categoryId, subCategoryId, sx }) => {
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
 	const handleAddNewDoc = async () => {
 		//Prepare skeleton document
-		const docItem = docItemNewDoc(category, subcategory, currentUser.username)
+		const docItem = docItemNewDoc(categoryId, subCategoryId, currentUser.username)
 		//add new document to DB
 		//dispatch actions are all moved to inside addDoc() function
 		await addDoc({ docItem: docItem })
@@ -169,8 +169,8 @@ export const RightMenuItemAddNewDoc = ({ category, subcategory, sx }) => {
 	)
 }
 RightMenuItemAddNewDoc.propTypes = {
-	category: PropTypes.string,
-	subcategory: PropTypes.string,
+	categoryId: PropTypes.string,
+	subCategoryId: PropTypes.string,
 	sx: PropTypes.object
 }
 
@@ -222,11 +222,21 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 		isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(targetDocItem.docId)
 
+	const {
+		data: catItem,
+		isLoading: isLoadingCatItem
+	} = useGetDoc(targetDocItem?.categoryId)
+
+	const {
+		data: subCatItem,
+		isLoading: isLoadingSubCatItem
+	} = useGetDoc(targetDocItem?.subCategoryId)
+
 	const handleDeleteDocItem = async (confirmed) => {
 		if (confirmed === false) return
 
 		if (targetDocItem.type === DOC_TYPE.CATEGORY) {
-			const affectedItems = filter(allDocsRaw.data, { category: targetDocItem.category })
+			const affectedItems = filter(allDocsRaw.data, { categoryId: targetDocItem?.categoryId })
 			if (affectedItems.length > 1) {
 				enqueueSnackbar("Can not delete selected category! Please delete/move all data out of it first!", { variant: "error" })
 				return
@@ -252,8 +262,8 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 			const affectedItems = filter(
 				allDocsRaw.data,
 				{
-					category: targetDocItem.category,
-					subcategory: targetDocItem.subcategory
+					categoryId: targetDocItem.categoryId,
+					subCategoryId: targetDocItem.subCategoryId
 				}
 			)
 
@@ -384,7 +394,7 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 												fontWeight: 500,
 												color: "grey.800"
 											}}>
-												{targetDocItem.category}
+												{targetDocItem.title}
 											</Typography>
 										}
 									/>
@@ -409,7 +419,7 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 												fontWeight: 500,
 												color: "grey.800"
 											}}>
-												{targetDocItem.subcategory}
+												{targetDocItem.title}
 											</Typography>
 										}
 										secondary={
@@ -417,7 +427,9 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 												fontWeight: 500,
 												color: "grey.700"
 											}}>
-												a member of {targetDocItem.category}
+												{(!isLoadingCatItem && !!catItem?.title)
+													? "a member of " + catItem.title
+													: null}
 											</Typography>
 										}
 									/>
@@ -450,10 +462,13 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 												fontWeight: 500,
 												color: "grey.700"
 											}}>
-												a member of
-												{(targetDocItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN)
-													? targetDocItem.subcategory
-													: targetDocItem.category}
+												{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
+													? (!isLoadingSubCatItem && !!subCatItem?.title)
+														? "a member of " + subCatItem.title
+														: null
+													: (!isLoadingCatItem && !!catItem?.title)
+														? "a member of " + catItem.title
+														: null}
 											</Typography>
 										}
 									/>
@@ -486,10 +501,13 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 													fontWeight: 500,
 													color: "grey.700"
 												}}>
-													a member of
-													{(targetDocItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN)
-														? targetDocItem?.subcategory
-														: targetDocItem?.category}
+													{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
+														? (!isLoadingSubCatItem && !!subCatItem?.title)
+															? "a member of " + subCatItem.title
+															: null
+														: (!isLoadingCatItem && !!catItem?.title)
+															? "a member of " + catItem.title
+															: null}
 												</Typography>
 											</>
 										}
@@ -581,8 +599,8 @@ const DocumentTocSideBar = () => {
 					}}>
 
 						<RightMenuItemAddNewDoc
-							category={activeDoc.category}
-							subcategory={activeDoc.subcategory}
+							categoryId={activeDoc?.categoryId}
+							subCategoryId={activeDoc?.subCategoryId}
 						/>
 						{/* <RightMenuItemImport targetDocItem={activeDoc} /> */}
 						{/* <RightMenuItemExportPDF targetDocItem={activeDoc} /> */}

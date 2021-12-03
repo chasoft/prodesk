@@ -38,7 +38,7 @@ const SignUpButtonRoot = styled("button")`
   font-weight: 600;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
-  padding: 12px 24px;
+  padding: 8px 18px;
   transition: all 200ms ease;
   cursor: pointer;
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);

@@ -63,7 +63,7 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) => {
+const TocSideBarSubCategory = ({ handleOpen, targetDocItem, children }) => {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -75,8 +75,8 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
@@ -86,8 +86,8 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const [{ isDragging }, drag] = useDrag(() => ({
@@ -96,8 +96,8 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult()
@@ -115,8 +115,8 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const [expanded, setExpanded] = useState(true)
@@ -195,7 +195,7 @@ const TocSideBarSubCategory = ({ title, handleOpen, targetDocItem, children }) =
 					fontWeight: "bold",
 					":hover": { color: "primary.main" }
 				}}>
-					{targetDocItem.emoji} {title}
+					{targetDocItem.emoji} {targetDocItem.title}
 				</Typography>
 			</TocSideBarItemBase>
 

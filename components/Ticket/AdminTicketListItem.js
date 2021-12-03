@@ -709,7 +709,7 @@ function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 
 							<TicketCategory
 								departmentId={ticket.departmentId}
-								category={ticket.category}
+								category={ticket.categoryId}
 								subCategory={ticket.subCategory}
 							/>
 

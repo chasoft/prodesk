@@ -74,8 +74,7 @@ export const CategoryListing = ({ docItem, children }) => {
 
 						<Link href={"/categories/" + docItem.docId + "-" + docItem.slug} passHref>
 							<a href="just-a-placeholder">
-
-								{docItem.category}
+								{docItem.title}
 							</a>
 						</Link>
 					</div>
@@ -141,7 +140,7 @@ export const SubCategoryItem = ({ docItem, children }) => {
 							}
 						}}>
 
-							{docItem.subcategory}
+							{docItem.title}
 						</Typography>
 					</a>
 				</Link>
@@ -257,7 +256,7 @@ const ThemeSimplicityCategories = ({ slug }) => {
 			<SimplicityLayout>
 				<CategoryListing
 					key={subCatDetails.docId}
-					docItem={{ ...subCatDetails, category: subCatDetails.subcategory }}
+					docItem={subCatDetails}
 				>
 					<SubCategoriesList>
 						<ArticlesList>

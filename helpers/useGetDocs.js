@@ -22,11 +22,11 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import { useRef, useState } from "react"
+import { useState } from "react"
 
 //THIRD-PARTY
-import { forEach, groupBy, isEqual, sortBy } from "lodash"
-import { useDeepCompareEffect, usePrevious } from "react-use"
+import { forEach, groupBy, sortBy } from "lodash"
+import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
 import { useGetDocsQuery } from "@redux/slices/firestoreApi"
@@ -42,28 +42,25 @@ import { DOC_TYPE } from "@helpers/constants"
  * 		- to open/view/edit a document (admin-side)
  * 		- to show a document to end-user (theme-side)
  */
-function useGetDoc(docId) {
+function useGetDoc(docId, slug) {
+	const [res, setRes] = useState({})
+
 	const {
 		data: docs = [],
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 
-	const foundDoc = useRef(undefined)
-	const prevDocs = usePrevious(docs)
-	const prevDocId = usePrevious(docId)
-
-	if (isLoadingDocs) return {
-		data: foundDoc.current,
-		isLoading: true
-	}
-
-	if (isEqual(prevDocs, docs) === false || docId !== prevDocId) {
-		foundDoc.current = docs.find((doc) => doc.docId === docId)
-	}
+	useDeepCompareEffect(() => {
+		if (slug) {
+			setRes(docs.find((doc) => doc.docId === slug.substring(0, 12)))
+		} else {
+			setRes(docs.find((doc) => doc.docId === docId))
+		}
+	}, [docs, docId])
 
 	return {
-		data: foundDoc.current,
-		isLoading: false
+		data: res,
+		isLoading: isLoadingDocs
 	}
 }
 
@@ -83,50 +80,49 @@ function useGetDocsGrouped(slug) {
 
 	const [groupedDocs, setGroupedDocs] = useState([])
 
-	console.log("useGetDocsGrouped executed", { docs, slug, isLoadingDocs })
-
 	useDeepCompareEffect(() => {
 
-		if (isLoadingDocs) return
-
-		console.log("useGetDocsGrouped ** effect", { docs, slug, isLoadingDocs })
+		if (isLoadingDocs || docs.length === 0) {
+			setGroupedDocs([])
+			return
+		}
 
 		let filteredDocs = docs
 
-		//get all valid docs
 		if (slug) {
 			//get parentDoc by docId provided in slug (the first 12 character of slug is docId)
 			const docParent = docs.find(doc => doc.docId === slug.substring(0, 12))
 
 			if (!docParent || ((docParent.type !== DOC_TYPE.CATEGORY) && (docParent.type !== DOC_TYPE.SUBCATEGORY))) {
-				console.log("useGetDocsGrouped ** effect ** ops not cat or subcat")
-				setGroupedDocs(filteredDocs)
+				setGroupedDocs([])
 				return
 			}
 
 			if (docParent.type === DOC_TYPE.CATEGORY) {
-				filteredDocs = docs.filter(doc => doc.category === docParent.category)
+				filteredDocs = docs.filter(doc => doc?.categoryId === docParent.docId)
 			}
+
 			if (docParent.type === DOC_TYPE.SUBCATEGORY) {
 				filteredDocs = docs.filter(
-					doc => doc.category === docParent.category &&
-						doc.subcategory === docParent.subcategory
+					doc => doc.categoryId === docParent.categoryId &&
+						doc.subCategoryId === docParent.subCategoryId
 				)
-				console.log("useGetDocsGrouped ** effect ** you requested subcat")
+
 				setGroupedDocs(filteredDocs)
 				return
 			}
 		}
 
 		//first, we need to sort the docs by position
-		const sortedDocs = sortBy(filteredDocs, ["category", "subcategory", "position"])
+		const sortedDocs = sortBy(filteredDocs, ["categoryId", "subCategoryId", "position"])
 		//then, we group docs by cat and then by subCat
-		const groupByCat = groupBy(sortedDocs, (i) => i.category)
+		const groupByCat = groupBy(sortedDocs, (i) => i.categoryId)
 		const groupByCatAndSub = forEach(groupByCat, function (value, key) {
-			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subcategory)
+			groupByCat[key] = groupBy(groupByCat[key], (i) => i.subCategoryId)
 		})
 
 		setGroupedDocs(Object.entries(groupByCatAndSub))
+
 	}, [docs, slug, isLoadingDocs])
 
 	return (

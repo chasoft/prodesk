@@ -509,7 +509,6 @@ async function fireStoreBaseQuery(args) {
 					)
 				)
 				if (docSnap.exists()) { docItemContent = docSnap.data() }
-				console.log({ docItemContent })
 				return { data: docItemContent }
 			} catch (e) {
 				return throwError(CODE.FAILED, ACTIONS.GET_CONTENT, e, "")
@@ -676,7 +675,7 @@ async function fireStoreBaseQuery(args) {
 					//if anything wrong, this would be unrecoverable.
 					const q = query(
 						collection(db, COLLECTION.DOCS),
-						where("category", "==", args.body.docItem.category)
+						where("category", "==", args.body.docItem.categoryId)
 					)
 					const querySnapshot = await getDocs(q)
 					//Only delete category when it is empty
@@ -707,8 +706,8 @@ async function fireStoreBaseQuery(args) {
 
 					const q = query(
 						collection(db, COLLECTION.DOCS),
-						where("category", "==", args.body.docItem.category),
-						where("subcategory", "==", args.body.docItem.subcategory)
+						where("category", "==", args.body.docItem.categoryId),
+						where("subcategory", "==", args.body.docItem.subCategoryId)
 					)
 					const querySnapshot = await getDocs(q)
 					//Only delete category when it is empty

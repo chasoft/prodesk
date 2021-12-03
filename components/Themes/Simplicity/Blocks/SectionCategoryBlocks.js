@@ -38,7 +38,6 @@ import { DOC_STATUS } from "@helpers/constants"
  *****************************************************************/
 
 export const SectionCategoryBlocks = () => {
-
 	const {
 		data: list,
 		isLoading
@@ -88,7 +87,7 @@ export const SectionCategoryBlocks = () => {
 												padding: "24px 0",
 												color: "inherit"
 											}}>
-												{category.category}
+												{category.title}
 											</Typography>
 										</a>
 									</Link>

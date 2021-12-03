@@ -85,6 +85,7 @@ const DocumentEditor = () => {
 	// Current document
 	const { currentUser } = useSelector(getAuth)
 	const { activeDocId } = useSelector(getDocsCenter)
+	const { editorDataHeadings } = useSelector(getTextEditor)
 	// Get all required data from database
 	const {
 		data: docItem,
@@ -177,7 +178,10 @@ const DocumentEditor = () => {
 			await updateDocContent({
 				docId: docItem.docId,
 				updatedBy: currentUser.username,
-				content: { text: editorData }
+				content: {
+					text: editorData,
+					headings: editorDataHeadings
+				}
 			})
 		}
 	}

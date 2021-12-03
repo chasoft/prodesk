@@ -28,10 +28,10 @@ import React, { useState } from "react"
 
 // MATERIAL-UI
 import { emphasize, styled } from "@mui/material/styles"
-import { Autocomplete, Avatar, Box, Button, Checkbox, Chip, CircularProgress, FormControl, FormControlLabel, IconButton, InputBase, Switch, TextField, Tooltip, Typography } from "@mui/material"
+import { Autocomplete, Avatar, Box, Button, Checkbox, Chip, FormControl, FormControlLabel, IconButton, InputBase, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { filter, isEqual } from "lodash"
+import { isEqual } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useSelector } from "react-redux"
 import dayjs from "dayjs"
@@ -68,7 +68,6 @@ import {
 } from "@components/Documentation/DocumentTocSideBar"
 
 import {
-	useGetDocsQuery,
 	useUpdateDocMutation,
 	useUpdateAppSettingsMutation
 } from "@redux/slices/firestoreApi"
@@ -557,7 +556,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 							sx={{
 								mt: 2,
 								height: "20px",
-								backgroundColor: photoColor ?? "#D3D3D3",
+								backgroundColor: photoColor ? photoColor : "#D3D3D3",
 								flexGrow: 1,
 								display: "flex",
 								alignItems: "center",
@@ -566,18 +565,18 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 								cursor: "pointer",
 								fontSize: "0.7rem",
 								border: "1px solid transparent",
-								borderColor: emphasize(photoColor ?? "#D3D3D3", 0.2)
+								borderColor: emphasize(photoColor ? photoColor : "#D3D3D3", 0.2)
 							}}
 						>
 
 							{photoColor
 								? <InputBase
-									value={photoColor ?? "#D3D3D3"}
+									value={photoColor ? photoColor : "#D3D3D3"}
 									onChange={(e) => { setPhotoColor(e.target.value ? e.target.value : "#FFFFFF") }}
 									sx={{
 										pl: 3,
 										textAlign: "center",
-										color: emphasize(photoColor ?? "#D3D3D3", 1)
+										color: emphasize(photoColor ? photoColor : "#D3D3D3", 1)
 									}}
 								/>
 								: <span>
@@ -610,7 +609,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 				sx={{ borderRadius: "8px" }}
 			>
 				<HexColorPicker
-					color={photoColor ?? "#D3D3D3"}
+					color={photoColor ? photoColor : "#D3D3D3"}
 					onChange={setPhotoColor}
 				/>
 			</PopupContainer>
@@ -637,48 +636,30 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
-		data: allDocs = [],
-		isLoading: isLoadingAllDocs
-	} = useGetDocsQuery(undefined)
-
-	const {
 		localCache,
 		handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
 	const isModified =
-		docItem.category !== localCache.category
+		docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
-		|| docItem.tags !== localCache.tags
+		|| isEqual(docItem.tags, localCache.tags) === false
 		|| docItem.status !== localCache.status
 		|| docItem.emoji !== localCache.emoji
 		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveCategoryDetails = async () => {
-		//If user modify item.category, then, we will have affected items
-		let affectedItems = []
-		let affectedItemsData = {}
-		if (docItem.category !== localCache.category) {
-			affectedItems = filter(
-				allDocs,
-				(item) =>
-					item.category === docItem.category
-					&& item.docId !== docItem.docId	//not included current editing item
-			)
-			affectedItemsData = { category: localCache.category }
-		}
-
 		//new data for current editing item
 		const updatedDocItem = {
 			docId: docItem.docId,
 			//
 			slug: localCache.slug,
 			tags: localCache.tags,
-			category: localCache.category,
+			title: localCache.title,
 			description: localCache.description,
 			emoji: localCache.emoji ?? "",
-			photoColor: localCache.photoColor ?? "",
+			photoColor: localCache.photoColor ?? "#D3D3D3",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -690,21 +671,14 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 							publishedBy: currentUser.username,
 							publishedDate: dayjs().valueOf()
 						}
-						: {
-							status: DOC_STATUS.DRAFT,
-							publishedBy: "",
-							publishedAt: 0
-						}
+						: { status: DOC_STATUS.DRAFT }
 					: {}
 			)
 		}
 
-		console.log("updatedDocItem for Cat", { updatedDocItem }, { affectedItems })
-
 		await updateDoc({
 			docItem: updatedDocItem,
-			affectedItems,
-			affectedItemsData
+			affectedItems: []
 		})
 	}
 
@@ -721,15 +695,15 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
 				>
 					<TypographyHeader>
-						Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
+						Title
 					</TypographyHeader>
 				</AddEmojiButton>
 
 				<InputBaseStyled
 					id="cat-title"
-					value={localCache.category}
+					value={localCache.title}
 					onChange={(e) => {
-						setLocalCache(e.target.value, "category")
+						setLocalCache(e.target.value, "title")
 						if (autoGenerateSlugFromTitle) {
 							setLocalCache(slugify(e.target.value), "slug")
 						}
@@ -761,7 +735,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-slug"
 					value={localCache.slug}
-					onChange={(e) => setLocalCache(e.target.value, "slug")}
+					onChange={(e) => setLocalCache(slugify(e.target.value), "slug")}
 					disabled={autoGenerateSlugFromTitle}
 					sx={{
 						...(autoGenerateSlugFromTitle && {
@@ -832,51 +806,31 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 		isLoading: isLoadingSettings
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
-
-	const {
-		data: allDocs = [],
-		isLoading: isLoadingAllDocs
-	} = useGetDocsQuery(undefined)
-
 	const {
 		localCache,
 		handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
 	const isModified =
-		docItem.subcategory !== localCache.subcategory
+		docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
-		|| docItem.tags !== localCache.tags
+		|| isEqual(docItem.tags, localCache.tags) === false
 		|| docItem.status !== localCache.status
 		|| docItem.emoji !== localCache.emoji
 		|| docItem.photoColor !== localCache.photoColor
 
 	const handleSaveSubCategoryDetails = async () => {
-		//If user modify item.subcategory, then, we will have affected items
-		let affectedItems = []
-		let affectedItemsData = {}
-		if (docItem.subcategory !== localCache.subcategory) {
-			affectedItems = filter(
-				allDocs,
-				(item) =>
-					item.category === docItem.category
-					&& item.subcategory === docItem.subcategory
-					&& item.docId !== docItem.docId	//not included current editing item
-			)
-			affectedItemsData = { subcategory: localCache.subcategory }
-		}
-
 		//new data for current editing item
 		const updatedDocItem = {
 			docId: docItem.docId,	//must included
 			//
 			slug: localCache.slug,
 			tags: localCache.tags,
-			subcategory: localCache.subcategory,
+			title: localCache.title,
 			description: localCache.description,
 			emoji: localCache.emoji ?? "",
-			photoColor: localCache.photoColor ?? "",
+			photoColor: localCache.photoColor ?? "#D3D3D3",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -888,21 +842,14 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 							publishedBy: currentUser.username,
 							publishedDate: dayjs().valueOf()
 						}
-						: {
-							status: DOC_STATUS.DRAFT,
-							publishedBy: "",
-							publishedAt: 0
-						}
+						: { status: DOC_STATUS.DRAFT }
 					: {}
 			)
 		}
 
-		console.log("updatedDocItem for SubCat", { updatedDocItem }, { affectedItems })
-
 		await updateDoc({
 			docItem: updatedDocItem,
-			affectedItems,
-			affectedItemsData
+			affectedItems: []
 		})
 	}
 
@@ -919,15 +866,15 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 					handleSelectEmoji={(emoji) => setLocalCache(emoji, "emoji")}
 				>
 					<TypographyHeader>
-						Title {isLoadingAllDocs ? <CircularProgress size={16} /> : null}
+						Title
 					</TypographyHeader>
 				</AddEmojiButton>
 
 				<InputBaseStyled
 					id="cat-title"
-					value={localCache.subcategory}
+					value={localCache.title}
 					onChange={(e) => {
-						setLocalCache(e.target.value, "subcategory")
+						setLocalCache(e.target.value, "title")
 						if (autoGenerateSlugFromTitle) {
 							setLocalCache(slugify(e.target.value), "slug")
 						}
@@ -959,7 +906,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-slug"
 					value={localCache.slug}
-					onChange={(e) => setLocalCache(e.target.value, "slug")}
+					onChange={(e) => setLocalCache(slugify(e.target.value), "slug")}
 					disabled={autoGenerateSlugFromTitle}
 					sx={{
 						...(autoGenerateSlugFromTitle && {
@@ -975,7 +922,6 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-description" value={localCache.description}
 					multiline={true}
-					// minRows={3}
 					onChange={
 						(e) => setLocalCache(e.target.value, "description")
 					}
@@ -1037,7 +983,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const isModified =
 		docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
-		|| !isEqual(docItem.tags, localCache.tags)
+		|| isEqual(docItem.tags, localCache.tags) === false
 		|| docItem.status !== localCache.status
 		|| docItem.emoji !== localCache.emoji
 		|| docItem.photoColor !== localCache.photoColor
@@ -1052,7 +998,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 			description: localCache.description,
 			tags: localCache.tags,
 			emoji: localCache.emoji ?? "",
-			photoColor: localCache.photoColor ?? "",
+			photoColor: localCache.photoColor ?? "#D3D3D3",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -1064,11 +1010,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 							publishedBy: currentUser.username,
 							publishedDate: dayjs().valueOf()
 						}
-						: {
-							status: DOC_STATUS.DRAFT,
-							publishedBy: "",
-							publishedAt: 0
-						}
+						: { status: DOC_STATUS.DRAFT }
 					: {}
 			)
 		}
@@ -1194,7 +1136,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 		docItem.title !== localCache.title
 		|| docItem.url !== localCache.url
 		|| docItem.description !== localCache.description
-		|| !isEqual(docItem.tags, localCache.tags)
+		|| isEqual(docItem.tags, localCache.tags) === false
 		|| docItem.status !== localCache.status
 		|| docItem.emoji !== localCache.emoji
 		|| docItem.photoColor !== localCache.photoColor
@@ -1209,7 +1151,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 			title: localCache.title,
 			description: localCache.description,
 			emoji: localCache.emoji ?? "",
-			photoColor: localCache.photoColor ?? "",
+			photoColor: localCache.photoColor ?? "#D3D3D3",
 			//
 			updatedBy: currentUser.username,
 			//
@@ -1221,11 +1163,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 							publishedBy: currentUser.username,
 							publishedDate: dayjs().valueOf()
 						}
-						: {
-							status: DOC_STATUS.DRAFT,
-							publishedBy: "",
-							publishedAt: 0
-						}
+						: { status: DOC_STATUS.DRAFT }
 					: {}
 			)
 		}
@@ -1341,8 +1279,6 @@ const TocSideBarDetails = ({ handleClose }) => {
 		isLoading: isLoadingDocItem
 	} = useGetDoc(activeDocIdOfTocSideBarDetails)
 
-	console.log("TocSideBarDetails", { docItem })
-
 	return (
 		<>
 			<Box id="TocSideBarDetails" sx={{
@@ -1412,8 +1348,8 @@ const TocSideBarDetails = ({ handleClose }) => {
 
 								<RightMenuItemAddNewDoc
 									sx={{ px: 3 }}
-									category={docItem.category}
-									subcategory={docItem.subcategory}
+									categoryId={docItem.categoryId}
+									subCategoryId={docItem?.subCategoryId}
 								/>
 
 								{/* <RightMenuItemImport

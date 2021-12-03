@@ -70,8 +70,8 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
@@ -81,8 +81,8 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const [{ isDragging }, drag] = useDrag(() => ({
@@ -91,8 +91,8 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult()
@@ -110,8 +110,8 @@ const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children })
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)

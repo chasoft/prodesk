@@ -68,7 +68,12 @@ import {
 	setActiveDocId,
 	setActiveDocIdOfTocSideBarDetails
 } from "@redux/slices/docsCenter"
-import { docItemNewCategory, docItemNewSubCategory } from "@helpers/firebase/docs"
+
+import {
+	docItemNewCategory,
+	docItemNewSubCategory
+} from "@helpers/firebase/docs"
+
 import TocSideBarActionsGroup from "@components/Documentation/TocSideBar/TocSideBarActionsGroup"
 
 //ASSETS
@@ -116,7 +121,7 @@ export const isValidDnD = (sourceItem, targetItem) => {
 
 	/* 1C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.CATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.CATEGORY) {
-		if (sourceItem.category === targetItem.category && sourceItem.subcategory === RESERVED_KEYWORDS.CAT_CHILDREN)
+		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === RESERVED_KEYWORDS.CAT_CHILDREN)
 			return false
 		return true
 	}
@@ -130,14 +135,14 @@ export const isValidDnD = (sourceItem, targetItem) => {
 		return false
 	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		if (sourceItem.category !== targetItem.category) return false
+		if (sourceItem.categoryId !== targetItem.categoryId) return false
 		// if (sourceItem.position < targetItem.position) return false
 		return true
 	}
 
 	/* 2C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.SUBCATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		if (sourceItem.category === targetItem.category && sourceItem.subcategory === targetItem.subcategory) return false
+		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === targetItem.subCategoryId) return false
 		return true
 	}
 
@@ -156,7 +161,7 @@ export const isValidDnD = (sourceItem, targetItem) => {
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL)
 		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL)) {
 
-		// if (sourceItem.category === targetItem.category && sourceItem.subcategory === targetItem.subcategory)
+		// if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === targetItem.subCategoryId)
 		// if (sourceItem.position < targetItem.position) return false
 
 		return true
@@ -205,31 +210,31 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 
 	/* 1B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.CATEGORY  */
 	// if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
-	// 	// 1B.1: if source.category === target.category => NOTHING TO CHANGE
-	// 	// 1B.2: if source.category !== target.category
-	// 	// => source.category = target.category
+	// 	// 1B.1: if source.categoryId === target.categoryId => NOTHING TO CHANGE
+	// 	// 1B.2: if source.categoryId !== target.categoryId
+	// 	// => source.categoryId = target.categoryId
 	// 	// 	  note: 1 or many affected items
-	// 	if (sourceItem.category !== targetItem.category) {
+	// 	if (sourceItem.categoryId !== targetItem.categoryId) {
 
 	// 		const affectedItems = filter(
 	// 			allDocs,
 	// 			(doc) => {
-	// 				return doc.category === sourceItem.category
-	// 					&& doc.subcategory === sourceItem.subcategory
+	// 				return doc.categoryId === sourceItem.categoryId
+	// 					&& doc.subCategoryId === sourceItem.subCategoryId
 	// 					&& doc.docId !== sourceItem.docId
 	// 			}
 	// 		)
 
 	// 		const newSourceData = {
 	// 			docId: sourceItem.docId,
-	// 			category: targetItem.category,
+	// 			categoryId: targetItem.categoryId,
 	// 		}
 
 	// 		const res = await updateDoc({
 	// 			docItem: newSourceData,
 	// 			affectedItems: affectedItems,
 	// 			affectedItemsData: {
-	// 				category: targetItem.category
+	// 				categoryId: targetItem.categoryId
 	// 			}
 	// 		})
 
@@ -255,15 +260,15 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 
 	/* 1C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.CATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.CATEGORY) {
-		// 1C.1: if source.category === target.category && source.subcategory === RESERVED_KEYWORDS.CAT_CHILDREN
+		// 1C.1: if source.categoryId === target.categoryId && source.subCategoryId === RESERVED_KEYWORDS.CAT_CHILDREN
 		// => NOTHING TO CHANGE
-		// 1C.2: if source.category === target.category && source.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN
-		// => source.subcategory = RESERVED_KEYWORDS.CAT_CHILDREN
+		// 1C.2: if source.categoryId === target.categoryId && source.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN
+		// => source.subCategoryId = RESERVED_KEYWORDS.CAT_CHILDREN
 		//    note: only 1 affected item
-		if (sourceItem.category === targetItem.category && sourceItem.subcategory !== RESERVED_KEYWORDS.CAT_CHILDREN) {
+		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN) {
 			const newSourceData = {
 				docId: sourceItem.docId,
-				subcategory: RESERVED_KEYWORDS.CAT_CHILDREN,
+				subCategoryId: RESERVED_KEYWORDS.CAT_CHILDREN,
 				position: targetItem.position - 1
 			}
 
@@ -285,15 +290,15 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 			}
 		}
 
-		// 1C.3: if source.category !== target.category
-		// => source.category = target.category
-		// => source.subcategory = RESERVED_KEYWORDS.CAT_CHILDREN
+		// 1C.3: if source.categoryId !== target.categoryId
+		// => source.categoryId = target.categoryId
+		// => source.subCategoryId = RESERVED_KEYWORDS.CAT_CHILDREN
 		//    note: only 1 affected item
-		if (sourceItem.category !== targetItem.category) {
+		if (sourceItem.categoryId !== targetItem.categoryId) {
 			const newSourceData = {
 				docId: sourceItem.docId,
-				category: targetItem.category,
-				subcategory: RESERVED_KEYWORDS.CAT_CHILDREN,
+				categoryId: targetItem.categoryId,
+				subCategoryId: RESERVED_KEYWORDS.CAT_CHILDREN,
 				position: targetItem.position - 1
 			}
 
@@ -324,8 +329,8 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	// => NOTHING TO CHANGE
 	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		// 2B.1 if source.category === target.category
-		if (sourceItem.category === targetItem.category) {
+		// 2B.1 if source.categoryId === target.categoryId
+		if (sourceItem.categoryId === targetItem.categoryId) {
 
 			const newSourceData = {
 				docId: sourceItem.docId,
@@ -352,24 +357,24 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 			}
 		}
 		// 	// => NOTHING TO CHANGE
-		// 	// 2B.2 if source.category !== target.category
-		// 	// => source.category = target.category
+		// 	// 2B.2 if source.categoryId !== target.categoryId
+		// 	// => source.categoryId = target.categoryId
 		// 	// => source.position = target.position - 1
 		// 	//    note: 1 or many affected items
-		// 	if (sourceItem.category !== targetItem.category) {
+		// 	if (sourceItem.categoryId !== targetItem.categoryId) {
 
 		// 		const affectedItems = filter(
 		// 			allDocs,
 		// 			(doc) => {
-		// 				return doc.category === sourceItem.category
-		// 					&& doc.subcategory === sourceItem.subcategory
+		// 				return doc.categoryId === sourceItem.categoryId
+		// 					&& doc.subCategoryId === sourceItem.subCategoryId
 		// 					&& doc.docId !== sourceItem.docId
 		// 			}
 		// 		)
 
 		// 		const newSourceData = {
 		// 			docId: sourceItem.docId,
-		// 			category: targetItem.category,
+		// 			categoryId: targetItem.categoryId,
 		// 			position: targetItem.position - 1,
 		// 		}
 
@@ -377,7 +382,7 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 		// 			docItem: newSourceData,
 		// 			affectedItems: affectedItems,
 		// 			affectedItemsData: {
-		// 				category: targetItem.category
+		// 				categoryId: targetItem.categoryId
 		// 			}
 		// 		})
 
@@ -400,15 +405,15 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 
 	/* 2C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.SUBCATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		// 2C.1: if source.category === target.category && source.subcategory === target.subcategory
+		// 2C.1: if source.categoryId === target.categoryId && source.subCategoryId === target.subCategoryId
 		// => NOTHING TO CHANGE
-		// 2C.2: if source.category === target.category && source.subcategory !== target.subcategory
-		// => source.subcategory = target.subcategory
+		// 2C.2: if source.categoryId === target.categoryId && source.subCategoryId !== target.subCategoryId
+		// => source.subCategoryId = target.subCategoryId
 		//    note: only 1 affected item
-		if (sourceItem.category === targetItem.category && sourceItem.subcategory !== targetItem.subcategory) {
+		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId !== targetItem.subCategoryId) {
 			const newSourceData = {
 				docId: sourceItem.docId,
-				subcategory: targetItem.subcategory,
+				subCategoryId: targetItem.subCategoryId,
 			}
 
 			const res = await updateDoc({
@@ -429,15 +434,15 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 			}
 		}
 
-		// 2C.3: if source.category !== target.category
-		// => source.category = target.category
-		// => source.subcategory = target.subcategory
+		// 2C.3: if source.categoryId !== target.categoryId
+		// => source.categoryId = target.categoryId
+		// => source.subCategoryId = target.subCategoryId
 		//    note: only 1 affected item
-		if (sourceItem.category !== targetItem.category) {
+		if (sourceItem.categoryId !== targetItem.categoryId) {
 			const newSourceData = {
 				docId: sourceItem.docId,
-				category: targetItem.category,
-				subcategory: targetItem.subcategory,
+				categoryId: targetItem.categoryId,
+				subCategoryId: targetItem.subCategoryId,
 			}
 
 			const res = await updateDoc({
@@ -468,8 +473,8 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	/* 3B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
 	// => NOTHING TO CHANGE
 	/* 3C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
-	// => source.category = target.category
-	// => source.subcategory = target.subcategory
+	// => source.categoryId = target.categoryId
+	// => source.subCategoryId = target.subCategoryId
 	// => source.position = target.position - 1
 	//    note: only 1 affected item
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL)
@@ -477,8 +482,8 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 
 		const newSourceData = {
 			docId: sourceItem.docId,
-			category: targetItem.category,
-			subcategory: targetItem.subcategory,
+			categoryId: targetItem.categoryId,
+			subCategoryId: targetItem.subCategoryId,
 			position: (sourceItem.position < targetItem.position)
 				? targetItem.position + 1
 				: targetItem.position - 1
@@ -507,6 +512,7 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
+
 const TocSideBar = () => {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
@@ -516,6 +522,8 @@ const TocSideBar = () => {
 		data: docs = [],	//grouped docs
 		isLoading: isLoadingDocs
 	} = useGetDocsGrouped()
+
+	console.log("TocSideBar => ", { docs })
 
 	const { activeDocId } = useSelector(getDocsCenter)
 
@@ -596,7 +604,6 @@ const TocSideBar = () => {
 								return (
 									<TocSideBarCategory
 										key={catDetail.docId}
-										title={cat[0]}
 										handleOpen={() => { handleOpenDetails(catDetail.docId) }}
 										targetDocItem={catDetail}
 									>
@@ -653,7 +660,6 @@ const TocSideBar = () => {
 											return (
 												<TocSideBarSubCategory
 													key={subcatDetail.docId}
-													title={subcatDetail.subcategory}
 													handleOpen={() => {
 														handleOpenDetails(subcatDetail.docId)
 													}}

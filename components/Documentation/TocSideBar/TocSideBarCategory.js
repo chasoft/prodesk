@@ -98,7 +98,7 @@ CollapseIconButton.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
+const TocSideBarCategory = ({ handleOpen, targetDocItem, children }) => {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -110,8 +110,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
@@ -121,8 +121,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const [{ isDragging }, drag] = useDrag(() => ({
@@ -131,8 +131,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 			type: targetDocItem.type,
 			position: targetDocItem.position,
 			docId: targetDocItem.docId,
-			category: targetDocItem.category,
-			subcategory: targetDocItem.subcategory,
+			categoryId: targetDocItem?.categoryId,
+			subCategoryId: targetDocItem?.subCategoryId,
 		}),
 		end: (item, monitor) => {
 			const dropResult = monitor.getDropResult()
@@ -150,8 +150,8 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 		targetDocItem.type,
 		targetDocItem.position,
 		targetDocItem.docId,
-		targetDocItem.category,
-		targetDocItem.subcategory,
+		targetDocItem?.categoryId,
+		targetDocItem?.subCategoryId,
 	])
 
 	const [expanded, setExpanded] = useState(true)
@@ -170,7 +170,6 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	drag(drop(ref))
 
 	const isActive = canDrop && isOver
-	// const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
 	return (
@@ -216,8 +215,7 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 							? "action.hover"
 							: "initial",
 					opacity,
-					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {}),
-					// ...(isNotActive ? { backgroundColor: "error.light", color: "error.contrastText" } : {}),
+					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {})
 				}}
 			>
 				<Typography sx={{
@@ -233,7 +231,7 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 					fontWeight: "bold",
 					":hover": { color: "primary.main" },
 				}}>
-					{targetDocItem.emoji} {title}
+					{targetDocItem.emoji} {targetDocItem.title}
 				</Typography>
 			</TocSideBarItemBase>
 
@@ -251,7 +249,6 @@ const TocSideBarCategory = ({ title, handleOpen, targetDocItem, children }) => {
 	)
 }
 TocSideBarCategory.propTypes = {
-	title: PropTypes.string,
 	handleOpen: PropTypes.func,
 	targetDocItem: PropTypes.object,
 	children: PropTypes.node
