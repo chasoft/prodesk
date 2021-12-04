@@ -97,15 +97,17 @@ const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 						</div>
 					</div>
 					<Typography
+						noWrap
+						variant="caption"
 						sx={{
 							fontSize: "0.75rem",
 							color: "#ffffff80",
 							width: "90%",
 							display: expanded ? "none" : "block"
 						}}
-						variant="caption"
-						noWrap
-					>{description}</Typography>
+					>
+						{description}
+					</Typography>
 				</div>
 			</Box>
 

@@ -24,7 +24,7 @@ import PropTypes from "prop-types"
 
 //MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
-import { Box, Breadcrumbs, Typography } from "@mui/material"
+import { Box, Breadcrumbs, Collapse, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { size } from "lodash"
@@ -38,6 +38,7 @@ import ThemeSimplicity404 from "@components/Themes/Simplicity/404"
 import TextEditor from "@components/common/TextEditor"
 import { useGetDocContentQuery } from "@redux/slices/firestoreApi"
 
+
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
@@ -47,8 +48,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
  * INIT                                                          *
  *****************************************************************/
 
+const HEADING_ROOT_ID = "Heading-Root_Id_r00t"
 
-const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
+const TocItem = forwardRef(({ sx, anchor, activeHeadingId, isHeader = false, isExpanded, callback, children }, ref) => {
 	return (
 		<Box
 			sx={{
@@ -58,7 +60,14 @@ const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
 				alignItems: "center",
 				px: 2, py: 0.5,
 				cursor: "pointer",
-				backgroundColor: active ? "#000" : "#FFF",
+				color: (activeHeadingId === anchor) ? "#FFF" : "#000",
+				backgroundColor: (activeHeadingId === anchor) ? "#000" : "#FFF",
+				":hover": {
+					backgroundColor: "#000",
+					fontWeight: 500,
+					color: "#FFF",
+					borderRadius: "8px"
+				},
 				":hover > svg": {
 					fill: "#FFF"
 
@@ -67,10 +76,13 @@ const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
 			}}
 			onClick={(e) => {
 				e.preventDefault()
+
+				//toggle the group
+				if (typeof callback === "function") callback()
+
+				//scroll to the target
 				let navbar = document.getElementById("pageHeader")
 				let navbarheight = parseInt(window.getComputedStyle(navbar).height, 10)
-
-				console.log({ navbarheight })
 				const offsetTop = document.querySelector(`#${anchor}`).offsetTop + navbarheight + 50
 				scroll({
 					top: offsetTop,
@@ -82,10 +94,12 @@ const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
 				{children}
 			</Typography>
 
-			<CollapseIconButton
-				expanded={true}
-				onClick={() => { }}
-			/>
+			{isHeader &&
+				<CollapseIconButton
+					expanded={isExpanded}
+					fillColor={(activeHeadingId === anchor) ? "#FFF" : "#000"}
+					onClick={() => { if (typeof callback === "function") callback() }}
+				/>}
 		</Box>
 	)
 })
@@ -95,18 +109,21 @@ TocItem.displayName = "TocItem"
 TocItem.propTypes = {
 	sx: PropTypes.object,
 	anchor: PropTypes.string,
-	active: PropTypes.bool,
+	activeHeadingId: PropTypes.string,
+	isHeader: PropTypes.bool,
+	isExpanded: PropTypes.bool,
+	callback: PropTypes.func,
 	children: PropTypes.node
 }
 
 
-function CollapseIconButton({ expanded, onClick }) {
+function CollapseIconButton({ expanded, fillColor, onClick }) {
 	if (expanded) {
 		return (
 			<KeyboardArrowDownIcon
 				sx={{
-					mr: 1.5, p: 0.25,
-					fill: "#000",
+					p: 0.25,
+					fill: fillColor ?? "#000",
 					cursor: "pointer",
 					":hover": { fill: "#FFF" },
 				}}
@@ -118,8 +135,8 @@ function CollapseIconButton({ expanded, onClick }) {
 	return (
 		<ChevronRightIcon
 			sx={{
-				mr: 1.5, p: 0.25,
-				fill: "#000",
+				p: 0.25,
+				fill: fillColor ?? "#000",
 				cursor: "pointer",
 				":hover": { fill: "#FFF" },
 			}}
@@ -129,6 +146,7 @@ function CollapseIconButton({ expanded, onClick }) {
 }
 CollapseIconButton.propTypes = {
 	expanded: PropTypes.bool.isRequired,
+	fillColor: PropTypes.string,
 	onClick: PropTypes.func.isRequired
 }
 
@@ -303,8 +321,41 @@ SideBarFloatButton.propTypes = {
 	handleShowFloatButton: PropTypes.func.isRequired
 }
 
+function ToggleContainer({ headingItem, activeHeadingId, isExpanded, callback, children }) {
+	if (headingItem.id !== HEADING_ROOT_ID) {
+		return (
+			<Box>
+				<TocItem
+					anchor={headingItem.id}
+					activeHeadingId={activeHeadingId}
+					isHeader={true}
+					callback={callback}
+					isExpanded={isExpanded}
+					sx={{ ml: 0 }}
+				>
+					{headingItem.title}
+				</TocItem>
+
+				<Collapse in={isExpanded}>
+					{children}
+				</Collapse>
+			</Box >
+		)
+	}
+	return (<>{children}</>)
+}
+ToggleContainer.propTypes = {
+	headingItem: PropTypes.string,
+	isExpanded: PropTypes.bool,
+	activeHeadingId: PropTypes.string,
+	callback: PropTypes.func,
+	children: PropTypes.node,
+}
+
 function SideBarContent({ showFloatButton, docItem }) {
 	const theme = useTheme()
+	const [activeHeadingId, setActiveHeadingId] = useState(-1)
+	const [activeHeadingGroup, setActiveHeadingGroup] = useState(-1)
 
 	const {
 		data: docItemContent = { headings: [], text: "" },
@@ -313,18 +364,24 @@ function SideBarContent({ showFloatButton, docItem }) {
 
 	if (isLoadingDocItemContent) return null
 
-	//TODO: group headings lại... để làm cái sổ xuống
-	// docItemContent.headings.reduce((res, curItem, idx) => {
+	const groupedHeadings = docItemContent.headings.reduce((res, curItem) => {
+		if (curItem.level > 2) {
+			return res
+		}
+		if (curItem.level === 1) {
+			res.push([curItem])
+			return res
+		}
+		if (curItem.level === 2) {
+			if (res.length === 0) {
+				res.push([{ id: HEADING_ROOT_ID, level: 1, title: "" }, curItem])
+				return res
+			}
 
-
-
-	// 	if (curItem.level === 1)
-	// 		res.push([curItem])
-
-
-	// }
-
-	// }, [])
+			res[res.length - 1].push(curItem)
+			return res
+		}
+	}, [])
 
 	return (
 		<Box component="ol" sx={{
@@ -349,30 +406,36 @@ function SideBarContent({ showFloatButton, docItem }) {
 				overflow: "scroll"
 			}
 		}}>
-
-			{docItemContent.headings.map((item) => {
-				if (item.level > 2) return null
+			{groupedHeadings.map((group, idx) => {
 				return (
-					<TocItem
-						key={item.id}
-						anchor={item.id}
-						sx={{
-							py: 0.5,
-							ml: (item.level === 2) ? 2.5 : 0,
-							":hover": {
-								backgroundColor: "#000",
-								fontWeight: 500,
-								color: "#FFF",
-								borderRadius: "4px"
-							}
+					<ToggleContainer
+						key={group[0].id}
+						headingItem={group[0]}
+						activeHeadingId={activeHeadingId}
+						isExpanded={activeHeadingGroup === idx}
+						callback={() => {
+							setActiveHeadingGroup(idx)
+							setActiveHeadingId(group[0].id)
 						}}
 					>
-						{item.title}
-					</TocItem>
+						{group.map((headingItem) => {
+							if (headingItem.id === group[0].id) return null
+							return (
+								<TocItem
+									key={headingItem.id}
+									anchor={headingItem.id}
+									activeHeadingId={activeHeadingId}
+									callback={() => { setActiveHeadingId(headingItem.id) }}
+									sx={{ ml: group[0].id !== HEADING_ROOT_ID ? 2.5 : 0 }}
+								>
+									{headingItem.title}
+								</TocItem>
+							)
+						})}
+					</ToggleContainer>
 				)
 			})}
-
-		</Box >
+		</Box>
 	)
 }
 SideBarContent.propTypes = {
