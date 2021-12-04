@@ -2,7 +2,6 @@ import React from "react"
 import { Card, CardContent, Grid, Typography } from "@mui/material"
 
 function ClientStats() {
-
 	return (
 		<Grid container spacing={2} >
 			<Grid item xs={12} sm={6}>

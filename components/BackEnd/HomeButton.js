@@ -48,7 +48,7 @@ import { useRouter } from "next/router"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
+function HomeButton({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) {
 	const router = useRouter()
 	const anchorRef = useRef(null)
 	const [open, setOpen] = useState(false)
@@ -166,8 +166,7 @@ const HomeButton = ({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) => {
 							<Grow
 								{...TransitionProps}
 								style={{
-									transformOrigin:
-										placement === "bottom-start" ? "left top" : "left top",
+									transformOrigin: placement === "bottom-start" ? "left top" : "left top",
 								}}
 							>
 								<Paper>

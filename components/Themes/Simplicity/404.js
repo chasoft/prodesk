@@ -38,7 +38,7 @@ import { SectionHero } from "@components/Themes/Simplicity/Blocks/SectionHero"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThemeSimplicity404 = () => {
+function ThemeSimplicity404() {
 	return (
 		<SimplicityLayout>
 			<Box sx={{

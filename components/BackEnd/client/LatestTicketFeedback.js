@@ -55,27 +55,24 @@ const LatestFeedbackDummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const LatestTicketFeedback = () => {
+function LatestTicketFeedback() {
 	return (
 		<ListGroup
 			title="Latest Support Activities"
 			viewAllText="View all tickets"
 			viewAllLink="/client/tickets"
 		>
-			{
-				LatestTicketFeedback.length > 0 ?
-					LatestFeedbackDummyData.map((item, idx) => (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					))
-					: <PostListEmpty message="There are no activities." />
-			}
+			{LatestTicketFeedback.length > 0 ?
+				LatestFeedbackDummyData.map((item, idx) => (
+					<PostListItem
+						key={item.docId}
+						isFirst={idx === 0} isLast={idx === LatestFeedbackDummyData.length - 1}
+						subject={item.subject}
+						excerpt={item.excerpt}
+						link={item.link}
+						metaData={item.metaData} />
+				))
+				: <PostListEmpty message="There are no activities." />}
 		</ListGroup>
 	)
 }

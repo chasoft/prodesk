@@ -44,14 +44,13 @@ import { CircularProgressBox } from "@components/common"
  * INIT                                                          *
  *****************************************************************/
 
-const SideImage = ({ imageUrl = null, children }) => {
+function SideImage({ imageUrl = null, children }) {
 	return (
 		<Box sx={{
 			backgroundRepeat: "no-repeat",
-			backgroundColor: (theme) =>
-				(theme.palette.mode === "light")
-					? theme.palette.grey[50]
-					: theme.palette.grey[900],
+			backgroundColor: (theme) => (theme.palette.mode === "light")
+				? theme.palette.grey[50]
+				: theme.palette.grey[900],
 			backgroundSize: "cover",
 			backgroundPosition: "center",
 			width: { xs: "40%", xl: "500px" },
@@ -64,7 +63,7 @@ const SideImage = ({ imageUrl = null, children }) => {
 }
 SideImage.propTypes = { imageUrl: PropTypes.string, children: PropTypes.any }
 
-export const TopLine = ({ left, center, right }) => {
+export function TopLine({ left, center, right }) {
 	return (
 		<Box sx={{
 			width: "100%",
@@ -103,7 +102,7 @@ TopLine.propTypes = {
 	right: PropTypes.any
 }
 
-export const RegContainer = ({ maxWidth = "400px", children }) => {
+export function RegContainer({ maxWidth = "400px", children }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -128,7 +127,7 @@ RegContainer.propTypes = {
 	children: PropTypes.node
 }
 
-export const RegHeader = ({ icon, title }) => {
+export function RegHeader({ icon, title }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -142,12 +141,12 @@ export const RegHeader = ({ icon, title }) => {
 			<Typography component="h1" variant="h1">
 				{title}
 			</Typography>
-		</Box >
+		</Box>
 	)
 }
 RegHeader.propTypes = { icon: PropTypes.node, title: PropTypes.string }
 
-export const useFlexDirection = (props) => {
+export function useFlexDirection(props) {
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(setflexDirection(props.payload))

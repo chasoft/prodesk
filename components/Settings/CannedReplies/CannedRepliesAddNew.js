@@ -71,23 +71,17 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
  * INIT                                                          *
  *****************************************************************/
 
-export const FullCannedReplySwitch = ({ isFullCannedReply, setIsFullCannedReply }) => {
+export function FullCannedReplySwitch({ isFullCannedReply, setIsFullCannedReply }) {
 	return (
 		<FormControlLabel
-			control={
-				<Switch
-					checked={isFullCannedReply}
-					onChange={() => setIsFullCannedReply(p => !p)}
-					name="full-canned-reply"
-					color="primary"
-				/>
-			}
-			label={
-				<Typography noWrap>
-					{isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
-				</Typography>
-			}
-		/>
+			control={<Switch
+				checked={isFullCannedReply}
+				onChange={() => setIsFullCannedReply(p => !p)}
+				name="full-canned-reply"
+				color="primary" />}
+			label={<Typography noWrap>
+				{isFullCannedReply ? "Full canned-reply" : "Partial canned-reply"}
+			</Typography>} />
 	)
 }
 FullCannedReplySwitch.propTypes = {
@@ -95,11 +89,9 @@ FullCannedReplySwitch.propTypes = {
 	setIsFullCannedReply: PropTypes.func.isRequired,
 }
 
-export const DepartmentSelect = ({
-	departmentId,
-	departments,
-	handleSelectDepartment
-}) => {
+export function DepartmentSelect({
+	departmentId, departments, handleSelectDepartment
+}) {
 	return (
 		<FormControl variant="standard" fullWidth>
 			<InputLabel id="department-select-label">
@@ -129,7 +121,7 @@ DepartmentSelect.propTypes = {
 	handleSelectDepartment: PropTypes.func.isRequired,
 }
 
-export const DescriptionTextField = ({ description, handleSetDescription }) => {
+export function DescriptionTextField({ description, handleSetDescription }) {
 	return (
 		<TextField
 			id="cannedReply-description"
@@ -137,8 +129,7 @@ export const DescriptionTextField = ({ description, handleSetDescription }) => {
 			variant="standard"
 			value={description}
 			onChange={handleSetDescription}
-			fullWidth
-		/>
+			fullWidth />
 	)
 }
 DescriptionTextField.propTypes = {
@@ -146,16 +137,11 @@ DescriptionTextField.propTypes = {
 	handleSetDescription: PropTypes.func.isRequired,
 }
 
-export const handleAddNewCannedReplyBase = async ({
-	content,
-	createdBy,
-	departmentId,
-	description,
-	isFullCannedReply,
+export async function handleAddNewCannedReplyBase({
+	content, createdBy, departmentId, description, isFullCannedReply,
 	//
-	dispatchActions,
-	addCannedReply
-}) => {
+	dispatchActions, addCannedReply
+}) {
 	const crid = nanoid()
 	const newCannedReply = {
 		crid,
@@ -164,12 +150,13 @@ export const handleAddNewCannedReplyBase = async ({
 		content,
 		departmentId,
 		createdBy: createdBy,
-		updatedBy: createdBy,	//new, then, createdBy and updatedBy are the same
+		updatedBy: createdBy,
 		createdAt: dayjs().valueOf(),
 		updatedAt: dayjs().valueOf(),
 	}
 
-	if (typeof dispatchActions === "function") dispatchActions()
+	if (typeof dispatchActions === "function")
+		dispatchActions()
 
 	const res = await addCannedReply(newCannedReply)
 
@@ -190,13 +177,12 @@ export const handleAddNewCannedReplyBase = async ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesAddNew = ({ backBtnClick }) => {
+function CannedRepliesAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [description, setDescription] = useState("")
@@ -233,12 +219,9 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 		<>
 			<SettingsContentHeader
 				backBtnOnClick={() => backBtnClick(false)}
-				rightButton={
-					<FullCannedReplySwitch
-						isFullCannedReply={isFullCannedReply}
-						setIsFullCannedReply={setIsFullCannedReply}
-					/>
-				}
+				rightButton={<FullCannedReplySwitch
+					isFullCannedReply={isFullCannedReply}
+					setIsFullCannedReply={setIsFullCannedReply} />}
 			>
 				New canned reply
 			</SettingsContentHeader>
@@ -255,16 +238,14 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 						departments={departments}
 						handleSelectDepartment={(e) => {
 							dispatch(setActiveSettingPanel(e.target.value))
-						}}
-					/>}
+						}} />}
 
 				<Box sx={{ py: 2 }}>
 					<DescriptionTextField
 						description={description}
 						handleSetDescription={(e) => {
 							setDescription(e.target.value)
-						}}
-					/>
+						}} />
 				</Box>
 
 				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #F0F0F0" }}>
@@ -284,11 +265,9 @@ const CannedRepliesAddNew = ({ backBtnClick }) => {
 
 				<Button
 					variant="contained" color="primary"
-					disabled={
-						(description === "")
+					disabled={(description === "")
 						|| (trim(editorData) === "")
-						|| (trim(editorData) === "\\")
-					}
+						|| (trim(editorData) === "\\")}
 					onClick={handleAddNewCannedReply}
 				>
 					Add

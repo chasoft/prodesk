@@ -66,192 +66,198 @@ const IconLib = {
 	"6": <AssessmentIcon />
 }
 
-const SideBarContentExpanded = ({ data }) => (
-	<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
-		{data.map((group) => {
-			if (group.type === MENU_ITEM_TYPE.ITEM)
-				return (
-					<Link key={group.url} href={group.url} passHref>
-						<a href="just-a-placeholder">
-							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-								<Box
-									sx={{
-										width: "256px",
-										display: "flex",
-										cursor: "pointer",
-										alignItems: "center",
-										borderBottom: "1px solid #2A4257",
-										padding: 3, pr: 1,
-										"&:hover": { backgroundColor: "#ffffff14" },
-									}}
-								>
-									<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-										<div style={{ display: "flex", alignItems: "center" }}>
+function SideBarContentExpanded({ data }) {
+	return (
+		<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
+			{data.map((group) => {
+				if (group.type === MENU_ITEM_TYPE.ITEM)
+					return (
+						<Link key={group.url} href={group.url} passHref>
+							<a href="just-a-placeholder">
+								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+									<Box
+										sx={{
+											width: "256px",
+											display: "flex",
+											cursor: "pointer",
+											alignItems: "center",
+											borderBottom: "1px solid #2A4257",
+											padding: 3, pr: 1,
+											"&:hover": { backgroundColor: "#ffffff14" },
+										}}
+									>
+										<div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+											<div style={{ display: "flex", alignItems: "center" }}>
+												<Typography
+													sx={{
+														color: "#fff",
+														fontSize: "1rem",
+														fontFamily: "\"Google Sans\", Roboto, sans-serif",
+														flexGrow: 1
+													}}
+												>
+													{group.title}
+												</Typography>
+											</div>
 											<Typography
 												sx={{
-													color: "#fff",
-													fontSize: "1rem",
-													fontFamily: "\"Google Sans\", Roboto, sans-serif",
-													flexGrow: 1
+													fontSize: "0.75rem",
+													color: "#ffffff80",
+													width: "90%"
 												}}
+												variant="caption"
+												noWrap
 											>
-												{group.title}
+												{group.description}
 											</Typography>
 										</div>
-										<Typography
-											sx={{
-												fontSize: "0.75rem",
-												color: "#ffffff80",
-												width: "90%"
-											}}
-											variant="caption"
-											noWrap
-										>
-											{group.description}
-										</Typography>
-									</div>
-								</Box>
-							</ButtonBase>
-						</a>
-					</Link>
-				)
-			else if (group.type === MENU_ITEM_TYPE.GROUP)
-				return (
-					<NavCollapse
-						key={group.id}
-						title={group.title}
-						isExpanded={group.expanded}
-						description={group.description}
-						isLongDisplay={true}
-					>
+									</Box>
+								</ButtonBase>
+							</a>
+						</Link>
+					)
+				else if (group.type === MENU_ITEM_TYPE.GROUP)
+					return (
+						<NavCollapse
+							key={group.id}
+							title={group.title}
+							isExpanded={group.expanded}
+							description={group.description}
+							isLongDisplay={true}
+						>
+							<Box
+								component="ul"
+								sx={{
+									margin: 0,
+									padding: 0,
+									width: "100%",
+									listStyle: "none",
+									"& > button > li > a": {
+										display: "flex",
+										alignItems: "center",
+										fontSize: "0.875rem",
+										py: 1, pr: 2, pl: 3,
+										"& >:first-of-type": {
+											mr: 1,
+											height: "20px",
+											weight: "20px",
+										}
+									},
+									"& > button > li:hover": {
+										backgroundColor: "#ffffff14",
+										cursor: "pointer",
+									}
+								}}
+							>
+								{group.items.map((item) => (
+									<ButtonBase key={item.id} sx={{ display: "block", width: "100%", textAlign: "left" }}>
+										<li>
+											<Link href={item.url} passHref>
+												<a href="just-a-placeholder">
+													{IconLib[item.icon]}{item.text}
+												</a>
+											</Link>
+										</li>
+									</ButtonBase>
+								))}
+							</Box>
+						</NavCollapse>
+					)
+
+				else
+					throw new Error("Wrong-Menu-DataType")
+			})}
+		</PerfectScrollbar>
+	)
+}
+SideBarContentExpanded.propTypes = { data: PropTypes.array }
+
+function SideBarContentCollapsed({ data }) {
+	return (
+		<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
+			{data.map((group) => {
+				if (group.type === MENU_ITEM_TYPE.ITEM)
+					return (
+						<Link key={group.url} href={group.url} passHref>
+							<Tooltip arrow title={group.description} placement="right">
+								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+									<Box
+										sx={{
+											display: "flex",
+											justifyContent: "center",
+											textAlign: "center",
+											px: 2, py: 1,
+											"&:hover": { backgroundColor: "#ffffff14" },
+											borderTop: "1px solid #2A4257",
+											color: "#ffffffcc",
+											cursor: "pointer",
+											"& >:first-of-type": { height: 20, weight: 20 },
+										}}
+									>
+										{IconLib[group.icon]}
+									</Box>
+								</ButtonBase>
+							</Tooltip>
+						</Link>
+					)
+				else if (group.type === MENU_ITEM_TYPE.GROUP)
+					return (
 						<Box
+							key={group.id}
 							component="ul"
 							sx={{
 								margin: 0,
 								padding: 0,
 								width: "100%",
 								listStyle: "none",
-								"& > button > li > a": {
+								textAlign: "center",
+								backgroundColor: "#ffffff14",
+								"&>button>li": {
 									display: "flex",
-									alignItems: "center",
-									fontSize: "0.875rem",
-									py: 1, pr: 2, pl: 3,
-									"& >:first-of-type": {
-										mr: 1,
+									justifyContent: "center",
+									pt: 1, px: 2, pb: 1,
+									color: "#ffffffcc",
+									"& > a > :first-of-type": {
 										height: "20px",
 										weight: "20px",
 									}
 								},
-								"& > button > li:hover": {
+								"&>button>li:hover": {
 									backgroundColor: "#ffffff14",
 									cursor: "pointer",
-								}
+								},
+								borderTop: "1px solid #2A4257",
 							}}
 						>
 							{group.items.map((item) => (
-								<ButtonBase key={item.id} sx={{ display: "block", width: "100%", textAlign: "left" }}>
-									<li>
-										<Link href={item.url} passHref>
-											<a href="just-a-placeholder">
-												{IconLib[item.icon]}{item.text}
-											</a>
-										</Link>
-									</li>
-								</ButtonBase>
+								<Tooltip arrow key={item.id} title={item.text} placement="right">
+									<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
+										<li>
+											<Link href={item.url} passHref>
+												<a href="just-a-placeholder">
+													{IconLib[item.icon]}
+												</a>
+											</Link>
+										</li>
+									</ButtonBase>
+								</Tooltip>
 							))}
 						</Box>
-					</NavCollapse>
-				)
-			else
-				throw new Error("Wrong-Menu-DataType")
-		})}
-	</PerfectScrollbar >
-)
-SideBarContentExpanded.propTypes = { data: PropTypes.array }
+					)
 
-const SideBarContentCollapsed = ({ data }) => (
-	<PerfectScrollbar component="div" style={{ height: "calc(100vh - 88px)" }}>
-		{data.map((group) => {
-			if (group.type === MENU_ITEM_TYPE.ITEM)
-				return (
-					<Link key={group.url} href={group.url} passHref >
-						<Tooltip arrow title={group.description} placement="right">
-							<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-								<Box
-									sx={{
-										display: "flex",
-										justifyContent: "center",
-										textAlign: "center",
-										px: 2, py: 1,
-										"&:hover": { backgroundColor: "#ffffff14" },
-										borderTop: "1px solid #2A4257",
-										color: "#ffffffcc",
-										cursor: "pointer",
-										"& >:first-of-type": { height: 20, weight: 20 },
-									}}
-								>
-									{IconLib[group.icon]}
-								</Box>
-							</ButtonBase>
-						</Tooltip>
-					</Link>
-				)
-			else if (group.type === MENU_ITEM_TYPE.GROUP)
-				return (
-					<Box
-						key={group.id}
-						component="ul"
-						sx={{
-							margin: 0,
-							padding: 0,
-							width: "100%",
-							listStyle: "none",
-							textAlign: "center",
-							backgroundColor: "#ffffff14",
-							"&>button>li": {
-								display: "flex",
-								justifyContent: "center",
-								pt: 1, px: 2, pb: 1,
-								color: "#ffffffcc",
-								"& > a > :first-of-type": {
-									height: "20px",
-									weight: "20px",
-								}
-							},
-							"&>button>li:hover": {
-								backgroundColor: "#ffffff14",
-								cursor: "pointer",
-							},
-							borderTop: "1px solid #2A4257",
-						}}
-					>
-						{group.items.map((item) => (
-							<Tooltip arrow key={item.id} title={item.text} placement="right">
-								<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
-									<li>
-										<Link href={item.url} passHref>
-											<a href="just-a-placeholder">
-												{IconLib[item.icon]}
-											</a>
-										</Link>
-									</li>
-								</ButtonBase>
-							</Tooltip>
-						))}
-					</Box>
-				)
-			else
-				throw new Error("Wrong-Menu-DataType")
-		})}
-	</PerfectScrollbar>
-)
+				else
+					throw new Error("Wrong-Menu-DataType")
+			})}
+		</PerfectScrollbar>
+	)
+}
 SideBarContentCollapsed.propTypes = { data: PropTypes.array }
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
+function SideBar({ homeUrl, settingsUrl, settingsTooltip, data = [] }) {
 	const { showSideBar, isSmallScreen, isSideBarExpanded } = useSelector(getUiSettings)
 	const dispatch = useDispatch()
 	return (
@@ -297,8 +303,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 					homeUrl={homeUrl}
 					settingsUrl={settingsUrl}
 					settingsTooltip={settingsTooltip}
-					isExpanded={isSideBarExpanded}
-				/>
+					isExpanded={isSideBarExpanded} />
 
 				{isSideBarExpanded
 					? <SideBarContentExpanded data={data} />
@@ -339,8 +344,7 @@ const SideBar = ({ homeUrl, settingsUrl, settingsTooltip, data = [] }) => {
 					width: "100%",
 					height: "100%"
 				}}
-				onClick={() => { dispatch(setShowSideBar(false)) }}
-			/>
+				onClick={() => { dispatch(setShowSideBar(false)) }} />
 
 		</>
 	)

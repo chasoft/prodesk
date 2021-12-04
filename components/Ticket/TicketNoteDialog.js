@@ -74,7 +74,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
+function TicketNoteDialog({ ticket, departments, open, setOpen }) {
 	const theme = useTheme()
 	dayjs.extend(relativeTime)
 	// const dispatch = useDispatch()
@@ -86,8 +86,7 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 	const [updateTicket] = useUpdateTicketMutation()
 
 	const {
-		userList: allAdminProfiles = [],
-		isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
 		USERGROUP.ADMIN.code,
@@ -181,8 +180,7 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 					}}>
 						<TextEditor
 							value={ticket.note.content}
-							placeholder="Write anything you want... this is a note field of the ticket"
-						/>
+							placeholder="Write anything you want... this is a note field of the ticket" />
 					</Box>
 
 					{ticket.note.content
@@ -210,12 +208,10 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 							color="primary"
 							onClick={handleSaveTicketNote}
 							sx={{ px: 4, minWidth: "100px" }}
-							disabled={
-								isLoadingAllAdminProfiles
+							disabled={isLoadingAllAdminProfiles
 								|| trimEditorData === ""
 								|| trimEditorData === "\\"
-								|| trimEditorData === trim(ticket.note.content)
-							}
+								|| trimEditorData === trim(ticket.note.content)}
 						>
 							Save
 						</Button>
@@ -232,13 +228,12 @@ const TicketNoteDialog = ({ ticket, departments, open, setOpen }) => {
 						borderBottomRightRadius: "0.5rem",
 						borderTop: "1px solid",
 						borderTopColor: "divider"
-					}} >
+					}}>
 						<Chip
 							size="small"
 							label="Note"
 							color="warning"
-							sx={{ mr: 2 }}
-						/>
+							sx={{ mr: 2 }} />
 						<Typography sx={{ flexGrow: 1 }}>
 							Some note here for this feature......
 						</Typography>

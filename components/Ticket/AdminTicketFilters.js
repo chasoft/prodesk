@@ -97,7 +97,7 @@ export const TICKET_INBOXES_LIST = [
 	}
 ]
 
-const FilterTicketInbox = () => {
+function FilterTicketInbox() {
 	const dispatch = useDispatch()
 	const { ticketCounter, filteredByInbox } = useSelector(getUiSettings)
 
@@ -136,7 +136,7 @@ const FilterTicketInbox = () => {
 	)
 }
 
-export const FilterTicketDepartments = () => {
+export function FilterTicketDepartments() {
 	const dispatch = useDispatch()
 	const { filteredByDepartment } = useSelector(getUiSettings)
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
@@ -179,7 +179,7 @@ export const FilterTicketDepartments = () => {
 	)
 }
 
-export const FilterTicketGroupBy = ({ groupBy, sx }) => {
+export function FilterTicketGroupBy({ groupBy, sx }) {
 	const dispatch = useDispatch()
 	const { filteredGroupBy } = useSelector(getUiSettings)
 	return (
@@ -209,7 +209,7 @@ FilterTicketGroupBy.propTypes = {
 	sx: PropTypes.object
 }
 
-export const FilterTicketStatus = () => {
+export function FilterTicketStatus() {
 	const dispatch = useDispatch()
 	const { filteredByStatusRaw } = useSelector(getUiSettings)
 	const handleSelectTicketStatus = (e) => {
@@ -224,76 +224,57 @@ export const FilterTicketStatus = () => {
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Status</Typography>
 			<FormGroup>
 				<FormControlLabel
-					control={
-						<CustomCheckbox
-							checked={statusCount === 4}
-							indeterminate={(statusCount > 0) && (statusCount < 4)}
-							onChange={() => {
-								if (statusCount < 4)
-									dispatch(setSelectedStatusRaw({
-										[TICKET_STATUS.OPEN]: true,
-										[TICKET_STATUS.PENDING]: true,
-										[TICKET_STATUS.REPLIED]: true,
-										[TICKET_STATUS.CLOSED]: true
-									}))
-								else
-									dispatch(setSelectedStatusRaw({
-										[TICKET_STATUS.OPEN]: false,
-										[TICKET_STATUS.PENDING]: false,
-										[TICKET_STATUS.REPLIED]: false,
-										[TICKET_STATUS.CLOSED]: false
-									}))
-							}}
-						/>
-					}
-					label={STATUS_FILTER.ANY}
-				/>
+					control={<CustomCheckbox
+						checked={statusCount === 4}
+						indeterminate={(statusCount > 0) && (statusCount < 4)}
+						onChange={() => {
+							if (statusCount < 4)
+								dispatch(setSelectedStatusRaw({
+									[TICKET_STATUS.OPEN]: true,
+									[TICKET_STATUS.PENDING]: true,
+									[TICKET_STATUS.REPLIED]: true,
+									[TICKET_STATUS.CLOSED]: true
+								}))
+
+							else
+								dispatch(setSelectedStatusRaw({
+									[TICKET_STATUS.OPEN]: false,
+									[TICKET_STATUS.PENDING]: false,
+									[TICKET_STATUS.REPLIED]: false,
+									[TICKET_STATUS.CLOSED]: false
+								}))
+						}} />}
+					label={STATUS_FILTER.ANY} />
 				<FormControlLabel
-					control={
-						<CustomCheckbox
-							checked={filteredByStatusRaw[TICKET_STATUS.OPEN]}
-							onChange={handleSelectTicketStatus}
-							name={TICKET_STATUS.OPEN}
-						/>
-					}
-					label={STATUS_FILTER.OPEN}
-				/>
+					control={<CustomCheckbox
+						checked={filteredByStatusRaw[TICKET_STATUS.OPEN]}
+						onChange={handleSelectTicketStatus}
+						name={TICKET_STATUS.OPEN} />}
+					label={STATUS_FILTER.OPEN} />
 				<FormControlLabel
-					control={
-						<CustomCheckbox
-							name={TICKET_STATUS.PENDING}
-							onChange={handleSelectTicketStatus}
-							checked={filteredByStatusRaw[TICKET_STATUS.PENDING]}
-						/>
-					}
-					label={STATUS_FILTER.PENDING}
-				/>
+					control={<CustomCheckbox
+						name={TICKET_STATUS.PENDING}
+						onChange={handleSelectTicketStatus}
+						checked={filteredByStatusRaw[TICKET_STATUS.PENDING]} />}
+					label={STATUS_FILTER.PENDING} />
 				<FormControlLabel
-					control={
-						<CustomCheckbox
-							name={TICKET_STATUS.REPLIED}
-							onChange={handleSelectTicketStatus}
-							checked={filteredByStatusRaw[TICKET_STATUS.REPLIED]}
-						/>
-					}
-					label={STATUS_FILTER.REPLIED}
-				/>
+					control={<CustomCheckbox
+						name={TICKET_STATUS.REPLIED}
+						onChange={handleSelectTicketStatus}
+						checked={filteredByStatusRaw[TICKET_STATUS.REPLIED]} />}
+					label={STATUS_FILTER.REPLIED} />
 				<FormControlLabel
-					control={
-						<CustomCheckbox
-							name={TICKET_STATUS.CLOSED}
-							onChange={handleSelectTicketStatus}
-							checked={filteredByStatusRaw[TICKET_STATUS.CLOSED]}
-						/>
-					}
-					label={STATUS_FILTER.CLOSED}
-				/>
+					control={<CustomCheckbox
+						name={TICKET_STATUS.CLOSED}
+						onChange={handleSelectTicketStatus}
+						checked={filteredByStatusRaw[TICKET_STATUS.CLOSED]} />}
+					label={STATUS_FILTER.CLOSED} />
 			</FormGroup>
 		</>
 	)
 }
 
-export const FilterTicketPriorities = () => {
+export function FilterTicketPriorities() {
 	const dispatch = useDispatch()
 	const { filteredByPriority } = useSelector(getUiSettings)
 	return (
@@ -324,15 +305,15 @@ export const FilterTicketPriorities = () => {
 	)
 }
 
-const FilterTicketLabels = () => {
+function FilterTicketLabels() {
 	const dispatch = useDispatch()
 	const { filteredByLabel } = useSelector(getUiSettings)
 	const { data: labels, isLoading: isLoadingLabels } = useGetLabelsQuery()
 
-	if (size(labels) === 0 || isLoadingLabels) return null
+	if (size(labels) === 0 || isLoadingLabels)
+		return null
 
 	// const labelSettings = keyBy(labels, "lid")
-
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Labels</Typography>
@@ -373,7 +354,7 @@ const FilterTicketLabels = () => {
 	)
 }
 
-export const FilterTicketHasWord = () => {
+export function FilterTicketHasWord() {
 	const dispatch = useDispatch()
 	const { filteredByWord } = useSelector(getUiSettings)
 	return (
@@ -382,11 +363,9 @@ export const FilterTicketHasWord = () => {
 			<FormControl variant="outlined">
 				<OutlinedInput
 					placeholder="Type keywords"
-					endAdornment={
-						<InputAdornment position="end">
-							<SearchIcon fontSize="small" />
-						</InputAdornment>
-					}
+					endAdornment={<InputAdornment position="end">
+						<SearchIcon fontSize="small" />
+					</InputAdornment>}
 					aria-describedby="ticket-search-term"
 					margin="dense"
 					value={filteredByWord}
@@ -410,8 +389,7 @@ export const FilterTicketHasWord = () => {
 						"&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root": {
 							color: "primary.main"
 						}
-					}}
-				/>
+					}} />
 			</FormControl>
 		</Box>
 	)

@@ -36,7 +36,7 @@ import { auth } from "."
  * INIT                                                          *
  *****************************************************************/
 
-export const signOut = ({ enqueueSnackbar, dispatch }) => {
+export function signOut({ enqueueSnackbar, dispatch }) {
 	signOutApp(auth)
 	reduxBatch(() => {
 		dispatch(logoutSuccess())

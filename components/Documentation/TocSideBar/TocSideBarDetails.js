@@ -107,7 +107,7 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 	color: theme.palette.grey[500]
 }))
 
-const InputBaseStyled = (props) => {
+function InputBaseStyled(props) {
 	const [minRows, setMinRows] = useState(1)
 	return (
 		<TextField
@@ -120,12 +120,11 @@ const InputBaseStyled = (props) => {
 				color: "grey.800",
 				borderColor: "divider",
 			}}
-			{...props}
-		/>
+			{...props} />
 	)
 }
 
-const PublishStatusSwitch = ({ status, setStatus }) => {
+function PublishStatusSwitch({ status, setStatus }) {
 	const isPublished = status === DOC_STATUS.PUBLISHED
 	dayjs.extend(relativeTime)
 	return (
@@ -137,8 +136,7 @@ const PublishStatusSwitch = ({ status, setStatus }) => {
 				else
 					setStatus(DOC_STATUS.DRAFT)
 			}}
-			stateDescription={["DRAFT", "PUBLISHED"]}
-		/>
+			stateDescription={["DRAFT", "PUBLISHED"]} />
 	)
 }
 PublishStatusSwitch.propTypes = {
@@ -146,7 +144,7 @@ PublishStatusSwitch.propTypes = {
 	setStatus: PropTypes.func.isRequired,
 }
 
-const Tags = ({ tags, setTags }) => {
+function Tags({ tags, setTags }) {
 	const [inputText, setInputText] = useState("")
 	const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
 	const checkedIcon = <CheckBoxIcon fontSize="small" />
@@ -161,52 +159,44 @@ const Tags = ({ tags, setTags }) => {
 			getOptionLabel={(option) => option}
 			value={tags}
 			noOptionsText="Enter to add new tag"
-			renderOption={(props, tag, { selected }) =>
-				<li {...props}>
-					<Checkbox
-						icon={icon}
-						checkedIcon={checkedIcon}
-						style={{ marginRight: 8 }}
-						checked={selected}
-					/>
-					{tag}
-				</li>}
-			renderInput={(params) =>
-				<TextField
-					{...params}
-					variant="standard"
-					value={inputText}
-					onChange={(e) => {
+			renderOption={(props, tag, { selected }) => <li {...props}>
+				<Checkbox
+					icon={icon}
+					checkedIcon={checkedIcon}
+					style={{ marginRight: 8 }}
+					checked={selected} />
+				{tag}
+			</li>}
+			renderInput={(params) => <TextField
+				{...params}
+				variant="standard"
+				value={inputText}
+				onChange={(e) => {
+					e.stopPropagation()
+					setInputText(e.target.value)
+				}}
+				onKeyPress={(e) => {
+					e.stopPropagation()
+					if (e.key === "Enter") {
+						if (tags.includes(inputText) === false && !!inputText)
+							setTags([...tags, inputText].sort(), "tags")
+						setInputText("")
+					}
+				}} />}
+			renderTags={(tags, getTagProps) => tags.map((selectedTag, index) => (
+				<Chip
+					key={index}
+					label={selectedTag}
+					{...getTagProps({ index })}
+					onDelete={(e) => {
 						e.stopPropagation()
-						setInputText(e.target.value)
-					}}
-					onKeyPress={(e) => {
-						e.stopPropagation()
-						if (e.key === "Enter") {
-							if (tags.includes(inputText) === false && !!inputText)
-								setTags([...tags, inputText].sort(), "tags")
-							setInputText("")
-						}
-					}}
-				/>}
-			renderTags={(tags, getTagProps) =>
-				tags.map((selectedTag, index) => (
-					<Chip
-						key={index}
-						label={selectedTag}
-						{...getTagProps({ index })}
-						onDelete={(e) => {
-							e.stopPropagation()
-							const tagIndex = tags.findIndex(tag => tag === selectedTag)
-							const newTags = [...tags]
-							newTags.splice(tagIndex, 1)
-							setTags(newTags, "tags")
-						}}
-					/>
-				))
-			}
-			onChange={(event, value) => { setTags(value, "tags") }}
-		/>
+						const tagIndex = tags.findIndex(tag => tag === selectedTag)
+						const newTags = [...tags]
+						newTags.splice(tagIndex, 1)
+						setTags(newTags, "tags")
+					}} />
+			))}
+			onChange={(event, value) => { setTags(value, "tags") }} />
 	)
 }
 Tags.propTypes = {
@@ -214,7 +204,7 @@ Tags.propTypes = {
 	setTags: PropTypes.func.isRequired
 }
 
-const PublishStatusSection = ({ localCache, setLocalCache }) => {
+function PublishStatusSection({ localCache, setLocalCache }) {
 	const { currentUser } = useSelector(getAuth)
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
@@ -225,8 +215,7 @@ const PublishStatusSection = ({ localCache, setLocalCache }) => {
 
 				<PublishStatusSwitch
 					status={localCache.status}
-					setStatus={(status) => setLocalCache(status, "status")}
-				/>
+					setStatus={(status) => setLocalCache(status, "status")} />
 			</Box>
 			{(localCache.status === DOC_STATUS.PUBLISHED) &&
 				<Typography variant="caption" sx={{
@@ -246,49 +235,47 @@ PublishStatusSection.propTypes = {
 	setLocalCache: PropTypes.func.isRequired
 }
 
-const CancelSaveButtons = ({ isModified, saveAction, handleClose }) => (
-	<Box sx={{
-		display: "flex",
-		justifyContent: "space-between",
-		mt: 3, pt: 3,
-		borderTop: "1px solid transparent",
-		borderColor: "divider",
-	}}>
-		<Button
-			onClick={() => { handleClose() }}
-			variant="outlined"
-			color="primary"
-			sx={{ px: 3, minWidth: "100px" }}
-		>
-			Cancel
-		</Button>
-		<Button
-			// type="submit"
-			variant="contained"
-			color="primary"
-			disabled={!isModified}
-			sx={{ px: 3, minWidth: "100px" }}
-			onClick={() => { saveAction() }}
-		>
-			Save
-		</Button>
-	</Box>
-)
+function CancelSaveButtons({ isModified, saveAction, handleClose }) {
+	return (
+		<Box sx={{
+			display: "flex",
+			justifyContent: "space-between",
+			mt: 3, pt: 3,
+			borderTop: "1px solid transparent",
+			borderColor: "divider",
+		}}>
+			<Button
+				onClick={() => { handleClose() }}
+				variant="outlined"
+				color="primary"
+				sx={{ px: 3, minWidth: "100px" }}
+			>
+				Cancel
+			</Button>
+			<Button
+				// type="submit"
+				variant="contained"
+				color="primary"
+				disabled={!isModified}
+				sx={{ px: 3, minWidth: "100px" }}
+				onClick={() => { saveAction() }}
+			>
+				Save
+			</Button>
+		</Box>
+	)
+}
 CancelSaveButtons.propTypes = {
 	isModified: PropTypes.bool.isRequired,
 	saveAction: PropTypes.func.isRequired,
 	handleClose: PropTypes.func.isRequired
 }
 
-export const AddEmojiButton = ({ emoji, handleSelectEmoji, removeEmoji, flexDirection, children }) => {
+export function AddEmojiButton({ emoji, handleSelectEmoji, removeEmoji, flexDirection, children }) {
 
 	const [
-		PopupContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		PopupContainer, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = usePopupContainer()
 
@@ -362,8 +349,7 @@ export const AddEmojiButton = ({ emoji, handleSelectEmoji, removeEmoji, flexDire
 					onEmojiClick={(event, { emoji }) => {
 						handleSelectEmoji(emoji)
 						handleClose(event)
-					}}
-				/>
+					}} />
 
 			</PopupContainer>
 		</>
@@ -378,19 +364,15 @@ AddEmojiButton.propTypes = {
 	children: PropTypes.node
 }
 
-const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) => {
+function DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
 	const [message, setMessage] = useState({ code: "", message: "" })
 	const [uploadFile, { uploading, progress }] = useUploadFile()
 
 	const [updateDoc] = useUpdateDocMutation()
 
 	const [
-		PopupContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		PopupContainer, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = usePopupContainer()
 
@@ -404,7 +386,8 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 	const handleSelectAndUploadFile = async (e) => {
 		const file = e.target.files[0]
 
-		if (!file) return
+		if (!file)
+			return
 
 		if (file.size > 1024000) {
 			setMessage({
@@ -486,8 +469,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 								"& >img": {
 									objectFit: "contain"
 								}
-							}}
-						/>
+							}} />
 
 						{photo && <IconButton
 							id="removePhotoBtn"
@@ -512,8 +494,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 							"& > div > p": {
 								fontSize: "0.8rem",
 							}
-						}}
-					/>}
+						}} />}
 				</Box>
 
 				<Box sx={{
@@ -545,8 +526,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 							aria-describedby="my-helper-text"
 							type="file"
 							accept="image/*"
-							onChange={handleSelectAndUploadFile}
-						/>
+							onChange={handleSelectAndUploadFile} />
 					</FormControl>
 
 					{photo
@@ -577,8 +557,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 										pl: 3,
 										textAlign: "center",
 										color: emphasize(photoColor ? photoColor : "#D3D3D3", 1)
-									}}
-								/>
+									}} />
 								: <span>
 									Click here to choose<br /> background color
 								</span>}
@@ -590,10 +569,9 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 
 			{message.code
 				? <Typography
-					color={
-						(message.code === CODE.FAILED)
-							? "error.main"
-							: "primary.main"}
+					color={(message.code === CODE.FAILED)
+						? "error.main"
+						: "primary.main"}
 				>
 					{message.message}
 				</Typography>
@@ -610,8 +588,7 @@ const DocPhoto = ({ username, docId, photo = "", photoColor, setPhotoColor }) =>
 			>
 				<HexColorPicker
 					color={photoColor ? photoColor : "#D3D3D3"}
-					onChange={setPhotoColor}
-				/>
+					onChange={setPhotoColor} />
 			</PopupContainer>
 		</>
 	)
@@ -624,24 +601,21 @@ DocPhoto.propTypes = {
 	setPhotoColor: PropTypes.func,
 }
 
-const DetailsFormCategory = ({ docItem, handleClose }) => {
+function DetailsFormCategory({ docItem, handleClose }) {
 	const { currentUser } = useSelector(getAuth)
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
 	const {
-		data: autoGenerateSlugFromTitle,
-		isLoading: isLoadingSettings
+		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
-	const isModified =
-		docItem.title !== localCache.title
+	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
 		|| isEqual(docItem.tags, localCache.tags) === false
@@ -707,8 +681,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 						if (autoGenerateSlugFromTitle) {
 							setLocalCache(slugify(e.target.value), "slug")
 						}
-					}}
-				/>
+					}} />
 
 				<Box sx={{
 					display: "flex",
@@ -728,9 +701,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 									await updateAppSettings({
 										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
 									})
-								}}
-							/>}
-						/>}
+								}} />} />}
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -742,8 +713,7 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 							backgroundColor: "action.hover",
 							borderRadius: "0.25rem"
 						})
-					}}
-				/>
+					}} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Description
@@ -752,18 +722,14 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 					id="cat-description" value={localCache.description}
 					multiline={true}
 					// minRows={3}
-					onChange={
-						(e) => setLocalCache(e.target.value, "description")
-					}
-				/>
+					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Tags
 				</TypographyHeader>
 				<Tags
 					tags={localCache.tags}
-					setTags={setLocalCache}
-				/>
+					setTags={setLocalCache} />
 
 				<DocPhoto
 					username={currentUser.username}
@@ -772,21 +738,18 @@ const DetailsFormCategory = ({ docItem, handleClose }) => {
 					photoColor={localCache.photoColor}
 					setPhotoColor={(color) => {
 						setLocalCache(color, "photoColor")
-					}}
-				/>
+					}} />
 
 				<PublishStatusSection
 					localCache={localCache}
-					setLocalCache={setLocalCache}
-				/>
+					setLocalCache={setLocalCache} />
 
 			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={handleSaveCategoryDetails}
-			/>
+				saveAction={handleSaveCategoryDetails} />
 		</form>
 	)
 }
@@ -795,24 +758,21 @@ DetailsFormCategory.propTypes = {
 	handleClose: PropTypes.func
 }
 
-const DetailsFormSubCategory = ({ docItem, handleClose }) => {
+function DetailsFormSubCategory({ docItem, handleClose }) {
 	const { currentUser } = useSelector(getAuth)
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
 	const {
-		data: autoGenerateSlugFromTitle,
-		isLoading: isLoadingSettings
+		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
-	const isModified =
-		docItem.title !== localCache.title
+	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
 		|| isEqual(docItem.tags, localCache.tags) === false
@@ -823,7 +783,8 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 	const handleSaveSubCategoryDetails = async () => {
 		//new data for current editing item
 		const updatedDocItem = {
-			docId: docItem.docId,	//must included
+			docId: docItem.docId,
+
 			//
 			slug: localCache.slug,
 			tags: localCache.tags,
@@ -878,8 +839,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 						if (autoGenerateSlugFromTitle) {
 							setLocalCache(slugify(e.target.value), "slug")
 						}
-					}}
-				/>
+					}} />
 
 				<Box sx={{
 					display: "flex",
@@ -899,9 +859,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 									await updateAppSettings({
 										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
 									})
-								}}
-							/>}
-						/>}
+								}} />} />}
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -913,8 +871,7 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 							backgroundColor: "action.hover",
 							borderRadius: "0.25rem"
 						})
-					}}
-				/>
+					}} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Description
@@ -922,18 +879,14 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="cat-description" value={localCache.description}
 					multiline={true}
-					onChange={
-						(e) => setLocalCache(e.target.value, "description")
-					}
-				/>
+					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Tags
 				</TypographyHeader>
 				<Tags
 					tags={localCache.tags}
-					setTags={setLocalCache}
-				/>
+					setTags={setLocalCache} />
 
 				<DocPhoto
 					username={currentUser.username}
@@ -942,21 +895,18 @@ const DetailsFormSubCategory = ({ docItem, handleClose }) => {
 					photoColor={localCache.photoColor}
 					setPhotoColor={(color) => {
 						setLocalCache(color, "photoColor")
-					}}
-				/>
+					}} />
 
 				<PublishStatusSection
 					localCache={localCache}
-					setLocalCache={setLocalCache}
-				/>
+					setLocalCache={setLocalCache} />
 
 			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={handleSaveSubCategoryDetails}
-			/>
+				saveAction={handleSaveSubCategoryDetails} />
 		</form>
 	)
 }
@@ -965,23 +915,20 @@ DetailsFormSubCategory.propTypes = {
 	handleClose: PropTypes.func
 }
 
-const DetailsFormDoc = ({ docItem, handleClose }) => {
+function DetailsFormDoc({ docItem, handleClose }) {
 	const { currentUser } = useSelector(getAuth)
 	const [updateDoc] = useUpdateDocMutation()
 
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 	const {
-		data: autoGenerateSlugFromTitle,
-		isLoading: isLoadingSettings
+		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
-	const isModified =
-		docItem.title !== localCache.title
+	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| isEqual(docItem.tags, localCache.tags) === false
 		|| docItem.status !== localCache.status
@@ -991,7 +938,8 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 	const handleSaveDocDetails = async () => {
 		//prepare the data
 		const newDocMeta = {
-			docId: docItem.docId, 	//must be included
+			docId: docItem.docId,
+
 			//
 			title: localCache.title,
 			slug: localCache.slug,
@@ -1018,7 +966,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 		//update DB
 		await updateDoc({
 			docItem: newDocMeta,
-			affectedItems: [/* no affectedItems! */]
+			affectedItems: [ /* no affectedItems! */]
 		})
 	}
 
@@ -1047,8 +995,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 						if (autoGenerateSlugFromTitle) {
 							setLocalCache(slugify(e.target.value), "slug")
 						}
-					}}
-				/>
+					}} />
 
 				<Box sx={{
 					display: "flex",
@@ -1068,9 +1015,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 									await updateAppSettings({
 										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
 									})
-								}}
-							/>}
-						/>}
+								}} />} />}
 				</Box>
 				<InputBaseStyled
 					id="doc-slug" value={localCache.slug}
@@ -1081,8 +1026,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 							backgroundColor: "action.hover",
 							borderRadius: "0.25rem"
 						})
-					}}
-				/>
+					}} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Tags
@@ -1090,8 +1034,7 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 
 				<Tags
 					tags={localCache?.tags ?? []}
-					setTags={setLocalCache}
-				/>
+					setTags={setLocalCache} />
 
 				<DocPhoto
 					username={currentUser.username}
@@ -1100,21 +1043,18 @@ const DetailsFormDoc = ({ docItem, handleClose }) => {
 					photoColor={localCache.photoColor}
 					setPhotoColor={(color) => {
 						setLocalCache(color, "photoColor")
-					}}
-				/>
+					}} />
 
 				<PublishStatusSection
 					localCache={localCache}
-					setLocalCache={setLocalCache}
-				/>
+					setLocalCache={setLocalCache} />
 
 			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={handleSaveDocDetails}
-			/>
+				saveAction={handleSaveDocDetails} />
 		</form>
 	)
 }
@@ -1123,17 +1063,15 @@ DetailsFormDoc.propTypes = {
 	handleClose: PropTypes.func
 }
 
-const DetailsFormExternal = ({ docItem, handleClose }) => {
+function DetailsFormExternal({ docItem, handleClose }) {
 	const { currentUser } = useSelector(getAuth)
 	const [updateDoc] = useUpdateDocMutation()
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
-	const isModified =
-		docItem.title !== localCache.title
+	const isModified = docItem.title !== localCache.title
 		|| docItem.url !== localCache.url
 		|| docItem.description !== localCache.description
 		|| isEqual(docItem.tags, localCache.tags) === false
@@ -1144,7 +1082,8 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 	const handleSaveExternalDetails = async () => {
 		//prepare the data
 		const newExternalMeta = {
-			docId: docItem.docId, //must included here
+			docId: docItem.docId,
+
 			//
 			url: localCache.url,
 			tags: localCache.tags,
@@ -1171,7 +1110,7 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 		//update DB
 		await updateDoc({
 			docItem: newExternalMeta,
-			affectedItems: [/* no affectedItems */]
+			affectedItems: [ /* no affectedItems */]
 		})
 	}
 
@@ -1195,20 +1134,14 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 				<InputBaseStyled
 					id="external-title"
 					value={localCache.title}
-					onChange={
-						(e) => setLocalCache(e.target.value, "title")
-					}
-				/>
+					onChange={(e) => setLocalCache(e.target.value, "title")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					url
 				</TypographyHeader>
 				<InputBaseStyled
 					id="external-url" value={localCache.url}
-					onChange={
-						(e) => setLocalCache(e.target.value, "url")
-					}
-				/>
+					onChange={(e) => setLocalCache(e.target.value, "url")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Description
@@ -1217,18 +1150,14 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 					id="external-description" value={localCache.description}
 					multiline={true}
 					// minRows={3}
-					onChange={
-						(e) => setLocalCache(e.target.value, "description")
-					}
-				/>
+					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Tags
 				</TypographyHeader>
 				<Tags
 					tags={localCache?.tags ?? []}
-					setTags={setLocalCache}
-				/>
+					setTags={setLocalCache} />
 
 				<DocPhoto
 					username={currentUser.username}
@@ -1237,21 +1166,18 @@ const DetailsFormExternal = ({ docItem, handleClose }) => {
 					photoColor={localCache.photoColor}
 					setPhotoColor={(color) => {
 						setLocalCache(color, "photoColor")
-					}}
-				/>
+					}} />
 
 				<PublishStatusSection
 					localCache={localCache}
-					setLocalCache={setLocalCache}
-				/>
+					setLocalCache={setLocalCache} />
 
 			</PerfectScrollbar>
 
 			<CancelSaveButtons
 				isModified={isModified}
 				handleClose={handleClose}
-				saveAction={handleSaveExternalDetails}
-			/>
+				saveAction={handleSaveExternalDetails} />
 		</form>
 	)
 }
@@ -1265,18 +1191,15 @@ DetailsFormExternal.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDetails = ({ handleClose }) => {
+function TocSideBarDetails({ handleClose }) {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	const {
-		isSideBarExpanded,
-		sideBarLeft,
-		showTocSideBarDetails
+		isSideBarExpanded, sideBarLeft, showTocSideBarDetails
 	} = useSelector(getUiSettings)
 
 	const {
-		data: docItem,
-		isLoading: isLoadingDocItem
+		data: docItem, isLoading: isLoadingDocItem
 	} = useGetDoc(activeDocIdOfTocSideBarDetails)
 
 	return (
@@ -1349,42 +1272,38 @@ const TocSideBarDetails = ({ handleClose }) => {
 								<RightMenuItemAddNewDoc
 									sx={{ px: 3 }}
 									categoryId={docItem.categoryId}
-									subCategoryId={docItem?.subCategoryId}
-								/>
+									subCategoryId={docItem?.subCategoryId} />
 
 								{/* <RightMenuItemImport
-									sx={{ px: 3 }}
-									targetDocItem={docItem}
-								/> */}
+                            sx={{ px: 3 }}
+                            targetDocItem={docItem}
+                        /> */}
 
 								{(docItem.type === DOC_TYPE.CATEGORY) &&
 									<RightMenuItemDelete
 										id="RightMenuItemDelete-category"
 										targetDocItem={docItem}
 										title="Delete this category"
-										sx={{ px: 3 }}
-									/>}
+										sx={{ px: 3 }} />}
 
 								{(docItem.type === DOC_TYPE.SUBCATEGORY) &&
 									<RightMenuItemDelete
 										id="RightMenuItemDelete-subcategory"
 										sx={{ px: 3 }}
 										targetDocItem={docItem}
-										title="Delete this sub-category"
-									/>}
+										title="Delete this sub-category" />}
 
 								{/* {(docItem.type === DOC_TYPE.DOC) &&
-									<RightMenuItemExportPDF
-										sx={{ px: 3 }}
-										targetDocItem={docItem}
-									/>} */}
+                            <RightMenuItemExportPDF
+                                sx={{ px: 3 }}
+                                targetDocItem={docItem}
+                            />} */}
 
 								{(docItem.type === DOC_TYPE.DOC || docItem.type === DOC_TYPE.EXTERNAL) &&
 									<RightMenuItemDelete
 										id="RightMenuItemDelete-document"
 										sx={{ px: 3 }}
-										targetDocItem={docItem}
-									/>}
+										targetDocItem={docItem} />}
 
 							</Box>
 						</div>
@@ -1402,8 +1321,7 @@ const TocSideBarDetails = ({ handleClose }) => {
 					minWidth: "100%",
 					height: "100%",
 					backgroundColor: "action.disabled",
-				}}
-			/>
+				}} />
 		</>
 	)
 }

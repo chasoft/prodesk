@@ -45,7 +45,7 @@ import BatteryFullIcon from "@mui/icons-material/BatteryFull"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesList = ({ cannedReplies }) => {
+function CannedRepliesList({ cannedReplies }) {
 	dayjs.extend(relativeTime)
 	const dispatch = useDispatch()
 	return (
@@ -72,31 +72,27 @@ const CannedRepliesList = ({ cannedReplies }) => {
 					</ListItemIcon>
 					<ListItemText
 						primary={cannedReply.description}
-						secondary={
-							<>
-								{cannedReply.content.substring(0, 70)}
-								<span style={{
-									display: "block",
-									marginTop: "6px",
-									fontSize: "0.75rem"
-								}}>
-									Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
-									<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
-								</span>
-							</>
-						}
+						secondary={<>
+							{cannedReply.content.substring(0, 70)}
+							<span style={{
+								display: "block",
+								marginTop: "6px",
+								fontSize: "0.75rem"
+							}}>
+								Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+								<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
+							</span>
+						</>}
 						primaryTypographyProps={{
 							variant: "h4",
 							marginBottom: "0"
 						}}
 						secondaryTypographyProps={{
 							variant: "body1"
-						}}
-					/>
+						}} />
 				</ListItemButton>
 
-			))
-			}
+			))}
 		</List>
 	)
 }

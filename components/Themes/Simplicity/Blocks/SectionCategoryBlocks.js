@@ -37,13 +37,13 @@ import { DOC_STATUS } from "@helpers/constants"
  * INIT                                                          *
  *****************************************************************/
 
-export const SectionCategoryBlocks = () => {
+export function SectionCategoryBlocks() {
 	const {
-		data: list,
-		isLoading
+		data: list, isLoading
 	} = useGetDocsCategoriesList()
 
-	if (isLoading) return <CircularProgressBox minHeight="70vh" />
+	if (isLoading)
+		return <CircularProgressBox minHeight="70vh" />
 
 	const sortedList = orderBy(list, ["position"])
 
@@ -59,7 +59,8 @@ export const SectionCategoryBlocks = () => {
 					padding={{ xs: "0 20px", sm: "0 40px", md: "0" }}
 				>
 					{sortedList.map(category => {
-						if (category.status === DOC_STATUS.DRAFT) return null
+						if (category.status === DOC_STATUS.DRAFT)
+							return null
 						return (
 							<Box key={category.docId} sx={{
 								backgroundImage: `url(${category.photo ? category.photo : ""})`,
@@ -97,7 +98,7 @@ export const SectionCategoryBlocks = () => {
 					})}
 				</Box>
 
-			</CustomContainer >
-		</Box >
+			</CustomContainer>
+		</Box>
 	)
 }

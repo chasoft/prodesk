@@ -78,7 +78,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime"
  * INIT                                                          *
  *****************************************************************/
 
-const MenuItemStyled = ({ ItemIcon, children, ...otherProps }) => {
+function MenuItemStyled({ ItemIcon, children, ...otherProps }) {
 	return (
 		<MenuItem {...otherProps}>
 			{<ItemIcon fontSize="small" style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }} />}
@@ -93,7 +93,7 @@ MenuItemStyled.propTypes = {
 	children: PropTypes.node
 }
 
-const PopupMenu = ({ ticket, allAdminProfiles }) => {
+function PopupMenu({ ticket, allAdminProfiles }) {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -101,19 +101,13 @@ const PopupMenu = ({ ticket, allAdminProfiles }) => {
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const handleCloseTicket = async () => {
@@ -175,8 +169,7 @@ const PopupMenu = ({ ticket, allAdminProfiles }) => {
 			<ReplyDialog
 				ticket={ticket}
 				showReplyDialog={showReplyDialog}
-				setShowReplyDialog={setShowReplyDialog}
-			/>
+				setShowReplyDialog={setShowReplyDialog} />
 		</>
 	)
 }
@@ -186,7 +179,7 @@ PopupMenu.propTypes = {
 	ticket: PropTypes.object
 }
 
-const TicketCreatedAt = ({ createdAt, dateTimeFormat, sx }) => {
+function TicketCreatedAt({ createdAt, dateTimeFormat, sx }) {
 	return (
 		<Box sx={{
 			display: "flex",

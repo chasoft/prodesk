@@ -99,24 +99,16 @@ const useStyles = makeStyles((theme) => ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const GeneralList = (
-	{
-		/* A list should have a title */
-		title,
-		titleHeading = "h2",
-		rightAction,
-
-		/* If a link is provided, then show it */
-		viewAllText,
-		viewAllLink,
-
-		/* A little decoration */
-		elevation = 2,
-
-		/* children are a list of GeneralListItem or GeneralListItemEmpty */
-		children
-	}
-) => {
+function GeneralList({
+	/* A list should have a title */
+	title, titleHeading = "h2", rightAction,
+	/* If a link is provided, then show it */
+	viewAllText, viewAllLink,
+	/* A little decoration */
+	elevation = 2,
+	/* children are a list of GeneralListItem or GeneralListItemEmpty */
+	children
+}) {
 	const classes = useStyles()
 	return (
 		<div className={classes.paper}>
@@ -127,15 +119,13 @@ const GeneralList = (
 					<div>{rightAction ?? ""}</div>
 				</div>
 
-				{
-					viewAllLink ?
-						<Link href={viewAllLink} className={classes.viewAll} passHref>
-							<a href="just-a-placeholder" className={classes.link}>
-								<Typography variant="button">{viewAllText}</Typography>
-							</a>
-						</Link>
-						: null
-				}
+				{viewAllLink ?
+					<Link href={viewAllLink} className={classes.viewAll} passHref>
+						<a href="just-a-placeholder" className={classes.link}>
+							<Typography variant="button">{viewAllText}</Typography>
+						</a>
+					</Link>
+					: null}
 
 				<Paper elevation={elevation} className={classes.group}>
 

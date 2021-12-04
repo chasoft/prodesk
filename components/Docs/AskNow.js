@@ -47,7 +47,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const AskNow = () => {
+function AskNow() {
 	const dispatch = useDispatch()
 	const { isSmallScreen } = useSelector(getUiSettings)
 	return (
@@ -70,7 +70,7 @@ const AskNow = () => {
 					alignItems: { xs: "flex-start", sm: "center" },
 					flexDirection: { xs: "column", sm: "row" },
 					"& > *": { mr: 2 },
-				}} >
+				}}>
 
 					<Typography>
 						<span style={{ fontWeight: 500 }}>Need help?</span> Open a ticket and we will help you.
@@ -93,7 +93,7 @@ const AskNow = () => {
 
 				</Box>
 			</Paper>
-		</Box >
+		</Box>
 	)
 }
 

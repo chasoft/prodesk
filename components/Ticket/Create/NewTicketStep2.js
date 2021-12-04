@@ -53,7 +53,7 @@ import { useGetTicketDetails } from "@components/Ticket/Create/NewTicketStepper"
  * MAIN RENDER                                                   *
  *****************************************************************/
 
-const DepartmentBlock = () => {
+function DepartmentBlock() {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery()
 	const { selectedDepartmentId } = useSelector(getNewTicket)
@@ -96,7 +96,7 @@ const DepartmentBlock = () => {
 	)
 }
 
-const PriorityBlock = () => {
+function PriorityBlock() {
 	const dispatch = useDispatch()
 	const priorities = ["Low", "Normal", "High"]
 	const { selectedPriority } = useSelector(getNewTicket)
@@ -124,13 +124,15 @@ const PriorityBlock = () => {
 	)
 }
 
-const CategoryBlock = () => {
+function CategoryBlock() {
 	const dispatch = useDispatch()
 	const { selectedCategory } = useSelector(getNewTicket)
 	const { data: categories, isLoading } = useGetCategoriesQuery()
 
-	if (isLoading) return (<div>Loading categories..</div>)
-	if (!categories?.length) return null
+	if (isLoading)
+		return (<div>Loading categories..</div>)
+	if (!categories?.length)
+		return null
 
 	const defaultCategory = categories?.find(i => i.default === true)?.name ?? ""
 
@@ -156,13 +158,15 @@ const CategoryBlock = () => {
 	)
 }
 
-const SubCategoryBlock = () => {
+function SubCategoryBlock() {
 	const dispatch = useDispatch()
 	const { selectedSubCategory } = useSelector(getNewTicket)
 	const { subCategories, defaultSubCategory, isLoading } = useGetTicketDetails()
 
-	if (isLoading) return (<div>Loading sub-categories..</div>)
-	if (subCategories.length === 0) return null
+	if (isLoading)
+		return (<div>Loading sub-categories..</div>)
+	if (subCategories.length === 0)
+		return null
 
 	return (
 		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
@@ -190,27 +194,27 @@ const SubCategoryBlock = () => {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NewTicketStep2 = () => {
+function NewTicketStep2() {
 	return (
 		<form onSubmit={(e) => { e.preventDefault() }}>
 			<Grid container spacing={4}>
-				<Grid item xs={12} sm={6} >
+				<Grid item xs={12} sm={6}>
 					<DepartmentBlock />
 				</Grid>
 
-				<Grid item xs={12} sm={6} >
+				<Grid item xs={12} sm={6}>
 					<PriorityBlock />
 				</Grid>
 
-				<Grid item xs={12} sm={6} >
+				<Grid item xs={12} sm={6}>
 					<CategoryBlock />
 				</Grid>
 
-				<Grid item xs={12} sm={6} >
+				<Grid item xs={12} sm={6}>
 					<SubCategoryBlock />
 				</Grid>
 
-			</Grid >
+			</Grid>
 		</form>
 	)
 }

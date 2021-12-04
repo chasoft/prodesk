@@ -68,7 +68,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
  * INIT                                                          *
  *****************************************************************/
 
-export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
+export function ReplyButton({ ticket, tooltip = "", disabled = false, sx }) {
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()
 	const { currentUser } = useSelector(getAuth)
@@ -87,29 +87,21 @@ export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 	])
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
 	const {
-		data: cannedReplies = [],
-		isLoading: isLoadingCannedReplies
+		data: cannedReplies = [], isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const filterCannedReplies = cannedReplies.filter(
-		cannedReply =>
-			(cannedReply.departmentId === ticket.departmentId)
+		cannedReply => (cannedReply.departmentId === ticket.departmentId)
 			&& cannedReply.full === true
 	)
 
@@ -197,38 +189,34 @@ export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 					</MenuItem>}
 
 				{(filterCannedReplies.length > 0) &&
-					filterCannedReplies.map((cannedReply) =>
-						<MenuItem
-							key={cannedReply.createdAt}
-							onClick={() => handleSubmitReplyUsingCannedReply(cannedReply.content)}
-						>
-							<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
-								<BatteryFullIcon sx={{ fill: (theme) => theme.palette.primary.light }} />
-							</Avatar>
-							<ListItemText
-								primary={cannedReply.description}
-								primaryTypographyProps={{
-									fontWeight: 500
-								}}
-								secondary={
-									<Box component="span" sx={{ whiteSpace: "normal" }}>
-										{cannedReply.content.substring(0, 110)}
-										<span style={{
-											display: "block",
-											marginTop: "6px",
-											fontSize: "0.75rem"
-										}}>
-											Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
-											<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
-										</span>
-									</Box>
-								}
-								secondaryTypographyProps={{
-									fontSize: "0.9rem",
-									maxWidth: "385px"
-								}}
-							/>
-						</MenuItem>
+					filterCannedReplies.map((cannedReply) => <MenuItem
+						key={cannedReply.createdAt}
+						onClick={() => handleSubmitReplyUsingCannedReply(cannedReply.content)}
+					>
+						<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
+							<BatteryFullIcon sx={{ fill: (theme) => theme.palette.primary.light }} />
+						</Avatar>
+						<ListItemText
+							primary={cannedReply.description}
+							primaryTypographyProps={{
+								fontWeight: 500
+							}}
+							secondary={<Box component="span" sx={{ whiteSpace: "normal" }}>
+								{cannedReply.content.substring(0, 110)}
+								<span style={{
+									display: "block",
+									marginTop: "6px",
+									fontSize: "0.75rem"
+								}}>
+									Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+									<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
+								</span>
+							</Box>}
+							secondaryTypographyProps={{
+								fontSize: "0.9rem",
+								maxWidth: "385px"
+							}} />
+					</MenuItem>
 					)}
 				<Divider key="divider_02" />
 				<MenuItem
@@ -248,8 +236,7 @@ export const ReplyButton = ({ ticket, tooltip = "", disabled = false, sx }) => {
 			<ReplyDialog
 				ticket={ticket}
 				showReplyDialog={showReplyDialog}
-				setShowReplyDialog={setShowReplyDialog}
-			/>
+				setShowReplyDialog={setShowReplyDialog} />
 		</Box>
 	)
 }
@@ -260,7 +247,7 @@ ReplyButton.propTypes = {
 	sx: PropTypes.object
 }
 
-const RepliesContainer = ({ ticket, children }) => {
+function RepliesContainer({ ticket, children }) {
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 	return (
 		<Box sx={{ margin: { xs: "1.625rem 0 0", md: "2rem 0 0" } }}>
@@ -289,10 +276,9 @@ const RepliesContainer = ({ ticket, children }) => {
 			<ReplyDialog
 				ticket={ticket}
 				showReplyDialog={showReplyDialog}
-				setShowReplyDialog={setShowReplyDialog}
-			/>
+				setShowReplyDialog={setShowReplyDialog} />
 
-		</Box >
+		</Box>
 	)
 }
 RepliesContainer.propTypes = {

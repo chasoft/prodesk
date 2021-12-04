@@ -44,7 +44,7 @@ import {
  * @param {string} username 
  * @returns docItem object
  */
-export const docItemNewDoc = (categoryId, subCategoryId, username) => {
+export function docItemNewDoc(categoryId, subCategoryId, username) {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
@@ -77,7 +77,7 @@ export const docItemNewDoc = (categoryId, subCategoryId, username) => {
  * @param {string} username
  * @returns docItem object
  */
-export const docItemNewExternal = (categoryId, subCategoryId, username) => {
+export function docItemNewExternal(categoryId, subCategoryId, username) {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
@@ -110,13 +110,13 @@ export const docItemNewExternal = (categoryId, subCategoryId, username) => {
  * @param {string} customName
  * @returns docItem object
  */
-export const docItemNewSubCategory = (categoryId, username, customName) => {
+export function docItemNewSubCategory(categoryId, username, customName) {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,
 		categoryId: categoryId,
-		subCategoryId: docId,	//this is a duplication of docId, used for grouping purpose
+		subCategoryId: docId,
 		type: DOC_TYPE.SUBCATEGORY,
 		//
 		createdBy: username,
@@ -142,12 +142,12 @@ export const docItemNewSubCategory = (categoryId, username, customName) => {
  * @param {string} customName
  * @returns docItem object
  */
-export const docItemNewCategory = (username, customName) => {
+export function docItemNewCategory(username, customName) {
 	const docId = nanoid()
 	const incNumber = uniqueId()
 	return {
 		docId: docId,
-		categoryId: docId,	//this is a duplication of docId, used for grouping purpose
+		categoryId: docId,
 		type: DOC_TYPE.CATEGORY,
 		//
 		createdBy: username,

@@ -66,7 +66,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
  * INIT                                                          *
  *****************************************************************/
 
-export const UserTicketListEmpty = ({ message }) => {
+export function UserTicketListEmpty({ message }) {
 	return (
 		<Box
 			sx={{
@@ -87,7 +87,7 @@ export const UserTicketListEmpty = ({ message }) => {
 }
 UserTicketListEmpty.propTypes = { message: PropTypes.string }
 
-export const UserTicketListItemShorten = ({ subject, link }) => {
+export function UserTicketListItemShorten({ subject, link }) {
 	return (
 		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
 			<Link href={link} passHref>
@@ -104,17 +104,18 @@ export const UserTicketListItemShorten = ({ subject, link }) => {
 					</Box>
 				</a>
 			</Link>
-		</Box >
+		</Box>
 	)
 }
 UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
 
-const TicketDateTimeSmallScreen = ({ ticket }) => {
+function TicketDateTimeSmallScreen({ ticket }) {
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
 	//Hide at bigScreen
-	if (!isSmallScreen) return null
+	if (!isSmallScreen)
+		return null
 
 	return (
 		<Box sx={{ display: "flex", flexDirection: { xs: "column" } }}>
@@ -149,12 +150,13 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 }
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
 
-const TicketDateTime = ({ ticket }) => {
+function TicketDateTime({ ticket }) {
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
 	//Hide at smallScreen
-	if (isSmallScreen) return null
+	if (isSmallScreen)
+		return null
 
 	return (
 		<Box sx={{

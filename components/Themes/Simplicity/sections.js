@@ -36,7 +36,7 @@ import SimplicityLayout from "@components/Themes/Simplicity/layout"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThemeSimplicitySections = () => {
+function ThemeSimplicitySections() {
 	return (
 		<SimplicityLayout>
 
@@ -223,7 +223,7 @@ const ThemeSimplicitySections = () => {
 
 
 
-		</SimplicityLayout >
+		</SimplicityLayout>
 	)
 }
 

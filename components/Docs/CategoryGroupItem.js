@@ -44,7 +44,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoryGroupItem = ({ header, viewAllText, viewAllLink, children }) => {
+function CategoryGroupItem({ header, viewAllText, viewAllLink, children }) {
 	return (
 		<Paper elevation={1}>
 

@@ -54,27 +54,24 @@ const DummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const FeaturedDocs = () => {
+function FeaturedDocs() {
 	return (
 		<ListGroup
 			title="Featured Docs"
 			viewAllText="View all featured docs"
 			viewAllLink="/docs/featured"
 		>
-			{
-				DummyData.map((item, idx) => {
-					return (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					)
-				})
-			}
+			{DummyData.map((item, idx) => {
+				return (
+					<PostListItem
+						key={item.docId}
+						isFirst={idx === 0} isLast={idx === DummyData.length - 1}
+						subject={item.subject}
+						excerpt={item.excerpt}
+						link={item.link}
+						metaData={item.metaData} />
+				)
+			})}
 		</ListGroup>
 	)
 }

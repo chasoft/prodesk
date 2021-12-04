@@ -39,7 +39,7 @@ import { Box, Paper } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Banner = () => {
+function Banner() {
 	return (
 		<Box sx={{ m: 1 }}>
 			<Paper elevation={2}>

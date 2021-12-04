@@ -43,7 +43,7 @@ import { Box, Paper, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
+function ListGroup({ title, viewAllText, viewAllLink, children }) {
 	return (
 		<Box
 			sx={{
@@ -89,7 +89,7 @@ const ListGroup = ({ title, viewAllText, viewAllLink, children }) => {
 				</Paper>
 
 			</div>
-		</Box >
+		</Box>
 	)
 }
 ListGroup.propTypes = {

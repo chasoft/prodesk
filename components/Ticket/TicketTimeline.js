@@ -48,7 +48,7 @@ import { styled } from "@mui/material/styles"
  * INIT                                                          *
  *****************************************************************/
 
-const TimeBlock = ({ date, time }) => {
+function TimeBlock({ date, time }) {
 	return (
 		<TimelineOppositeContent>
 			<Box
@@ -77,7 +77,7 @@ TimeBlock.propTypes = {
 	time: PropTypes.any
 }
 
-const TimeConnector = () => {
+function TimeConnector() {
 	return (
 		<TimelineSeparator>
 			<TimelineDot />
@@ -86,7 +86,7 @@ const TimeConnector = () => {
 	)
 }
 
-const TimeAuthor = ({ photoURL = "/avatar/1.png", userInfo }) => {
+function TimeAuthor({ photoURL = "/avatar/1.png", userInfo }) {
 	return (
 
 		<TimelineContent
@@ -104,8 +104,7 @@ const TimeAuthor = ({ photoURL = "/avatar/1.png", userInfo }) => {
 			>
 				<Avatar
 					alt="Remy Sharp" src={photoURL}
-					sx={{ mr: 1 }}
-				/>
+					sx={{ mr: 1 }} />
 			</Tooltip>
 
 			<Box sx={{
@@ -139,7 +138,7 @@ const TimelineItemStyled = styled(TimelineItem)({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TicketTimeline = () => {
+function TicketTimeline() {
 	return (
 		<Timeline>
 

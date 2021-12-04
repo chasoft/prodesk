@@ -37,7 +37,7 @@ import { CustomButtonOutlined } from "@components/Themes/Simplicity/Buttons/Outl
  * INIT                                                          *
  *****************************************************************/
 
-export const SectionCallOut = () => {
+export function SectionCallOut() {
 	return (
 		<Box component="section" sx={{
 			margin: "24px 0 80px 0"

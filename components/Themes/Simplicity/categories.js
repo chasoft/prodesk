@@ -45,7 +45,7 @@ import ThemeSimplicity404 from "@components/Themes/Simplicity/404"
  * INIT                                                          *
  *****************************************************************/
 
-export const CategoryListing = ({ docItem, children }) => {
+export function CategoryListing({ docItem, children }) {
 	return (
 		<Box id="category-content" sx={{
 			padding: { xs: "20", xss: "32px", md: "48px" },
@@ -96,7 +96,7 @@ CategoryListing.propTypes = {
 	children: PropTypes.node.isRequired
 }
 
-export const SubCategoriesList = ({ children }) => {
+export function SubCategoriesList({ children }) {
 	return (
 		<Box component="ul" sx={{
 			listStyle: "none",
@@ -111,7 +111,7 @@ SubCategoriesList.propTypes = {
 	children: PropTypes.node.isRequired
 }
 
-export const SubCategoryItem = ({ docItem, children }) => {
+export function SubCategoryItem({ docItem, children }) {
 	return (
 		<li id="sub-category">
 			<div style={{ display: "flex", alignItems: "center" }}>
@@ -160,7 +160,7 @@ SubCategoryItem.propTypes = {
 	children: PropTypes.node.isRequired
 }
 
-export const ArticleItem = ({ docItem }) => {
+export function ArticleItem({ docItem }) {
 	return (
 		<li id="article-item">
 			{docItem.emoji
@@ -170,11 +170,9 @@ export const ArticleItem = ({ docItem }) => {
 					: null}
 
 			<Link
-				href={
-					(docItem.type === DOC_TYPE.EXTERNAL)
-						? docItem.url ? docItem.url : "/you-have-not-provide-an-external-link"
-						: "/articles/" + docItem.docId + "-" + docItem.slug
-				}
+				href={(docItem.type === DOC_TYPE.EXTERNAL)
+					? docItem.url ? docItem.url : "/you-have-not-provide-an-external-link"
+					: "/articles/" + docItem.docId + "-" + docItem.slug}
 				passHref
 			>
 				<a href="just-a-placeholder">
@@ -190,7 +188,7 @@ ArticleItem.propTypes = {
 	docItem: PropTypes.object.isRequired,
 }
 
-export const ArticlesList = ({ children }) => {
+export function ArticlesList({ children }) {
 	return (
 		<Box component="ul" id="articles-list" sx={{
 			listStyle: "none",
@@ -226,12 +224,11 @@ ArticlesList.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThemeSimplicityCategories = ({ slug }) => {
+function ThemeSimplicityCategories({ slug }) {
 	const { currentUser } = useSelector(getAuth)
 
 	const {
-		data: docs = [],
-		isLoading: isLoadingDocs
+		data: docs = [], isLoading: isLoadingDocs
 	} = useGetDocsGrouped(slug)
 
 	console.log("Render => ThemeSimplicityCategories", { docs })
@@ -243,14 +240,16 @@ const ThemeSimplicityCategories = ({ slug }) => {
 			</SimplicityLayout>
 		)
 
-	if (docs.length === 0) return <ThemeSimplicity404 />
+	if (docs.length === 0)
+		return <ThemeSimplicity404 />
 
 	//if the very first element is not Array,
 	//it mean, this is list docs in subCategory
 	if (Array.isArray(docs[0]) === false) {
 		const subCatDetails = docs.find(doc => doc.type === DOC_TYPE.SUBCATEGORY)
 
-		if (!subCatDetails) return <ThemeSimplicity404 />
+		if (!subCatDetails)
+			return <ThemeSimplicity404 />
 
 		return (
 			<SimplicityLayout>
@@ -261,13 +260,14 @@ const ThemeSimplicityCategories = ({ slug }) => {
 					<SubCategoriesList>
 						<ArticlesList>
 							{docs.map(doc => {
-								if (doc.status === DOC_STATUS.DRAFT) return null
-								if (doc.docId === subCatDetails.docId) return null
+								if (doc.status === DOC_STATUS.DRAFT)
+									return null
+								if (doc.docId === subCatDetails.docId)
+									return null
 								return (
 									<ArticleItem
 										key={doc.docId}
-										docItem={doc}
-									/>
+										docItem={doc} />
 								)
 							})}
 						</ArticlesList>
@@ -286,7 +286,8 @@ const ThemeSimplicityCategories = ({ slug }) => {
 					/* Category Level */
 					const catDetail = cat[1]["undefined"][0] ?? docItemNewCategory(currentUser.username, "Missing category")
 
-					if (catDetail.status === DOC_STATUS.DRAFT) return null
+					if (catDetail.status === DOC_STATUS.DRAFT)
+						return null
 
 					return (
 						<CategoryListing
@@ -296,19 +297,20 @@ const ThemeSimplicityCategories = ({ slug }) => {
 							<SubCategoriesList>
 								{Object.entries(cat[1]).map((subCat) => {
 
-									if (subCat[0] === RESERVED_KEYWORDS.CAT) return null
+									if (subCat[0] === RESERVED_KEYWORDS.CAT)
+										return null
 
 									//Draw items at root level of Category
 									if (subCat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 										return (
 											<ArticlesList key={catDetail.slug + "root"}>
 												{subCat[1].map((item) => {
-													if (item.status === DOC_STATUS.DRAFT) return null
+													if (item.status === DOC_STATUS.DRAFT)
+														return null
 													return (
 														<ArticleItem
 															key={item.docId}
-															docItem={item}
-														/>
+															docItem={item} />
 													)
 												})}
 											</ArticlesList>
@@ -319,7 +321,8 @@ const ThemeSimplicityCategories = ({ slug }) => {
 									const subCatIndex = findKey(subCat[1], { type: DOC_TYPE.SUBCATEGORY })
 									const subcatDetail = subCat[1][subCatIndex] ?? docItemNewSubCategory(currentUser.username, "Missing subcategory")
 
-									if (subcatDetail.status === DOC_STATUS.DRAFT) return null
+									if (subcatDetail.status === DOC_STATUS.DRAFT)
+										return null
 
 									return (
 										<SubCategoryItem
@@ -328,13 +331,14 @@ const ThemeSimplicityCategories = ({ slug }) => {
 										>
 											<ArticlesList>
 												{subCat[1].map((item, idx) => {
-													if (idx == subCatIndex) return null
-													if (item.status === DOC_STATUS.DRAFT) return null
+													if (idx == subCatIndex)
+														return null
+													if (item.status === DOC_STATUS.DRAFT)
+														return null
 													return (
 														<ArticleItem
 															key={item.docId}
-															docItem={item}
-														/>
+															docItem={item} />
 													)
 												})}
 											</ArticlesList>
@@ -345,10 +349,9 @@ const ThemeSimplicityCategories = ({ slug }) => {
 							</SubCategoriesList>
 						</CategoryListing>
 					)
-				})
-			}
+				})}
 
-		</SimplicityLayout >
+		</SimplicityLayout>
 	)
 }
 ThemeSimplicityCategories.propTypes = {

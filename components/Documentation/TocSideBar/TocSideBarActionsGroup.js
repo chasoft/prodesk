@@ -97,22 +97,17 @@ TocSideBarActionItem.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarActionsGroup = () => {
+function TocSideBarActionsGroup() {
 	const { activeDocId } = useSelector(getDocsCenter)
 
 	const [
-		AddNewPopupMenu,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		AddNewPopupMenu, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = useAddNewDocumentationPopupMenu()
 
 	const {
-		data: targetDocItem,
-		isLoading: isLoadingTargetDocItem
+		data: targetDocItem, isLoading: isLoadingTargetDocItem
 	} = useGetDoc(activeDocId)
 
 	return (
@@ -137,18 +132,15 @@ const TocSideBarActionsGroup = () => {
 				anchorRef={anchorRef}
 				handleClose={handleClose}
 				targetDocItem={targetDocItem}
-				actions={
-					(activeDocId === null)
-						? [DOCS_ADD.CATEGORY]
-						: [
-							DOCS_ADD.CATEGORY,
-							DOCS_ADD.SUB_CATEGORY,
-							DOCS_ADD.DOC,
-							DOCS_ADD.EXTERNAL
-						]
-				}
-				placement="right"
-			/>
+				actions={(activeDocId === null)
+					? [DOCS_ADD.CATEGORY]
+					: [
+						DOCS_ADD.CATEGORY,
+						DOCS_ADD.SUB_CATEGORY,
+						DOCS_ADD.DOC,
+						DOCS_ADD.EXTERNAL
+					]}
+				placement="right" />
 
 			<TocSideBarActionItem
 				ItemIcon={FolderOutlinedIcon}

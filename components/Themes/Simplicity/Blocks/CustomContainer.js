@@ -35,7 +35,7 @@ import { Box } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-export const CustomContainer = ({ children }) => {
+export function CustomContainer({ children }) {
 	return (
 		<Box sx={{
 			maxWidth: "1142px",

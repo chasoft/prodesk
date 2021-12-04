@@ -92,7 +92,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment"
  * INIT                                                          *
  *****************************************************************/
 
-const AdminFilterDrawer = ({ isOpen, handleClose }) => {
+function AdminFilterDrawer({ isOpen, handleClose }) {
 	return (
 		<Drawer
 			anchor="right"
@@ -114,18 +114,16 @@ AdminFilterDrawer.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
-const AssignButton = ({ departments }) => {
+function AssignButton({ departments }) {
 	const { currentUser } = useSelector(getAuth)
 	const [updateTicket] = useUpdateTicketMutation()
 
 	const {
-		filteredByInbox,
-		selectedTickets
+		filteredByInbox, selectedTickets
 	} = useSelector(getUiSettings)
 
 	const {
-		userList: allAdminProfiles = [],
-		isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
 		USERGROUP.ADMIN.code,
@@ -134,34 +132,27 @@ const AssignButton = ({ departments }) => {
 	])
 
 	const {
-		data: profiles = [],
-		isLoading: isLoadingProfiles
+		data: profiles = [], isLoading: isLoadingProfiles
 	} = useGetProfilesQuery()
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
 	//Only use this button when in UNASSIGNED INBOX
 	//If assigned, then, admin must handle directly in a specific ticket
-	if (filteredByInbox !== TICKET_INBOXES.UNASSIGNED) return null
+	if (filteredByInbox !== TICKET_INBOXES.UNASSIGNED)
+		return null
 
 	//Assign button can be used only when
 	//all selected tickets are belong to same department
 	const selectedDepartmentId = selectedTickets[0].departmentId
-	if (
-		every(
-			selectedTickets,
-			{ departmentId: selectedDepartmentId }
-		) === false
-	) {
+	if (every(
+		selectedTickets,
+		{ departmentId: selectedDepartmentId }
+	) === false) {
 		return null
 	}
 
@@ -169,7 +160,6 @@ const AssignButton = ({ departments }) => {
 	//this is "members" which is set at
 	//	=> 1. `admin/settings/tickets/department` => members
 	//  => 2. `availableForAll`
-
 	const department = departments.find(
 		department => department.did === selectedDepartmentId
 	) ?? {}
@@ -178,10 +168,9 @@ const AssignButton = ({ departments }) => {
 		profile => department.members.includes(profile.username)
 	)
 
-	let availableStaffs =
-		(department?.availableForAll)
-			? allAdminProfiles
-			: profilesByDepartment
+	let availableStaffs = (department?.availableForAll)
+		? allAdminProfiles
+		: profilesByDepartment
 
 	const handleAssignTicket = async (selectedUsername) => {
 		//this is new assignment,
@@ -206,7 +195,6 @@ const AssignButton = ({ departments }) => {
 			Assignee - who is the support of the ticket
 			Ticket's owners - tell him/her that his/her ticket is initial processing...
 		*/
-
 		if (res?.data.code === CODE.SUCCESS) {
 
 			const invalidatesTags = {
@@ -226,18 +214,15 @@ const AssignButton = ({ departments }) => {
 				notisData: {
 					actionType: ACTIONS.NEW_ASSIGNMENT,
 					iconURL: currentUser.photoURL,
-					title:
-						(selectedTickets.length === 1)
-							? "You got new assignment"
-							: "You got new assignments",
-					description:
-						(selectedTickets.length === 1)
-							? selectedTickets[0].subject
-							: `${selectedTickets.length} newly opened ticket waiting for your support`,
-					link:
-						(selectedTickets.length === 1)
-							? selectedTickets[0].slug
-							: "/admin/tickets",
+					title: (selectedTickets.length === 1)
+						? "You got new assignment"
+						: "You got new assignments",
+					description: (selectedTickets.length === 1)
+						? selectedTickets[0].subject
+						: `${selectedTickets.length} newly opened ticket waiting for your support`,
+					link: (selectedTickets.length === 1)
+						? selectedTickets[0].slug
+						: "/admin/tickets",
 				}
 			})
 
@@ -307,20 +292,17 @@ const AssignButton = ({ departments }) => {
 					<MenuItem disabled={true}>{"You don't have any staff that can be assigned."}</MenuItem>}
 
 				{(!isLoadingAllAdminProfiles && !isLoadingProfiles && availableStaffs.length > 0) &&
-					availableStaffs.map((profile) =>
-						<MenuItem key={profile.username} onClick={() => handleAssignTicket(profile.username)}>
-							<Avatar
-								src={profile.photoURL}
-								sx={{ width: 32, height: 32, mr: 2 }}
-							/>
-							<ListItemText
-								primary={profile.displayName}
-								secondary={`${profile.username} (${profile.email})`}
-								secondaryTypographyProps={{
-									fontSize: "0.9rem"
-								}}
-							/>
-						</MenuItem>
+					availableStaffs.map((profile) => <MenuItem key={profile.username} onClick={() => handleAssignTicket(profile.username)}>
+						<Avatar
+							src={profile.photoURL}
+							sx={{ width: 32, height: 32, mr: 2 }} />
+						<ListItemText
+							primary={profile.displayName}
+							secondary={`${profile.username} (${profile.email})`}
+							secondaryTypographyProps={{
+								fontSize: "0.9rem"
+							}} />
+					</MenuItem>
 					)}
 			</MenuContainer>
 		</>
@@ -330,18 +312,13 @@ AssignButton.propTypes = {
 	departments: PropTypes.array
 }
 
-const StatusButton = () => {
+function StatusButton() {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
 	const { selectedTickets } = useSelector(getUiSettings)
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
@@ -394,28 +371,22 @@ const StatusButton = () => {
 	)
 }
 
-const LabelButton = () => {
+function LabelButton() {
 	const [updateTicket] = useUpdateTicketMutation()
 	const { selectedTickets } = useSelector(getUiSettings)
 	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
 
 	const {
-		data: labels,
-		isLoading: isLoadingLabels
+		data: labels, isLoading: isLoadingLabels
 	} = useGetLabelsQuery()
 
 	const {
-		data: tickets,
-		isLoading: isLoadingTickets
+		data: tickets, isLoading: isLoadingTickets
 	} = useGetTicketsForAdminQuery(undefined)
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = useMenuContainer()
 
@@ -434,12 +405,14 @@ const LabelButton = () => {
 				labels: [...selectedTicket.labels, labelId].sort()
 			})
 		})
-		if (affectedTickets.length === 0) return
+		if (affectedTickets.length === 0)
+			return
 		await updateTicket(affectedTickets)
 	}
 
 	//hide this button if admin not yet created any label
-	if (size(labels) === 0) return null
+	if (size(labels) === 0)
+		return null
 
 	return (
 		<>
@@ -493,30 +466,28 @@ const LabelButton = () => {
 
 			<LabelEditorDialog
 				open={openNewLableDialog}
-				handleClose={() => setOpenNewLableDialog(false)}
-			/>
+				handleClose={() => setOpenNewLableDialog(false)} />
 		</>
 	)
 }
 
-const DeleteTicketsButton = () => {
+function DeleteTicketsButton() {
 	const [deleteTicketTemp] = useDeleteTicketTempMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
-		selectedTickets,
-		isSmallScreen
+		selectedTickets, isSmallScreen
 	} = useSelector(getUiSettings)
 
 	const {
-		userList: allUsers,
-		isLoading: isLoadingAllUsers
+		userList: allUsers, isLoading: isLoadingAllUsers
 	} = useProfilesGroup()
 
 	dayjs.extend(relativeTime)
 
 	const handleDeleteTicket = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 
 		const affectedTickets = []
 		selectedTickets.forEach((selectedTicket) => {
@@ -603,36 +574,31 @@ const DeleteTicketsButton = () => {
 												<Avatar alt={userProfile.displayName} src={userProfile.photoURL} />
 											</ListItemAvatar>
 											<ListItemText
-												primary={
-													<>
-														<Typography variant="h2" sx={{
-															mb: 0,
-															fontWeight: 500,
-															lineHeight: "1.25rem",
-															color: "grey.800"
-														}}>
-															{selectedTicket.subject}
-														</Typography>
-														<Typography sx={{
-															mb: 1.5,
-															fontWeight: 500,
-															color: "grey.700"
-														}}>
-															By {userProfile.displayName} at {dayjs(selectedTicket.createdAt).format(DATE_FORMAT.LONG)} ({dayjs(selectedTicket.createdAt).fromNow()})
-														</Typography>
-													</>
-												}
-												secondary={
-													<Typography
-														component="span"
-														variant="body2"
-														color="text.primary"
-														sx={{ display: "inline" }}
-													>
-														{selectedTicket.content.substring(0, 100)}
+												primary={<>
+													<Typography variant="h2" sx={{
+														mb: 0,
+														fontWeight: 500,
+														lineHeight: "1.25rem",
+														color: "grey.800"
+													}}>
+														{selectedTicket.subject}
 													</Typography>
-												}
-											/>
+													<Typography sx={{
+														mb: 1.5,
+														fontWeight: 500,
+														color: "grey.700"
+													}}>
+														By {userProfile.displayName} at {dayjs(selectedTicket.createdAt).format(DATE_FORMAT.LONG)} ({dayjs(selectedTicket.createdAt).fromNow()})
+													</Typography>
+												</>}
+												secondary={<Typography
+													component="span"
+													variant="body2"
+													color="text.primary"
+													sx={{ display: "inline" }}
+												>
+													{selectedTicket.content.substring(0, 100)}
+												</Typography>} />
 										</ListItemButton>
 									)
 								})}
@@ -644,7 +610,7 @@ const DeleteTicketsButton = () => {
 	)
 }
 
-const ClearSelectedTicketsButton = () => {
+function ClearSelectedTicketsButton() {
 	const dispatch = useDispatch()
 	return (
 		<Tooltip arrow title="Unselect all tickets" placement="top">

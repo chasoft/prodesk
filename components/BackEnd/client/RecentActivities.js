@@ -62,7 +62,7 @@ const DUMMY_PUBLIC_TICKETS = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const RecentActivities = () => {
+function RecentActivities() {
 
 	return (
 		<Box sx={{ mt: { xs: 5, md: 8 }, }}>
@@ -78,8 +78,7 @@ const RecentActivities = () => {
 							header="Public tickets"
 							viewAllText="View all public tickets"
 							viewAllLink="/client/public-ticket"
-							dataSource={DUMMY_PUBLIC_TICKETS}
-						/>
+							dataSource={DUMMY_PUBLIC_TICKETS} />
 
 					</Grid>
 
@@ -89,8 +88,7 @@ const RecentActivities = () => {
 							header="Popular documents"
 							viewAllText="View all popular documents"
 							viewAllLink="/client/popular-documents"
-							dataSource={DUMMY_PUBLIC_TICKETS}
-						/>
+							dataSource={DUMMY_PUBLIC_TICKETS} />
 
 					</Grid>
 

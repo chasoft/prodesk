@@ -71,7 +71,7 @@ const countries = [
 	{ code: "VN", label: "Vietnam" },
 ]
 
-const CountrySelect = () => {
+function CountrySelect() {
 	return (
 		<Autocomplete
 			id="language-select"
@@ -86,8 +86,7 @@ const CountrySelect = () => {
 						width="20"
 						src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
 						srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-						alt=""
-					/>
+						alt="" />
 					{option.label} ({option.code})
 				</Box>
 			)}
@@ -98,10 +97,8 @@ const CountrySelect = () => {
 					inputProps={{
 						...params.inputProps,
 						autoComplete: "new-password", // disable autocomplete and autofill
-					}}
-				/>
-			)}
-		/>
+					}} />
+			)} />
 	)
 }
 
@@ -119,7 +116,7 @@ const validationChangePassword = yup.object({
 		.required("Confirm your password"),
 })
 
-const ChangePasswordForm = () => {
+function ChangePasswordForm() {
 
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
@@ -139,7 +136,8 @@ const ChangePasswordForm = () => {
 				password: values.currentPassword,
 				newPassword: values.newPassword
 			})
-			if (res?.error) enqueueSnackbar(res.error, { variant: "error" })
+			if (res?.error)
+				enqueueSnackbar(res.error, { variant: "error" })
 			setIsUpdatingPassword(false)
 		}
 	})
@@ -148,7 +146,8 @@ const ChangePasswordForm = () => {
 		<EditButton
 			defaultState="Username and password"
 			saveAction={() => {
-				if (!formik.isValid) return false
+				if (!formik.isValid)
+					return false
 				formik.handleSubmit()
 			}}
 			cancelAction={formik.handleReset}
@@ -166,8 +165,7 @@ const ChangePasswordForm = () => {
 							onBlur={formik.handleBlur}
 							error={formik.touched.currentPassword && Boolean(formik.errors.currentPassword)}
 							helperText={formik.touched.currentPassword && formik.errors.currentPassword}
-							type="password"
-						/>
+							type="password" />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -178,10 +176,9 @@ const ChangePasswordForm = () => {
 							onBlur={formik.handleBlur}
 							error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
 							helperText={formik.touched.newPassword && formik.errors.newPassword}
-							type="password"
-						/>
+							type="password" />
 					</Grid>
-					<Grid item xs={12} >
+					<Grid item xs={12}>
 						<TextField
 							id="confirmPassword"
 							label="Confirm new password"
@@ -190,8 +187,7 @@ const ChangePasswordForm = () => {
 							onBlur={formik.handleBlur}
 							error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
 							helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-							type="password"
-						/>
+							type="password" />
 					</Grid>
 				</Grid>
 			</form>

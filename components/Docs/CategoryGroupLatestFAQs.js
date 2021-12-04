@@ -41,24 +41,21 @@ const DummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoryGroupLatestFAQs = () => {
+function CategoryGroupLatestFAQs() {
 	return (
 		<CategoryGroupItem
 			header="Frequently Asked Questions"
 			viewAllText="View all FAQs"
 			viewAllLink="/faqs"
 		>
-			{
-				DummyData.map((item) => {
-					return (
-						<PostListItemShorten
-							key={item.id}
-							subject={item.subject}
-							link={item.link}
-						/>
-					)
-				})
-			}
+			{DummyData.map((item) => {
+				return (
+					<PostListItemShorten
+						key={item.id}
+						subject={item.subject}
+						link={item.link} />
+				)
+			})}
 		</CategoryGroupItem>
 	)
 }

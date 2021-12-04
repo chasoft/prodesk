@@ -50,7 +50,7 @@ import { SimpleTogglePanel, DefaultAvatarPanel } from "@components/common"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CreateProfileForm = () => {
+function CreateProfileForm() {
 	const dispatch = useDispatch()
 	// const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
@@ -93,8 +93,7 @@ const CreateProfileForm = () => {
 							value={location}
 							onChange={(e) => setLocation(e.target.value)}
 							fullWidth
-							required
-						/>
+							required />
 					</Grid>
 				</Grid>
 				<Button

@@ -44,7 +44,7 @@ import { SignUpButton } from "@components/Themes/Simplicity/Buttons/SignUp"
  * INIT                                                          *
  *****************************************************************/
 
-export const Header = () => {
+export function Header() {
 	return (
 		<Box
 			id="pageHeader"

@@ -43,9 +43,10 @@ import { FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
  * INIT                                                          *
  *****************************************************************/
 
-const getTabId = (tabName, dataSet) => {
+function getTabId(tabName, dataSet) {
 	for (let i = 0; i < dataSet.length; i++) {
-		if (dataSet[i].indexOf(tabName) !== -1) return i
+		if (dataSet[i].indexOf(tabName) !== -1)
+			return i
 	}
 	return 0
 }
@@ -54,7 +55,7 @@ const getTabId = (tabName, dataSet) => {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TopNavigatorBar = ({ dataSet }) => {
+function TopNavigatorBar({ dataSet }) {
 	// const dispatch = useDispatch()
 	const router = useRouter()
 
@@ -66,7 +67,7 @@ const TopNavigatorBar = ({ dataSet }) => {
 	}
 
 	return (
-		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}		>
+		<Paper elevation={0} sx={{ borderBottom: (activeSettingTab === FRONT_PAGE_TABS_NAME.HOME) ? 0 : 1, borderColor: "divider" }}>
 			<Tabs
 				value={getTabId(activeSettingTab, dataSet)}
 				onChange={handleChange}
@@ -84,19 +85,16 @@ const TopNavigatorBar = ({ dataSet }) => {
 				}}
 
 			>
-				{
-					dataSet.map((item, idx) => (
-						<Tab
-							key={idx} label={item[0]}
-							sx={{
-								fontSize: "0.875rem",
-								color: "#5f6368"
-							}}
-						/>
-					))
-				}
+				{dataSet.map((item, idx) => (
+					<Tab
+						key={idx} label={item[0]}
+						sx={{
+							fontSize: "0.875rem",
+							color: "#5f6368"
+						}} />
+				))}
 			</Tabs>
-		</Paper >
+		</Paper>
 	)
 }
 TopNavigatorBar.propTypes = {

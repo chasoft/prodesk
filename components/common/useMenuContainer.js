@@ -36,7 +36,7 @@ import { ClickAwayListener, Grow, MenuList, Paper, Popper } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-const MenuContainer = ({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, zIndex, children }) => {
+function MenuContainer({ open, anchorRef, elevation = 4, handleClose, handleListKeyDown, placement, transformOrigin, zIndex, children }) {
 	return (
 		<Popper
 			open={open}
@@ -83,7 +83,7 @@ MenuContainer.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const useMenuContainer = () => {
+function useMenuContainer() {
 	const anchorRef = useRef(null)
 	const [open, setOpen] = useState(false)
 

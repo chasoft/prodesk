@@ -85,7 +85,7 @@ import { useRouter } from "next/router"
  * INIT                                                          *
  *****************************************************************/
 
-const ReplyCreatedAt = ({ createdAt, sx }) => {
+function ReplyCreatedAt({ createdAt, sx }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -115,28 +115,16 @@ ReplyCreatedAt.propTypes = {
 	sx: PropTypes.object
 }
 
-const ReplyItemPopupMenu = (
-	{
-		editMode,
-		setEditMode,
-		setOpenConfirmDialog,
-		setOpenNewCannedReplyDialog,
-		trid,
-		sx
-	}
-) => {
+function ReplyItemPopupMenu({
+	editMode, setEditMode, setOpenConfirmDialog, setOpenNewCannedReplyDialog, trid, sx
+}) {
 
 	const router = useRouter()
 	const { enqueueSnackbar } = useSnackbar()
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
@@ -165,8 +153,7 @@ const ReplyItemPopupMenu = (
 				<CopyToClipboard
 					text={
 						//TODO: the link is not full, still missing the domain name
-						router.asPath + "#" + trid
-					}
+						router.asPath + "#" + trid}
 					onCopy={() => {
 						enqueueSnackbar("Link copied", { variant: "info" })
 					}}

@@ -48,7 +48,7 @@ export const STORAGE_DESTINATION = {
 	SETTINGS: "Settings"
 }
 
-export const getFileURL = async (fullDestinationFilePath) => {
+export async function getFileURL(fullDestinationFilePath) {
 	try {
 		const url = await getDownloadURL(ref(storage, fullDestinationFilePath))
 		return url
@@ -57,7 +57,7 @@ export const getFileURL = async (fullDestinationFilePath) => {
 	}
 }
 
-export const deleteFile = async (fileLocation) => {
+export async function deleteFile(fileLocation) {
 	const fileRef = ref(storage, fileLocation)
 	deleteObject(fileRef)
 		.then(() => {
@@ -80,7 +80,7 @@ export const deleteFile = async (fileLocation) => {
 		})
 }
 
-export const useUploadFile = () => {
+export function useUploadFile() {
 	const [progress, setProgress] = useState(0)
 	const [uploading, setUploading] = useState(false)
 

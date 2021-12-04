@@ -42,25 +42,26 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DetailsRightButton = ({ handleOpen }) => (
-	<MoreHorizIcon
-		id="detailsRightButton" size="small"
-		fontSize="small"
-		sx={{
-			fill: (theme) => theme.palette.grey[500],
-			my: 0.5, mr: 1.75,
-			cursor: "pointer",
-			":hover": {
-				fill: (theme) => theme.palette.primary.main
-			}
-		}}
-		onClick={(e) => {
-			e.stopPropagation()
-			handleOpen()
-			console.log("details clicked")
-		}}
-	/>
-)
+function DetailsRightButton({ handleOpen }) {
+	return (
+		<MoreHorizIcon
+			id="detailsRightButton" size="small"
+			fontSize="small"
+			sx={{
+				fill: (theme) => theme.palette.grey[500],
+				my: 0.5, mr: 1.75,
+				cursor: "pointer",
+				":hover": {
+					fill: (theme) => theme.palette.primary.main
+				}
+			}}
+			onClick={(e) => {
+				e.stopPropagation()
+				handleOpen()
+				console.log("details clicked")
+			}} />
+	)
+}
 DetailsRightButton.propTypes = {
 	handleOpen: PropTypes.func
 }

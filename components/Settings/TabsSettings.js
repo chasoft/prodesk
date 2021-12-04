@@ -38,7 +38,7 @@ import { getUiSettings } from "@redux/selectors"
  * INIT                                                          *
  *****************************************************************/
 
-const TabsSettings = ({ tabsList }) => {
+function TabsSettings({ tabsList }) {
 	const router = useRouter()
 	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
 	const { activeSettingTab } = useSelector(getUiSettings)
@@ -50,7 +50,7 @@ const TabsSettings = ({ tabsList }) => {
 
 	const activeTabIndex = useMemo(() => {
 		const res = findIndex(tabsList, (i) => i.name === activeSettingTab)
-		return res === - 1 ? 0 : res
+		return res === -1 ? 0 : res
 	}, [activeSettingTab, tabsList])
 
 	return (
@@ -70,9 +70,7 @@ const TabsSettings = ({ tabsList }) => {
 				scrollButtons="auto"
 				indicatorColor="primary"
 			>
-				{
-					tabsList.map((tabItem) => <Tab key={tabItem.name} label={tabItem.name} />)
-				}
+				{tabsList.map((tabItem) => <Tab key={tabItem.name} label={tabItem.name} />)}
 			</Tabs>
 		</Paper>
 	)

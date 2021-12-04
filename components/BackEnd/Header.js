@@ -54,7 +54,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Header = () => {
+function Header() {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 	const { title } = useSelector(getPageMeta)
@@ -97,7 +97,10 @@ const Header = () => {
 				alignItems: "center"
 			}}>
 				<IconButton
-					onClick={() => { if (isSmallScreen || isMobile) dispatch(setShowSideBar(true)) }}
+					onClick={() => {
+						if (isSmallScreen || isMobile)
+							dispatch(setShowSideBar(true))
+					}}
 				>
 					<MenuIcon sx={{ fill: "white" }} />
 				</IconButton>
@@ -157,14 +160,13 @@ const Header = () => {
 					isOpen={showNotificationDrawer}
 					handleClose={() => setShowNotificationDraw(false)}
 					notis={notis}
-					counter={counter}
-				/>
+					counter={counter} />
 
 				<UserIcon />
 
 			</Box>
 
-		</AppBar >
+		</AppBar>
 	)
 }
 Header.propTypes = { scrolled: PropTypes.bool }

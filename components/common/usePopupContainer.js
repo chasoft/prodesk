@@ -36,7 +36,7 @@ import { ClickAwayListener, Grow, Paper, Popper } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-const PopupContainer = ({ open, anchorRef, elevation, sx, handleClose, placement, transformOrigin, children }) => {
+function PopupContainer({ open, anchorRef, elevation, sx, handleClose, placement, transformOrigin, children }) {
 	return (
 		<Popper
 			open={open}
@@ -76,7 +76,7 @@ PopupContainer.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const usePopupContainer = () => {
+function usePopupContainer() {
 	const anchorRef = useRef(null)
 	const [open, setOpen] = useState(false)
 

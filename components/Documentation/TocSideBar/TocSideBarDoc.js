@@ -58,7 +58,7 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarDoc = ({ active, onClick, handleOpen, targetDocItem, children }) => {
+function TocSideBarDoc({ active, onClick, handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)

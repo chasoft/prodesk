@@ -49,7 +49,7 @@ const ListItemStyle = styled(ListItem)({ color: "#1a73e8" })
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const LeftIcon = () => {
+function LeftIcon() {
 	const [showMenu, setShowMenu] = useState(false)
 
 	const handleClose = () => { setShowMenu(false) }

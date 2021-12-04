@@ -4,7 +4,7 @@ import { Breadcrumbs, Link, Typography } from "@mui/material"
 import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 
 
-const ProBreadcrumbs = () => {
+function ProBreadcrumbs() {
 	return (
 		<Breadcrumbs
 			separator={<NavigateNextIcon fontSize="small" />}

@@ -28,8 +28,7 @@ import React from "react"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThemeTraditional = () => {
-
+function ThemeTraditional() {
 	return (
 		<div>
 			Traditional theme

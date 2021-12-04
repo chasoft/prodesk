@@ -41,24 +41,21 @@ const DummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoryGroupLatestPublicTickets = () => {
+function CategoryGroupLatestPublicTickets() {
 	return (
 		<CategoryGroupItem
 			header="Public Tickets"
 			viewAllText="View all public tickets"
 			viewAllLink="/public-tickets"
 		>
-			{
-				DummyData.map((item) => {
-					return (
-						<PostListItemShorten
-							key={item.id}
-							subject={item.subject}
-							link={item.link}
-						/>
-					)
-				})
-			}
+			{DummyData.map((item) => {
+				return (
+					<PostListItemShorten
+						key={item.id}
+						subject={item.subject}
+						link={item.link} />
+				)
+			})}
 		</CategoryGroupItem>
 	)
 }

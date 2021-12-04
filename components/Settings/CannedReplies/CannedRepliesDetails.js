@@ -78,19 +78,17 @@ import {
 
 //TODO: add bigger option to show bigger text-editor
 
-const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
+function CannedRepliesDetails({ selectedCannedReply, isFullCannedReply }) {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const [updateCannedReply] = useUpdateCannedReplyMutation()
 
 	const {
-		data: departments,
-		isLoading: isLoadingDepartments
+		data: departments, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(selectedCannedReply)
 
 	const isModified = !isEqual(selectedCannedReply, localCache) || selectedCannedReply.full !== isFullCannedReply
@@ -144,23 +142,20 @@ const CannedRepliesDetails = ({ selectedCannedReply, isFullCannedReply }) => {
 						departments={departments}
 						handleSelectDepartment={((e) => {
 							setLocalCache(e.target.value, "departmentId")
-						})}
-					/>}
+						})} />}
 
 				<Box sx={{ py: 2 }}>
 					<DescriptionTextField
 						description={localCache.description}
 						handleSetDescription={(e) => {
 							setLocalCache(e.target.value, "description")
-						}}
-					/>
+						}} />
 				</Box>
 
 				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #f0f0f0" }}>
 					<TextEditor
 						value={selectedCannedReply.content}
-						onChange={handleTextEditorOnChange}
-					/>
+						onChange={handleTextEditorOnChange} />
 				</Box>
 
 				<Typography sx={{ fontSize: "0.8rem", color: "text.secondary" }}>

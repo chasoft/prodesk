@@ -75,7 +75,7 @@ function throwError(statusCode, action, e, data) {
 	}
 }
 
-export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) => {
+export function useNotificationsBase(username, enqueueSnackbar, closeSnackbar) {
 	const [notis, setNotis] = useState([])
 	const [requestRefetching] = useRequestRefetchingMutation()
 
@@ -237,7 +237,7 @@ export const useNotificationsBase = (username, enqueueSnackbar, closeSnackbar) =
 	return orderBy(notis, ["createdAt"], ["desc"])
 }
 
-export const useNotifications = (username, enqueueSnackbar, closeSnackbar) => {
+export function useNotifications(username, enqueueSnackbar, closeSnackbar) {
 	const { notificationInbox, forceRefreshId } = useSelector(getUiSettings)
 	const notis = useNotificationsBase(username, enqueueSnackbar, closeSnackbar)
 
@@ -276,7 +276,7 @@ export const useNotifications = (username, enqueueSnackbar, closeSnackbar) => {
 	}
 }
 
-export const removeNotifications = async (username, nid) => {
+export async function removeNotifications(username, nid) {
 	console.log("removeNotifications => nid =", nid ?? "null")
 	try {
 		const notisRef = nid
@@ -293,7 +293,7 @@ export const removeNotifications = async (username, nid) => {
 	}
 }
 
-export const readAllNotifications = async (username) => {
+export async function readAllNotifications(username) {
 	try {
 		const notisRef = ref(realtimeDB, `${username}/${STRINGS.notifications}`)
 		runTransaction(notisRef, (notifications) => {
@@ -312,7 +312,7 @@ export const readAllNotifications = async (username) => {
 	}
 }
 
-export const readNotification = async (username, nid) => {
+export async function readNotification(username, nid) {
 	try {
 		const notisRef = ref(realtimeDB, `${username}/${STRINGS.notifications}/${nid}`)
 		runTransaction(notisRef, (notification) => {
@@ -339,7 +339,7 @@ export const readNotification = async (username, nid) => {
  * @param {object} invalidatesTags
  * @returns
  */
-export const requestSilentRefetching = async (invalidatesTags) => {
+export async function requestSilentRefetching(invalidatesTags) {
 	try {
 		const updates = {}
 		updates["invalidatesTags/details"] = {
@@ -364,7 +364,7 @@ export const requestSilentRefetching = async (invalidatesTags) => {
  * @param {object} notisData
  * @returns
  */
-export const addNewNotification = async (receivers, notisData = {}, invalidatesTags = {}) => {
+export async function addNewNotification(receivers, notisData = {}, invalidatesTags = {}) {
 	try {
 		const nid = nanoid()
 		const createdAt = dayjs().valueOf()
@@ -415,7 +415,7 @@ export const addNewNotification = async (receivers, notisData = {}, invalidatesT
 		},
 	]
  */
-export const addNewNotifications = async (notisGroup = [], invalidatesTags = {}) => {
+export async function addNewNotifications(notisGroup = [], invalidatesTags = {}) {
 	try {
 		const createdAt = dayjs().valueOf()
 		const updates = {}

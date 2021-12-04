@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-export const SimpleListItemEmpty = ({ message }) => {
+export function SimpleListItemEmpty({ message }) {
 	const classes = useStyles()
 	return (
 		<div className={classes.main}>

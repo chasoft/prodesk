@@ -118,7 +118,7 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentTemplate = () => {
+function DocumentTemplate() {
 
 	const { currentUser } = useSelector(getAuth)
 	const { activeDocId } = useSelector(getDocsCenter)

@@ -59,7 +59,7 @@ export function getPlainTextFromMarkDown(md) {
 }
 
 
-export const getStaffInCharge = (staffInCharge) => {
+export function getStaffInCharge(staffInCharge) {
 	return (staffInCharge.length > 0)
 		? staffInCharge[staffInCharge.length - 1]
 		: {
@@ -69,7 +69,7 @@ export const getStaffInCharge = (staffInCharge) => {
 		}
 }
 
-export const replyLinkBuilder = ({ isAdminURL, actionType, slug, trid }) => {
+export function replyLinkBuilder({ isAdminURL, actionType, slug, trid }) {
 	let Url = ""
 
 	switch (actionType) {

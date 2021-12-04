@@ -44,7 +44,7 @@ import TextEditor from "@components/common/TextEditor"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NewTicketStep3 = () => {
+function NewTicketStep3() {
 	const { editorData } = useSelector(getTextEditor)
 	return (
 		<Box sx={{
@@ -54,8 +54,7 @@ const NewTicketStep3 = () => {
 		}}>
 			<TextEditor
 				defaultValue={editorData}
-				placeholder="Please describe your issue in details as much as possible."
-			/>
+				placeholder="Please describe your issue in details as much as possible." />
 		</Box>
 	)
 }

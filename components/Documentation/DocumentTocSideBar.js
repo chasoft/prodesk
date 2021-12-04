@@ -116,7 +116,7 @@ TocItem.propTypes = {
 	children: PropTypes.node
 }
 
-export const RightMenuItemBase = ({ sx, Icon, children, ...otherProps }) => {
+export function RightMenuItemBase({ sx, Icon, children, ...otherProps }) {
 	return (
 		<Box
 			sx={{
@@ -151,7 +151,7 @@ RightMenuItemBase.propTypes = {
 	children: PropTypes.node
 }
 
-export const RightMenuItemAddNewDoc = ({ categoryId, subCategoryId, sx }) => {
+export function RightMenuItemAddNewDoc({ categoryId, subCategoryId, sx }) {
 	const [addDoc] = useAddDocMutation()
 	const { currentUser } = useSelector(getAuth)
 
@@ -169,7 +169,7 @@ export const RightMenuItemAddNewDoc = ({ categoryId, subCategoryId, sx }) => {
 			onClick={handleAddNewDoc}
 		>
 			New Document
-		</RightMenuItemBase >
+		</RightMenuItemBase>
 	)
 }
 RightMenuItemAddNewDoc.propTypes = {
@@ -212,7 +212,7 @@ RightMenuItemAddNewDoc.propTypes = {
 // 	sx: PropTypes.object
 // }
 
-export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => {
+export function RightMenuItemDelete({ title = "Delete", targetDocItem, sx }) {
 	const dispatch = useDispatch()
 	const allDocsRaw = useGetDocsQuery(undefined)
 	const [deleteDoc] = useDeleteDocMutation()
@@ -222,22 +222,20 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
-		data: docItemContent = {},
-		isLoading: isLoadingDocItemContent
+		data: docItemContent = {}, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(targetDocItem.docId)
 
 	const {
-		data: catItem,
-		isLoading: isLoadingCatItem
+		data: catItem, isLoading: isLoadingCatItem
 	} = useGetDoc(targetDocItem?.categoryId)
 
 	const {
-		data: subCatItem,
-		isLoading: isLoadingSubCatItem
+		data: subCatItem, isLoading: isLoadingSubCatItem
 	} = useGetDoc(targetDocItem?.subCategoryId)
 
 	const handleDeleteDocItem = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 
 		if (targetDocItem.type === DOC_TYPE.CATEGORY) {
 			const affectedItems = filter(allDocsRaw.data, { categoryId: targetDocItem?.categoryId })
@@ -392,16 +390,13 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 										<DOCS_ADD.CATEGORY.icon />
 									</ListItemAvatar>
 									<ListItemText
-										primary={
-											<Typography variant="h3" sx={{
-												my: 0,
-												fontWeight: 500,
-												color: "grey.800"
-											}}>
-												{targetDocItem.title}
-											</Typography>
-										}
-									/>
+										primary={<Typography variant="h3" sx={{
+											my: 0,
+											fontWeight: 500,
+											color: "grey.800"
+										}}>
+											{targetDocItem.title}
+										</Typography>} />
 								</ListItemButton>}
 
 							{(targetDocItem.type === DOC_TYPE.SUBCATEGORY) &&
@@ -417,26 +412,21 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 										<DOCS_ADD.SUB_CATEGORY.icon />
 									</ListItemAvatar>
 									<ListItemText
-										primary={
-											<Typography variant="h3" sx={{
-												my: 0,
-												fontWeight: 500,
-												color: "grey.800"
-											}}>
-												{targetDocItem.title}
-											</Typography>
-										}
-										secondary={
-											<Typography sx={{
-												fontWeight: 500,
-												color: "grey.700"
-											}}>
-												{(!isLoadingCatItem && !!catItem?.title)
-													? "a member of " + catItem.title
-													: null}
-											</Typography>
-										}
-									/>
+										primary={<Typography variant="h3" sx={{
+											my: 0,
+											fontWeight: 500,
+											color: "grey.800"
+										}}>
+											{targetDocItem.title}
+										</Typography>}
+										secondary={<Typography sx={{
+											fontWeight: 500,
+											color: "grey.700"
+										}}>
+											{(!isLoadingCatItem && !!catItem?.title)
+												? "a member of " + catItem.title
+												: null}
+										</Typography>} />
 								</ListItemButton>}
 
 							{(targetDocItem.type === DOC_TYPE.EXTERNAL) &&
@@ -452,30 +442,25 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 										<DOCS_ADD.EXTERNAL.icon />
 									</ListItemAvatar>
 									<ListItemText
-										primary={
-											<Typography variant="h3" sx={{
-												my: 0,
-												fontWeight: 500,
-												color: "grey.800"
-											}}>
-												{targetDocItem.title}
-											</Typography>
-										}
-										secondary={
-											<Typography sx={{
-												fontWeight: 500,
-												color: "grey.700"
-											}}>
-												{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
-													? (!isLoadingSubCatItem && !!subCatItem?.title)
-														? "a member of " + subCatItem.title
-														: null
-													: (!isLoadingCatItem && !!catItem?.title)
-														? "a member of " + catItem.title
-														: null}
-											</Typography>
-										}
-									/>
+										primary={<Typography variant="h3" sx={{
+											my: 0,
+											fontWeight: 500,
+											color: "grey.800"
+										}}>
+											{targetDocItem.title}
+										</Typography>}
+										secondary={<Typography sx={{
+											fontWeight: 500,
+											color: "grey.700"
+										}}>
+											{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
+												? (!isLoadingSubCatItem && !!subCatItem?.title)
+													? "a member of " + subCatItem.title
+													: null
+												: (!isLoadingCatItem && !!catItem?.title)
+													? "a member of " + catItem.title
+													: null}
+										</Typography>} />
 								</ListItemButton>}
 
 							{(targetDocItem.type === DOC_TYPE.DOC) &&
@@ -491,43 +476,38 @@ export const RightMenuItemDelete = ({ title = "Delete", targetDocItem, sx }) => 
 										<DOCS_ADD.DOC.icon />
 									</ListItemAvatar>
 									<ListItemText
-										primary={
-											<>
-												<Typography variant="h3" sx={{
-													my: 0,
-													fontWeight: 500,
-													color: "grey.800"
-												}}>
-													{targetDocItem?.title}
-												</Typography>
-												<Typography sx={{
-													mb: 1.5,
-													fontWeight: 500,
-													color: "grey.700"
-												}}>
-													{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
-														? (!isLoadingSubCatItem && !!subCatItem?.title)
-															? "a member of " + subCatItem.title
-															: null
-														: (!isLoadingCatItem && !!catItem?.title)
-															? "a member of " + catItem.title
-															: null}
-												</Typography>
-											</>
-										}
-										secondary={
-											isLoadingDocItemContent
-												? <CircularProgressBox minHeight="32px" />
-												: <Typography
-													component="span"
-													variant="body2"
-													color="text.primary"
-													sx={{ display: "inline" }}
-												>
-													{docItemContent?.text?.substring(0, 100)}
-												</Typography>
-										}
-									/>
+										primary={<>
+											<Typography variant="h3" sx={{
+												my: 0,
+												fontWeight: 500,
+												color: "grey.800"
+											}}>
+												{targetDocItem?.title}
+											</Typography>
+											<Typography sx={{
+												mb: 1.5,
+												fontWeight: 500,
+												color: "grey.700"
+											}}>
+												{(targetDocItem.subCategoryId !== RESERVED_KEYWORDS.CAT_CHILDREN)
+													? (!isLoadingSubCatItem && !!subCatItem?.title)
+														? "a member of " + subCatItem.title
+														: null
+													: (!isLoadingCatItem && !!catItem?.title)
+														? "a member of " + catItem.title
+														: null}
+											</Typography>
+										</>}
+										secondary={isLoadingDocItemContent
+											? <CircularProgressBox minHeight="32px" />
+											: <Typography
+												component="span"
+												variant="body2"
+												color="text.primary"
+												sx={{ display: "inline" }}
+											>
+												{docItemContent?.text?.substring(0, 100)}
+											</Typography>} />
 								</ListItemButton>}
 
 						</List>
@@ -547,7 +527,7 @@ RightMenuItemDelete.propTypes = {
 	sx: PropTypes.object
 }
 
-export const RightMenuItemMore = ({ sx }) => {
+export function RightMenuItemMore({ sx }) {
 	const dispatch = useDispatch()
 	const { activeDocId } = useSelector(getDocsCenter)
 	return (
@@ -574,13 +554,12 @@ RightMenuItemMore.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentTocSideBar = () => {
+function DocumentTocSideBar() {
 	const { activeDocId } = useSelector(getDocsCenter)
 	const { editorDataHeadings } = useSelector(getTextEditor)
 
 	const {
-		data: activeDoc,
-		isLoading: isLoadingActiveDoc
+		data: activeDoc, isLoading: isLoadingActiveDoc
 	} = useGetDoc(activeDocId)
 
 	return (
@@ -604,8 +583,7 @@ const DocumentTocSideBar = () => {
 
 						<RightMenuItemAddNewDoc
 							categoryId={activeDoc?.categoryId}
-							subCategoryId={activeDoc?.subCategoryId}
-						/>
+							subCategoryId={activeDoc?.subCategoryId} />
 						{/* <RightMenuItemImport targetDocItem={activeDoc} /> */}
 						{/* <RightMenuItemExportPDF targetDocItem={activeDoc} /> */}
 						<RightMenuItemMore />
@@ -629,7 +607,8 @@ const DocumentTocSideBar = () => {
 
 						<nav>
 							{editorDataHeadings.map((item) => {
-								if (item.level > 2) return null
+								if (item.level > 2)
+									return null
 								return (
 									<TocItem
 										key={item.id}
@@ -647,8 +626,7 @@ const DocumentTocSideBar = () => {
 
 					</Box>
 
-				</div>
-			}
+				</div>}
 		</Box>
 	)
 }

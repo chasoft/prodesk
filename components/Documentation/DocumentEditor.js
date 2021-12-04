@@ -73,9 +73,9 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentEditor = () => {
+function DocumentEditor() {
 	/*
-		Prepare all necessary variables 
+		Prepare all necessary variables
 	*/
 	const dispatch = useDispatch()
 	const editorRef = useRef(null)
@@ -88,20 +88,17 @@ const DocumentEditor = () => {
 	const { editorDataHeadings } = useSelector(getTextEditor)
 	// Get all required data from database
 	const {
-		data: docItem,
-		isLoading: isLoadingDocItem
+		data: docItem, isLoading: isLoadingDocItem
 	} = useGetDoc(activeDocId)
 
 	const {
-		data: docItemContent = {},
-		isLoading: isLoadingDocItemContent
+		data: docItemContent = {}, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(activeDocId)
 	//
 	const { editorData, editorDefaultData } = useSelector(getTextEditor)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache({
 		title: docItem?.title,
 		description: docItem?.description,
@@ -110,7 +107,6 @@ const DocumentEditor = () => {
 	/*
 		Effect, to update status of mounted controls
 	*/
-
 	useEffect(() => {
 		const text = (docItemContent?.text ?? "") + " ".repeat(random(20))
 		reduxBatch(() => {
@@ -124,7 +120,8 @@ const DocumentEditor = () => {
 		dispatch(setEditorDataHeadings(headings))
 	}, [dispatch, editorData])
 
-	if (docItem === undefined) return null
+	if (docItem === undefined)
+		return null
 
 	dayjs.extend(relativeTime)
 
@@ -138,11 +135,10 @@ const DocumentEditor = () => {
 	// 		dispatch(setEditorDefaultData(text))
 	// 	})
 	// }
-
 	const handleUpdateTitleOnBlur = async () => {
 		if (localCache.title !== docItem.title) {
 			const newDocMeta = {
-				docId: docItem.docId,	//must be included
+				docId: docItem.docId,
 				title: localCache.title,
 				updatedBy: currentUser.username,
 			}
@@ -156,7 +152,7 @@ const DocumentEditor = () => {
 	const handleUpdateDescriptionOnBlur = async () => {
 		if (localCache.description !== docItem.description) {
 			const newDocMeta = {
-				docId: docItem.docId,	//must be included
+				docId: docItem.docId,
 				description: localCache.description,
 				updatedBy: currentUser.username,
 			}
@@ -170,7 +166,7 @@ const DocumentEditor = () => {
 	const handleUpdateContentOnBlur = async () => {
 		/*******************************
 		 * TODO: !! Bug here
-		 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì 
+		 * khi đang ở Editor, xóa trắng, sau đó click vào nút template thì
 		 * ứng dụng sẽ 1. save data rỗng (vì onBlur)... v.v. sau đó mới apply data mới từ Template
 		 * như vậy, 1 thao tác mà 2 hành động, rất là không hợp lý và trùng lặp.
 		 */
@@ -204,8 +200,7 @@ const DocumentEditor = () => {
 					lineHeight: "2rem", fontWeight: "bold",
 					color: "grey.800"
 				}}
-				onBlur={handleUpdateTitleOnBlur}
-			/>
+				onBlur={handleUpdateTitleOnBlur} />
 
 			{/* {Max 200 characters} */}
 
@@ -221,8 +216,7 @@ const DocumentEditor = () => {
 					fontWeight: "500",
 					lineHeight: "2rem"
 				}}
-				onBlur={handleUpdateDescriptionOnBlur}
-			/>
+				onBlur={handleUpdateDescriptionOnBlur} />
 
 			<Box id="doc-content" sx={{
 				my: 2,
@@ -230,50 +224,47 @@ const DocumentEditor = () => {
 				borderColor: "divider"
 			}} />
 
-			{
-				isLoadingDocItemContent || isLoadingDocItem
-					? <CircularProgressBox />
-					: <>
-						<Box sx={{
-							"& .ProseMirror > p": {
-								marginBottom: "20px",
-								lineHeight: "1.8rem"
-							},
-							"& .ProseMirror li": {
-								marginBottom: "8px",
-							},
-							"& .ProseMirror ul": {
-								marginTop: "8px"
-							}
-						}}>
-							<TextEditor
-								ref={editorRef}
-								value={editorDefaultData ?? ""}
-								placeholder="Enter your content here..."
-								onBlur={handleUpdateContentOnBlur}
-							/>
-						</Box>
+			{isLoadingDocItemContent || isLoadingDocItem
+				? <CircularProgressBox />
+				: <>
+					<Box sx={{
+						"& .ProseMirror > p": {
+							marginBottom: "20px",
+							lineHeight: "1.8rem"
+						},
+						"& .ProseMirror li": {
+							marginBottom: "8px",
+						},
+						"& .ProseMirror ul": {
+							marginTop: "8px"
+						}
+					}}>
+						<TextEditor
+							ref={editorRef}
+							value={editorDefaultData ?? ""}
+							placeholder="Enter your content here..."
+							onBlur={handleUpdateContentOnBlur} />
+					</Box>
 
-						{!isEmptyContent &&
-							<Typography sx={{
-								pt: 12,
-								fontSize: "0.8rem",
-								color: "text.secondary",
-								marginTop: "auto"
-							}}>
-								Created at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.createdBy}
-								{(docItem.createdAt !== docItem.updatedAt) &&
-									<span style={{ display: "block" }}>
-										Updated at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.updatedBy}&nbsp;
-										<span style={{ fontStyle: "italic" }}>({dayjs(docItem.updatedAt).fromNow()})</span>
-									</span>}
-							</Typography>}
-					</>
-			}
+					{!isEmptyContent &&
+						<Typography sx={{
+							pt: 12,
+							fontSize: "0.8rem",
+							color: "text.secondary",
+							marginTop: "auto"
+						}}>
+							Created at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.createdBy}
+							{(docItem.createdAt !== docItem.updatedAt) &&
+								<span style={{ display: "block" }}>
+									Updated at {dayjs(docItem.createdAt).format(DATE_FORMAT.LONG)} by {docItem.updatedBy}&nbsp;
+									<span style={{ fontStyle: "italic" }}>({dayjs(docItem.updatedAt).fromNow()})</span>
+								</span>}
+						</Typography>}
+				</>}
 
 			{isEmptyContent && <DocumentTemplate />}
 
-		</Box >
+		</Box>
 	)
 }
 

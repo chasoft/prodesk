@@ -39,18 +39,20 @@ import { Box, Breadcrumbs, Typography } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-export const BreadcrumbsBox = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		flexDirection: "column",
-		alignItems: "flex-start",
-		pl: { xs: 0, sm: 3 },
-		pt: { xs: 3, sm: 4, md: 6, lg: 8 },
-		pb: 2
-	}}>
-		{children}
-	</Box>
-)
+export function BreadcrumbsBox({ children }) {
+	return (
+		<Box sx={{
+			display: "flex",
+			flexDirection: "column",
+			alignItems: "flex-start",
+			pl: { xs: 0, sm: 3 },
+			pt: { xs: 3, sm: 4, md: 6, lg: 8 },
+			pb: 2
+		}}>
+			{children}
+		</Box>
+	)
+}
 BreadcrumbsBox.propTypes = { children: PropTypes.node }
 
 /*****************************************************************

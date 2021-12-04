@@ -39,7 +39,7 @@ import { Box, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ReplyNotice = () => {
+function ReplyNotice() {
 	return (
 		<Box sx={{
 			my: 1, mr: 1,

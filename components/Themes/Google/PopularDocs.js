@@ -54,7 +54,7 @@ const DummyData = [
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const PopularDocs = () => {
+function PopularDocs() {
 
 	return (
 		<ListGroup
@@ -62,20 +62,17 @@ const PopularDocs = () => {
 			viewAllText="View all popular documents"
 			viewAllLink="/docs/featured"
 		>
-			{
-				DummyData.map((item, idx) => {
-					return (
-						<PostListItem
-							key={item.docId}
-							isFirst={idx === 0} isLast={idx === DummyData.length - 1}
-							subject={item.subject}
-							excerpt={item.excerpt}
-							link={item.link}
-							metaData={item.metaData}
-						/>
-					)
-				})
-			}
+			{DummyData.map((item, idx) => {
+				return (
+					<PostListItem
+						key={item.docId}
+						isFirst={idx === 0} isLast={idx === DummyData.length - 1}
+						subject={item.subject}
+						excerpt={item.excerpt}
+						link={item.link}
+						metaData={item.metaData} />
+				)
+			})}
 		</ListGroup>
 	)
 }

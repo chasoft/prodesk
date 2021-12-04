@@ -76,7 +76,7 @@ export const NOTIFICATION_INBOXES_LIST = [
 	},
 ]
 
-const NotificationInbox = ({ counter }) => {
+function NotificationInbox({ counter }) {
 	const dispatch = useDispatch()
 	const { notificationInbox } = useSelector(getUiSettings)
 
@@ -149,7 +149,7 @@ const useStyles = makeStyles({
 	}
 })
 
-const NotisItemContainer = ({ children, ...props }) => {
+function NotisItemContainer({ children, ...props }) {
 	const classes = useStyles()
 	const nodeRef = useRef(null)
 	return (
@@ -174,7 +174,7 @@ NotisItemContainer.propTypes = {
 	children: PropTypes.node.isRequired,
 }
 
-const NotisItemLink = ({ notisContent }) => {
+function NotisItemLink({ notisContent }) {
 	const { isAdminURL } = useAdmin()
 
 	const link = replyLinkBuilder({
@@ -204,7 +204,7 @@ const NotisItemLink = ({ notisContent }) => {
 					{notisContent.description}
 				</Typography>
 			</Typography>
-		</Link >
+		</Link>
 	)
 }
 NotisItemLink.propTypes = {
@@ -215,7 +215,7 @@ NotisItemLink.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
+function NotificationDrawer({ isOpen, handleClose, notis, counter }) {
 	const classes = useStyles()
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
@@ -271,7 +271,7 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 						my: 1, px: 2
 					}}>
 						<Typography>
-							You don&apos;t have any {(notificationInbox !== STATUS_FILTER.ALL) ? ` ${notificationInbox?.toLowerCase() ?? ""} ` : ""}  notifications
+							You don&apos; t have any {(notificationInbox !== STATUS_FILTER.ALL) ? ` ${notificationInbox?.toLowerCase() ?? ""} ` : ""}  notifications
 						</Typography>
 					</Box>}
 
@@ -281,20 +281,18 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 							<NotisItemContainer key={i.nid}>
 								<ListItem
 									button
-									secondaryAction={
-										<IconButton
-											id="closeButton"
-											edge="end"
-											size="small"
-											aria-label="delete"
-											onClick={async (e) => {
-												e.stopPropagation()
-												await removeNotifications(currentUser.username, i.nid)
-											}}
-										>
-											<CloseIcon />
-										</IconButton>
-									}
+									secondaryAction={<IconButton
+										id="closeButton"
+										edge="end"
+										size="small"
+										aria-label="delete"
+										onClick={async (e) => {
+											e.stopPropagation()
+											await removeNotifications(currentUser.username, i.nid)
+										}}
+									>
+										<CloseIcon />
+									</IconButton>}
 									sx={{
 										"&>.MuiListItemSecondaryAction-root": { display: "none" },
 										":hover": {
@@ -314,8 +312,7 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 									<ListItemAvatar>
 										<Avatar
 											alt={i.content.description}
-											src={i.content.iconURL}
-										/>
+											src={i.content.iconURL} />
 									</ListItemAvatar>
 									<Box
 										onClick={async () => {
@@ -329,16 +326,14 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 										}}
 									>
 										<ListItemText
-											primary={
-												i.content.link
-													? <NotisItemLink notisContent={i.content} />
-													: <Typography variant="h4" sx={{ my: 0 }}>
-														{i.content.title}
-														<Typography component="span" variant="body1">
-															{i.content.description}
-														</Typography>
-													</Typography>}
-										/>
+											primary={i.content.link
+												? <NotisItemLink notisContent={i.content} />
+												: <Typography variant="h4" sx={{ my: 0 }}>
+													{i.content.title}
+													<Typography component="span" variant="body1">
+														{i.content.description}
+													</Typography>
+												</Typography>} />
 										<Typography variant="body1" sx={{
 											color: "grey.500",
 											fontSize: "0.8rem",
@@ -388,7 +383,7 @@ const NotificationDrawer = ({ isOpen, handleClose, notis, counter }) => {
 					</IconButton>
 				</Box>
 			</Box>
-		</Drawer >
+		</Drawer>
 	)
 }
 

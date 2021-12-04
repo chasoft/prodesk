@@ -39,7 +39,7 @@ import { Avatar, Box, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const UserInfo = () => {
+function UserInfo() {
 	return (
 		<Box
 			sx={{

@@ -103,7 +103,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SearchBox = () => {
+function SearchBox() {
 	const { activeSettingTab } = useSelector(getUiSettings)
 
 	//Only show this SearchBox when not at HOME!
@@ -117,8 +117,7 @@ const SearchBox = () => {
 			</SearchIconWrapper>
 			<StyledInputBase
 				placeholder="Search…"
-				inputProps={{ "aria-label": "search" }}
-			/>
+				inputProps={{ "aria-label": "search" }} />
 		</Search>
 	)
 }

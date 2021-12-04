@@ -66,25 +66,22 @@ import DeleteIcon from "@mui/icons-material/Delete"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesGroup = ({ backBtnClick }) => {
+function CannedRepliesGroup({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
-		selectedCrid,
-		activeSettingPanel
+		selectedCrid, activeSettingPanel
 	} = useSelector(getUiSettings)
 
 	const {
-		data: departments,
-		isLoading: isLoadingDepartments
+		data: departments, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		data: cannedReplies = [],
-		isLoading: isLoadingCannedReplies
+		data: cannedReplies = [], isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const [deleteCannedReply] = useDeleteCannedReplyMutation()
@@ -106,7 +103,8 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 	}, [selectedCannedReply])
 
 	const handleDeleteCannedReply = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 		//
 		dispatch(setSelectedCrid(""))
 		//get newList of canned-replies
@@ -168,45 +166,41 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 					/* Go to SettingsList OR CannedRepliesGroup */
 					if (selectedCrid === "")
 						backBtnClick(false)
+
 					else
 						dispatch(setSelectedCrid(""))
 				}}
 
-				rightButton={
-					(size(selectedCannedReply) > 0)
-						? <Box sx={{ display: "flex", alignItems: "center" }}>
+				rightButton={(size(selectedCannedReply) > 0)
+					? <Box sx={{ display: "flex", alignItems: "center" }}>
 
-							<FullCannedReplySwitch
-								isFullCannedReply={isFullCannedReply}
-								setIsFullCannedReply={setIsFullCannedReply}
-							/>
+						<FullCannedReplySwitch
+							isFullCannedReply={isFullCannedReply}
+							setIsFullCannedReply={setIsFullCannedReply} />
 
-							<div>
-								<Tooltip arrow title="Delete current canned-reply" placement="top">
-									<IconButton
-										sx={{ ":hover": { color: "warning.main" } }}
-										onClick={() => setOpenConfirmDialog(true)}
-									>
-										<DeleteIcon fontSize="small" />
-									</IconButton>
-								</Tooltip>
-							</div>
-						</Box> : null
-				}
+						<div>
+							<Tooltip arrow title="Delete current canned-reply" placement="top">
+								<IconButton
+									sx={{ ":hover": { color: "warning.main" } }}
+									onClick={() => setOpenConfirmDialog(true)}
+								>
+									<DeleteIcon fontSize="small" />
+								</IconButton>
+							</Tooltip>
+						</div>
+					</Box> : null}
 			>
 				{currentDepartment.name}
 			</SettingsContentHeader>
 
 			{(size(selectedCannedReply) === 0)
 				? <CannedRepliesList
-					cannedReplies={cannedRepliesGroup}
-				/> : null}
+					cannedReplies={cannedRepliesGroup} /> : null}
 
 			{(size(selectedCannedReply) > 0)
 				? <CannedRepliesDetails
 					selectedCannedReply={selectedCannedReply}
-					isFullCannedReply={isFullCannedReply}
-				/> : null}
+					isFullCannedReply={isFullCannedReply} /> : null}
 
 			<ConfirmDialog
 				okButtonText="Delete"
@@ -218,14 +212,13 @@ const CannedRepliesGroup = ({ backBtnClick }) => {
 				<Box sx={{ display: "flex" }}>
 					<DeleteIcon
 						color="warning"
-						sx={{ width: 60, height: 60, mr: 2 }}
-					/>
+						sx={{ width: 60, height: 60, mr: 2 }} />
 					<Typography sx={{ lineHeight: 2 }}>
-						Are you sure you want to delete this canned-reply? <br /> Please note that this action can not be undo.
+						Are you sure you want to delete this canned-reply?<br /> Please note that this action can not be undo.
 					</Typography>
 				</Box>
 			</ConfirmDialog>
-		</ >
+		</>
 	)
 }
 

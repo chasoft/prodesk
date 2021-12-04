@@ -44,7 +44,7 @@ import { Box } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Template = ({ children }) => {
+function Template({ children }) {
 	return (
 		<Box>
 			{children}

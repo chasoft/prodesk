@@ -24,7 +24,7 @@ const LocationsToFixHeight = [
 	{ url: "/admin/settings", height: "90%" }
 ]
 
-const PageTransition = ({ children, location }) => {
+function PageTransition({ children, location }) {
 	const nodeRef = useRef(null)
 	const height = useMemo(() => {
 		let res = "100%"
@@ -40,23 +40,21 @@ const PageTransition = ({ children, location }) => {
 	return (
 		<TransitionGroup style={{ position: "relative", width: "100%", height: height }}>
 			<ReactTransition nodeRef={nodeRef} key={location} timeout={{ enter: TIMEOUT, exit: TIMEOUT }}>
-				{
-					(status) => (
-						<div
-							ref={nodeRef}
-							style={{
-								...getTransitionStyles[status],
-								display: "flex",
-								flexDirection: "column",
-								height: "100%"
-							}}
-						>
-							{children}
-						</div>
-					)
-				}
+				{(status) => (
+					<div
+						ref={nodeRef}
+						style={{
+							...getTransitionStyles[status],
+							display: "flex",
+							flexDirection: "column",
+							height: "100%"
+						}}
+					>
+						{children}
+					</div>
+				)}
 			</ReactTransition>
-		</TransitionGroup >
+		</TransitionGroup>
 	)
 }
 PageTransition.propTypes = { children: PropTypes.node, location: PropTypes.string }

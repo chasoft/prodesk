@@ -43,7 +43,7 @@ import CategoryGroupLatestFAQs from "./CategoryGroupLatestFAQs"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoryGroup = () => {
+function CategoryGroup() {
 	return (
 		<Container maxWidth="md">
 			<Box
@@ -99,7 +99,7 @@ const CategoryGroup = () => {
 				</Grid>
 
 			</Box>
-		</Container >
+		</Container>
 	)
 }
 

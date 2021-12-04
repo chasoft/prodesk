@@ -78,7 +78,7 @@ const validationSchema = yup.object({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const LoginForm = () => {
+function LoginForm() {
 	useFlexDirection({ payload: "row" })
 	const dispatch = useDispatch()
 	const [isLoading, setIsLoading] = useState(false)
@@ -125,8 +125,7 @@ const LoginForm = () => {
 
 			<RegHeader
 				icon={<LockOutlinedIcon />}
-				title="Login"
-			/>
+				title="Login" />
 
 			<Box sx={{
 				display: "flex",
@@ -175,8 +174,7 @@ const LoginForm = () => {
 						padding: "0 16px",
 						background: "#fff"
 					}
-				}}
-			/>
+				}} />
 
 			<form onSubmit={formik.handleSubmit}>
 				<Grid container spacing={2}>
@@ -193,8 +191,7 @@ const LoginForm = () => {
 							error={formik.touched.username && Boolean(formik.errors.username)}
 							helperText={formik.touched.username && formik.errors.username}
 							fullWidth
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -210,14 +207,12 @@ const LoginForm = () => {
 							error={formik.touched.password && Boolean(formik.errors.password)}
 							helperText={formik.touched.password && formik.errors.password}
 							required
-							fullWidth
-						/>
+							fullWidth />
 					</Grid>
 					<Grid item xs={12}>
 						<FormControlLabel
 							control={<Checkbox value="remember" color="primary" />}
-							label="Remember me"
-						/>
+							label="Remember me" />
 					</Grid>
 					<Grid item xs={12}>
 						<Button

@@ -58,7 +58,7 @@ import { RegContainer } from "@layout/RegLayout"
 // 	)
 // }
 
-const InitSurveyForm = () => {
+function InitSurveyForm() {
 	const dispatch = useDispatch()
 	// const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
@@ -109,20 +109,17 @@ const InitSurveyForm = () => {
 						<Paper>
 							<FormControlLabel
 								label="Option 1" control={<Radio />}
-								value="Option1"
-							/>
+								value="Option1" />
 						</Paper>
 						<Paper>
 							<FormControlLabel
 								label="Option 2" control={<Radio />}
-								value="Option2"
-							/>
+								value="Option2" />
 						</Paper>
 						<Paper>
 							<FormControlLabel
 								label="Option 3" control={<Radio />}
-								value="Option3"
-							/>
+								value="Option3" />
 						</Paper>
 					</RadioGroup>
 				</Box>

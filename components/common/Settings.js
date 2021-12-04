@@ -43,13 +43,9 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
  * INIT                                                          *
  *****************************************************************/
 
-export const SettingsSwitch = ({
-	title,
-	state,
-	setState,
-	stateDescription,
-	description
-}) => {
+export function SettingsSwitch({
+	title, state, setState, stateDescription, description
+}) {
 	return (
 		<>
 			{title &&
@@ -58,16 +54,12 @@ export const SettingsSwitch = ({
 				</Typography>}
 
 			<FormControlLabel
-				control={
-					<Switch
-						checked={state}
-						onChange={(e) => setState(e.target.checked)}
-						name="checkedB"
-						color="primary"
-					/>
-				}
-				label={stateDescription[state ? 1 : 0]}
-			/>
+				control={<Switch
+					checked={state}
+					onChange={(e) => setState(e.target.checked)}
+					name="checkedB"
+					color="primary" />}
+				label={stateDescription[state ? 1 : 0]} />
 
 			{description &&
 				<Typography
@@ -89,7 +81,7 @@ SettingsSwitch.propTypes = {
 	description: PropTypes.string
 }
 
-export const ContentGroup = ({ title, children }) => {
+export function ContentGroup({ title, children }) {
 	return (
 		<Box sx={{
 			borderBottom: "1px solid transparent",
@@ -106,7 +98,7 @@ ContentGroup.propTypes = {
 	children: PropTypes.node
 }
 
-export const ContentDescription = ({ children }) => {
+export function ContentDescription({ children }) {
 	return (
 		<Typography variant="caption" sx={{
 			display: "block",
@@ -122,7 +114,7 @@ ContentDescription.propTypes = {
 	children: PropTypes.node
 }
 
-export const ContentRow = ({ title, tooltip, removePadding = false, children }) => {
+export function ContentRow({ title, tooltip, removePadding = false, children }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -150,8 +142,7 @@ export const ContentRow = ({ title, tooltip, removePadding = false, children }) 
 								cursor: "pointer",
 								fill: (theme) => theme.palette.grey[600],
 								fontSize: "1rem"
-							}}
-						/>
+							}} />
 					</Tooltip>}
 			</Box>
 			<Box sx={{ width: "100%" }}>
@@ -167,7 +158,7 @@ ContentRow.propTypes = {
 	children: PropTypes.node
 }
 
-export const EditButton = ({ defaultState, saveAction, cancelAction, isUpdating = false, canSave = true, children }) => {
+export function EditButton({ defaultState, saveAction, cancelAction, isUpdating = false, canSave = true, children }) {
 	const [isEditMode, setIsEditMode] = useState(false)
 	return (
 		<>
@@ -241,18 +232,20 @@ EditButton.propTypes = {
  * SETTINGS PANEL                                                *
  *****************************************************************/
 
-export const ListTitle = ({ children }) => (
-	<Box sx={{
-		padding: 2,
-		color: (theme) => theme.palette.grey[600],
-	}}>
-		<Typography variant="caption">
-			{children}
-		</Typography>
-	</Box>
-); ListTitle.propTypes = { children: PropTypes.node }
+export function ListTitle({ children }) {
+	return (
+		<Box sx={{
+			padding: 2,
+			color: (theme) => theme.palette.grey[600],
+		}}>
+			<Typography variant="caption">
+				{children}
+			</Typography>
+		</Box>
+	)
+} ListTitle.propTypes = { children: PropTypes.node }
 
-export const ListItem = ({ selected, icon, onClick, children }) => {
+export function ListItem({ selected, icon, onClick, children }) {
 	return (
 		<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 			<Box
@@ -275,7 +268,7 @@ export const ListItem = ({ selected, icon, onClick, children }) => {
 					{children}
 				</Typography>
 			</Box>
-		</ButtonBase >
+		</ButtonBase>
 	)
 }
 ListItem.propTypes = {
@@ -285,70 +278,76 @@ ListItem.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsHeader = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		marginBottom: "1rem"
-	}}
-	>{children}</Box>
-)
+export function SettingsHeader({ children }) {
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+			marginBottom: "1rem"
+		}}
+		>{children}</Box>
+	)
+}
 SettingsHeader.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContainer = ({ children }) => (
-	<Paper sx={{
-		display: "flex",
-		mt: { xs: 3, md: 1 },
-		borderRadius: 2
-	}}
-	>{children}</Paper>
-)
+export function SettingsContainer({ children }) {
+	return (
+		<Paper sx={{
+			display: "flex",
+			mt: { xs: 3, md: 1 },
+			borderRadius: 2
+		}}
+		>{children}</Paper>
+	)
+}
 SettingsContainer.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsList = ({ showContent, sx, children }) => (
-	<Box
-		sx={{
-			backgroundColor: "#F0F0F0",
-			borderTopLeftRadius: "0.5rem",
-			borderBottomLeftRadius: "0.5rem",
-			minWidth: {
-				xs: 20 * 8,
-				sm: 27 * 8,
-				lg: 37 * 8
-			},
-			maxWidth: {
-				xs: "100%",
-				sm: 27 * 8,
-				lg: 37 * 8
-			},
-			padding: (theme) => theme.spacing(1, 0, 1),
-			// display: { xs: "none", sm: "initial" },
-			borderTopRightRadius: { xs: "0.5rem", md: 0 },
-			borderBottomRightRadius: { xs: "0.5rem", md: 0 },
-			//
-			flexGrow: showContent ? 0 : 1,
-			display: {
-				xs: showContent ? "none" : "initial",
-				sm: "initial",
-			},
-			...sx
-		}}
-	>
-		{children}
-	</Box>
-)
+export function SettingsList({ showContent, sx, children }) {
+	return (
+		<Box
+			sx={{
+				backgroundColor: "#F0F0F0",
+				borderTopLeftRadius: "0.5rem",
+				borderBottomLeftRadius: "0.5rem",
+				minWidth: {
+					xs: 20 * 8,
+					sm: 27 * 8,
+					lg: 37 * 8
+				},
+				maxWidth: {
+					xs: "100%",
+					sm: 27 * 8,
+					lg: 37 * 8
+				},
+				padding: (theme) => theme.spacing(1, 0, 1),
+				// display: { xs: "none", sm: "initial" },
+				borderTopRightRadius: { xs: "0.5rem", md: 0 },
+				borderBottomRightRadius: { xs: "0.5rem", md: 0 },
+				//
+				flexGrow: showContent ? 0 : 1,
+				display: {
+					xs: showContent ? "none" : "initial",
+					sm: "initial",
+				},
+				...sx
+			}}
+		>
+			{children}
+		</Box>
+	)
+}
 SettingsList.propTypes = {
 	showContent: PropTypes.bool,
 	sx: PropTypes.object,
 	children: PropTypes.node
 }
 
-export const SettingsContent = ({ showContent = true, children }) => {
+export function SettingsContent({ showContent = true, children }) {
 	// const theme = useTheme()
 	// const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
 	return (
@@ -372,33 +371,37 @@ SettingsContent.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentDetails = ({ sx, children }) => (
-	<Container sx={{ py: { xs: 3, sm: 2 }, ...sx }}>
-		{children}
-	</Container>
-)
+export function SettingsContentDetails({ sx, children }) {
+	return (
+		<Container sx={{ py: { xs: 3, sm: 2 }, ...sx }}>
+			{children}
+		</Container>
+	)
+}
 SettingsContentDetails.propTypes = {
 	sx: PropTypes.any,
 	children: PropTypes.node
 }
 
-const ContentHeader = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "space-between",
-		px: 3,
-		py: { xs: 1, sm: 2 },
-		borderTopLeftRadius: 8,
-		borderTopRightRadius: 8,
-		backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
-	}}> {children} </Box>
-)
+function ContentHeader({ children }) {
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+			px: 3,
+			py: { xs: 1, sm: 2 },
+			borderTopLeftRadius: 8,
+			borderTopRightRadius: 8,
+			backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
+		}}> {children} </Box>
+	)
+}
 ContentHeader.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentHeader = ({ hasBackBtn = true, backBtnOnClick = () => { }, rightButton, children }) => {
+export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () => { }, rightButton, children }) {
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
@@ -443,57 +446,65 @@ SettingsContentHeader.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentHelper = ({ children }) => (
-	<Box sx={{
-		borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-		"& > div:last-child": { pt: 0 }
-	}}>{children}</Box>
-)
+export function SettingsContentHelper({ children }) {
+	return (
+		<Box sx={{
+			borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+			"& > div:last-child": { pt: 0 }
+		}}>{children}</Box>
+	)
+}
 SettingsContentHelper.propTypes = {
 	children: PropTypes.node
 }
 
-const ContentHelperText = ({ children }) => (
-	<Box sx={{
-		color: (theme) => theme.palette.grey[600],
-		px: 3,
-		pb: 2,
-		pt: { xs: 2, sm: 0 },
-		"& > span > div:last-child": {
-			marginTop: "0.5rem"
-		}
-	}}> {children} </Box>
-)
+function ContentHelperText({ children }) {
+	return (
+		<Box sx={{
+			color: (theme) => theme.palette.grey[600],
+			px: 3,
+			pb: 2,
+			pt: { xs: 2, sm: 0 },
+			"& > span > div:last-child": {
+				marginTop: "0.5rem"
+			}
+		}}> {children} </Box>
+	)
+}
 ContentHelperText.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentHelperText = ({ children }) => (
-	<ContentHelperText>
-		<Typography component="div" variant="caption">
-			{children}
-		</Typography>
-	</ContentHelperText>
-)
+export function SettingsContentHelperText({ children }) {
+	return (
+		<ContentHelperText>
+			<Typography component="div" variant="caption">
+				{children}
+			</Typography>
+		</ContentHelperText>
+	)
+}
 SettingsContentHelperText.propTypes = {
 	children: PropTypes.node
 }
 
-export const SettingsContentHelperAlert = ({ severity, children }) => (
-	<ContentHelperText>
-		<Alert severity={severity}>
-			<Typography variant="caption">
-				{children}
-			</Typography>
-		</Alert>
-	</ContentHelperText>
-)
+export function SettingsContentHelperAlert({ severity, children }) {
+	return (
+		<ContentHelperText>
+			<Alert severity={severity}>
+				<Typography variant="caption">
+					{children}
+				</Typography>
+			</Alert>
+		</ContentHelperText>
+	)
+}
 SettingsContentHelperAlert.propTypes = {
 	severity: PropTypes.oneOf(["error", "warning", "info", "success"]),
 	children: PropTypes.node
 }
 
-export const SettingsContentHelperLearnMore = ({ target, action = () => { } }) => {
+export function SettingsContentHelperLearnMore({ target, action = () => { } }) {
 	if (target) {
 		return (
 			<Box
@@ -547,23 +558,25 @@ SettingsContentHelperLearnMore.propTypes = {
 	action: PropTypes.func
 }
 
-export const SettingsContentActionBar = ({ children }) => (
-	<Box sx={{
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "flex-end",
-		px: 3,
-		py: { xs: 1, sm: 2 },
-		backgroundColor: "#F0F0F0",
-		// backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
-		"> *:last-child": {
-			ml: 2,
-			minWidth: 100
-		},
-		borderBottomLeftRadius: 8,
-		borderBottomRightRadius: 8,
-	}}>{children}</Box>
-)
+export function SettingsContentActionBar({ children }) {
+	return (
+		<Box sx={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "flex-end",
+			px: 3,
+			py: { xs: 1, sm: 2 },
+			backgroundColor: "#F0F0F0",
+			// backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
+			"> *:last-child": {
+				ml: 2,
+				minWidth: 100
+			},
+			borderBottomLeftRadius: 8,
+			borderBottomRightRadius: 8,
+		}}>{children}</Box>
+	)
+}
 
 SettingsContentActionBar.propTypes = {
 	children: PropTypes.node

@@ -58,7 +58,7 @@ import LaunchIcon from "@mui/icons-material/Launch"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
+function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -128,28 +128,24 @@ const TocSideBarExternal = ({ url, handleOpen, targetDocItem, children }) => {
 				onClick={handleOpen}
 				handleOpen={handleOpen}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
-				additionalButton={
-					<Tooltip arrow title={url ? url : "Empty"} placement="top">
-						<a href={url} target="_blank" rel="noopener noreferrer">
-							<LaunchIcon
-								sx={{
-									mx: 0.5,
-									color: "grey.500",
-									fontSize: "1.2rem",
-									":hover": {
-										fill: (theme) => theme.palette.primary.main
-									}
-								}}
-							/>
-						</a>
-					</Tooltip>
-				}
+				additionalButton={<Tooltip arrow title={url ? url : "Empty"} placement="top">
+					<a href={url} target="_blank" rel="noopener noreferrer">
+						<LaunchIcon
+							sx={{
+								mx: 0.5,
+								color: "grey.500",
+								fontSize: "1.2rem",
+								":hover": {
+									fill: (theme) => theme.palette.primary.main
+								}
+							}} />
+					</a>
+				</Tooltip>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor:
-						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-							? "action.hover"
-							: "transparent",
+					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+						? "action.hover"
+						: "transparent",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light" } : {}),
 					...(isNotActive ? { backgroundColor: "error.light" } : {}),

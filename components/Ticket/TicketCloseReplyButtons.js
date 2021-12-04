@@ -50,13 +50,9 @@ import { addNewNotification } from "@helpers/realtimeApi"
  * INIT                                                          *
  *****************************************************************/
 
-export const handleCloseTicketBase = async ({
-	allAdminProfiles,
-	currentUser,
-	departments,
-	ticket,
-	updateTicket,
-}) => {
+export async function handleCloseTicketBase({
+	allAdminProfiles, currentUser, departments, ticket, updateTicket,
+}) {
 	const res = await updateTicket([{
 		username: currentUser.username,
 		tid: ticket.tid,
@@ -106,14 +102,13 @@ export const handleCloseTicketBase = async ({
 
 //TODO: Show a dialog to get customer's feedback (satisfaction)
 //When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
-const TicketActionButtons = ({ ticket, allAdminProfiles }) => {
+function TicketActionButtons({ ticket, allAdminProfiles }) {
 	const [updateTicket] = useUpdateTicketMutation()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
 
 	const {
-		data: departments,
-		isLoading: isLoadingDepartments
+		data: departments, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const handleCloseTicket = async () => {
@@ -148,18 +143,13 @@ const TicketActionButtons = ({ ticket, allAdminProfiles }) => {
 
 			<ReplyButton
 				ticket={ticket}
-				disabled={
-					currentUser.username !== ticket.username
-					&& ticket.status === STATUS_FILTER.CLOSED
-				}
-				tooltip={
-					(ticket.status === STATUS_FILTER.CLOSED
-						&& currentUser.username === ticket.username)
-						? "The ticket would be re-open if you reply"
-						: ""
-				}
-				sx={{ mt: 3 }}
-			/>
+				disabled={currentUser.username !== ticket.username
+					&& ticket.status === STATUS_FILTER.CLOSED}
+				tooltip={(ticket.status === STATUS_FILTER.CLOSED
+					&& currentUser.username === ticket.username)
+					? "The ticket would be re-open if you reply"
+					: ""}
+				sx={{ mt: 3 }} />
 
 		</Box>
 	)

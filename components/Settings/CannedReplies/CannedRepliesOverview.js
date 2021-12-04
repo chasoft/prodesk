@@ -49,7 +49,7 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CannedRepliesOverview = ({ departmentCreated, backBtnClick }) => {
+function CannedRepliesOverview({ departmentCreated, backBtnClick }) {
 	return (
 		<>
 			<SettingsContentHeader backBtnOnClick={() => backBtnClick(false)}>
@@ -66,7 +66,7 @@ const CannedRepliesOverview = ({ departmentCreated, backBtnClick }) => {
 						<>
 							<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
 							<span>
-								You can not add any new canned-reply for there is no department created. Click here to go to <Link href="/admin/settings/tickets/department" passHref><Box component="a" href="just-a-placeholder" sx={{ color: "primary.main" }}>department settings</Box></Link>, create at least one department and come back later.
+								You can not add any new canned-reply for there is no department created.Click here to go to <Link href="/admin/settings/tickets/department" passHref><Box component="a" href="just-a-placeholder" sx={{ color: "primary.main" }}>department settings</Box></Link>, create at least one department and come back later.
 							</span>
 						</>}
 				</SettingsContentHelperText>

@@ -58,7 +58,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
  * INIT                                                          *
  *****************************************************************/
 
-export const CollapseIconButton = ({ expanded, onClick }) => {
+export function CollapseIconButton({ expanded, onClick }) {
 	if (expanded) {
 		return (
 			<KeyboardArrowDownIcon
@@ -70,8 +70,7 @@ export const CollapseIconButton = ({ expanded, onClick }) => {
 						fill: (theme) => theme.palette.primary.main
 					},
 				}}
-				onClick={onClick}
-			/>
+				onClick={onClick} />
 		)
 	}
 
@@ -85,8 +84,7 @@ export const CollapseIconButton = ({ expanded, onClick }) => {
 					fill: (theme) => theme.palette.primary.main
 				}
 			}}
-			onClick={onClick}
-		/>
+			onClick={onClick} />
 	)
 }
 CollapseIconButton.propTypes = {
@@ -98,7 +96,7 @@ CollapseIconButton.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarCategory = ({ handleOpen, targetDocItem, children }) => {
+function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -158,12 +156,8 @@ const TocSideBarCategory = ({ handleOpen, targetDocItem, children }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	const [
-		AddNewPopupMenu,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		AddNewPopupMenu, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = useAddNewDocumentationPopupMenu()
 
@@ -183,37 +177,31 @@ const TocSideBarCategory = ({ handleOpen, targetDocItem, children }) => {
 				handleOpen={handleOpen}
 				showDetailsButton={false}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
-				additionalButton={
-					<>
-						<TocSideBarAddNew
-							ref={anchorRef}
-							handleToggle={handleToggle}
-						/>
-						<AddNewPopupMenu
-							open={open}
-							anchorRef={anchorRef}
-							handleClose={handleClose}
-							targetDocItem={targetDocItem}
-							placement="bottom-start"
-							actions={[
-								DOCS_ADD.CATEGORY,
-								DOCS_ADD.SUB_CATEGORY,
-								DOCS_ADD.DOC,
-								DOCS_ADD.EXTERNAL,
-							]}
-						/>
-						<CollapseIconButton
-							expanded={expanded}
-							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
-						/>
-					</>
-				}
+				additionalButton={<>
+					<TocSideBarAddNew
+						ref={anchorRef}
+						handleToggle={handleToggle} />
+					<AddNewPopupMenu
+						open={open}
+						anchorRef={anchorRef}
+						handleClose={handleClose}
+						targetDocItem={targetDocItem}
+						placement="bottom-start"
+						actions={[
+							DOCS_ADD.CATEGORY,
+							DOCS_ADD.SUB_CATEGORY,
+							DOCS_ADD.DOC,
+							DOCS_ADD.EXTERNAL,
+						]} />
+					<CollapseIconButton
+						expanded={expanded}
+						onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }} />
+				</>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor:
-						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-							? "action.hover"
-							: "initial",
+					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+						? "action.hover"
+						: "initial",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {})
 				}}
@@ -222,12 +210,11 @@ const TocSideBarCategory = ({ handleOpen, targetDocItem, children }) => {
 					px: 2, py: 1,
 					ml: -2, mr: 0,
 					textTransform: "uppercase",
-					color:
-						isActive
-							? "primary.contrastText"
-							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-								? "primary.main"
-								: "grey.500",
+					color: isActive
+						? "primary.contrastText"
+						: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+							? "primary.main"
+							: "grey.500",
 					fontWeight: "bold",
 					":hover": { color: "primary.main" },
 				}}>

@@ -42,7 +42,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
  * INIT                                                          *
  *****************************************************************/
 
-const TicketMetaBox = ({ format, title, content }) => {
+function TicketMetaBox({ format, title, content }) {
 	const middleLine = useRef(null)
 	const [middleWidth, setMiddleWidth] = useState(100)
 	dayjs.extend(relativeTime)
@@ -74,9 +74,7 @@ const TicketMetaBox = ({ format, title, content }) => {
 			{(format === MetaContentFormat.CHIP) &&
 				<Chip
 					size="small"
-					label={content}
-
-				/>}
+					label={content} />}
 
 			{(format === MetaContentFormat.DATE) &&
 				<Typography sx={{ textAlign: "right" }}>
@@ -91,7 +89,7 @@ const TicketMetaBox = ({ format, title, content }) => {
 					</span>
 				</Typography>}
 
-		</Box >
+		</Box>
 	)
 }
 TicketMetaBox.propTypes = {
@@ -145,7 +143,7 @@ const DUMMY_META = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const PostMeta = () => {
+function PostMeta() {
 
 	return (
 		<Paper
@@ -165,8 +163,7 @@ const PostMeta = () => {
 						key={META_CODE.DEPARTMENT.CODE}
 						title={MetaProperties[META_CODE.DEPARTMENT.CODE].name}
 						format={MetaProperties[META_CODE.DEPARTMENT.CODE].type}
-						content={DUMMY_META[META_CODE.DEPARTMENT.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.DEPARTMENT.CODE]} />
 				}
 
 				if ((META_CODE.STATUS.CODE in DUMMY_META) && idx === META_CODE.STATUS.POSITION) {
@@ -174,8 +171,7 @@ const PostMeta = () => {
 						key={META_CODE.STATUS.CODE}
 						title={MetaProperties[META_CODE.STATUS.CODE].name}
 						format={MetaProperties[META_CODE.STATUS.CODE].type}
-						content={DUMMY_META[META_CODE.STATUS.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.STATUS.CODE]} />
 				}
 
 				if ((META_CODE.CREATOR.CODE in DUMMY_META) && idx === META_CODE.CREATOR.POSITION) {
@@ -183,8 +179,7 @@ const PostMeta = () => {
 						key={META_CODE.CREATOR.CODE}
 						title={MetaProperties[META_CODE.CREATOR.CODE].name}
 						format={MetaProperties[META_CODE.CREATOR.CODE].type}
-						content={DUMMY_META[META_CODE.CREATOR.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.CREATOR.CODE]} />
 				}
 
 				if ((META_CODE.PRIORITY.CODE in DUMMY_META) && idx === META_CODE.PRIORITY.POSITION) {
@@ -192,8 +187,7 @@ const PostMeta = () => {
 						key={META_CODE.PRIORITY.CODE}
 						title={MetaProperties[META_CODE.PRIORITY.CODE].name}
 						format={MetaProperties[META_CODE.PRIORITY.CODE].type}
-						content={DUMMY_META[META_CODE.PRIORITY.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.PRIORITY.CODE]} />
 				}
 
 				if ((META_CODE.UPDATED_AT.CODE in DUMMY_META) && idx === META_CODE.UPDATED_AT.POSITION) {
@@ -201,8 +195,7 @@ const PostMeta = () => {
 						key={META_CODE.UPDATED_AT.CODE}
 						title={MetaProperties[META_CODE.UPDATED_AT.CODE].name}
 						format={MetaProperties[META_CODE.UPDATED_AT.CODE].type}
-						content={DUMMY_META[META_CODE.UPDATED_AT.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.UPDATED_AT.CODE]} />
 				}
 
 				if ((META_CODE.CREATED_AT.CODE in DUMMY_META) && idx === META_CODE.CREATED_AT.POSITION) {
@@ -210,8 +203,7 @@ const PostMeta = () => {
 						key={META_CODE.CREATED_AT.CODE}
 						title={MetaProperties[META_CODE.CREATED_AT.CODE].name}
 						format={MetaProperties[META_CODE.CREATED_AT.CODE].type}
-						content={DUMMY_META[META_CODE.CREATED_AT.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.CREATED_AT.CODE]} />
 				}
 
 				if ((META_CODE.CATEGORY.CODE in DUMMY_META) && idx === META_CODE.CATEGORY.POSITION) {
@@ -219,8 +211,7 @@ const PostMeta = () => {
 						key={META_CODE.CATEGORY.CODE}
 						title={MetaProperties[META_CODE.CATEGORY.CODE].name}
 						format={MetaProperties[META_CODE.CATEGORY.CODE].type}
-						content={DUMMY_META[META_CODE.CATEGORY.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.CATEGORY.CODE]} />
 				}
 
 				if ((META_CODE.LABEL.CODE in DUMMY_META) && idx === META_CODE.LABEL.POSITION) {
@@ -228,8 +219,7 @@ const PostMeta = () => {
 						key={META_CODE.LABEL.CODE}
 						title={MetaProperties[META_CODE.LABEL.CODE].name}
 						format={MetaProperties[META_CODE.LABEL.CODE].type}
-						content={DUMMY_META[META_CODE.LABEL.CODE]}
-					/>
+						content={DUMMY_META[META_CODE.LABEL.CODE]} />
 				}
 
 			})}

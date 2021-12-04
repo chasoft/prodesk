@@ -49,7 +49,7 @@ import FilterListIcon from "@mui/icons-material/FilterList"
  * INIT                                                          *
  *****************************************************************/
 
-const FilterDrawer = ({ isOpen, handleClose }) => {
+function FilterDrawer({ isOpen, handleClose }) {
 	return (
 		<Drawer
 			anchor="right"

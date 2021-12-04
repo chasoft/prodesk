@@ -31,7 +31,7 @@ import { SearchButton } from "@components/Themes/Simplicity/Buttons/Search"
  * INIT                                                          *
  *****************************************************************/
 
-export const SectionHero = ({ children }) => {
+export function SectionHero({ children }) {
 	return (
 		<Box component="section" sx={{
 			backgroundColor: "#FFFFFF",
@@ -89,8 +89,7 @@ export const SectionHero = ({ children }) => {
 							sx={{
 								width: "100%",
 								fontSize: "1.2em",
-							}}
-						/>
+							}} />
 					</Paper>
 					<SearchButton
 						type="submit"

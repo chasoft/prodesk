@@ -63,7 +63,7 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TocSideBarSubCategory = ({ handleOpen, targetDocItem, children }) => {
+function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const { currentUser } = useSelector(getAuth)
@@ -123,12 +123,8 @@ const TocSideBarSubCategory = ({ handleOpen, targetDocItem, children }) => {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	const [
-		AddNewPopupMenu,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		AddNewPopupMenu, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = useAddNewDocumentationPopupMenu()
 
@@ -148,37 +144,31 @@ const TocSideBarSubCategory = ({ handleOpen, targetDocItem, children }) => {
 				handleOpen={handleOpen}
 				showDetailsButton={false}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
-				additionalButton={
-					<>
-						<TocSideBarAddNew
-							ref={anchorRef}
-							handleToggle={handleToggle}
-						/>
-						<AddNewPopupMenu
-							open={open}
-							anchorRef={anchorRef}
-							handleClose={handleClose}
-							targetDocItem={targetDocItem}
-							placement="bottom-start"
-							actions={[
-								DOCS_ADD.DOC,
-								DOCS_ADD.EXTERNAL,
-								DOCS_ADD.SUB_CATEGORY,
-								DOCS_ADD.CATEGORY,
-							]}
-						/>
-						<CollapseIconButton
-							expanded={expanded}
-							onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }}
-						/>
-					</>
-				}
+				additionalButton={<>
+					<TocSideBarAddNew
+						ref={anchorRef}
+						handleToggle={handleToggle} />
+					<AddNewPopupMenu
+						open={open}
+						anchorRef={anchorRef}
+						handleClose={handleClose}
+						targetDocItem={targetDocItem}
+						placement="bottom-start"
+						actions={[
+							DOCS_ADD.DOC,
+							DOCS_ADD.EXTERNAL,
+							DOCS_ADD.SUB_CATEGORY,
+							DOCS_ADD.CATEGORY,
+						]} />
+					<CollapseIconButton
+						expanded={expanded}
+						onClick={(e) => { e.stopPropagation(); setExpanded(p => !p) }} />
+				</>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor:
-						(activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-							? "action.hover"
-							: "initial",
+					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
+						? "action.hover"
+						: "initial",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light" } : {}),
 					...(isNotActive ? { backgroundColor: "error.light" } : {}),
@@ -210,7 +200,7 @@ const TocSideBarSubCategory = ({ handleOpen, targetDocItem, children }) => {
 					</div>
 				</Collapse>
 			</Box>
-		</div >
+		</div>
 	)
 }
 TocSideBarSubCategory.propTypes = {

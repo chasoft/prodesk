@@ -50,13 +50,12 @@ import AddIcon from "@mui/icons-material/Add"
  * INIT                                                          *
  *****************************************************************/
 
-export const AddMembersDialog = ({ open, members, addMemberCallback, handleClose }) => {
+export function AddMembersDialog({ open, members, addMemberCallback, handleClose }) {
 	const [selected, setSelected] = useState(members)
 	const { isSmallScreen } = useSelector(getUiSettings)
 
 	const {
-		userList: supporterList = [],
-		isLoading: isLoadingSupporterList
+		userList: supporterList = [], isLoading: isLoadingSupporterList
 	} = useProfilesGroup(
 		[
 			USERGROUP.USER.code,
@@ -107,8 +106,7 @@ export const AddMembersDialog = ({ open, members, addMemberCallback, handleClose
 				{(!isLoadingSupporterList && supporterList.length === 0) &&
 					<DialogContentText>
 						You don&apos;t have any staff. Please go to User management to ....
-					</DialogContentText>
-				}
+					</DialogContentText>}
 
 				{(!isLoadingSupporterList && supporterList.length > 0) &&
 					<>
@@ -122,28 +120,23 @@ export const AddMembersDialog = ({ open, members, addMemberCallback, handleClose
 								return (
 									<ListItem
 										key={staff.username}
-										secondaryAction={
-											<Checkbox
-												edge="end"
-												onChange={handleToggleStaff(staff.username)}
-												checked={selected.indexOf(staff.username) !== -1}
-												inputProps={{ "aria-labelledby": labelId }}
-											/>
-										}
+										secondaryAction={<Checkbox
+											edge="end"
+											onChange={handleToggleStaff(staff.username)}
+											checked={selected.indexOf(staff.username) !== -1}
+											inputProps={{ "aria-labelledby": labelId }} />}
 										disablePadding
 									>
 										<ListItemButton>
 											<ListItemAvatar>
 												<Avatar
 													src={staff.photoURL}
-													alt={staff.displayName}
-												/>
+													alt={staff.displayName} />
 											</ListItemAvatar>
 											<ListItemText
 												id={labelId}
 												primary={`${staff.displayName} (${staff.username})`}
-												secondary={staff.email}
-											/>
+												secondary={staff.email} />
 										</ListItemButton>
 									</ListItem>
 								)
@@ -182,14 +175,13 @@ AddMembersDialog.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const MembersList = ({ members, addMemberCallback }) => {
+function MembersList({ members, addMemberCallback }) {
 	const dispatch = useDispatch()
 	const [membersCache, setMembersCache] = useState(members)
 	const [memberProfiles, setMemberProfiles] = useState([])
 
 	const {
-		userList: administrativeUsers = [],
-		isLoading: isLoadingStaffList
+		userList: administrativeUsers = [], isLoading: isLoadingStaffList
 	} = useProfilesGroup(
 		[
 			USERGROUP.USER.code,
@@ -210,7 +202,6 @@ const MembersList = ({ members, addMemberCallback }) => {
 		anyway, sometime, an item in members would not be existed in staffList
 		maybe... that user is fired/removed from staffList
 	*/
-
 	useDeepCompareEffect(() => {
 		const verifiedMembers = membersCache
 			.map(memberCache => administrativeUsers.find(user => user.username === memberCache))
@@ -257,8 +248,7 @@ const MembersList = ({ members, addMemberCallback }) => {
 						onClick={(e) => {
 							e.stopPropagation()
 							dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + profile.username))
-						}}
-					/>
+						}} />
 				))}
 			</div>
 
@@ -269,8 +259,7 @@ const MembersList = ({ members, addMemberCallback }) => {
 					setMembersCache(members)
 					addMemberCallback(members)
 				}}
-				handleClose={() => setOpenAddMemberDialog(false)}
-			/>
+				handleClose={() => setOpenAddMemberDialog(false)} />
 		</Box>
 
 	</>

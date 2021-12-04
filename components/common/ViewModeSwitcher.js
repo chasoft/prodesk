@@ -49,7 +49,7 @@ export const VIEW_LISTING_MODE = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ViewModeSwitcher = ({ listingMode, setListingMode }) => {
+function ViewModeSwitcher({ listingMode, setListingMode }) {
 
 	const handleListingMode = (event, newListingMode) => {
 		if (newListingMode) {

@@ -55,7 +55,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoriesOverview = ({ backBtnClick }) => {
+function CategoriesOverview({ backBtnClick }) {
 
 	const dispatch = useDispatch()
 	const [updateCategory] = useUpdateCategoryMutation()
@@ -124,7 +124,6 @@ const CategoriesOverview = ({ backBtnClick }) => {
 							":last-child:hover": {
 								borderBottomRightRadius: "0.5rem",
 							},
-
 						}}
 					>
 						<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
@@ -150,18 +149,15 @@ const CategoriesOverview = ({ backBtnClick }) => {
 										arrow
 										key={item.name}
 										placement="top"
-										title={
-											item.default
-												? "Default sub-category"
-												: ""
-										}
+										title={item.default
+											? "Default sub-category"
+											: ""}
 									>
 										<Chip
 											id={item.default ? "sub-default" : "sub"}
 											label={item.name}
 											size="small"
-											variant={item.default ? "" : "outlined"}
-										/>
+											variant={item.default ? "" : "outlined"} />
 									</Tooltip>
 								))}
 							</Box>
@@ -182,8 +178,7 @@ const CategoriesOverview = ({ backBtnClick }) => {
 						</Box>
 
 					</Box>
-				))
-			}
+				))}
 		</>
 	)
 }

@@ -68,16 +68,11 @@ import { requestSilentRefetching } from "@helpers/realtimeApi"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NewCannedReplyDialog = (
-	{
-		createdBy,
-		content,
-		departmentId,
-		//
-		open,
-		setOpen
-	}
-) => {
+function NewCannedReplyDialog({
+	createdBy, content, departmentId,
+	//
+	open, setOpen
+}) {
 	const dispatch = useDispatch()
 	const { isSmallScreen } = useSelector(getUiSettings)
 
@@ -88,8 +83,7 @@ const NewCannedReplyDialog = (
 	const [addCannedReply] = useAddCannedReplyMutation()
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	useEffect(() => {
@@ -169,8 +163,7 @@ const NewCannedReplyDialog = (
 
 							<FullCannedReplySwitch
 								isFullCannedReply={isFullCannedReply}
-								setIsFullCannedReply={setIsFullCannedReply}
-							/>
+								setIsFullCannedReply={setIsFullCannedReply} />
 						</Box>}
 
 					<Box sx={{ py: 2 }}>
@@ -178,8 +171,7 @@ const NewCannedReplyDialog = (
 							description={description}
 							handleSetDescription={(e) => {
 								setDescription(e.target.value)
-							}}
-						/>
+							}} />
 					</Box>
 
 					<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #F0F0F0" }}>
@@ -201,11 +193,9 @@ const NewCannedReplyDialog = (
 					variant="contained"
 					color="primary"
 					sx={{ minWidth: "100px" }}
-					disabled={
-						(trim(description) === "")
+					disabled={(trim(description) === "")
 						|| (trim(editorData) === "")
-						|| (trim(editorData) === "\\")
-					}
+						|| (trim(editorData) === "\\")}
 					onClick={handleAddNewCannedReply}
 				>
 					Add

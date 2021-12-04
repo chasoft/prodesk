@@ -44,10 +44,10 @@ import {
 export const SHADE = [500, 300, 400, 600, 700, 800, 900] //7 options
 export const HUE = { red, pink, purple, deepPurple, indigo, blue, lightBlue, cyan, teal, green, lightGreen, lime, yellow, amber, orange, deepOrange, brown, grey, blueGrey } //19 items
 
-const ListColors = ({ colorFamily, selectedColor, setSelectedColor, size = 30 }) => (
-	<>
-		{
-			SHADE.map((item, idx) => (
+function ListColors({ colorFamily, selectedColor, setSelectedColor, size = 30 }) {
+	return (
+		<>
+			{SHADE.map((item, idx) => (
 				<Box
 					key={idx}
 					sx={{
@@ -61,10 +61,10 @@ const ListColors = ({ colorFamily, selectedColor, setSelectedColor, size = 30 })
 					}}
 					onClick={() => { setSelectedColor(colorFamily[item]) }}
 				></Box>
-			))
-		}
-	</>
-)
+			))}
+		</>
+	)
+}
 ListColors.propTypes = {
 	colorFamily: PropTypes.any,
 	selectedColor: PropTypes.string,

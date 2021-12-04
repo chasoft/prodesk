@@ -40,20 +40,16 @@ import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
  * INIT                                                          *
  *****************************************************************/
 
-const useFilteredTicketsForUser = () => {
+function useFilteredTicketsForUser() {
 	const [res, setRes] = useState([])
 	const { currentUser } = useSelector(getAuth)
 
 	const {
-		filteredGroupBy,
-		filteredByDepartment,
-		filteredByPriority,
-		filteredByStatusRaw,
+		filteredGroupBy, filteredByDepartment, filteredByPriority, filteredByStatusRaw,
 	} = useSelector(getUiSettings)
 
 	const {
-		data: tickets,
-		isLoading: isLoadingTickets
+		data: tickets, isLoading: isLoadingTickets
 	} = useGetTicketsForUserQuery(currentUser.username)
 
 	useDeepCompareEffect(
@@ -63,9 +59,12 @@ const useFilteredTicketsForUser = () => {
 			let filtered_1 = tickets
 
 			let filterCriteria = {}
-			if (filteredByPriority !== STATUS_FILTER.ANY) filterCriteria.priority = filteredByPriority
-			if (filteredByDepartment !== STATUS_FILTER.ANY) filterCriteria.departmentId = filteredByDepartment
-			if (size(filterCriteria) > 0) filtered_1 = filter(tickets, filterCriteria)
+			if (filteredByPriority !== STATUS_FILTER.ANY)
+				filterCriteria.priority = filteredByPriority
+			if (filteredByDepartment !== STATUS_FILTER.ANY)
+				filterCriteria.departmentId = filteredByDepartment
+			if (size(filterCriteria) > 0)
+				filtered_1 = filter(tickets, filterCriteria)
 
 			//filter by status
 			const selectedStatus = Object.keys(pickBy(filteredByStatusRaw, v => v === true))

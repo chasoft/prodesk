@@ -37,7 +37,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
  * INIT                                                          *
  *****************************************************************/
 
-const TicketDepartmentDetailsDialog = ({ department, children }) => {
+function TicketDepartmentDetailsDialog({ department, children }) {
 	// const classes = useStyles()
 	const [open, setOpen] = React.useState(false)
 	const theme = useTheme()
@@ -62,7 +62,7 @@ const TicketDepartmentDetailsDialog = ({ department, children }) => {
 				<DialogContent>
 					<DialogContentText>
 						Let Google help apps determine location. This means sending anonymous location data to
-						Google, even when no apps are running. {department.note}
+						Google, even when no apps are running.{department.note}
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>

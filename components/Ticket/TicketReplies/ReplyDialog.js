@@ -86,15 +86,11 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
  * INIT                                                          *
  *****************************************************************/
 
-export const handleSubmitReplyBase = async ({
-	addTicketReply,
-	content,
-	currentUser,
-	departmentDetails,
-	allAdminProfiles,
-	ticket,
-}) => {
-	if (currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED) return
+export async function handleSubmitReplyBase({
+	addTicketReply, content, currentUser, departmentDetails, allAdminProfiles, ticket,
+}) {
+	if (currentUser.username !== ticket.username && ticket.status === STATUS_FILTER.CLOSED)
+		return
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 	const trid = nanoid()
 	const newReplyItem = {
@@ -146,11 +142,10 @@ export const handleSubmitReplyBase = async ({
 
 		const invalidatesTags = {
 			trigger: currentUser.username,
-			tag:
-				[
-					{ type: TYPE.TICKETS, id: "LIST" },
-					{ type: TYPE.TICKETS, id: ticket.tid.concat("_replies") }
-				],
+			tag: [
+				{ type: TYPE.TICKETS, id: "LIST" },
+				{ type: TYPE.TICKETS, id: ticket.tid.concat("_replies") }
+			],
 			target: {
 				isForUser: true,
 				isForAdmin: true,
@@ -165,7 +160,7 @@ export const handleSubmitReplyBase = async ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
+function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 	dayjs.extend(relativeTime)
 
 	const theme = useTheme()
@@ -192,29 +187,21 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 	])
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [
-		MenuContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose,
-			handleListKeyDown
+		MenuContainer, open, anchorRef, {
+			handleToggle, handleClose, handleListKeyDown
 		}
 	] = useMenuContainer()
 
 	const {
-		data: cannedReplies = [],
-		isLoading: isLoadingCannedReplies
+		data: cannedReplies = [], isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const filterCannedReplies = cannedReplies.filter(
-		cannedReply =>
-			(cannedReply.departmentId === ticket.departmentId)
+		cannedReply => (cannedReply.departmentId === ticket.departmentId)
 			&& cannedReply.full === false
 	)
 
@@ -270,8 +257,7 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 					}}>
 						<TextEditor
 							placeholder="Provides as many details as possible..."
-							onChange={getEditorData}
-						/>
+							onChange={getEditorData} />
 					</Box>
 				</DialogContent>
 
@@ -299,11 +285,9 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 								size="small"
 								onClick={handleSubmitReply}
 								sx={{ px: 4, minWidth: "100px" }}
-								disabled={
-									replyEditorData.length < 10
+								disabled={replyEditorData.length < 10
 									|| isLoadingDepartments
-									|| isLoadingSomething
-								}
+									|| isLoadingSomething}
 							>
 								{isLoadingSomething
 									? <>Posting... <CircularProgress size={16} /></>
@@ -338,13 +322,12 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 						borderBottomRightRadius: "0.5rem",
 						borderTop: "1px solid",
 						borderTopColor: "divider"
-					}} >
+					}}>
 						<Chip
 							size="small"
 							label="Note"
 							color="warning"
-							sx={{ mr: 2 }}
-						/>
+							sx={{ mr: 2 }} />
 						<Typography sx={{ flexGrow: 1 }}>
 							This ticket has not been assigned to any staff.<br />If you do the very first reply, this ticket would be assigned to you automatically.
 						</Typography>
@@ -360,13 +343,12 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 						borderBottomRightRadius: "0.5rem",
 						borderTop: "1px solid",
 						borderTopColor: "divider"
-					}} >
+					}}>
 						<Chip
 							size="small"
 							label="Note"
 							color="info"
-							sx={{ mr: 2 }}
-						/>
+							sx={{ mr: 2 }} />
 
 						<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
 							{(latestStaffInCharge.assignee === currentUser.username)
@@ -418,44 +400,40 @@ const ReplyDialog = ({ ticket, showReplyDialog, setShowReplyDialog }) => {
 					</MenuItem>}
 
 				{(filterCannedReplies.length > 0) &&
-					filterCannedReplies.map((cannedReply) =>
-						<CopyToClipboard
-							key={cannedReply.createdAt}
-							text={cannedReply.content}
-							onCopy={() => {
-								setJustCopied(true)
-								setTimeout(() => { setJustCopied(false) }, 700)
-							}}
-						>
-							<MenuItem>
-								<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
-									<Battery30Icon sx={{ fill: (theme) => theme.palette.primary.light }} />
-								</Avatar>
-								<ListItemText
-									primary={cannedReply.description}
-									primaryTypographyProps={{
-										fontWeight: 500
-									}}
-									secondary={
-										<Box component="span" sx={{ whiteSpace: "normal" }}>
-											{cannedReply.content.substring(0, 110)}
-											<span style={{
-												display: "block",
-												marginTop: "6px",
-												fontSize: "0.75rem"
-											}}>
-												Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
-												<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
-											</span>
-										</Box>
-									}
-									secondaryTypographyProps={{
-										fontSize: "0.9rem",
-										maxWidth: "385px"
-									}}
-								/>
-							</MenuItem>
-						</CopyToClipboard>
+					filterCannedReplies.map((cannedReply) => <CopyToClipboard
+						key={cannedReply.createdAt}
+						text={cannedReply.content}
+						onCopy={() => {
+							setJustCopied(true)
+							setTimeout(() => { setJustCopied(false) }, 700)
+						}}
+					>
+						<MenuItem>
+							<Avatar sx={{ width: 32, height: 32, mr: 2, bgcolor: "transparent" }}>
+								<Battery30Icon sx={{ fill: (theme) => theme.palette.primary.light }} />
+							</Avatar>
+							<ListItemText
+								primary={cannedReply.description}
+								primaryTypographyProps={{
+									fontWeight: 500
+								}}
+								secondary={<Box component="span" sx={{ whiteSpace: "normal" }}>
+									{cannedReply.content.substring(0, 110)}
+									<span style={{
+										display: "block",
+										marginTop: "6px",
+										fontSize: "0.75rem"
+									}}>
+										Updated at {dayjs(cannedReply.createdAt).format(DATE_FORMAT.LONG)}&nbsp;
+										<span style={{ fontStyle: "italic" }}>({dayjs(cannedReply.updatedAt).fromNow()})</span>
+									</span>
+								</Box>}
+								secondaryTypographyProps={{
+									fontSize: "0.9rem",
+									maxWidth: "385px"
+								}} />
+						</MenuItem>
+					</CopyToClipboard>
 					)}
 
 				<Divider key="divider_02" />

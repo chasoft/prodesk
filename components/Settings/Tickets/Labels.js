@@ -76,7 +76,7 @@ import { TransitionGroup } from "react-transition-group"
  * INIT                                                          *
  *****************************************************************/
 
-export const LabelEditorDialog = ({ open, handleClose }) => {
+export function LabelEditorDialog({ open, handleClose }) {
 	const [addLabel] = useAddLabelMutation()
 	const { isSmallScreen } = useSelector(getUiSettings)
 	const { data: labels, isLoading } = useGetLabelsQuery()
@@ -124,8 +124,7 @@ export const LabelEditorDialog = ({ open, handleClose }) => {
 					? <CircularProgressBox minHeight="100px" />
 					: (labels.length === 0)
 						? <div>Label list is empty</div>
-						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)
-				}
+						: labels.map((label) => <SubCatItem key={label.lid} currentItem={label} />)}
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose} sx={{ mb: 1, mr: 2, px: 4 }}>Close</Button>
@@ -138,7 +137,7 @@ LabelEditorDialog.propTypes = {
 	handleClose: PropTypes.func
 }
 
-export const SubCatItem = ({ currentItem, labels }) => {
+export function SubCatItem({ currentItem, labels }) {
 	const { currentUser } = useSelector(getAuth)
 	const [updateLabel] = useUpdateLabelMutation()
 	const [deleteLabel] = useDeleteLabelMutation()
@@ -152,7 +151,8 @@ export const SubCatItem = ({ currentItem, labels }) => {
 	const isModified = currentItem.color !== color || currentItem.name !== name
 
 	const handleDeleteLabel = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 
 		//get newList of labels
 		const newList = filter(labels, l => l.lid !== currentItem.lid)
@@ -169,7 +169,6 @@ export const SubCatItem = ({ currentItem, labels }) => {
 			color,
 			updatedAt: dayjs().valueOf(),
 			updatedBy: currentUser.username
-
 		})
 	}
 
@@ -190,8 +189,7 @@ export const SubCatItem = ({ currentItem, labels }) => {
 					<Box sx={{ display: "flex" }}>
 						<LabelIcon
 							sx={{ color: color, mr: 0.5, cursor: "pointer" }}
-							onClick={() => { setShowColorTable(true) }}
-						/>
+							onClick={() => { setShowColorTable(true) }} />
 						<InputBase
 							fullWidth
 							value={name}
@@ -203,8 +201,7 @@ export const SubCatItem = ({ currentItem, labels }) => {
 								"&.Mui-focused": {
 									borderColor: isModified ? (theme) => theme.palette.warning.main : color
 								}
-							}}
-						/>
+							}} />
 					</Box>
 				</Collapse>
 
@@ -229,8 +226,7 @@ export const SubCatItem = ({ currentItem, labels }) => {
 								marginLeft: "8px"
 							}}>
 								<LabelIcon
-									sx={{ color: color, mr: 0.5, cursor: "pointer" }}
-								/>
+									sx={{ color: color, mr: 0.5, cursor: "pointer" }} />
 								{name}
 							</span>
 						</Box>
@@ -245,7 +241,7 @@ export const SubCatItem = ({ currentItem, labels }) => {
 
 				</Collapse>
 
-			</Box >
+			</Box>
 
 			{!showColorTable &&
 				<Box id="buttons" sx={{
@@ -270,10 +266,9 @@ export const SubCatItem = ({ currentItem, labels }) => {
 							<DeleteIcon fontSize="small" />
 						</IconButton>
 					</Tooltip>
-				</Box>
-			}
+				</Box>}
 
-		</Box >
+		</Box>
 	)
 }
 SubCatItem.propTypes = {
@@ -285,7 +280,7 @@ SubCatItem.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const PageLabels = ({ backBtnClick }) => {
+function PageLabels({ backBtnClick }) {
 	const [addLabel] = useAddLabelMutation()
 	const { currentUser } = useSelector(getAuth)
 	const { data: labels, isLoading } = useGetLabelsQuery()
@@ -320,16 +315,14 @@ const PageLabels = ({ backBtnClick }) => {
 		<>
 			<SettingsContentHeader
 				backBtnOnClick={() => backBtnClick(false)}
-				rightButton={
-					<Button
-						startIcon={<AddIcon />}
-						size="small"
-						variant="contained"
-						onClick={handleAddNewLabel}
-					>
-						Add new
-					</Button>
-				}
+				rightButton={<Button
+					startIcon={<AddIcon />}
+					size="small"
+					variant="contained"
+					onClick={handleAddNewLabel}
+				>
+					Add new
+				</Button>}
 			>
 				Labels
 			</SettingsContentHeader>
@@ -354,15 +347,12 @@ const PageLabels = ({ backBtnClick }) => {
 							Label list is empty
 						</Box>
 						: <TransitionGroup>
-							{labels.map((label) =>
-								<Collapse key={label.lid}>
-									<SubCatItem
-										currentItem={label}
-										labels={labels}
-									/>
-								</Collapse>)}
-						</TransitionGroup>
-				}
+							{labels.map((label) => <Collapse key={label.lid}>
+								<SubCatItem
+									currentItem={label}
+									labels={labels} />
+							</Collapse>)}
+						</TransitionGroup>}
 			</SettingsContentDetails>
 		</>
 	)

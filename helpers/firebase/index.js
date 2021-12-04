@@ -56,9 +56,15 @@ export const STATE_CHANGED = "state_changed"
 
 //HELPER FUNCTIONS
 //Convert sang Milis, to use this data, use this => dayjs(millis).format(DATE_FORMAT.LONG)
-export const fix_datetime_list = (items) => items.map((item) => fix_datetime_single(item))
-export const fix_datetime_single = (item) => ({
-	...item,
-	createdAt: item?.createdAt?.toMillis() || 0,
-	updatedAt: item?.updatedAt?.toMillis() || 0
-})
+
+export function fix_datetime_list(items) {
+	return items.map((item) => fix_datetime_single(item))
+}
+
+export function fix_datetime_single(item) {
+	return ({
+		...item,
+		createdAt: item?.createdAt?.toMillis() || 0,
+		updatedAt: item?.updatedAt?.toMillis() || 0
+	})
+}

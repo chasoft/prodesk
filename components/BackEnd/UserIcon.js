@@ -34,14 +34,10 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const UserIcon = () => {
+function UserIcon() {
 	const [
-		PopupContainer,
-		open,
-		anchorRef,
-		{
-			handleToggle,
-			handleClose
+		PopupContainer, open, anchorRef, {
+			handleToggle, handleClose
 		}
 	] = usePopupContainer()
 
@@ -59,8 +55,7 @@ const UserIcon = () => {
 			>
 				<Avatar
 					alt={currentUser.displayName}
-					src={currentUser.photoURL ?? "/avatar/default.png"}
-				/>
+					src={currentUser.photoURL ?? "/avatar/default.png"} />
 			</IconButton>
 		</Tooltip>
 
@@ -104,8 +99,7 @@ const UserIcon = () => {
 					sx={{
 						height: (theme) => theme.spacing(11),
 						width: (theme) => theme.spacing(11)
-					}}
-				/>
+					}} />
 				<Typography variant="button">{currentUser.displayName}</Typography>
 				<Typography variant="caption">{currentUser.email}</Typography>
 				<Typography variant="caption">{currentUser.group} {currentUser?.role ? <> | {currentUser?.role}</> : null}</Typography>

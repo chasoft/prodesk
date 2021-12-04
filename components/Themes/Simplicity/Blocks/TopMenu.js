@@ -32,7 +32,7 @@ import { Box } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
-export const TopMenu = () => {
+export function TopMenu() {
 	return (
 		<Box id="user-nav" component="nav" sx={{
 			display: { xs: "none", md: "block" },
@@ -101,7 +101,7 @@ export const TopMenu = () => {
 				textUnderlineOffset: "5px"
 			}
 		}}>
-			<ul >
+			<ul>
 				<li>
 					<Link href="/">
 						<a href="just-a-placeholder">Getting Started</a>

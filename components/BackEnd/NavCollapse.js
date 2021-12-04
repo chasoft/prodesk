@@ -44,7 +44,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NavCollapse = ({ title, description, children, isExpanded = false }) => {
+function NavCollapse({ title, description, children, isExpanded = false }) {
 	const [expanded, setExpanded] = useState(isExpanded)
 	return (
 		<Box
@@ -87,7 +87,7 @@ const NavCollapse = ({ title, description, children, isExpanded = false }) => {
 								fontSize: "1rem",
 								color: "#fff",
 								flexGrow: 1,
-								...(expanded && {/* currently, empty styled */ })
+								...(expanded && { /* currently, empty styled */ })
 							}}
 						>
 							{title}

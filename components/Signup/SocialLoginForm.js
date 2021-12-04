@@ -85,7 +85,7 @@ const validationSchema = yup.object({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SocialLoginForm = () => {
+function SocialLoginForm() {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
@@ -137,8 +137,7 @@ const SocialLoginForm = () => {
 
 			<RegHeader
 				icon={<LockOutlinedIcon />}
-				title="Sign up"
-			/>
+				title="Sign up" />
 
 			<form onSubmit={formik.handleSubmit}>
 				<Grid container spacing={2}>
@@ -154,8 +153,7 @@ const SocialLoginForm = () => {
 							error={formik.touched.name && Boolean(formik.errors.name)}
 							helperText={formik.touched.name && formik.errors.name}
 							variant="outlined"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
@@ -169,8 +167,7 @@ const SocialLoginForm = () => {
 							error={formik.touched.username && Boolean(formik.errors.username)}
 							helperText={formik.touched.username && formik.errors.username}
 							variant="outlined"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -180,23 +177,18 @@ const SocialLoginForm = () => {
 							label="Email Address"
 							value={formik.values.email}
 							variant="outlined"
-							disabled
-						/>
+							disabled />
 					</Grid>
 					<Grid item xs={12}>
 						<FormControlLabel
-							control={
-								<Checkbox
-									id="agreement"
-									name="agreement"
-									checked={formik.values.agreement}
-									onChange={formik.handleChange}
-									error={Boolean(formik.errors.agreement)}
-									color="primary"
-								/>
-							}
-							label="I want to receive inspiration, marketing promotions and updates via email."
-						/>
+							control={<Checkbox
+								id="agreement"
+								name="agreement"
+								checked={formik.values.agreement}
+								onChange={formik.handleChange}
+								error={Boolean(formik.errors.agreement)}
+								color="primary" />}
+							label="I want to receive inspiration, marketing promotions and updates via email." />
 					</Grid>
 				</Grid>
 

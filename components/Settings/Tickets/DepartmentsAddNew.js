@@ -64,7 +64,7 @@ import useLocalComponentCache from "@helpers/useLocalComponentCache"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsAddNew = ({ backBtnClick }) => {
+function DepartmentsAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
@@ -72,8 +72,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache({
 		isPublic: true,
 		name: "",
@@ -134,11 +133,8 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							label="Name of the department"
 							placeholder="eg. Sales, Accounting..."
 							value={localCache.name}
-							onChange={(e) =>
-								setLocalCache(e.target.value, "name")
-							}
-							fullWidth
-						/>
+							onChange={(e) => setLocalCache(e.target.value, "name")}
+							fullWidth />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -148,8 +144,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 							onChange={(e) => {
 								setLocalCache(e.target.value, "description")
 							}}
-							fullWidth
-						/>
+							fullWidth />
 					</Grid>
 					<Grid item xs={12}>
 						<SettingsSwitch
@@ -159,8 +154,7 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 								setLocalCache(undefined, "isPublic", true)
 							}}
 							stateDescription={["For internal use only", "Available for all users"]}
-							description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
-						/>
+							description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on." />
 					</Grid>
 					<Grid item xs={12}>
 						<SettingsSwitch
@@ -170,16 +164,12 @@ const DepartmentsAddNew = ({ backBtnClick }) => {
 								setLocalCache(undefined, "availableForAll", true)
 							}}
 							stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
-							description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
-						/>
+							description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets" />
 					</Grid>
 					<Grid item xs={12}>
 						<MembersList
 							members={localCache.members}
-							addMemberCallback={
-								(members) => setLocalCache(members, "members")
-							}
-						/>
+							addMemberCallback={(members) => setLocalCache(members, "members")} />
 					</Grid>
 				</Grid>
 			</SettingsContentDetails>

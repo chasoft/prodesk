@@ -36,7 +36,7 @@ import { COLLECTION } from "@redux/slices/firestoreApiConstants"
  * INIT                                                          *
  *****************************************************************/
 
-export const changePassword = async ({ email, password, newPassword }) => {
+export async function changePassword({ email, password, newPassword }) {
 	try {
 		const credential = EmailAuthProvider.credential(email, password)
 		await reauthenticateWithCredential(auth.currentUser, credential)
@@ -47,7 +47,7 @@ export const changePassword = async ({ email, password, newPassword }) => {
 	}
 }
 
-export const getUserProfile = async (uid) => {
+export async function getUserProfile(uid) {
 	try {
 		let res = []
 		const q = query(
@@ -56,7 +56,8 @@ export const getUserProfile = async (uid) => {
 		)
 		const querySnapshot = await getDocs(q)
 		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
+		if (res[0])
+			return { data: res[0] }
 		//---
 		return { error: "User not existed." }
 	} catch (e) {
@@ -64,7 +65,7 @@ export const getUserProfile = async (uid) => {
 	}
 }
 
-export const getUserProfileByUsername = async (username) => {
+export async function getUserProfileByUsername(username) {
 	try {
 		let res = []
 		const q = query(
@@ -73,7 +74,8 @@ export const getUserProfileByUsername = async (username) => {
 		)
 		const querySnapshot = await getDocs(q)
 		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { data: res[0] }
+		if (res[0])
+			return { data: res[0] }
 		//---
 		return { error: "User not existed." }
 	} catch (e) {
@@ -81,7 +83,7 @@ export const getUserProfileByUsername = async (username) => {
 	}
 }
 
-export const isUsernameAvailable = async (username) => {
+export async function isUsernameAvailable(username) {
 	try {
 		let res = []
 		const q = query(
@@ -90,7 +92,8 @@ export const isUsernameAvailable = async (username) => {
 		)
 		const querySnapshot = await getDocs(q)
 		querySnapshot.forEach((user) => { res.push(user.data()) })
-		if (res[0]) return { isUsernameAvailable: false, data: res[0] }
+		if (res[0])
+			return { isUsernameAvailable: false, data: res[0] }
 		//---
 		return { isUsernameAvailable: true }
 	} catch (e) {
@@ -98,11 +101,13 @@ export const isUsernameAvailable = async (username) => {
 	}
 }
 
-export const setUsername = async (uid, username) => {
+export async function setUsername(uid, username) {
 	const res = await isUsernameAvailable(username)
 
-	if (res.error) return res.error
-	if (res.isUsernameAvailable === false) return { error: "Username existed." }
+	if (res.error)
+		return res.error
+	if (res.isUsernameAvailable === false)
+		return { error: "Username existed." }
 
 	try {
 		const batch = writeBatch(db)

@@ -84,7 +84,7 @@ import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBl
  * INIT                                                          *
  *****************************************************************/
 
-export const UserTicketListEmpty = ({ message }) => {
+export function UserTicketListEmpty({ message }) {
 	return (
 		<Box
 			sx={{
@@ -123,7 +123,7 @@ export const UserTicketListEmpty = ({ message }) => {
 }
 UserTicketListEmpty.propTypes = { message: PropTypes.string }
 
-export const UserTicketListItemShorten = ({ subject, link }) => {
+export function UserTicketListItemShorten({ subject, link }) {
 	return (
 		<Box sx={{ borderTop: "1px solid", borderColor: "divider" }}>
 			<Link href={link} passHref>
@@ -140,17 +140,18 @@ export const UserTicketListItemShorten = ({ subject, link }) => {
 					</Box>
 				</a>
 			</Link>
-		</Box >
+		</Box>
 	)
 }
 UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
 
-const TicketDateTimeSmallScreen = ({ ticket }) => {
+function TicketDateTimeSmallScreen({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
-	if (isSmallScreen === false) return null
+	if (isSmallScreen === false)
+		return null
 
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -185,12 +186,13 @@ const TicketDateTimeSmallScreen = ({ ticket }) => {
 }
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
 
-const TicketDateTime = ({ ticket }) => {
+function TicketDateTime({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
 	const { isSmallScreen } = useSelector(getUiSettings)
-	if (isSmallScreen) return null
+	if (isSmallScreen)
+		return null
 
 	return (
 		<Box
@@ -229,17 +231,19 @@ const TicketDateTime = ({ ticket }) => {
 }
 TicketDateTime.propTypes = { ticket: PropTypes.object }
 
-export const TicketLabels = ({ ticket, callback, sx }) => {
+export function TicketLabels({ ticket, callback, sx }) {
 	const { currentUser } = useSelector(getAuth)
 	const { data, isLoading } = useGetLabelsQuery()
 	const [updateTicket] = useUpdateTicketMutation()
 
 	//Do not show lables for ticket's owner
 	//Ticket feature is used for admin to manage ticket only, not used for user
-	if (currentUser.username === ticket.username) return null
+	if (currentUser.username === ticket.username)
+		return null
 
 	//Nothing to show
-	if (size(ticket.labels) === 0 || isLoading) return null
+	if (size(ticket.labels) === 0 || isLoading)
+		return null
 
 	const labelSettings = keyBy(data, "lid")
 
@@ -253,7 +257,7 @@ export const TicketLabels = ({ ticket, callback, sx }) => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", mr: 1, mb: 0.5, ...sx }} >
+		<Box sx={{ display: "flex", mr: 1, mb: 0.5, ...sx }}>
 			{ticket.labels.map((labelId) => (
 				<Box
 					component="span"
@@ -278,11 +282,13 @@ export const TicketLabels = ({ ticket, callback, sx }) => {
 							backgroundColor: (theme) => alpha(labelSettings[labelId]?.color ?? "#FF7F7F", theme.palette.action.activatedOpacity),
 							"&>#removeLabel": {
 								display: "inline-block",
-
 							}
 						}
 					}}
-					onClick={(e) => { if (isFunction(callback)) callback(e, labelId) }}
+					onClick={(e) => {
+						if (isFunction(callback))
+							callback(e, labelId)
+					}}
 				>
 					<LabelIcon sx={{ color: labelSettings[labelId]?.color ?? "#FF7F7F", mr: 0.5 }} />
 					<Typography sx={{ color: labelSettings[labelId]?.color ?? "#FF7F7F" }}>
@@ -294,8 +300,7 @@ export const TicketLabels = ({ ticket, callback, sx }) => {
 							onClick={(e) => {
 								e.stopPropagation()
 								removeLabelFromTicket(labelId)
-							}}
-						/>
+							}} />
 					</Tooltip>
 				</Box>
 			))}
@@ -308,7 +313,7 @@ TicketLabels.propTypes = {
 	sx: PropTypes.object
 }
 
-export const TicketStatus = ({ status, sx }) => {
+export function TicketStatus({ status, sx }) {
 	const dispatch = useDispatch()
 	const chipColor = {
 		[STATUS_FILTER.OPEN]: {
@@ -344,8 +349,7 @@ export const TicketStatus = ({ status, sx }) => {
 						[TICKET_STATUS.CLOSED]: false,
 						[status]: true
 					}))
-				}}
-			/>
+				}} />
 		</Tooltip>
 	)
 }
@@ -354,14 +358,16 @@ TicketStatus.propTypes = {
 	sx: PropTypes.object,
 }
 
-export const TicketPriority = ({ priority, sx, callback }) => {
-	if (priority === PRIORITY.NORMAL) return null
+export function TicketPriority({ priority, sx, callback }) {
+	if (priority === PRIORITY.NORMAL)
+		return null
 	return (
 		<Box
 			sx={{ mr: 0.5, mb: 0.5, ...sx }}
 			onClick={(e) => {
 				e.stopPropagation()
-				if (isFunction(callback)) callback()
+				if (isFunction(callback))
+					callback()
 			}}
 		>
 			{priority === PRIORITY.LOW &&
@@ -386,11 +392,12 @@ TicketPriority.propTypes = {
 	callback: PropTypes.func
 }
 
-export const TicketDepartment = ({ departmentId }) => {
+export function TicketDepartment({ departmentId }) {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery()
 
-	if (isLoading || size(departments) === 0) return null
+	if (isLoading || size(departments) === 0)
+		return null
 
 	const department = departments.find(
 		department => department.did === departmentId
@@ -406,8 +413,7 @@ export const TicketDepartment = ({ departmentId }) => {
 				onClick={(e) => {
 					e.stopPropagation()
 					dispatch(setFilteredByDepartment(departmentId))
-				}}
-			/>
+				}} />
 		</Tooltip>
 	)
 }
@@ -415,9 +421,10 @@ TicketDepartment.propTypes = {
 	departmentId: PropTypes.string.isRequired,
 }
 
-export const TicketCategory = ({ departmentId, category, subCategory }) => {
+export function TicketCategory({ departmentId, category, subCategory }) {
 	const dispatch = useDispatch()
-	if (!category) return null
+	if (!category)
+		return null
 	const subText = subCategory
 		? ("/" + subCategory)
 		: ""
@@ -430,8 +437,7 @@ export const TicketCategory = ({ departmentId, category, subCategory }) => {
 				onClick={(e) => {
 					e.stopPropagation()
 					dispatch(setFilteredByDepartment(departmentId))
-				}}
-			/>
+				}} />
 		</Tooltip>
 	)
 }
@@ -441,7 +447,7 @@ TicketCategory.propTypes = {
 	subCategory: PropTypes.string,
 }
 
-export const TicketReplyCount = ({ count }) => {
+export function TicketReplyCount({ count }) {
 	return (
 		<Chip
 			size="small"
@@ -450,19 +456,19 @@ export const TicketReplyCount = ({ count }) => {
 			variant="outlined"
 			color="primary"
 			sx={{ mb: 0.5 }}
-			onClick={(e) => e.stopPropagation()}
-		/>
+			onClick={(e) => e.stopPropagation()} />
 	)
 }
 TicketReplyCount.propTypes = {
 	count: PropTypes.number
 }
 
-export const TicketUser = ({ username, title = "Ticket's Owner" }) => {
+export function TicketUser({ username, title = "Ticket's Owner" }) {
 	const dispatch = useDispatch()
 	const profile = useGetProfileByUsername(username)
 
-	if (!profile) return null
+	if (!profile)
+		return null
 
 	return (
 		<Tooltip
@@ -483,8 +489,7 @@ export const TicketUser = ({ username, title = "Ticket's Owner" }) => {
 				onClick={(e) => {
 					e.stopPropagation()
 					dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + username))
-				}}
-			/>
+				}} />
 		</Tooltip>
 	)
 }
@@ -493,36 +498,32 @@ TicketUser.propTypes = {
 	title: PropTypes.node,
 }
 
-export const TicketNote = ({ ticket }) => {
+export function TicketNote({ ticket }) {
 
 	const [openNoteDialog, setOpenNoteDialog] = useState(false)
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
-	if (isLoadingDepartments) return null
+	if (isLoadingDepartments)
+		return null
 
 	return (
 		<>
 			<Tooltip
 				arrow
 				placement="top"
-				title={
-					(ticket?.note?.content)
-						? ticket?.note?.content.substring(0, 500)
-						: "Note is empty"
-				}
+				title={(ticket?.note?.content)
+					? ticket?.note?.content.substring(0, 500)
+					: "Note is empty"}
 			>
 				<Chip
 					size="small"
-					avatar={
-						<CommentIcon sx={{
-							fill: (theme) => theme.palette.success.main,
-							...((!ticket?.note?.content) ? { fill: "grey" } : {})
-						}} />
-					}
+					avatar={<CommentIcon sx={{
+						fill: (theme) => theme.palette.success.main,
+						...((!ticket?.note?.content) ? { fill: "grey" } : {})
+					}} />}
 					label="Note"
 					variant="outlined"
 					color={(ticket?.note?.content) ? "success" : "default"}
@@ -532,16 +533,14 @@ export const TicketNote = ({ ticket }) => {
 						setOpenNoteDialog(true)
 
 						/* Đang làm dang dỡ chỗ này!!!  */
-					}}
-				/>
+					}} />
 			</Tooltip>
 
 			<TicketNoteDialog
 				ticket={ticket}
 				departments={departments}
 				open={openNoteDialog}
-				setOpen={setOpenNoteDialog}
-			/>
+				setOpen={setOpenNoteDialog} />
 		</>
 	)
 }
@@ -549,7 +548,7 @@ TicketNote.propTypes = {
 	ticket: PropTypes.object,
 }
 
-export const TicketCreatedBy = ({ createdBy }) => {
+export function TicketCreatedBy({ createdBy }) {
 	const dispatch = useDispatch()
 	return (
 		<Tooltip
@@ -567,8 +566,7 @@ export const TicketCreatedBy = ({ createdBy }) => {
 				onClick={(e) => {
 					e.stopPropagation()
 					dispatch(setRedirect(REDIRECT_URL.ADMIN.USERS + "/" + createdBy))
-				}}
-			/>
+				}} />
 		</Tooltip>
 	)
 }

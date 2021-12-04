@@ -62,7 +62,7 @@ const DummyData = [
 	},
 ]
 
-const ReadMoreBtn = ({ url }) => {
+function ReadMoreBtn({ url }) {
 	return (
 		<Box
 			sx={{

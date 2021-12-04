@@ -42,7 +42,7 @@ import { Box } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SettingsContent = ({ children }) => {
+function SettingsContent({ children }) {
 	return (
 		<Box sx={{
 			m: 1

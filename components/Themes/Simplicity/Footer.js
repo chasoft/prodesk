@@ -109,7 +109,7 @@ const socialLinks = [
  * INIT                                                          *
  *****************************************************************/
 
-export const FooterLinks = ({ linkGroup }) => {
+export function FooterLinks({ linkGroup }) {
 	return (
 		<Box id="footer-links" sx={{
 			"&>ul": {
@@ -142,7 +142,7 @@ FooterLinks.propTypes = {
 	linkGroup: PropTypes.object.isRequired,
 }
 
-const LogoAndSocial = ({ socialLinks }) => {
+function LogoAndSocial({ socialLinks }) {
 	const theme = useTheme()
 	return (
 		<Box
@@ -213,7 +213,7 @@ LogoAndSocial.propTypes = {
 	socialLinks: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
-export const Footer = () => {
+export function Footer() {
 	return (
 		<Container id="wrap" sx={{
 			marginTop: "auto",

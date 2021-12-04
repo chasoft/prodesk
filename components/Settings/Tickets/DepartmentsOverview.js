@@ -42,6 +42,7 @@ import {
 
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
+import { CircularProgressBox } from "@components/common"
 
 //ASSETS
 import PublicIcon from "@mui/icons-material/Public"
@@ -51,7 +52,7 @@ import FingerprintIcon from "@mui/icons-material/Fingerprint"
  * INIT                                                          *
  *****************************************************************/
 
-export const DepartmentMembersCount = ({ count }) => {
+export function DepartmentMembersCount({ count }) {
 	return (
 		<Chip
 			size="small"
@@ -59,23 +60,21 @@ export const DepartmentMembersCount = ({ count }) => {
 			label={count > 1 ? "members" : "member"}
 			variant="outlined"
 			sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
-			onClick={(e) => e.stopPropagation()}
-		/>
+			onClick={(e) => e.stopPropagation()} />
 	)
 }
 DepartmentMembersCount.propTypes = {
 	count: PropTypes.number
 }
 
-const DepartmentAvailableForAll = () => {
+function DepartmentAvailableForAll() {
 	return (
 		<Chip
 			size="small"
 			label="Available for all"
 			color="primary"
 			sx={{ ".MuiChip-avatar": { color: "#FFF", fontWeight: 700 } }}
-			onClick={(e) => e.stopPropagation()}
-		/>
+			onClick={(e) => e.stopPropagation()} />
 	)
 }
 
@@ -83,7 +82,7 @@ const DepartmentAvailableForAll = () => {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsOverview = ({ backBtnClick }) => {
+function DepartmentsOverview({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery(undefined)
 
@@ -138,16 +137,14 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 										<FingerprintIcon
 											fontSize="small"
 											color="primary"
-											sx={{ ml: 1 }}
-										/>
+											sx={{ ml: 1 }} />
 									</Tooltip>
 									:
 									<Tooltip arrow title="Only selected members" placement="top">
 										<FingerprintIcon
 											fontSize="small"
 											color="warning"
-											sx={{ ml: 1 }}
-										/>
+											sx={{ ml: 1 }} />
 									</Tooltip>}
 
 								{department.isPublic
@@ -156,16 +153,14 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 										<PublicIcon
 											fontSize="small"
 											color="primary"
-											sx={{ ml: 1 }}
-										/>
+											sx={{ ml: 1 }} />
 									</Tooltip>
 									:
 									<Tooltip arrow title="For internal use only" placement="top">
 										<PublicIcon
 											fontSize="small"
 											color="disabled"
-											sx={{ ml: 1 }}
-										/>
+											sx={{ ml: 1 }} />
 									</Tooltip>}
 
 							</Box>
@@ -191,8 +186,7 @@ const DepartmentsOverview = ({ backBtnClick }) => {
 						</Box>
 
 					</Box>
-				))
-			}
+				))}
 		</>
 	)
 }

@@ -91,7 +91,7 @@ const validationSchema = yup.object({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SignupForm = () => {
+function SignupForm() {
 	const dispatch = useDispatch()
 	const [isProcessing, setIsProcessing] = useState(false)
 	const [signUpWithEmail] = useSignUpWithEmailMutation()
@@ -144,8 +144,7 @@ const SignupForm = () => {
 
 			<RegHeader
 				icon={<LockOutlinedIcon />}
-				title="Sign up"
-			/>
+				title="Sign up" />
 
 			<form onSubmit={formik.handleSubmit}>
 				<Grid container spacing={2}>
@@ -161,8 +160,7 @@ const SignupForm = () => {
 							error={formik.touched.name && Boolean(formik.errors.name)}
 							helperText={formik.touched.name && formik.errors.name}
 							variant="outlined"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<TextField
@@ -176,8 +174,7 @@ const SignupForm = () => {
 							error={formik.touched.username && Boolean(formik.errors.username)}
 							helperText={formik.touched.username && formik.errors.username}
 							variant="outlined"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -191,8 +188,7 @@ const SignupForm = () => {
 							error={formik.touched.email && Boolean(formik.errors.email)}
 							helperText={formik.touched.email && formik.errors.email}
 							variant="outlined"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -207,8 +203,7 @@ const SignupForm = () => {
 							helperText={formik.touched.password && formik.errors.password}
 							variant="outlined"
 							type="password"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -223,23 +218,18 @@ const SignupForm = () => {
 							helperText={formik.touched.password2 && formik.errors.password2}
 							variant="outlined"
 							type="password"
-							required
-						/>
+							required />
 					</Grid>
 					<Grid item xs={12}>
 						<FormControlLabel
-							control={
-								<Checkbox
-									id="agreement"
-									name="agreement"
-									checked={formik.values.agreement}
-									onChange={formik.handleChange}
-									error={new Boolean(formik.errors.agreement)}
-									color="primary"
-								/>
-							}
-							label="I want to receive inspiration, marketing promotions and updates via email."
-						/>
+							control={<Checkbox
+								id="agreement"
+								name="agreement"
+								checked={formik.values.agreement}
+								onChange={formik.handleChange}
+								error={new Boolean(formik.errors.agreement)}
+								color="primary" />}
+							label="I want to receive inspiration, marketing promotions and updates via email." />
 					</Grid>
 				</Grid>
 

@@ -75,7 +75,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DepartmentsDetails = ({ backBtnClick }) => {
+function DepartmentsDetails({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
 	const { currentUser } = useSelector(getAuth)
@@ -84,27 +84,25 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
-		data: cannedReplies,
-		isLoading: isLoadingCannedReplies
+		data: cannedReplies, isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const { activeSettingPanel } = useSelector(getUiSettings)
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const selectedDepartment = departments.find(department => department.name === activeSettingPanel)
 
 	//Local memory
 	const {
-		localCache,
-		handlers: { setLocalCache }
+		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(selectedDepartment)
 
 	const handleDeleteDepartment = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 
 		//User must delete all related canned-replies
 		//before they can delete department
@@ -140,10 +138,9 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 
 	const handleUpdateDepartment = async () => {
 		//Do not allow departments have the same name
-		const departmentDuplicated =
-			(selectedDepartment?.name === localCache.name)
-				? false
-				: some(departments, { name: localCache.name })
+		const departmentDuplicated = (selectedDepartment?.name === localCache.name)
+			? false
+			: some(departments, { name: localCache.name })
 		if (departmentDuplicated) {
 			enqueueSnackbar(`Department with name "${localCache.name}" existed."`, { variant: "error" })
 			return
@@ -180,16 +177,14 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 				: <>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
-						rightButton={
-							<Tooltip title="Delete current department" placement="left">
-								<IconButton
-									sx={{ ":hover": { color: "warning.main" } }}
-									onClick={() => setOpenConfirmDialog(true)}
-								>
-									<DeleteIcon fontSize="small" />
-								</IconButton>
-							</Tooltip>
-						}
+						rightButton={<Tooltip title="Delete current department" placement="left">
+							<IconButton
+								sx={{ ":hover": { color: "warning.main" } }}
+								onClick={() => setOpenConfirmDialog(true)}
+							>
+								<DeleteIcon fontSize="small" />
+							</IconButton>
+						</Tooltip>}
 					>
 						<Typography variant="button">{localCache.name}</Typography>
 
@@ -205,7 +200,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 							}}>
 								<DeleteIcon sx={{ width: 60, height: 60, mr: 2 }} color="warning" />
 								<Typography sx={{ lineHeight: 2 }}>
-									Are you sure you want to delete this department?<br />Try to rename instead of deleting if it&apos;s possible. <br />Please note that this action can not be undo.
+									Are you sure you want to delete this department?<br />Try to rename instead of deleting if it&apos; s possible.<br />Please note that this action can not be undo.
 								</Typography>
 							</Box>
 						</ConfirmDialog>
@@ -222,8 +217,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 									}}
 									label="Name of the department"
 									placeholder="eg. Sales, Accounting..."
-									fullWidth
-								/>
+									fullWidth />
 							</Grid>
 
 							<Grid item xs={12}>
@@ -233,8 +227,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 										setLocalCache(e.target.value, "description")
 									}}
 									label="Department description (Optional)"
-									fullWidth
-								/>
+									fullWidth />
 							</Grid>
 							<Grid item xs={12}>
 								<SettingsSwitch
@@ -244,8 +237,7 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 										setLocalCache(undefined, "isPublic", true)
 									}}
 									stateDescription={["For internal use only", "Available for all users"]}
-									description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on."
-								/>
+									description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on." />
 							</Grid>
 							<Grid item xs={12}>
 								<SettingsSwitch
@@ -255,16 +247,12 @@ const DepartmentsDetails = ({ backBtnClick }) => {
 										setLocalCache(undefined, "availableForAll", true)
 									}}
 									stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
-									description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets"
-								/>
+									description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets" />
 							</Grid>
 							<Grid item xs={12}>
 								<MembersList
 									members={localCache.members}
-									addMemberCallback={
-										(members) => setLocalCache(members, "members")
-									}
-								/>
+									addMemberCallback={(members) => setLocalCache(members, "members")} />
 								<div style={{ height: "2rem" }}></div>
 							</Grid>
 						</Grid>

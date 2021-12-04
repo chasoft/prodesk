@@ -53,7 +53,7 @@ import {
  * INIT                                                          *
  *****************************************************************/
 
-const LoadingIndicator = () => {
+function LoadingIndicator() {
 	return (
 		<div style={{
 			height: "80vh",

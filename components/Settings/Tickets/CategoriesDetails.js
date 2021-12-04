@@ -70,7 +70,7 @@ import { TransitionGroup } from "react-transition-group"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoriesDetails = ({ backBtnClick }) => {
+function CategoriesDetails({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
@@ -109,7 +109,8 @@ const CategoriesDetails = ({ backBtnClick }) => {
 	}
 
 	const handleDeleteCategory = async (confirmed) => {
-		if (confirmed === false) return
+		if (confirmed === false)
+			return
 
 		//redirect to overview tab
 		dispatch(setActiveSettingPanel(CATEGORY_PAGES.OVERVIEW))
@@ -123,10 +124,9 @@ const CategoriesDetails = ({ backBtnClick }) => {
 
 	const handleUpdateCategory = async () => {
 		//Do not allow categories have the same name
-		const categoryDuplicated =
-			(selectedCategory.name === categoryName)
-				? false
-				: some(categories, { name: categoryName })
+		const categoryDuplicated = (selectedCategory.name === categoryName)
+			? false
+			: some(categories, { name: categoryName })
 		if (categoryDuplicated) {
 			enqueueSnackbar(`Category with name "${categoryName}" existed`, { variant: "error" })
 			return
@@ -186,29 +186,23 @@ const CategoriesDetails = ({ backBtnClick }) => {
 				: <>
 					<SettingsContentHeader
 						backBtnOnClick={() => backBtnClick(false)}
-						rightButton={
-							<Box>
-								<FormControlLabel
-									control={
-										<Switch
-											checked={isDefault}
-											onChange={() => setIsDefault(p => !p)}
-											name="checkedB"
-											color="primary"
-										/>
-									}
-									label={(isMobile || isSmallScreen) ? "Default " : "Set as default"}
-								/>
-								<Tooltip title="Delete current category" placement="left">
-									<IconButton
-										sx={{ ":hover": { color: "warning.main" } }}
-										onClick={() => setOpenConfirmDialog(true)}
-									>
-										<DeleteIcon fontSize="small" />
-									</IconButton>
-								</Tooltip>
-							</Box>
-						}
+						rightButton={<Box>
+							<FormControlLabel
+								control={<Switch
+									checked={isDefault}
+									onChange={() => setIsDefault(p => !p)}
+									name="checkedB"
+									color="primary" />}
+								label={(isMobile || isSmallScreen) ? "Default " : "Set as default"} />
+							<Tooltip title="Delete current category" placement="left">
+								<IconButton
+									sx={{ ":hover": { color: "warning.main" } }}
+									onClick={() => setOpenConfirmDialog(true)}
+								>
+									<DeleteIcon fontSize="small" />
+								</IconButton>
+							</Tooltip>
+						</Box>}
 					>
 						<Typography variant="button">
 							Edit category
@@ -240,8 +234,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 									onChange={(e) => { setCategoryName(e.target.value) }}
 									label="Category name"
 									placeholder="eg. name of your provided product/service group"
-									fullWidth
-								/>
+									fullWidth />
 							</Grid>
 
 							<Grid item xs={12}>
@@ -252,8 +245,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 											<SubCatItem
 												currentItem={subCat}
 												list={subCategories}
-												setList={setSubCategories}
-											/>
+												setList={setSubCategories} />
 										</Collapse>
 									))}
 								</TransitionGroup>
@@ -274,8 +266,7 @@ const CategoriesDetails = ({ backBtnClick }) => {
 												onChange={(e) => { setSubCategoryName(e.target.value) }}
 												label="Sub-category name"
 												placeholder="eg. name of your sub-category"
-												fullWidth
-											/>
+												fullWidth />
 										</div>
 										<Button
 											sx={{ ml: { xs: 0, sm: 2 }, px: 2, mt: { xs: 2, sm: 0 } }}

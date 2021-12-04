@@ -39,7 +39,7 @@ import { Box } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const Widget = () => {
+function Widget() {
 	return (
 		<Box sx={{ margin: 1 }}>
 			Template

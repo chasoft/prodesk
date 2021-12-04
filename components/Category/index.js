@@ -44,41 +44,45 @@ import LaunchIcon from "@mui/icons-material/Launch"
  * INIT                                                          *
  *****************************************************************/
 
-const UiDocList = ({ sx, children }) => (
-	<Box
-		component="ul"
-		sx={{
-			padding: 0,
-			cursor: "pointer",
-			listStyle: "none",
-			color: "primary.main",
-			"& > li": { display: "flex", px: 2, py: 1 },
-			"& > li:hover": {
-				backgroundColor: "#E8F0FE"
-			},
-			...sx
-		}}
-	>
-		{children}
-	</Box>
-)
+function UiDocList({ sx, children }) {
+	return (
+		<Box
+			component="ul"
+			sx={{
+				padding: 0,
+				cursor: "pointer",
+				listStyle: "none",
+				color: "primary.main",
+				"& > li": { display: "flex", px: 2, py: 1 },
+				"& > li:hover": {
+					backgroundColor: "#E8F0FE"
+				},
+				...sx
+			}}
+		>
+			{children}
+		</Box>
+	)
+}
 UiDocList.propTypes = { sx: PropTypes.object, children: PropTypes.node }
 
-const UiDocItem = ({ item }) => (
-	<li>
-		<Link href={item.url ?? `/${item.slug}`} passHref>
-			<ButtonBase sx={{ textAlign: "left" }}>
-				{item.title}
+function UiDocItem({ item }) {
+	return (
+		<li>
+			<Link href={item.url ?? `/${item.slug}`} passHref>
+				<ButtonBase sx={{ textAlign: "left" }}>
+					{item.title}
 
-				{(item.type === DOC_TYPE.EXTERNAL)
-					? <LaunchIcon sx={{
-						fontSize: "1.2rem", mx: 0.5
-					}} />
-					: null}
-			</ButtonBase>
-		</Link>
-	</li>
-)
+					{(item.type === DOC_TYPE.EXTERNAL)
+						? <LaunchIcon sx={{
+							fontSize: "1.2rem", mx: 0.5
+						}} />
+						: null}
+				</ButtonBase>
+			</Link>
+		</li>
+	)
+}
 UiDocItem.propTypes = { item: PropTypes.object }
 
 /*****************************************************************

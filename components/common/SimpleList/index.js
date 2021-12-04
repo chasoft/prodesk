@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const SimpleList = ({ children }) => {
+function SimpleList({ children }) {
 	const classes = useStyles()
 	return (
 		<div className={classes.root}>

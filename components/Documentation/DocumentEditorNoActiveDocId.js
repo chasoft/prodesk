@@ -44,7 +44,7 @@ import { Box, Paper, Typography } from "@mui/material"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocumentEditorNoActiveDocId = () => {
+function DocumentEditorNoActiveDocId() {
 	return (
 		<Box sx={{
 			display: "flex",

@@ -44,7 +44,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const DocsList = ({ header, viewAllText, viewAllLink, dataSource }) => {
+function DocsList({ header, viewAllText, viewAllLink, dataSource }) {
 	return (
 		<div>
 

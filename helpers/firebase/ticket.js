@@ -42,7 +42,7 @@ import { TICKET_STATUS } from "./../constants"
  * @param {string} ticketContent 
  * @returns Nothing
  */
-export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { router, enqueueSnackbar }) => {
+export async function ticketAddNew({ currentUser, metaData, ticketContent }, { router, enqueueSnackbar }) {
 	/* validate input */
 	if (metaData.subject.length < 10) {
 		enqueueSnackbar("Please enter meaningful subject for your new ticket!", { variant: "error" })
@@ -77,7 +77,7 @@ export const ticketAddNew = async ({ currentUser, metaData, ticketContent }, { r
 	}
 }
 
-export const ticketAddReply = async ({ currentUser, ticketId, replyContent }, { enqueueSnackbar }) => {
+export async function ticketAddReply({ currentUser, ticketId, replyContent }, { enqueueSnackbar }) {
 	/* validate input */
 	if (replyContent.length < 5) {
 		enqueueSnackbar("Too short for a reply!", { variant: "error" })
@@ -122,7 +122,7 @@ export const ticketAddReply = async ({ currentUser, ticketId, replyContent }, { 
  * @param {string} uid - uid of current logged in user
  * @returns Firebase collection reference
  */
-export const ticketsRef = (uid) => {
+export function ticketsRef(uid) {
 	return db
 		.collection("users").doc(uid)
 		.collection("tickets")
@@ -135,7 +135,7 @@ export const ticketsRef = (uid) => {
  * @param {string} ticketId
  * @returns Firebase collection reference
  */
-export const ticketRepliesRef = (uid, ticketId) => {
+export function ticketRepliesRef(uid, ticketId) {
 	console.log({ uid, ticketId })
 	return db
 		.collection("users").doc(uid)
@@ -150,7 +150,7 @@ export const ticketRepliesRef = (uid, ticketId) => {
  * @param {string[]} idArray
  * @param {string} uid - uid of current logged in user
  */
-export const ticketDeleteTicket = async ({ idArray, uid }, { enqueueSnackbar }) => {
+export async function ticketDeleteTicket({ idArray, uid }, { enqueueSnackbar }) {
 	const batch = db.batch()
 	try {
 		idArray.forEach((id) => {
@@ -172,7 +172,7 @@ export const ticketDeleteTicket = async ({ idArray, uid }, { enqueueSnackbar }) 
  * @param {string} uid - uid of current logged in user
  * @param {string} newStatus - limited in STATUS_FILTER const
  */
-export const ticketUpdateStatus = async ({ idArray, uid, newStatus }, { enqueueSnackbar }) => {
+export async function ticketUpdateStatus({ idArray, uid, newStatus }, { enqueueSnackbar }) {
 	const batch = db.batch()
 
 	try {

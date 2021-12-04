@@ -72,7 +72,7 @@ import { TransitionGroup } from "react-transition-group"
  * INIT                                                          *
  *****************************************************************/
 
-export const SubCatItem = ({ currentItem, list, setList }) => {
+export function SubCatItem({ currentItem, list, setList }) {
 	const handleSetDefault = () => {
 		console.log("change default item")
 		const newArray = Array.from(list)
@@ -143,7 +143,7 @@ export const SubCatItem = ({ currentItem, list, setList }) => {
 				</Tooltip>
 			</Box>
 
-		</Box >
+		</Box>
 	)
 }
 SubCatItem.propTypes = {
@@ -157,7 +157,7 @@ SubCatItem.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const CategoriesAddNew = ({ backBtnClick }) => {
+function CategoriesAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const { isSmallScreen } = useSelector(getUiSettings)
@@ -194,7 +194,6 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 		/**
 		 * Note: if user set as default === true, then, must update all items
 		 */
-
 		//prepare the data for new category
 		const catId = nanoid()
 		const categoryItem = {
@@ -249,19 +248,13 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 		<>
 			<SettingsContentHeader
 				backBtnOnClick={() => backBtnClick(false)}
-				rightButton={
-					<FormControlLabel
-						control={
-							<Switch
-								checked={isDefault}
-								onChange={() => setIsDefault(p => !p)}
-								name="checkedB"
-								color="primary"
-							/>
-						}
-						label={(isMobile || isSmallScreen) ? "Default " : "Set as default"}
-					/>
-				}
+				rightButton={<FormControlLabel
+					control={<Switch
+						checked={isDefault}
+						onChange={() => setIsDefault(p => !p)}
+						name="checkedB"
+						color="primary" />}
+					label={(isMobile || isSmallScreen) ? "Default " : "Set as default"} />}
 			>
 				Add new category
 			</SettingsContentHeader>
@@ -276,8 +269,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 								onChange={(e) => { setCategoryName(e.target.value) }}
 								label="Category name"
 								placeholder="eg. name of your provided product/service group"
-								fullWidth
-							/>
+								fullWidth />
 						</Grid>
 
 						<Grid item xs={12}>
@@ -288,8 +280,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 										<SubCatItem
 											currentItem={subCat}
 											list={subCategories}
-											setList={setSubCategories}
-										/>
+											setList={setSubCategories} />
 									</Collapse>
 								))}
 							</TransitionGroup>
@@ -304,8 +295,7 @@ const CategoriesAddNew = ({ backBtnClick }) => {
 											onChange={(e) => { setSubCategoryName(e.target.value) }}
 											label="Sub-category name"
 											placeholder="eg. name of your sub-category"
-											fullWidth
-										/>
+											fullWidth />
 									</div>
 									<Button
 										sx={{ ml: { xs: 0, sm: 2 }, px: 2, mt: { xs: 2, sm: 0 } }}

@@ -64,7 +64,7 @@ const steps = [
 	"Describe & post"
 ]
 
-export const useGetTicketDetails = () => {
+export function useGetTicketDetails() {
 	const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery()
 
@@ -92,20 +92,17 @@ export const useGetTicketDetails = () => {
 	return res
 }
 
-export const useGetNewTicketData = () => {
+export function useGetNewTicketData() {
 	const res = useRef([])
 	const { editorData } = useSelector(getTextEditor)
 	const { subject, selectedPriority } = useSelector(getNewTicket)
 
 	const {
-		selectedCategory,
-		selectedDepartmentId,
-		selectedSubCategory
+		selectedCategory, selectedDepartmentId, selectedSubCategory
 	} = useGetTicketDetails()
 
 	const {
-		data: departments = [],
-		isLoading: isLoadingDepartments
+		data: departments = [], isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery()
 
 	useEffect(() => {
@@ -136,16 +133,14 @@ export const useGetNewTicketData = () => {
 	return { data: res.current, isLoading: isLoadingDepartments }
 }
 
-const StepperControlButtons = () => {
+function StepperControlButtons() {
 	const dispatch = useDispatch()
 	const { currentUser } = useSelector(getAuth)
 	const { editorData } = useSelector(getTextEditor)
 	const [isProcessingNewTicket, setIsProcessingNewTicket] = useState(false)
 
 	const {
-		currentStep,
-		onBehalf,
-		subject
+		currentStep, onBehalf, subject
 	} = useSelector(getNewTicket)
 
 	const [addTicket] = useAddTicketMutation()
@@ -154,13 +149,11 @@ const StepperControlButtons = () => {
 	const raw = useGetTicketDetails()
 
 	const {
-		data: departments,
-		isLoading: isLoadingDepartments
+		data: departments, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		userList: allAdminProfiles = [],
-		isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup(
 		[
 			USERGROUP.SUPERADMIN.code,
@@ -227,10 +220,9 @@ const StepperControlButtons = () => {
 					department => department.did === raw.selectedDepartmentId
 				) ?? {}
 
-				const receivers =
-					(selectedDepartment?.availableForAll)
-						? allAdminProfiles.map(profile => profile.username)
-						: selectedDepartment.members
+				const receivers = (selectedDepartment?.availableForAll)
+					? allAdminProfiles.map(profile => profile.username)
+					: selectedDepartment.members
 
 				await addNewNotification(receivers, notisContent, invalidatesTags)
 			}
@@ -263,20 +255,18 @@ const StepperControlButtons = () => {
 				</Button>
 
 				<Button
-					disabled={
-						(
-							currentStep === 0 && subject.length < 10 || isAdminURL
-								? (
-									onBehalf
-										? (false || subject.length < 10)
-										: true
-								)
-								: false
-						)
+					disabled={(
+						currentStep === 0 && subject.length < 10 || isAdminURL
+							? (
+								onBehalf
+									? (false || subject.length < 10)
+									: true
+							)
+							: false
+					)
 						|| (currentStep === 2 && editorData.length < 20)
 						|| isLoadingDepartments
-						|| isLoadingAllAdminProfiles
-					}
+						|| isLoadingAllAdminProfiles}
 					variant="contained" color="primary"
 					onClick={handleGoNext}
 					sx={{ px: { xs: 4, sm: 2 } }}
@@ -296,8 +286,7 @@ const StepperControlButtons = () => {
 				<Box sx={{ display: { xs: "none", sm: "initial" } }}>
 					<LearnMoreAdvancedTextEditor
 						text="Learn more about"
-						linkText="advanced text editor"
-					/>
+						linkText="advanced text editor" />
 				</Box>}
 
 		</Box>

@@ -202,7 +202,7 @@ EnhancedTableHead.propTypes = {
 	rowCount: PropTypes.number.isRequired,
 }
 
-const EnhancedTableToolbar = (props) => {
+function EnhancedTableToolbar(props) {
 	const { numSelected } = props
 
 	return (
@@ -211,8 +211,7 @@ const EnhancedTableToolbar = (props) => {
 				pl: { sm: 2 },
 				pr: { xs: 1, sm: 1 },
 				...(numSelected > 0 && {
-					bgcolor: (theme) =>
-						alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+					bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
 				}),
 			}}
 		>
@@ -261,7 +260,7 @@ EnhancedTableToolbar.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const TicketsTable = () => {
+function TicketsTable() {
 	const [order, setOrder] = React.useState("asc")
 	const [orderBy, setOrderBy] = React.useState("calories")
 	const [selected, setSelected] = React.useState([])
@@ -297,7 +296,7 @@ const TicketsTable = () => {
 		} else if (selectedIndex > 0) {
 			newSelected = newSelected.concat(
 				selected.slice(0, selectedIndex),
-				selected.slice(selectedIndex + 1),
+				selected.slice(selectedIndex + 1)
 			)
 		}
 
@@ -320,8 +319,7 @@ const TicketsTable = () => {
 	const isSelected = (name) => selected.indexOf(name) !== -1
 
 	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
+	const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
 	return (
 		<Box sx={{ width: "100%" }}>
@@ -339,11 +337,10 @@ const TicketsTable = () => {
 							orderBy={orderBy}
 							onSelectAllClick={handleSelectAllClick}
 							onRequestSort={handleRequestSort}
-							rowCount={rows.length}
-						/>
+							rowCount={rows.length} />
 						<TableBody>
 							{/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
+ rows.slice().sort(getComparator(order, orderBy)) */}
 							{rows.slice().sort(getComparator(order, orderBy))
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((row, index) => {
@@ -373,8 +370,7 @@ const TicketsTable = () => {
 													onClick={(event) => {
 														event.stopPropagation()
 														handleClick(event, row.name)
-													}}
-												/>
+													}} />
 											</TableCell>
 											<TableCell
 												component="th"
@@ -410,13 +406,11 @@ const TicketsTable = () => {
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+					onRowsPerPageChange={handleChangeRowsPerPage} />
 			</Paper>
 			<FormControlLabel
 				control={<Switch checked={dense} onChange={handleChangeDense} />}
-				label="Dense padding"
-			/>
+				label="Dense padding" />
 		</Box>
 	)
 }

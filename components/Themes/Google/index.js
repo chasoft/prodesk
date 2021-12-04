@@ -28,8 +28,7 @@ import React from "react"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const ThemeGoogle = () => {
-
+function ThemeGoogle() {
 	return (
 		<div style={{ height: "50vh", width: "100%", backgroundColor: "red" }}>
 			Google Theme

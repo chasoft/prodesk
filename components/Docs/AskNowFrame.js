@@ -34,11 +34,11 @@ import AskNow from "./AskNow"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const AskNowFrame = () => {
+function AskNowFrame() {
 	return (
 		<Container maxWidth="md" sx={{ width: "100%" }}>
 			<AskNow />
-		</Container >
+		</Container>
 	)
 }
 

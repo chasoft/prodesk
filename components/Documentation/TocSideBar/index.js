@@ -82,7 +82,7 @@ import TocSideBarActionsGroup from "@components/Documentation/TocSideBar/TocSide
  * INIT                                                          *
  *****************************************************************/
 
-const HiddenBgFixBug = () => {
+function HiddenBgFixBug() {
 	return (<Box id="HiddenBgFixBug" sx={{
 		position: "fixed",
 		zIndex: 1,
@@ -103,11 +103,10 @@ const HiddenBgFixBug = () => {
  * @param {*} sourceItem 
  * @param {*} targetItem 
  */
-export const isValidDnD = (sourceItem, targetItem) => {
+export function isValidDnD(sourceItem, targetItem) {
 	/**************************************************************
 	 * 1. TARGET IS A TYPE OF CATEGORY
 	 **************************************************************/
-
 	/* 1A: DOC_TYPE.CATEGORY >>> DOC_TYPE.CATEGORY  */
 	if (sourceItem.type === DOC_TYPE.CATEGORY && targetItem.type === DOC_TYPE.CATEGORY) {
 		// if (sourceItem.position < targetItem.position) return false
@@ -129,20 +128,21 @@ export const isValidDnD = (sourceItem, targetItem) => {
 	/**************************************************************
 	 * 2. TARGET IS A TYPE OF SUBCATEGORY
 	 **************************************************************/
-
 	/* 2A: DOC_TYPE.CATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	if (sourceItem.type === DOC_TYPE.CATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY)
 		return false
 	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	if (sourceItem.type === DOC_TYPE.SUBCATEGORY && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		if (sourceItem.categoryId !== targetItem.categoryId) return false
+		if (sourceItem.categoryId !== targetItem.categoryId)
+			return false
 		// if (sourceItem.position < targetItem.position) return false
 		return true
 	}
 
 	/* 2C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.SUBCATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.SUBCATEGORY) {
-		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === targetItem.subCategoryId) return false
+		if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === targetItem.subCategoryId)
+			return false
 		return true
 	}
 
@@ -151,10 +151,8 @@ export const isValidDnD = (sourceItem, targetItem) => {
 	 **************************************************************/
 	/* 3A: DOC_TYPE.CATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
 	/* 3B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
-	if (
-		(sourceItem.type === DOC_TYPE.CATEGORY || sourceItem.type === DOC_TYPE.SUBCATEGORY)
-		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL)
-	)
+	if ((sourceItem.type === DOC_TYPE.CATEGORY || sourceItem.type === DOC_TYPE.SUBCATEGORY)
+		&& (targetItem.type === DOC_TYPE.DOC || targetItem.type === DOC_TYPE.EXTERNAL))
 		return false
 
 	/* 3C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
@@ -163,7 +161,6 @@ export const isValidDnD = (sourceItem, targetItem) => {
 
 		// if (sourceItem.categoryId === targetItem.categoryId && sourceItem.subCategoryId === targetItem.subCategoryId)
 		// if (sourceItem.position < targetItem.position) return false
-
 		return true
 	}
 }
@@ -173,11 +170,10 @@ export const isValidDnD = (sourceItem, targetItem) => {
  * @param {object} sourceItem 
  * @param {object} targetItem 
  */
-export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) => {
+export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 	/**************************************************************
 	 * 1. TARGET IS A TYPE OF CATEGORY
 	 **************************************************************/
-
 	/* 1A: DOC_TYPE.CATEGORY >>> DOC_TYPE.CATEGORY  */
 	// => sourceItem.position = targetItem.position - 1
 	//    note: only 1 affected item
@@ -215,7 +211,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	// 	// => source.categoryId = target.categoryId
 	// 	// 	  note: 1 or many affected items
 	// 	if (sourceItem.categoryId !== targetItem.categoryId) {
-
 	// 		const affectedItems = filter(
 	// 			allDocs,
 	// 			(doc) => {
@@ -224,12 +219,10 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	// 					&& doc.docId !== sourceItem.docId
 	// 			}
 	// 		)
-
 	// 		const newSourceData = {
 	// 			docId: sourceItem.docId,
 	// 			categoryId: targetItem.categoryId,
 	// 		}
-
 	// 		const res = await updateDoc({
 	// 			docItem: newSourceData,
 	// 			affectedItems: affectedItems,
@@ -237,7 +230,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	// 				categoryId: targetItem.categoryId
 	// 			}
 	// 		})
-
 	// 		if (res?.data.code === CODE.SUCCESS) {
 	// 			const invalidatesTags = {
 	// 				trigger: username,
@@ -252,12 +244,9 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	// 			}
 	// 			await requestSilentRefetching(invalidatesTags)
 	// 		}
-
 	// 		console.log({ sourceItem, targetItem, newSourceData, affectedItems, allDocs })
 	// 	}
-
 	// }
-
 	/* 1C: DOC_TYPE.DOC || DOC_TYPE.EXTERNAL >>> DOC_TYPE.CATEGORY  */
 	if ((sourceItem.type === DOC_TYPE.DOC || sourceItem.type === DOC_TYPE.EXTERNAL) && targetItem.type === DOC_TYPE.CATEGORY) {
 		// 1C.1: if source.categoryId === target.categoryId && source.subCategoryId === RESERVED_KEYWORDS.CAT_CHILDREN
@@ -324,7 +313,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	/**************************************************************
 	 * 2. TARGET IS A TYPE OF SUBCATEGORY
 	 **************************************************************/
-
 	/* 2A: DOC_TYPE.CATEGORY >>> DOC_TYPE.SUBCATEGORY  */
 	// => NOTHING TO CHANGE
 	/* 2B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.SUBCATEGORY  */
@@ -362,7 +350,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 		// 	// => source.position = target.position - 1
 		// 	//    note: 1 or many affected items
 		// 	if (sourceItem.categoryId !== targetItem.categoryId) {
-
 		// 		const affectedItems = filter(
 		// 			allDocs,
 		// 			(doc) => {
@@ -371,13 +358,11 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 		// 					&& doc.docId !== sourceItem.docId
 		// 			}
 		// 		)
-
 		// 		const newSourceData = {
 		// 			docId: sourceItem.docId,
 		// 			categoryId: targetItem.categoryId,
 		// 			position: targetItem.position - 1,
 		// 		}
-
 		// 		const res = await updateDoc({
 		// 			docItem: newSourceData,
 		// 			affectedItems: affectedItems,
@@ -385,7 +370,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 		// 				categoryId: targetItem.categoryId
 		// 			}
 		// 		})
-
 		// 		if (res?.data.code === CODE.SUCCESS) {
 		// 			const invalidatesTags = {
 		// 				trigger: username,
@@ -467,7 +451,6 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
 	/**************************************************************
 	 * 3. TARGET IS A TYPE OF DOC || EXTERNAL
 	 **************************************************************/
-
 	/* 3A: DOC_TYPE.CATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
 	// => NOTHING TO CHANGE
 	/* 3B: DOC_TYPE.SUBCATEGORY >>> DOC_TYPE.DOC || DOC_TYPE.EXTERNAL  */
@@ -513,13 +496,13 @@ export const moveDocItem = async (sourceItem, targetItem, updateDoc, username) =
  *****************************************************************/
 
 
-const TocSideBar = () => {
+function TocSideBar() {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
 	const { currentUser } = useSelector(getAuth)
 
 	const {
-		data: docs = [],	//grouped docs
+		data: docs = [], //grouped docs
 		isLoading: isLoadingDocs
 	} = useGetDocsGrouped()
 
@@ -536,7 +519,8 @@ const TocSideBar = () => {
 	}
 
 	const handleOpenDetails = (docId) => {
-		if (docId === undefined) return
+		if (docId === undefined)
+			return
 		reduxBatch(() => {
 			if (activeDocId !== docId) {
 				dispatch(setActiveDocId(null))
@@ -609,7 +593,6 @@ const TocSideBar = () => {
 									>
 										{Object.entries(cat[1]).map((subCat) => {
 											/* Contents of Category */
-
 											//Draw items at root level of Category
 											if (subCat[0] === RESERVED_KEYWORDS.CAT_CHILDREN) {
 												return (
@@ -649,7 +632,8 @@ const TocSideBar = () => {
 											}
 
 											//bypass undefined item which represent/hold category's info
-											if (subCat[0] === RESERVED_KEYWORDS.CAT) return null
+											if (subCat[0] === RESERVED_KEYWORDS.CAT)
+												return null
 
 											//position of Sub-Category in the list
 											const subCatIndex = findKey(subCat[1], { type: DOC_TYPE.SUBCATEGORY })
@@ -668,7 +652,8 @@ const TocSideBar = () => {
 													{subCat[1].map((item, idx) => {
 
 														//bypass position of the sub-category
-														if (idx == subCatIndex) return null
+														if (idx == subCatIndex)
+															return null
 
 														//Draw items within SubCategory
 														if (item.type === DOC_TYPE.DOC)

@@ -45,14 +45,15 @@ import { getNewTicket } from "@redux/selectors"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-const NewTicketStep1 = ({ goNextStep }) => {
+function NewTicketStep1({ goNextStep }) {
 	const dispatch = useDispatch()
 	const { subject } = useSelector(getNewTicket)
 
 	return (
 		<form onSubmit={(e) => {
 			e.preventDefault()
-			if (subject.length > 10) goNextStep()
+			if (subject.length > 10)
+				goNextStep()
 		}}>
 			<TextField
 				id="outlined-helperText"
@@ -65,8 +66,7 @@ const NewTicketStep1 = ({ goNextStep }) => {
 					dispatch(setSubject(e.target.value))
 				}}
 				fullWidth
-				InputLabelProps={{ shrink: true }}
-			/>
+				InputLabelProps={{ shrink: true }} />
 		</form>
 	)
 }

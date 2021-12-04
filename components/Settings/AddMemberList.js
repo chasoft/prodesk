@@ -37,7 +37,7 @@ import PerfectScrollbar from "react-perfect-scrollbar"
  * INIT                                                          *
  *****************************************************************/
 
-const AddMemberList = ({ departmentName, members, children }) => {
+function AddMemberList({ departmentName, members, children }) {
 
 	const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -107,29 +107,25 @@ const AddMemberList = ({ departmentName, members, children }) => {
 									button
 									key={value}
 									sx={{
-										backgroundColor:
-											(checked.indexOf(value) !== -1)
-												? "#F5F5F5"
-												: ""
+										backgroundColor: (checked.indexOf(value) !== -1)
+											? "#F5F5F5"
+											: ""
 									}}>
 									<ListItemAvatar>
 										<Avatar
 											alt={`Avatar n°${value + 1}`}
-											src={`/avatar/${value}.png`}
-										/>
+											src={`/avatar/${value}.png`} />
 									</ListItemAvatar>
 									<ListItemText
 										id={labelId}
 										primary={`Line item ${value + 1}`}
-										secondary="email@yourdomain.com"
-									/>
+										secondary="email@yourdomain.com" />
 									<ListItemSecondaryAction style={{ marginRight: "0.75rem" }}>
 										<Checkbox
 											edge="end"
 											onChange={handleToggle(value)}
 											checked={checked.indexOf(value) !== -1}
-											inputProps={{ "aria-labelledby": labelId }}
-										/>
+											inputProps={{ "aria-labelledby": labelId }} />
 									</ListItemSecondaryAction>
 								</ListItem>
 							)
