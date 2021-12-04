@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState, forwardRef } from "react"
+import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -76,34 +76,38 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined"
  * INIT                                                          *
  *****************************************************************/
 
-const TocItem = forwardRef(({ sx, anchor, active, children }, ref) => {
+function TocItem({ sx, anchor, active, children }) {
 	return (
-		<a ref={ref} href={`#${anchor}`}>
-			<Box
-				sx={{
-					display: "flex",
-					alignItems: "center",
-					px: 2, py: 0.5,
-					cursor: "pointer",
-					":hover": {
-						color: "primary.main",
-						"&>svg": {
-							fill: (theme) => theme.palette.primary.main
-						}
-					},
-					color: active ? "primary.main" : "grey.500",
-					...sx
-				}}
-			>
-				<Typography sx={{ fontSize: "0.80rem" }} noWrap>
-					{children}
-				</Typography>
-			</Box>
-		</a>
+		<Box
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				px: 2, py: 0.5,
+				cursor: "pointer",
+				":hover": {
+					color: "primary.main",
+					"&>svg": {
+						fill: (theme) => theme.palette.primary.main
+					}
+				},
+				color: active ? "primary.main" : "grey.500",
+				...sx
+			}}
+			onClick={(e) => {
+				e.preventDefault()
+				const offsetTop = document.querySelector(`#${anchor}`).offsetTop + 150
+				scroll({
+					top: offsetTop,
+					behavior: "smooth"
+				})
+			}}
+		>
+			<Typography sx={{ fontSize: "0.80rem" }} noWrap>
+				{children}
+			</Typography>
+		</Box>
 	)
-})
-
-TocItem.displayName = "TocItem"
+}
 
 TocItem.propTypes = {
 	sx: PropTypes.object,

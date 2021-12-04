@@ -234,12 +234,25 @@ const DocumentEditor = () => {
 				isLoadingDocItemContent || isLoadingDocItem
 					? <CircularProgressBox />
 					: <>
-						<TextEditor
-							ref={editorRef}
-							value={editorDefaultData ?? ""}
-							placeholder="Enter your content here..."
-							onBlur={handleUpdateContentOnBlur}
-						/>
+						<Box sx={{
+							"& .ProseMirror > p": {
+								marginBottom: "20px",
+								lineHeight: "1.8rem"
+							},
+							"& .ProseMirror li": {
+								marginBottom: "8px",
+							},
+							"& .ProseMirror ul": {
+								marginTop: "8px"
+							}
+						}}>
+							<TextEditor
+								ref={editorRef}
+								value={editorDefaultData ?? ""}
+								placeholder="Enter your content here..."
+								onBlur={handleUpdateContentOnBlur}
+							/>
+						</Box>
 
 						{!isEmptyContent &&
 							<Typography sx={{

@@ -18,7 +18,7 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React, { forwardRef, useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
 
@@ -50,7 +50,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown"
 
 const HEADING_ROOT_ID = "Heading-Root_Id_r00t"
 
-const TocItem = forwardRef(({ sx, anchor, activeHeadingId, isHeader = false, isExpanded, callback, children }, ref) => {
+function TocItem({ sx, anchor, activeHeadingId, isHeader = false, isExpanded, callback, children }) {
 	return (
 		<Box
 			sx={{
@@ -102,10 +102,7 @@ const TocItem = forwardRef(({ sx, anchor, activeHeadingId, isHeader = false, isE
 				/>}
 		</Box>
 	)
-})
-
-TocItem.displayName = "TocItem"
-
+}
 TocItem.propTypes = {
 	sx: PropTypes.object,
 	anchor: PropTypes.string,
@@ -115,7 +112,6 @@ TocItem.propTypes = {
 	callback: PropTypes.func,
 	children: PropTypes.node
 }
-
 
 function CollapseIconButton({ expanded, fillColor, onClick }) {
 	if (expanded) {
@@ -238,7 +234,27 @@ function Article({ docItem }) {
 						</Typography>
 					</Box>
 
-					<Box id="article-info">
+					<Box id="article-info" sx={{
+						"& .ProseMirror > p": {
+							marginBottom: "20px",
+							lineHeight: "1.8rem"
+						},
+						"& .ProseMirror li": {
+							marginBottom: "8px",
+						},
+						"& .ProseMirror ul": {
+							marginTop: "8px"
+						},
+						"& .ProseMirror h1": {
+							padding: "30px 0 16px"
+						},
+						"& .ProseMirror h2": {
+							padding: "25px 0 16px"
+						},
+						"& .ProseMirror h3": {
+							padding: "20px 0 16px"
+						}
+					}}>
 						<TextEditor
 							value={docItemContent?.text ?? ""}
 							readOnly={true}
@@ -275,10 +291,34 @@ function Article({ docItem }) {
 									backgroundColor: "#efefef"
 								}
 							}}>
-								<CustomButtonContained variant="outlined">
+								<CustomButtonContained
+									variant="outlined"
+									sx={{
+										minWidth: "125px",
+										border: "2px solid #000",
+										marginRight: "25px",
+										fontSize: "16px",
+										boxShadow: "none",
+										":hover": {
+											backgroundColor: "#efefef"
+										}
+									}}
+								>
 									Yes, thanks!
 								</CustomButtonContained>
-								<CustomButtonContained variant="outlined">
+
+								<CustomButtonContained
+									variant="outlined"
+									sx={{
+										minWidth: "125px",
+										border: "2px solid #000",
+										boxShadow: "none",
+										fontSize: "16px",
+										":hover": {
+											backgroundColor: "#efefef"
+										}
+									}}
+								>
 									Not really
 								</CustomButtonContained>
 							</Box>
@@ -331,7 +371,7 @@ function ToggleContainer({ headingItem, activeHeadingId, isExpanded, callback, c
 					isHeader={true}
 					callback={callback}
 					isExpanded={isExpanded}
-					sx={{ ml: 0 }}
+					sx={{ pl: 2 }}
 				>
 					{headingItem.title}
 				</TocItem>
@@ -352,8 +392,9 @@ ToggleContainer.propTypes = {
 	children: PropTypes.node,
 }
 
-function SideBarContent({ showFloatButton, docItem }) {
+function ArticleSideBar({ docItem }) {
 	const theme = useTheme()
+	const [showFloatButton, setShowFloatButton] = useState(false)
 	const [activeHeadingId, setActiveHeadingId] = useState(-1)
 	const [activeHeadingGroup, setActiveHeadingGroup] = useState(-1)
 
@@ -364,7 +405,7 @@ function SideBarContent({ showFloatButton, docItem }) {
 
 	if (isLoadingDocItemContent) return null
 
-	const groupedHeadings = docItemContent.headings.reduce((res, curItem) => {
+	const groupedHeadings = docItemContent?.headings?.reduce((res, curItem) => {
 		if (curItem.level > 2) {
 			return res
 		}
@@ -381,71 +422,7 @@ function SideBarContent({ showFloatButton, docItem }) {
 			res[res.length - 1].push(curItem)
 			return res
 		}
-	}, [])
-
-	return (
-		<Box component="ol" sx={{
-			listStyle: "none",
-			marginTop: "0",
-			paddingLeft: "0px",
-			border: "1px solid #000",
-			borderRadius: "8px",
-			[theme.breakpoints.down("mdd")]: {
-				display: showFloatButton ? "block" : "none",
-				position: "fixed",
-				right: "39px",
-				zIndex: "1",
-				top: "200px",
-				maxWidth: "331px",
-				border: "2px solid #000",
-				borderRadius: 0,
-				backgroundColor: "#fff",
-				padding: "15px",
-				margin: "0 0 0 20px",
-				maxHeight: "50vh",
-				overflow: "scroll"
-			}
-		}}>
-			{groupedHeadings.map((group, idx) => {
-				return (
-					<ToggleContainer
-						key={group[0].id}
-						headingItem={group[0]}
-						activeHeadingId={activeHeadingId}
-						isExpanded={activeHeadingGroup === idx}
-						callback={() => {
-							setActiveHeadingGroup(idx)
-							setActiveHeadingId(group[0].id)
-						}}
-					>
-						{group.map((headingItem) => {
-							if (headingItem.id === group[0].id) return null
-							return (
-								<TocItem
-									key={headingItem.id}
-									anchor={headingItem.id}
-									activeHeadingId={activeHeadingId}
-									callback={() => { setActiveHeadingId(headingItem.id) }}
-									sx={{ ml: group[0].id !== HEADING_ROOT_ID ? 2.5 : 0 }}
-								>
-									{headingItem.title}
-								</TocItem>
-							)
-						})}
-					</ToggleContainer>
-				)
-			})}
-		</Box>
-	)
-}
-SideBarContent.propTypes = {
-	docItem: PropTypes.object,
-	showFloatButton: PropTypes.bool,
-}
-
-function ArticleSideBar({ docItem }) {
-	const theme = useTheme()
-	const [showFloatButton, setShowFloatButton] = useState(false)
+	}, []) ?? []
 
 	return (
 		<Box component="section" id="collapsible-sidebar" sx={{
@@ -476,27 +453,75 @@ function ArticleSideBar({ docItem }) {
 					zIndex: 0,
 				},
 			}}>
-				<Box id="article-toc" sx={{
-					[theme.breakpoints.down("mdd")]: {
-						position: "fixed",
-						right: 0,
-						top: "200px"
-					}
-				}}>
-					<SideBarFloatButton handleShowFloatButton={setShowFloatButton} />
-					<Box component="h3" sx={{
-						display: { xs: "none", mdd: "block" },
+
+				{(groupedHeadings.length > 0) &&
+					<Box id="article-toc" sx={{
+						[theme.breakpoints.down("mdd")]: {
+							position: "fixed",
+							right: 0,
+							top: "200px"
+						}
 					}}>
-						Article outline
-					</Box>
-					<SideBarContent
-						docItem={docItem}
-						showFloatButton={showFloatButton}
-					/>
-				</Box>
-
+						<SideBarFloatButton handleShowFloatButton={setShowFloatButton} />
+						<Box component="h3" sx={{
+							display: { xs: "none", mdd: "block" },
+						}}>
+							Article outline
+						</Box>
+						<Box component="ol" sx={{
+							listStyle: "none",
+							marginTop: "0",
+							paddingLeft: "0px",
+							border: "1px solid #000",
+							borderRadius: "8px",
+							[theme.breakpoints.down("mdd")]: {
+								display: showFloatButton ? "block" : "none",
+								position: "fixed",
+								right: "39px",
+								zIndex: "1",
+								top: "200px",
+								maxWidth: "331px",
+								border: "2px solid #000",
+								borderRadius: 0,
+								backgroundColor: "#fff",
+								padding: "15px",
+								margin: "0 0 0 20px",
+								maxHeight: "50vh",
+								overflow: "scroll"
+							}
+						}}>
+							{groupedHeadings.map((group, idx) => {
+								return (
+									<ToggleContainer
+										key={group[0].id}
+										headingItem={group[0]}
+										activeHeadingId={activeHeadingId}
+										isExpanded={activeHeadingGroup === idx}
+										callback={() => {
+											setActiveHeadingGroup(idx)
+											setActiveHeadingId(group[0].id)
+										}}
+									>
+										{group.map((headingItem) => {
+											if (headingItem.id === group[0].id) return null
+											return (
+												<TocItem
+													key={headingItem.id}
+													anchor={headingItem.id}
+													activeHeadingId={activeHeadingId}
+													callback={() => { setActiveHeadingId(headingItem.id) }}
+													sx={{ pl: group[0].id !== HEADING_ROOT_ID ? 4 : 2 }}
+												>
+													{headingItem.title}
+												</TocItem>
+											)
+										})}
+									</ToggleContainer>
+								)
+							})}
+						</Box>
+					</Box>}
 			</Box>
-
 		</Box >
 	)
 }
