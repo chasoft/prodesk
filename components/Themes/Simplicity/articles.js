@@ -37,6 +37,7 @@ import { CircularProgressBox } from "@components/common"
 import ThemeSimplicity404 from "@components/Themes/Simplicity/404"
 import TextEditor from "@components/common/TextEditor"
 import { useGetDocContentQuery } from "@redux/slices/firestoreApi"
+import useScrollSpy from "@helpers/useScrollSpy"
 
 
 //ASSETS
@@ -361,7 +362,7 @@ SideBarFloatButton.propTypes = {
 	handleShowFloatButton: PropTypes.func.isRequired
 }
 
-function ToggleContainer({ headingItem, activeHeadingId, isExpanded, callback, children }) {
+function ToggleContainer({ headingItem, activeHeadingId, isExpanded, children }) {
 	if (headingItem.id !== HEADING_ROOT_ID) {
 		return (
 			<Box>
@@ -369,7 +370,6 @@ function ToggleContainer({ headingItem, activeHeadingId, isExpanded, callback, c
 					anchor={headingItem.id}
 					activeHeadingId={activeHeadingId}
 					isHeader={true}
-					callback={callback}
 					isExpanded={isExpanded}
 					sx={{ pl: 2 }}
 				>
@@ -385,23 +385,22 @@ function ToggleContainer({ headingItem, activeHeadingId, isExpanded, callback, c
 	return (<>{children}</>)
 }
 ToggleContainer.propTypes = {
-	headingItem: PropTypes.string,
+	headingItem: PropTypes.object,
 	isExpanded: PropTypes.bool,
 	activeHeadingId: PropTypes.string,
-	callback: PropTypes.func,
 	children: PropTypes.node,
 }
 
 function ArticleSideBar({ docItem }) {
 	const theme = useTheme()
 	const [showFloatButton, setShowFloatButton] = useState(false)
-	const [activeHeadingId, setActiveHeadingId] = useState(-1)
-	const [activeHeadingGroup, setActiveHeadingGroup] = useState(-1)
 
 	const {
 		data: docItemContent = { headings: [], text: "" },
 		isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(docItem?.docId)
+
+	const activeHeadingId = useScrollSpy({ headings: docItemContent.headings })
 
 	if (isLoadingDocItemContent) return null
 
@@ -490,17 +489,14 @@ function ArticleSideBar({ docItem }) {
 								overflow: "scroll"
 							}
 						}}>
-							{groupedHeadings.map((group, idx) => {
+							{groupedHeadings.map((group) => {
+								const groupIds = group.map(item => item.id)
 								return (
 									<ToggleContainer
 										key={group[0].id}
 										headingItem={group[0]}
 										activeHeadingId={activeHeadingId}
-										isExpanded={activeHeadingGroup === idx}
-										callback={() => {
-											setActiveHeadingGroup(idx)
-											setActiveHeadingId(group[0].id)
-										}}
+										isExpanded={groupIds.includes(activeHeadingId)}
 									>
 										{group.map((headingItem) => {
 											if (headingItem.id === group[0].id) return null
@@ -509,7 +505,6 @@ function ArticleSideBar({ docItem }) {
 													key={headingItem.id}
 													anchor={headingItem.id}
 													activeHeadingId={activeHeadingId}
-													callback={() => { setActiveHeadingId(headingItem.id) }}
 													sx={{ pl: group[0].id !== HEADING_ROOT_ID ? 4 : 2 }}
 												>
 													{headingItem.title}
