@@ -39,7 +39,12 @@ export default function useScrollSpy({ headings, options = {} }) {
 	const prevIdTracker = useRef("")
 
 	const isVisible = (anchor) => {
-		const rectInView = document.getElementById(anchor).getBoundingClientRect()
+
+		const el = document.getElementById(anchor)
+
+		if (!el) return false
+
+		const rectInView = el.getBoundingClientRect()
 
 		const useHeight = window.innerHeight
 		const hitbox_top = useHeight
@@ -53,7 +58,7 @@ export default function useScrollSpy({ headings, options = {} }) {
 	}
 
 	const checkAndUpdateActiveScrollSpy = () => {
-		if (headings.length === 0) return
+		if (!headings || headings.length === 0) return
 		for (let i = 0; i < headings.length; i++) {
 			const elementIsVisible = isVisible(headings[i].id)
 			if (elementIsVisible) {
@@ -67,10 +72,9 @@ export default function useScrollSpy({ headings, options = {} }) {
 	}
 
 	useEffect(() => {
-		window.addEventListener(
-			"scroll",
-			throttle(checkAndUpdateActiveScrollSpy, 400)
-		)
+		const checker = throttle(checkAndUpdateActiveScrollSpy, 400)
+		window.addEventListener("scroll", checker)
+		return () => window.removeEventListener("scroll", checker)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	})
 
