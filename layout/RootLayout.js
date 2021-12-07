@@ -30,6 +30,7 @@ import React, { useEffect } from "react"
 //MATERIAL-UI
 
 //THIRD-PARTY
+import { KBarProvider } from "kbar"
 import { batch as reduxBatch, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
@@ -49,6 +50,12 @@ import {
 	setRedirect,
 	clearRedirectAfterLoginURL
 } from "@redux/slices/redirect"
+
+import { CommandBar, initialActions } from "@components/common/kbar/kbar"
+
+/*****************************************************************
+ * INIT                                                          *
+ *****************************************************************/
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
@@ -126,7 +133,7 @@ function RootLayout({ children }) {
 	}, [dispatch, router.pathname, router])
 
 	return (
-		<>
+		<KBarProvider actions={initialActions} >
 			<Head>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
 				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
@@ -134,10 +141,12 @@ function RootLayout({ children }) {
 				<meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
 			</Head>
 
+			<CommandBar />
+
 			<ReduxRedirect>
 				{children}
 			</ReduxRedirect>
-		</>
+		</KBarProvider>
 	)
 }
 

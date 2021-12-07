@@ -22,7 +22,7 @@ import React from "react"
 import Link from "next/link"
 
 //MATERIAL-UI
-import { Box, IconButton } from "@mui/material"
+import { Box, Button, IconButton } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -64,7 +64,7 @@ export function Header() {
 				alignItems: "center",
 				justifyContent: "space-between",
 				width: "100%",
-				padding: { xs: "24px 24px", md: "24px 48px" }
+				padding: { xs: "24px 24px", sm: "24px 48px" }
 			}}>
 				<Box id="logo">
 					<Logo />
@@ -78,19 +78,25 @@ export function Header() {
 					alignItems: "center"
 				}}>
 					<Box id="search-wrapper header-search" sx={{ mr: 1 }}>
-						<form>
-
-						</form>
-						<IconButton size="small">
-							<SearchIcon />
-						</IconButton>
+						<Box sx={{
+							display: { xs: "block", mdd: "none" }
+						}}>
+							<IconButton id="searchIcon">
+								<SearchIcon />
+							</IconButton>
+						</Box>
+						<Button id="searchButton" startIcon={<SearchIcon />} sx={{
+							display: { xs: "none", mdd: "flex" }
+						}}>
+							Ctrl+K
+						</Button>
 					</Box>
 
 					<Box
 						id="icon-menu"
 						component="span"
 						sx={{
-							display: { xs: "block", md: "none" },
+							display: { xs: "block", mdd: "none" },
 							mr: 1
 						}}
 					>
@@ -104,7 +110,7 @@ export function Header() {
 						component="a"
 						href="https://chasoft.net"
 						sx={{
-							display: { xs: "none", md: "block" },
+							display: { xs: "none", mdd: "block" },
 						}}
 						passHref
 					>

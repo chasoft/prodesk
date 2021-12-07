@@ -35,6 +35,7 @@ import { Container, ThemeProvider } from "@mui/material"
 import { simplicityTheme } from "@components/Themes/Simplicity/theme"
 import { Header } from "@components/Themes/Simplicity/Header"
 import { Footer } from "@components/Themes/Simplicity/Footer"
+import { CommandBar } from "@components/common/kbar/kbar"
 
 //ASSETS
 

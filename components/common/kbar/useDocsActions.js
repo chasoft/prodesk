@@ -18,46 +18,55 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
-import PropTypes from "prop-types"
+import { useMemo } from "react"
+import { useRegisterActions } from "kbar"
+import kbar_demo_data from "@components/common/kbar/data"
 
-//MATERIAL-UI
-import { Box } from "@mui/material"
+const searchId = randomId()
 
-//PROJECT IMPORT
-import { FrontSearchBox } from "@components/Themes/Simplicity/Blocks/FrontSearchBox"
+export default function useDocsActions() {
+	const searchActions = useMemo(() => {
+		let actions = []
+		const collectDocs = (tree) => {
+			Object.keys(tree).forEach((key) => {
+				const curr = tree[key]
+				if (curr.children) {
+					collectDocs(curr.children)
+				}
+				if (curr.component) {
+					actions.push({
+						id: randomId(),
+						parent: searchId,
+						name: curr.name,
+						shortcut: [],
+						keywords: "api reference docs",
+						section: curr.section,
+						perform: () => history.push(curr.slug),
+					})
+				}
+			})
+			return actions
+		}
+		return collectDocs(kbar_demo_data)
+	}, [])
 
-/*****************************************************************
- * INIT                                                          *
- *****************************************************************/
-
-export function SectionHero({ children }) {
-	return (
-		<Box component="section" sx={{
-			backgroundColor: "#FFFFFF",
-			backgroundPosition: "center",
-			backgroundSize: "cover",
-			width: "100%",
-			minHeight: "55vh",
-			position: "relative",
-			padding: "9vh 0 0 0",
-			display: "flex",
-			flexDirection: "column",
-			marginBottom: "40px"
-		}}>
-			<Box id="here-inner" sx={{
-				position: "relative",
-				maxWidth: "1009px",
-				margin: "0 auto"
-			}}>
-				{children}
-			</Box>
-
-			<FrontSearchBox />
-
-		</Box>
+	const rootSearchAction = useMemo(
+		() =>
+			searchActions.length
+				? {
+					id: searchId,
+					name: "Search docs…",
+					shortcut: ["?"],
+					keywords: "find",
+					section: "Documentation",
+				}
+				: null,
+		[searchActions]
 	)
+
+	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean))
 }
-SectionHero.propTypes = {
-	children: PropTypes.node.isRequired,
+
+function randomId() {
+	return Math.random().toString(36).substring(2, 9)
 }

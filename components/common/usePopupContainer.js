@@ -36,6 +36,19 @@ import { ClickAwayListener, Grow, Paper, Popper } from "@mui/material"
  * INIT                                                          *
  *****************************************************************/
 
+// https://stackoverflow.com/questions/13382516/getting-scroll-bar-width-using-javascript
+export function getScrollbarWidth() {
+	const outer = document.createElement("div")
+	outer.style.visibility = "hidden"
+	outer.style.overflow = "scroll"
+	document.body.appendChild(outer)
+	const inner = document.createElement("div")
+	outer.appendChild(inner)
+	const scrollbarWidth = outer.offsetWidth - inner.offsetWidth
+	outer.parentNode?.removeChild(outer)
+	return scrollbarWidth
+}
+
 function PopupContainer({ open, anchorRef, elevation, sx, handleClose, placement, transformOrigin, children }) {
 	return (
 		<Popper
@@ -85,8 +98,11 @@ function usePopupContainer() {
 			handleToggle: () => {
 				setOpen((prevOpen) => !prevOpen)
 			},
+			handleOpen: () => {
+				setOpen(true)
+			},
 			handleClose: (e) => {
-				if (anchorRef.current && anchorRef.current.contains(e.target)) {
+				if (anchorRef.current && anchorRef.current?.contains(e.current?.target)) {
 					return
 				}
 				setOpen(false)

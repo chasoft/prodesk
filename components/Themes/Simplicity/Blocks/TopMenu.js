@@ -35,7 +35,7 @@ import { Box } from "@mui/material"
 export function TopMenu() {
 	return (
 		<Box id="user-nav" component="nav" sx={{
-			display: { xs: "none", md: "block" },
+			display: { xs: "none", mdd: "block" },
 			"&>ul": {
 				display: "flex",
 				listStyle: "none",

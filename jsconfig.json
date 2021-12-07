@@ -2,12 +2,24 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@redux/*": ["redux/*"],
-			"@layout/*": ["layout/*"],
-			"@styles/*": ["styles/*"],
-			"@helpers/*": ["helpers/*"],
-			"@components/*": ["components/*"],
-			"@pages/*": ["pages/*"]
+			"@redux/*": [
+				"redux/*"
+			],
+			"@layout/*": [
+				"layout/*"
+			],
+			"@styles/*": [
+				"styles/*"
+			],
+			"@helpers/*": [
+				"helpers/*"
+			],
+			"@components/*": [
+				"components/*"
+			],
+			"@pages/*": [
+				"pages/*"
+			]
 		}
 	}
 }
