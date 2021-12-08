@@ -185,11 +185,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 			</Box>
 
 			{rowVirtualizer.virtualItems.length === 0 &&
-				<Box sx={{
-					p: 2,
-					borderTop: "1px solid transparent",
-					borderColor: "rgba(0,0,0,0.05)"
-				}}>
+				<Box sx={{ p: 2 }}>
 					<Typography>
 						Nothing found!
 					</Typography>

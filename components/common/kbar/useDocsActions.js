@@ -50,6 +50,8 @@ export default function useDocsActions() {
 		return collectDocs(kbar_demo_data)
 	}, [])
 
+	console.log({ searchActions })
+
 	const rootSearchAction = useMemo(
 		() =>
 			searchActions.length

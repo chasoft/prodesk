@@ -18,6 +18,7 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
+import React from "react"
 // import Actions from "./Actions"
 // import APIReference from "./APIReference"
 // import GettingStarted from "./GettingStarted"
@@ -34,13 +35,13 @@ const kbar_demo_data = {
 			overview: {
 				name: "Overview",
 				slug: "/docs/overview",
-				component: null,//Overview,
+				component: <div></div>,//Overview,
 				section: "Overview",
 			},
 			gettingStarted: {
 				name: "Getting started",
 				slug: "/docs/getting-started",
-				component: null,//GettingStarted,
+				component: <div></div>,//GettingStarted,
 				section: "Overview",
 			},
 		},
@@ -52,25 +53,25 @@ const kbar_demo_data = {
 			overview: {
 				name: "Actions",
 				slug: "/docs/concepts/actions",
-				component: null,//Actions,
+				component: <div></div>,//Actions,
 				section: "Concepts",
 			},
 			shortcuts: {
 				name: "Shortcuts",
 				slug: "/docs/concepts/shortcuts",
-				component: null,//Shortcuts,
+				component: <div></div>,//Shortcuts,
 				section: "Concepts",
 			},
 			accessingState: {
 				name: "State",
 				slug: "/docs/concepts/state",
-				component: null,//State,
+				component: <div></div>,//State,
 				section: "Concepts",
 			},
 			history: {
 				name: "Undo/Redo",
 				slug: "/docs/concepts/history",
-				component: null,//UndoRedo,
+				component: <div></div>,//UndoRedo,
 				section: "Concepts",
 			},
 		},
@@ -82,49 +83,49 @@ const kbar_demo_data = {
 			useStore: {
 				name: "useStore",
 				slug: "/docs/api/#useStore",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			kbarProvider: {
 				name: "KBarProvider",
 				slug: "/docs/api/#KBarProvider",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			kbarPortal: {
 				name: "KBarPortal",
 				slug: "/docs/api/#KBarPortal",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			kbarAnimator: {
 				name: "KBarAnimator",
 				slug: "/docs/api/#KBarAnimator",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			kbarSearch: {
 				name: "KBarSearch",
 				slug: "/docs/api/#KBarSearch",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			kbarResults: {
 				name: "KBarResults",
 				slug: "/docs/api/#KBarResults",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			useKBar: {
 				name: "useKBar",
 				slug: "/docs/api/#useKBar",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 			historyImpl: {
 				name: "HistoryImpl",
 				slug: "/docs/api/#HistoryImpl",
-				component: null,//APIReference,
+				component: <div></div>,//APIReference,
 				section: "API Reference",
 			},
 		},
@@ -136,13 +137,13 @@ const kbar_demo_data = {
 			basic: {
 				name: "Basic tutorial",
 				slug: "/docs/tutorials/basic",
-				component: null,//null,
+				component: <div></div>,//null,
 				section: "Tutorials",
 			},
 			custom: {
 				name: "Custom styles",
 				slug: "/docs/tutorials/custom-styles",
-				component: null,//null,
+				component: <div></div>,//null,
 				section: "Tutorials",
 			},
 		},

@@ -34,8 +34,8 @@ import {
 } from "kbar"
 
 //PROJECT IMPORT
-import useDocsActions from "@components/common/kbar/useDocsActions"
 import KBarResults from "@components/common/kbar/KBarResults"
+import useDocsActions from "@components/common/kbar/useDocsActions"
 
 //ASSETS
 import HomeIcon from "@mui/icons-material/Home"
