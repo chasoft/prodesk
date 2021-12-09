@@ -18,76 +18,83 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { useMemo } from "react"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import { collection, getDocs, doc, setDoc, writeBatch } from "firebase/firestore"
 
 //THIRD-PARTY
-import { keyBy } from "lodash"
-import { useDispatch } from "react-redux"
-import { useRegisterActions } from "kbar"
 
 //PROJECT IMPORT
-import { setRedirect } from "@redux/slices/redirect"
-import { useGetDocSearchIndexQuery } from "@redux/slices/firestoreApi"
+import { db } from "@helpers/firebase"
+import { CODE } from "@helpers/constants"
+import { COLLECTION, TYPE } from "@redux/slices/firestoreApiConstants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DOCUMENTATION_ID = "documentationSectionId"
+/**
+ * Get all documentation records directly
+ * @returns array of object
+ */
+export async function _getAllDocs() {
+	try {
+		let allDocs = []
+		const querySnapshot = await getDocs(collection(db,
+			COLLECTION.DOCS
+		))
+		querySnapshot.forEach((doc) => { allDocs.push(doc.data()) })
+		return allDocs
+	} catch (e) {
+		return e
+	}
+}
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-export default function useDocsActions() {
-	const {
-		data: docSearchIndex = { searchIndexes: [] },
-	} = useGetDocSearchIndexQuery(undefined)
-
-	const dispatch = useDispatch()
-
-	const searchActions = useMemo(() => {
-		let actions = []
-		const collectDocs = (tree) => {
-			Object.keys(tree).forEach((key) => {
-				const curr = tree[key]
-				if (curr.children) {
-					collectDocs(curr.children)
-				}
-				if (!curr.children) {
-					actions.push({
-						...curr,
-						parent: DOCUMENTATION_ID,
-						shortcut: [],
-						perform: () => {
-							if (curr.slug.substring(0, 4) === "http")
-								window.open(curr.slug, "_blank")
-							else
-								dispatch(setRedirect(curr.slug))
-						},
-					})
-				}
-			})
-			return actions
+/**
+ * Get all documentation records directly
+ * @returns array of object
+ */
+export async function _updateDocSearchIndex(data) {
+	try {
+		const batch = writeBatch(db)
+		batch.set(
+			doc(db, COLLECTION.SETTINGS, "DocSearchIndex"),
+			data
+		)
+		await batch.commit()
+		return {
+			data: {
+				code: CODE.SUCCESS,
+				message: "docSearchIndex updated successfully"
+			}
 		}
+	}
+	catch (e) {
+		console.log("Fail to update docSearchIndex")
+	}
+}
 
-		const shortedList = keyBy(docSearchIndex.searchIndexes, "id")
-
-		return collectDocs(shortedList)
-	}, [dispatch, docSearchIndex.searchIndexes])
-
-	const rootSearchAction = useMemo(
-		() =>
-			searchActions.length
-				? {
-					id: DOCUMENTATION_ID,
-					name: "Search docs…",
-					shortcut: ["?"],
-					keywords: "find",
-					section: "Documentation",
-				}
-				: null,
-		[searchActions]
-	)
-	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean))
+export async function _updateAppSettings(data) {
+	try {
+		await setDoc(
+			doc(db, COLLECTION.SETTINGS, "settings"),
+			data,
+			{ merge: true }
+		)
+		//refetch app settings
+		const invalidatesTags = {
+			trigger: "_",
+			tag: [TYPE.SETTINGS],
+			target: {
+				isForUser: false,
+				isForAdmin: true,
+			}
+		}
+		await requestSilentRefetching(invalidatesTags)
+	} catch (e) {
+		console.log("Fail to update AppSettings")
+	}
 }

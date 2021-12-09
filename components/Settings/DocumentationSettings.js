@@ -22,30 +22,49 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 
 // MATERIAL-UI
-import { Box, Grid, Paper, Typography } from "@mui/material"
+import { Box, Button, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { find, map } from "lodash"
+import { find, map, size } from "lodash"
+import { useSelector } from "react-redux"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
+import { getAuth } from "@redux/selectors"
+import { getLayout } from "@layout/ClientLayout"
+import { themeInfo } from "@components/Themes/themeInfo"
+import { useCreateDocSearchIndex } from "@helpers/docSearchIndex"
+import useAppSettings from "@helpers/useAppSettings"
+
 import {
 	ContentGroup,
 	ContentRow,
+	ContentDescription,
 	EditButton,
 	SettingsContainer,
 	SettingsContent,
 	SettingsHeader
 } from "@components/common/Settings"
 
-import { getLayout } from "@layout/ClientLayout"
-import { themeInfo } from "@components/Themes/themeInfo"
-import { useUpdateAppSettingsMutation } from "@redux/slices/firestoreApi"
-import { APP_SETTINGS } from "@helpers/constants"
-import useAppSettings from "@helpers/useAppSettings"
-import { CircularProgressBox } from "@components/common"
+import {
+	useGetDocsQuery,
+	useUpdateAppSettingsMutation,
+	useGetDocSearchIndexQuery
+} from "@redux/slices/firestoreApi"
+
+import {
+	APP_SETTINGS,
+	DATE_FORMAT
+} from "@helpers/constants"
+
+import {
+	CircularProgressBox,
+	LinearProgressWithLabel
+} from "@components/common"
 
 //ASSETS
 
@@ -53,12 +72,7 @@ import { CircularProgressBox } from "@components/common"
  * INIT                                                          *
  *****************************************************************/
 
-
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-function DocumentationSettings() {
+function DocTheme() {
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
 	const {
@@ -86,7 +100,165 @@ function DocumentationSettings() {
 	const handleCancel = () => {
 		setSelectedTheme(activeTheme)
 	}
+	return (
+		<ContentGroup title="Settings">
+			<ContentRow title="Active theme">
+				<EditButton
+					defaultState={
+						isLoadingActiveTheme
+							? <CircularProgressBox minHeight="128px" />
+							: <Grid container spacing={2}>
+								<Grid item>
+									<Paper sx={{ width: 128, height: 128 }}>
+										{themeDetails.name}
+									</Paper>
+								</Grid>
+								<Grid item>
+									<Typography>name: {themeDetails.name}</Typography>
+									<Typography>description: {themeDetails.description}</Typography>
+								</Grid>
+							</Grid>
+					}
+					saveAction={handleSaveSelectedTheme}
+					cancelAction={handleCancel}
+				>
+					<Box
+						sx={{
+							display: "flex",
+							flexWrap: "wrap",
+							"& > :not(style)": {
+								m: 1,
+								width: 128,
+								height: 128,
+							},
+						}}
+					>
+						{map(themeInfo, theme => {
+							return (
+								<Paper
+									key={theme.id}
+									elevation={(selectedTheme === theme.id) ? 3 : 0}
+									onClick={() => setSelectedTheme(theme.id)}
+									sx={{
+										cursor: "pointer",
+										... ((selectedTheme === theme.id)
+											? {
+												border: "2px solid transparent",
+												borderColor: "blue"
+											}
+											: {
+												border: "2px solid transparent",
+												borderColor: "white",
+											})
+									}}
+								>
+									<div>
+										{theme.name + " (version " + theme.version + ")"}
+									</div>
+									<div>
+										{theme.description}
+									</div>
+								</Paper>
+							)
+						})}
+					</Box>
 
+				</EditButton>
+			</ContentRow>
+		</ContentGroup>
+	)
+}
+
+function DocSearchIndex() {
+	const {
+		data: docs = [],
+		isLoading: isLoadingDocs
+	} = useGetDocsQuery(undefined)
+
+	const {
+		data: docSearchIndex = undefined,
+		isLoading: isLoadingDocSearchIndex
+	} = useGetDocSearchIndexQuery(undefined)
+
+	const { currentUser } = useSelector(getAuth)
+
+	const [createSearchIndex, { isCreating, progress }] = useCreateDocSearchIndex()
+
+	const handleCreateDocSearchIndex = useCallback(async () => {
+		await createSearchIndex(docs, currentUser.username)
+	}, [docs, createSearchIndex, currentUser.username])
+
+	dayjs.extend(relativeTime)
+
+	return (
+		<ContentGroup title="Searching Index">
+			<ContentDescription>
+				Creating searching index helps boost overal performance to a new level. It is &quot;instantly&quot;. Re-create the index if you have any update/modification on documentation.
+			</ContentDescription>
+			<ContentRow title="Index status">
+				<Box sx={{
+					display: "flex",
+					flexDirection: { xs: "column", xss: "row" },
+					py: 2
+				}}>
+					<Box sx={{ flexGrow: 1 }}>
+
+						{isCreating ? <LinearProgressWithLabel
+							value={progress}
+							sx={{
+								"& > div > p": {
+									fontSize: "0.8rem",
+								}
+							}} /> : null}
+
+						{(isLoadingDocs || isLoadingDocSearchIndex) ?
+							<CircularProgressBox minHeight="60px" /> : null}
+
+						{(!isLoadingDocs && !isLoadingDocSearchIndex && size(docSearchIndex)) ?
+							<Box>
+								<Typography sx={{ fontWeight: 700 }}>
+									Index Created
+								</Typography>
+								<Typography>
+									Created: {dayjs(docSearchIndex.updatedAt).format(DATE_FORMAT.LONG)}<br />
+									<span style={{ fontStyle: "italic" }}>({dayjs(docSearchIndex.updatedAt).fromNow()})</span> by {docSearchIndex.updatedBy}
+								</Typography>
+							</Box> : null}
+
+						{(!isLoadingDocs && !isLoadingDocSearchIndex && !size(docSearchIndex)) ?
+							<div>
+								<Typography sx={{ fontWeight: 700 }}>
+									No Index Created<br />
+								</Typography>
+								<Typography>
+									Documentation searching would not be active unless you have an index created.
+								</Typography>
+							</div> : null}
+					</Box>
+
+
+					<Box sx={{
+						display: "flex",
+						alignItems: "center"
+					}}>
+						<Button variant="contained" onClick={handleCreateDocSearchIndex}>
+							{size(docSearchIndex)
+								? "ReCreate"
+								: "Create"}
+						</Button>
+					</Box>
+
+				</Box>
+			</ContentRow>
+		</ContentGroup >
+	)
+}
+
+/*****************************************************************
+ * EXPORT DEFAULT                                                *
+ *****************************************************************/
+
+function DocumentationSettings() {
 	return (
 		<>
 			<SettingsHeader>
@@ -98,72 +270,8 @@ function DocumentationSettings() {
 			<SettingsContainer>
 				<SettingsContent>
 
-					<ContentGroup title="Themes">
-						<ContentRow title="Active theme">
-							<EditButton
-								defaultState={
-									isLoadingActiveTheme
-										? <CircularProgressBox minHeight="128px" />
-										: <Grid container spacing={2}>
-											<Grid item>
-												<Paper sx={{ width: 128, height: 128 }}>
-													{themeDetails.name}
-												</Paper>
-											</Grid>
-											<Grid item>
-												<Typography>name: {themeDetails.name}</Typography>
-												<Typography>description: {themeDetails.description}</Typography>
-											</Grid>
-										</Grid>
-								}
-								saveAction={handleSaveSelectedTheme}
-								cancelAction={handleCancel}
-							>
-								<Box
-									sx={{
-										display: "flex",
-										flexWrap: "wrap",
-										"& > :not(style)": {
-											m: 1,
-											width: 128,
-											height: 128,
-										},
-									}}
-								>
-									{map(themeInfo, theme => {
-										return (
-											<Paper
-												key={theme.id}
-												elevation={(selectedTheme === theme.id) ? 3 : 0}
-												onClick={() => setSelectedTheme(theme.id)}
-												sx={{
-													cursor: "pointer",
-													... ((selectedTheme === theme.id)
-														? {
-															border: "2px solid transparent",
-															borderColor: "blue"
-														}
-														: {
-															border: "2px solid transparent",
-															borderColor: "white",
-														})
-												}}
-											>
-												<div>
-													{theme.name + " (version " + theme.version + ")"}
-												</div>
-												<div>
-													{theme.description}
-												</div>
-											</Paper>
-										)
-									})}
-								</Box>
-
-							</EditButton>
-						</ContentRow>
-
-					</ContentGroup>
+					<DocTheme />
+					<DocSearchIndex />
 
 				</SettingsContent>
 			</SettingsContainer>

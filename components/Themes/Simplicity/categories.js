@@ -231,8 +231,6 @@ function ThemeSimplicityCategories({ slug }) {
 		data: docs = [], isLoading: isLoadingDocs
 	} = useGetDocsGrouped(slug)
 
-	console.log("Render => ThemeSimplicityCategories", { docs })
-
 	if (isLoadingDocs)
 		return (
 			<SimplicityLayout>

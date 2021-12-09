@@ -30,12 +30,14 @@ import PropTypes from "prop-types"
 import { Container, ThemeProvider } from "@mui/material"
 
 //THIRD-PARTY
+import { KBarProvider } from "kbar"
 
 //PROJECT IMPORT
 import { simplicityTheme } from "@components/Themes/Simplicity/theme"
 import { Header } from "@components/Themes/Simplicity/Header"
 import { Footer } from "@components/Themes/Simplicity/Footer"
-import { CommandBar } from "@components/common/kbar/kbar"
+import { ClientCommandBar } from "@components/common/kbar/kbar"
+import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions"
 
 //ASSETS
 
@@ -49,43 +51,50 @@ import { CommandBar } from "@components/common/kbar/kbar"
  *****************************************************************/
 
 function SimplicityLayout({ children }) {
+
+	const { defaultPublicActions } = useDefaultKbarActions()
+
 	return (
-		<ThemeProvider theme={simplicityTheme}>
-			<Head>
-				{/* PWA primary color */}
-				<meta name="theme-color" content={simplicityTheme.palette.primary.main} />
-				{/* eslint-disable-next-line @next/next/no-css-tags */}
-				<link rel="stylesheet" href="/themes/simplicity/simplicity.css" />
-				{/* eslint-disable-next-line @next/next/no-page-custom-font */}
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap"
-				/>
-				{/* eslint-disable-next-line @next/next/no-page-custom-font */}
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/css?family=Google+Sans:300,400,500,700&amp;display=swap"
-				/>
-			</Head>
+		<KBarProvider actions={defaultPublicActions}>
+			<ThemeProvider theme={simplicityTheme}>
+				<Head>
+					{/* PWA primary color */}
+					<meta name="theme-color" content={simplicityTheme.palette.primary.main} />
+					{/* eslint-disable-next-line @next/next/no-css-tags */}
+					<link rel="stylesheet" href="/themes/simplicity/simplicity.css" />
+					{/* eslint-disable-next-line @next/next/no-page-custom-font */}
+					<link
+						rel="stylesheet"
+						href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap"
+					/>
+					{/* eslint-disable-next-line @next/next/no-page-custom-font */}
+					<link
+						rel="stylesheet"
+						href="https://fonts.googleapis.com/css?family=Google+Sans:300,400,500,700&amp;display=swap"
+					/>
+				</Head>
 
-			<div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+				<ClientCommandBar />
 
-				<Header />
+				<div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
-				<hr style={{ borderColor: "transparent", marginTop: "150px" }} />
+					<Header />
 
-				<Container
-					maxWidth="lg"
-					component="main"
-					sx={{ flexGrow: 1 }}
-				>
-					{children}
-				</Container>
+					<hr style={{ borderColor: "transparent", marginTop: "150px" }} />
 
-				<Footer />
+					<Container
+						maxWidth="lg"
+						component="main"
+						sx={{ flexGrow: 1 }}
+					>
+						{children}
+					</Container>
 
-			</div>
-		</ThemeProvider>
+					<Footer />
+
+				</div>
+			</ThemeProvider>
+		</KBarProvider>
 	)
 }
 SimplicityLayout.propTypes = { children: PropTypes.node }

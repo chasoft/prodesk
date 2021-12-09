@@ -30,15 +30,16 @@ import { Box } from "@mui/material"
 
 //THIRD-PARTY
 import {
-	KBarAnimator, KBarPortal, KBarPositioner, KBarSearch, createAction, useMatches
+	KBarAnimator, KBarPortal, KBarSearch, useMatches
 } from "kbar"
 
 //PROJECT IMPORT
 import KBarResults from "@components/common/kbar/KBarResults"
 import useDocsActions from "@components/common/kbar/useDocsActions"
+import useAdminActions from "@components/common/kbar/useAdminActions"
+import KBarPositioner from "@components/common/kbar/KBarPositioner"
 
 //ASSETS
-import HomeIcon from "@mui/icons-material/Home"
 
 /*****************************************************************
  * INIT                                                          *
@@ -76,51 +77,22 @@ export const groupNameStyle = {
 	opacity: 0.5,
 }
 
-export const initialActions = [
-	{
-		id: "homeAction",
-		name: "Documentation",
-		shortcut: ["h"],
-		keywords: "back",
-		section: "Navigation",
-		perform: () => history.push("/"),
-		icon: <HomeIcon />,
-	},
-	{
-		id: "docsAction",
-		name: "Docs",
-		shortcut: ["g", "d"],
-		keywords: "help",
-		section: "Navigation",
-		perform: () => history.push("/docs"),
-	},
-	{
-		id: "contactAction",
-		name: "Contact",
-		shortcut: ["c"],
-		keywords: "email hello",
-		section: "Navigation",
-		perform: () => window.open("mailto:timchang@hey.com", "_blank"),
-	},
-	{
-		id: "twitterAction",
-		name: "Twitter",
-		shortcut: ["t"],
-		keywords: "social contact dm",
-		section: "Navigation",
-		perform: () => window.open("https://twitter.com/timcchang", "_blank"),
-	},
-	createAction({
-		name: "Github",
-		shortcut: ["g", "h"],
-		keywords: "sourcecode",
-		section: "Navigation",
-		perform: () => window.open("https://github.com/timc1/kbar", "_blank"),
-	}),
-]
-
-export function CommandBar() {
+export function ClientCommandBar() {
 	useDocsActions()
+	return (
+		<KBarPortal>
+			<KBarPositioner>
+				<KBarAnimator style={animatorStyle}>
+					<KBarSearch style={searchStyle} />
+					<RenderResults />
+				</KBarAnimator>
+			</KBarPositioner>
+		</KBarPortal>
+	)
+}
+
+export function AdminCommandBar() {
+	useAdminActions()
 	return (
 		<KBarPortal>
 			<KBarPositioner>
@@ -135,8 +107,6 @@ export function CommandBar() {
 
 export function RenderResults() {
 	const { results, rootActionId } = useMatches()
-
-	console.log({ results })
 	return (
 		<KBarResults
 			items={results}

@@ -23,8 +23,8 @@
  *****************************************************************/
 
 //THIRD-PARTY
-import { uniqueId } from "lodash"
 import nanoid from "@helpers/nanoid"
+import { uniqueId } from "lodash"
 
 //PROJECT IMPORT
 import {
@@ -166,4 +166,3 @@ export function docItemNewCategory(username, customName) {
 		position: 9999
 	}
 }
-

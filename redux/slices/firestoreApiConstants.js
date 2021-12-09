@@ -36,10 +36,12 @@ export const ACTIONS = {
 	GET_DOCS: "getDocs",
 	GET_DOC: "getDoc",
 	GET_CONTENT: "getDocContent",
+	GET_DOC_SEARCH_INDEX: "getDocSearchIndex",
 	ADD_DOC: "addDoc",
 	UPDATE_DOC: "updateDoc",
 	UPDATE_DOC_DND: "updateDocDnd",
 	UPDATE_DOC_CONTENT: "updateDocContent",
+	UPDATE_DOC_SEARCH_INDEX: "updateDocSearchIndex",
 	DELETE_DOC: "deleteDoc",
 
 	/* APPLICATION SETTINGS */

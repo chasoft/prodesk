@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Avatar, Button, Checkbox, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography } from "@mui/material"
+import { Avatar, Box, Button, Checkbox, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Popover, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -37,7 +37,7 @@ import PerfectScrollbar from "react-perfect-scrollbar"
  * INIT                                                          *
  *****************************************************************/
 
-function AddMemberList({ departmentName, members, children }) {
+function AddMemberList({ departmentName, children }) {
 
 	const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -70,7 +70,7 @@ function AddMemberList({ departmentName, members, children }) {
 
 	return (
 		<div>
-			<div onClick={() => handleClick()}>{children}</div>
+			<Box onClick={() => handleClick()}>{children}</Box>
 
 			<Popover
 				open={open}
@@ -149,7 +149,6 @@ function AddMemberList({ departmentName, members, children }) {
 }
 AddMemberList.propTypes = {
 	departmentName: PropTypes.string,
-	members: PropTypes.array,
 	children: PropTypes.node
 }
 

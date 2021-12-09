@@ -18,10 +18,6 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import PropTypes from "prop-types"
 import React, { useState } from "react"
 
@@ -29,17 +25,24 @@ import React, { useState } from "react"
 import { Button, Box, Grid, TextField, Tooltip, Typography, IconButton, FormControlLabel, Switch, Collapse } from "@mui/material"
 
 //THIRD-PARTY
-import dayjs from "dayjs"
-import { useSnackbar } from "notistack"
+import { cloneDeep, find, filter, some, isEqual } from "lodash"
 import { isMobile } from "react-device-detect"
+import { TransitionGroup } from "react-transition-group"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
-import { cloneDeep, find, filter, some, isEqual } from "lodash"
+import { useSnackbar } from "notistack"
+import dayjs from "dayjs"
 
 //PROJECT IMPORT
+import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
 import { CircularProgressBox } from "@components/common"
-import ConfirmDialog from "@components/common/ConfirmDialog"
+import { CODE } from "@helpers/constants"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
+import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { SubCatItem } from "@components/Settings/Tickets/CategoriesAddNew"
+import { TYPE } from "@redux/slices/firestoreApiConstants"
+import ConfirmDialog from "@components/common/ConfirmDialog"
+import useTicketCategories from "@helpers/useTicketCategories"
 
 import {
 	SettingsContentActionBar,
@@ -47,24 +50,18 @@ import {
 	SettingsContentHeader
 } from "@components/common/Settings"
 
-import { TYPE } from "@redux/slices/firestoreApiConstants"
-import { getAuth, getUiSettings } from "@redux/selectors"
-import { setActiveSettingPanel } from "@redux/slices/uiSettings"
+import {
+	getAuth,
+	getUiSettings
+} from "@redux/selectors"
 
 import {
 	useDeleteCategoryMutation,
 	useUpdateCategoryMutation
 } from "@redux/slices/firestoreApi"
 
-import { CODE } from "@helpers/constants"
-import useTicketCategories from "@helpers/useTicketCategories"
-import { requestSilentRefetching } from "@helpers/realtimeApi"
-
-import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
-
 //ASSETS
 import DeleteIcon from "@mui/icons-material/Delete"
-import { TransitionGroup } from "react-transition-group"
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *

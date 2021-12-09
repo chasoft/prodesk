@@ -26,10 +26,9 @@ import { useKBar, VisualState } from "kbar"
 import { Box, InputBase, Paper } from "@mui/material"
 
 //PROJECT IMPORT
-import usePopupContainer from "@components/common/usePopupContainer"
-import { SearchButton } from "@components/Themes/Simplicity/Buttons/Search"
 import { RenderResults } from "@components/common/kbar/kbar"
-import useDocsActions from "@components/common/kbar/useDocsActions"
+import { SearchButton } from "@components/Themes/Simplicity/Buttons/Search"
+import usePopupContainer from "@components/common/usePopupContainer"
 
 /*****************************************************************
  * INIT                                                          *
@@ -61,8 +60,6 @@ export function FrontSearchBox(props) {
 		activeIndex: state.activeIndex,
 		showing: state.visualState === VisualState.showing,
 	}))
-
-	useDocsActions()
 
 	useEffect(() => {
 		query.setSearch("")

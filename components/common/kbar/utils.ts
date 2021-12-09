@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { Action } from "./types";
 
-export function swallowEvent(event) {
+export function swallowEvent(event: any) {
 	event.stopPropagation();
 	event.preventDefault();
 }
@@ -14,7 +14,7 @@ export function useOuterClick(
 	cbRef.current = cb;
 
 	React.useEffect(() => {
-		function handler(event) {
+		function handler(event: any) {
 			if (dom.current?.contains(event.target)) {
 				return;
 			}

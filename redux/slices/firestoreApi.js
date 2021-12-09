@@ -189,7 +189,6 @@ export const firestoreApi = createApi({
 					:
 					[{ type: TYPE.DOCS, id: "LIST" }]
 			},
-			// transformResponse: (response) => orderBy(fix_datetime_list(response), ["position"])
 			transformResponse: (response) => fix_datetime_list(response)
 		}),
 
@@ -202,6 +201,11 @@ export const firestoreApi = createApi({
 		getDocContent: builder.query({
 			query: (docId) => ({ action: ACTIONS.GET_CONTENT, docId: docId }),
 			providesTags: (result, error, docId) => [{ type: TYPE.DOCS, id: docId.concat("_content") }],
+		}),
+
+		getDocSearchIndex: builder.query({
+			query: () => ({ action: ACTIONS.GET_DOC_SEARCH_INDEX }),
+			providesTags: () => [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
 		}),
 
 		addDoc: builder.mutation({
@@ -315,6 +319,13 @@ export const firestoreApi = createApi({
 					patchContent.undo()
 				}
 			},
+		}),
+
+		updateDocSearchIndex: builder.mutation({
+			query: (body) => ({ action: ACTIONS.UPDATE_DOC_SEARCH_INDEX, body }),
+			invalidatesTags: () => {
+				return [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }]
+			}
 		}),
 
 		deleteDoc: builder.mutation({
@@ -1279,12 +1290,14 @@ export const {
 	useGetDocQuery,
 	useGetDocsQuery,
 	useGetDocContentQuery,
+	useGetDocSearchIndexQuery,
 	//
 	useAddDocMutation,
 	useUpdateDocMutation,
 	useUpdateDocDndMutation,
 	useUpdateDocContentMutation,
 	useDeleteDocMutation,
+	useUpdateDocSearchIndexMutation,
 
 	/* TICKET SETTINGS */
 	useGetDepartmentsQuery,

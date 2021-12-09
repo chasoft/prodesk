@@ -114,7 +114,7 @@ ContentDescription.propTypes = {
 	children: PropTypes.node
 }
 
-export function ContentRow({ title, tooltip, removePadding = false, children }) {
+export function ContentRow({ title, tooltip, removePadding = false, sx, children }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -125,6 +125,7 @@ export function ContentRow({ title, tooltip, removePadding = false, children }) 
 				backgroundColor: "action.hover"
 			},
 			transition: "height .3s cubic-bezier(0.4, 0, 0.2, 1)",
+			...sx
 		}}>
 			<Box sx={{
 				width: "201px",
@@ -155,6 +156,7 @@ ContentRow.propTypes = {
 	title: PropTypes.node,
 	tooltip: PropTypes.string,
 	removePadding: PropTypes.bool,
+	sx: PropTypes.object,
 	children: PropTypes.node
 }
 

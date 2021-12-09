@@ -18,76 +18,120 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { useMemo } from "react"
-
 //THIRD-PARTY
-import { keyBy } from "lodash"
-import { useDispatch } from "react-redux"
+import { useSelector } from "react-redux"
 import { useRegisterActions } from "kbar"
+import { useSnackbar } from "notistack"
 
 //PROJECT IMPORT
-import { setRedirect } from "@redux/slices/redirect"
-import { useGetDocSearchIndexQuery } from "@redux/slices/firestoreApi"
+import { _createDocSearchIndex } from "@helpers/docSearchIndex"
+import { _updateAppSettings } from "@helpers/firebase/_"
+import { APP_SETTINGS } from "@helpers/constants"
+import { getAuth } from "@redux/selectors"
+import { THEME_NAME } from "@components/Themes/themeInfo"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DOCUMENTATION_ID = "documentationSectionId"
+const ID_GROUP = {
+	DOCUMENTATION: "docSettingsGroupId",
+	APPLICATION: "appSettingsGroupId"
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-export default function useDocsActions() {
-	const {
-		data: docSearchIndex = { searchIndexes: [] },
-	} = useGetDocSearchIndexQuery(undefined)
 
-	const dispatch = useDispatch()
+export default function useAdminActions() {
+	const { enqueueSnackbar } = useSnackbar()
+	const { currentUser } = useSelector(getAuth)
 
-	const searchActions = useMemo(() => {
-		let actions = []
-		const collectDocs = (tree) => {
-			Object.keys(tree).forEach((key) => {
-				const curr = tree[key]
-				if (curr.children) {
-					collectDocs(curr.children)
-				}
-				if (!curr.children) {
-					actions.push({
-						...curr,
-						parent: DOCUMENTATION_ID,
-						shortcut: [],
-						perform: () => {
-							if (curr.slug.substring(0, 4) === "http")
-								window.open(curr.slug, "_blank")
-							else
-								dispatch(setRedirect(curr.slug))
-						},
+	useRegisterActions(
+		[
+			//DOCUMENTATION
+			{
+				id: ID_GROUP.DOCUMENTATION,
+				name: "Documentation...",
+				shortcut: [],
+				keywords: "preference documentation",
+				section: "Preferences",
+			},
+			{
+				name: "Simplicity theme",
+				section: "",
+				parent: ID_GROUP.DOCUMENTATION,
+				perform: async () => {
+					await _updateAppSettings({
+						[APP_SETTINGS.activeTheme]: THEME_NAME.themeSimplicity
 					})
+					enqueueSnackbar("Simplicity theme selected successfully", { variant: "success" })
 				}
-			})
-			return actions
-		}
-
-		const shortedList = keyBy(docSearchIndex.searchIndexes, "id")
-
-		return collectDocs(shortedList)
-	}, [dispatch, docSearchIndex.searchIndexes])
-
-	const rootSearchAction = useMemo(
-		() =>
-			searchActions.length
-				? {
-					id: DOCUMENTATION_ID,
-					name: "Search docs…",
-					shortcut: ["?"],
-					keywords: "find",
-					section: "Documentation",
+			},
+			{
+				name: "Traditional theme",
+				section: "",
+				parent: ID_GROUP.DOCUMENTATION,
+				perform: async () => {
+					await _updateAppSettings({
+						[APP_SETTINGS.activeTheme]: THEME_NAME.themeTraditional
+					})
+					enqueueSnackbar("Traditional theme selected successfully", { variant: "success" })
 				}
-				: null,
-		[searchActions]
+			},
+			{
+				name: "Google theme",
+				section: "",
+				parent: ID_GROUP.DOCUMENTATION,
+				perform: async () => {
+					await _updateAppSettings({
+						[APP_SETTINGS.activeTheme]: THEME_NAME.themeGoogle
+					})
+					enqueueSnackbar("Google theme selected successfully", { variant: "success" })
+				}
+			},
+			{
+				name: "Create searching index",
+				section: "Searching Index",
+				parent: ID_GROUP.DOCUMENTATION,
+				perform: async () => {
+					await _createDocSearchIndex(currentUser.username)
+					enqueueSnackbar("Searching Index created successfully", { variant: "success" })
+				}
+			},
+
+			//APLLICATION
+			{
+				id: ID_GROUP.APPLICATION,
+				name: "Application...",
+				keywords: "application",
+				section: "Preferences",
+			},
+			{
+				name: "Setting1",
+				section: "",
+				parent: ID_GROUP.APPLICATION,
+				perform: () => {
+					console.log("Setting1 selected!")
+				},
+			},
+			{
+				name: "Setting2",
+				section: "",
+				parent: ID_GROUP.APPLICATION,
+				perform: () => {
+					console.log("Setting2 selected!")
+				}
+			},
+			{
+				name: "Setting3",
+				section: "",
+				parent: ID_GROUP.APPLICATION,
+				perform: () => {
+					console.log("Setting3 selected!")
+				}
+			},
+		]
 	)
-	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean))
 }

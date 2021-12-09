@@ -30,17 +30,20 @@ import { Box } from "@mui/material"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 //THIRD-PARTY
+import { KBarProvider } from "kbar"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import { AdminCommandBar } from "@components/common/kbar/kbar"
+import { getRootLayout } from "@layout/RootLayout"
+import { getUiSettings } from "@redux/selectors"
+import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
+import { setIsSmallScreen } from "@redux/slices/uiSettings"
+import AuthCheck from "@components/AuthCheck"
 import Footer from "@components/common/Footer"
 import Header from "@components/BackEnd/Header"
 import SideBar from "@components/BackEnd/SideBar"
-import { getRootLayout } from "./RootLayout"
-import AuthCheck from "@components/AuthCheck"
-import { getUiSettings } from "@redux/selectors"
-import { setIsSmallScreen } from "@redux/slices/uiSettings"
-import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
+import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions"
 import usePrefetchImmediately from "@helpers/usePrefetchImmediately"
 
 //ASSETS
@@ -121,6 +124,8 @@ function AdminLayout({ children }) {
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")
 
+	const { defaultAdminActions } = useDefaultKbarActions()
+
 	useEffect(() => {
 		dispatch(setIsSmallScreen(isSmallScreen))
 	}, [dispatch, isSmallScreen])
@@ -128,34 +133,38 @@ function AdminLayout({ children }) {
 	usePrefetchImmediately("getProfiles", undefined)
 
 	return (
-		<AuthCheck>
+		<KBarProvider actions={defaultAdminActions} >
+			<AuthCheck>
 
-			<Box sx={{ ...backgroundForLoggedinPage }} />
+				<Box sx={{ ...backgroundForLoggedinPage }} />
 
-			<Box style={{ display: "flex", minHeight: "100vh" }}>
+				<Box style={{ display: "flex", minHeight: "100vh" }}>
 
-				<SideBar
-					homeUrl={REDIRECT_URL.ADMIN.INDEX}
-					settingsUrl=""
-					settingsTooltip=""
-					data={ADMIN_MENUS}
-				/>
+					<AdminCommandBar />
 
-				<Box
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						flexGrow: 1,
-						width: "100%",
-					}}
-				>
-					<Header />
-					{children}
-					<Footer />
+					<SideBar
+						homeUrl={REDIRECT_URL.ADMIN.INDEX}
+						settingsUrl=""
+						settingsTooltip=""
+						data={ADMIN_MENUS}
+					/>
+
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							flexGrow: 1,
+							width: "100%",
+						}}
+					>
+						<Header />
+						{children}
+						<Footer />
+					</Box>
 				</Box>
-			</Box>
 
-		</AuthCheck>
+			</AuthCheck>
+		</KBarProvider>
 	)
 }
 AdminLayout.propTypes = { children: PropTypes.any }

@@ -22,7 +22,6 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-
 import { useCallback, useState } from "react"
 import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from "firebase/storage"
 
@@ -117,3 +116,14 @@ export function useUploadFile() {
 
 	return [uploadFile, { uploading, progress }]
 }
+
+// export async function uploadDocSearchIndex(docIndexes) {
+// 	try {
+// 		const uploadData = JSON.stringify(docIndexes.toJSON())
+// 		const docSearchIndexRef = ref(storage, `${STORAGE_DESTINATION.DOCS}/doc-index.json`)
+// 		await uploadString(docSearchIndexRef, uploadData)
+// 		console.log("uploaded doc-index.json")
+// 	} catch (e) {
+// 		console.log(e.code)
+// 	}
+// }

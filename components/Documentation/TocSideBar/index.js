@@ -495,7 +495,6 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-
 function TocSideBar() {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
@@ -584,7 +583,8 @@ function TocSideBar() {
 							? <CircularProgressBox />
 							: docs.map((cat) => {
 								/* Category Level */
-								const catDetail = cat[1]["undefined"][0] ?? docItemNewCategory(currentUser.username, "Missing category")
+								const catDetail = cat[1]["undefined"][0]
+									?? docItemNewCategory(currentUser.username, "Un-categoried")
 								return (
 									<TocSideBarCategory
 										key={catDetail.docId}
@@ -638,7 +638,8 @@ function TocSideBar() {
 											//position of Sub-Category in the list
 											const subCatIndex = findKey(subCat[1], { type: DOC_TYPE.SUBCATEGORY })
 
-											const subcatDetail = subCat[1][subCatIndex] ?? docItemNewSubCategory(currentUser.username, "Missing subcategory")
+											const subcatDetail = subCat[1][subCatIndex]
+												?? docItemNewSubCategory(currentUser.username, "Un-subcategoried")
 
 											//Draw SubCategory
 											return (

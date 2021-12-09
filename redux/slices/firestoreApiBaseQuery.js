@@ -514,6 +514,18 @@ async function fireStoreBaseQuery(args) {
 				return throwError(CODE.FAILED, ACTIONS.GET_CONTENT, e, "")
 			}
 
+		case ACTIONS.GET_DOC_SEARCH_INDEX:
+			try {
+				let docSearchIndex = {}
+				const docSnap = await getDoc(
+					doc(db, COLLECTION.SETTINGS, "DocSearchIndex")
+				)
+				if (docSnap.exists()) { docSearchIndex = docSnap.data() }
+				return { data: docSearchIndex }
+			} catch (e) {
+				return throwError(CODE.FAILED, ACTIONS.GET_DOC_SEARCH_INDEX, e, "")
+			}
+
 		case ACTIONS.ADD_DOC:
 			try {
 				const batch = writeBatch(db)
@@ -642,6 +654,28 @@ async function fireStoreBaseQuery(args) {
 					id: args.body.docId
 				})
 			}
+
+		case ACTIONS.UPDATE_DOC_SEARCH_INDEX:
+			try {
+				const batch = writeBatch(db)
+				batch.set(
+					doc(db, COLLECTION.SETTINGS, "DocSearchIndex"),
+					args.body
+				)
+				await batch.commit()
+				return {
+					data: {
+						code: CODE.SUCCESS,
+						action: ACTIONS.UPDATE_DOC_SEARCH_INDEX,
+						message: "docSearchIndex updated successfully"
+					}
+				}
+			}
+			catch (e) {
+				return throwError(CODE.FAILED, ACTIONS.UPDATE_DOC_SEARCH_INDEX, e, null)
+			}
+
+
 		case ACTIONS.DELETE_DOC:
 			try {
 				if (args.body.docItem.type === DOC_TYPE.EXTERNAL) {
