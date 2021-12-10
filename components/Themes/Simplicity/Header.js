@@ -25,6 +25,7 @@ import Link from "next/link"
 import { Box, Button, IconButton } from "@mui/material"
 
 //THIRD-PARTY
+import { useKBar } from "kbar"
 
 //PROJECT IMPORT
 import { Logo } from "@components/common"
@@ -45,6 +46,7 @@ import { SignUpButton } from "@components/Themes/Simplicity/Buttons/SignUp"
  *****************************************************************/
 
 export function Header() {
+	const { query } = useKBar()
 	return (
 		<Box
 			id="pageHeader"
@@ -77,7 +79,11 @@ export function Header() {
 					display: "flex",
 					alignItems: "center"
 				}}>
-					<Box id="search-wrapper header-search" sx={{ mr: 1 }}>
+					<Box
+						id="search-wrapper header-search"
+						sx={{ mr: 1 }}
+						onClick={query.toggle}
+					>
 						<Box sx={{
 							display: { xs: "block", mdd: "none" }
 						}}>

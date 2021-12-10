@@ -25,7 +25,7 @@ import { useSnackbar } from "notistack"
 
 //PROJECT IMPORT
 import { _createDocSearchIndex } from "@helpers/docSearchIndex"
-import { _updateAppSettings } from "@helpers/firebase/_"
+import { updateAppSettings } from "@redux/slices/firestoreApiBase"
 import { APP_SETTINGS } from "@helpers/constants"
 import { getAuth } from "@redux/selectors"
 import { THEME_NAME } from "@components/Themes/themeInfo"
@@ -63,7 +63,7 @@ export default function useAdminActions() {
 				section: "",
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
-					await _updateAppSettings({
+					await updateAppSettings({
 						[APP_SETTINGS.activeTheme]: THEME_NAME.themeSimplicity
 					})
 					enqueueSnackbar("Simplicity theme selected successfully", { variant: "success" })
@@ -74,7 +74,7 @@ export default function useAdminActions() {
 				section: "",
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
-					await _updateAppSettings({
+					await updateAppSettings({
 						[APP_SETTINGS.activeTheme]: THEME_NAME.themeTraditional
 					})
 					enqueueSnackbar("Traditional theme selected successfully", { variant: "success" })
@@ -85,7 +85,7 @@ export default function useAdminActions() {
 				section: "",
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
-					await _updateAppSettings({
+					await updateAppSettings({
 						[APP_SETTINGS.activeTheme]: THEME_NAME.themeGoogle
 					})
 					enqueueSnackbar("Google theme selected successfully", { variant: "success" })

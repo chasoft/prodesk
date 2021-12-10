@@ -42,7 +42,7 @@ import { setIsSmallScreen } from "@redux/slices/uiSettings"
 import AuthCheck from "@components/AuthCheck"
 import Footer from "@components/common/Footer"
 import Header from "@components/BackEnd/Header"
-import SideBar from "@components/BackEnd/SideBar"
+import SideBar, { IconName } from "@components/BackEnd/SideBar"
 import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions"
 import usePrefetchImmediately from "@helpers/usePrefetchImmediately"
 
@@ -56,42 +56,23 @@ const ADMIN_MENUS = [
 	{
 		id: "menu_tickets",
 		type: MENU_ITEM_TYPE.ITEM,
-		icon: "0",
+		icon: IconName.tickets,
 		title: "Tickets",
 		description: "Managing all your tickets at ease",
 		url: "/admin/tickets"
 	},
 	{
-		id: "menu_blog",
-		type: MENU_ITEM_TYPE.GROUP,
-		expanded: false,
-		icon: "0",
-		title: "Blog",
-		description: "Managing your blog content",
-		items: [
-			{ id: "submenu_blog", icon: "1", text: "Blog", url: "/admin/blog" },
-			{ id: "submenu_addpost", icon: "1", text: "Add a blog post", url: "/admin/blog/add-new" },
-			{ id: "submenu_blogcategories", icon: "1", text: "Categories", url: "/admin/blog/categories" },
-			{ id: "submenu_comments", icon: "1", text: "Comments", url: "/admin/blog/comments" }
-		]
-	},
-	{
 		id: "menu_documentation",
-		type: MENU_ITEM_TYPE.GROUP,
-		expanded: false,
-		icon: "0",
+		type: MENU_ITEM_TYPE.ITEM,
+		icon: IconName.documentation,
 		title: "Documentation",
 		description: "Managing your documentation",
-		items: [
-			{ id: "submenu_alldocs", icon: "1", text: "All documents", url: "/admin/documentation" },
-			{ id: "submenu_categories", icon: "2", text: "Categories", url: "/admin/documentation/categories" },
-			{ id: "submenu_tags", icon: "2", text: "Tags", url: "/admin/documentation/tags" }
-		]
+		url: "/admin/documentation"
 	},
 	{
 		id: "menu_users",
 		type: MENU_ITEM_TYPE.ITEM,
-		icon: "0",
+		icon: IconName.users,
 		title: "Users",
 		description: "List all users with quick summary",
 		url: "/admin/users"
@@ -100,15 +81,15 @@ const ADMIN_MENUS = [
 		id: "menu_settings",
 		type: MENU_ITEM_TYPE.GROUP,
 		expanded: false,
-		icon: "0",
+		icon: IconName.settings,
 		title: "Settings",
 		description: "Configuring your ProDesk",
 		items: [
-			{ id: 1, icon: "1", text: "Members", url: "/admin/settings/members" },
-			{ id: 2, icon: "1", text: "Site Pages", url: "/admin/settings/pages" },
-			{ id: 3, icon: "1", text: "Tickets", url: "/admin/settings/tickets/department" },
-			{ id: 4, icon: "1", text: "Documentation", url: "/admin/settings/documentation" },
-			{ id: 5, icon: "1", text: "Application Settings", url: "/admin/settings/application" },
+			{ id: 1, icon: IconName.members, text: "Members", alt: "Members settings", url: "/admin/settings/members" },
+			{ id: 2, icon: IconName.pages, text: "Site Pages", alt: "Site Pages settings", url: "/admin/settings/pages" },
+			{ id: 3, icon: IconName.tickets, text: "Tickets", alt: "Tickets settings", url: "/admin/settings/tickets/department" },
+			{ id: 4, icon: IconName.documentation, text: "Documentation", alt: "Documentation settings", url: "/admin/settings/documentation" },
+			{ id: 5, icon: IconName.application, text: "Application Settings", url: "/admin/settings/application" },
 		]
 	},
 

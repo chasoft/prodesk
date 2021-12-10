@@ -1,4 +1,8 @@
-import * as React from "react";
+import * as React from "react"
+import { Box } from "@mui/material"
+import { useSelector } from "react-redux"
+import { getUiSettings } from "@redux/selectors"
+import useAdmin from "@helpers/useAdmin"
 
 interface Props {
 	children: React.ReactNode;
@@ -13,13 +17,28 @@ const defaultStyle: React.CSSProperties = {
 	width: "100%",
 	inset: "0px",
 	padding: "14vh 16px 16px",
+	backgroundColor: "rgba(0,0,0,0.5)",
 	zIndex: 9999
 };
 
 export default function KBarPositioner(props: Props) {
+	const { isAdminURL } = useAdmin()
+	const { isSideBarExpanded } = useSelector(getUiSettings)
 	return (
-		<div style={defaultStyle} {...props}>
+		<Box
+			style={{
+				...defaultStyle,
+				...(
+					isAdminURL
+						? isSideBarExpanded
+							? { paddingLeft: "128px" }
+							: { paddingLeft: "34px" }
+						: {}
+				)
+			}}
+			{...props}
+		>
 			{props.children}
-		</div>
+		</Box>
 	);
 }

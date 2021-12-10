@@ -36,7 +36,7 @@ import { batch as reduxBatch, useDispatch } from "react-redux"
 import { auth } from "@helpers/firebase"
 import { regAdminURL } from "@helpers/regex"
 import { ReduxRedirect } from "@components/AuthCheck"
-import { getUserProfile } from "@helpers/firebase/user"
+import { getUserProfile } from "@redux/slices/firestoreApiBase"
 import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
 
 import {
@@ -110,7 +110,7 @@ function RootLayout({ children }) {
 
 				// if user is not admin but loggin at / admin, then redirect to / client
 				if (regAdminURL.test(router.pathname) &&
-					([USERGROUP.USER.code, USERGROUP.MEMBER.code].includes(userProfile.data.group))) {
+					([USERGROUP.USER.code, USERGROUP.MEMBER.code].includes(userProfile?.data?.group))) {
 					// router.push(REDIRECT_URL.CLIENT.INDEX)
 					dispatch(setRedirect(REDIRECT_URL.CLIENT.INDEX))
 					return

@@ -44,26 +44,50 @@ import { setIsSideBarExpanded, setShowSideBar } from "@redux/slices/uiSettings"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"
-import BarChartIcon from "@mui/icons-material/BarChart"
-import CategoryIcon from "@mui/icons-material/Category"
-import AssessmentIcon from "@mui/icons-material/Assessment"
-import CreditCardIcon from "@mui/icons-material/CreditCard"
-import AccountTreeIcon from "@mui/icons-material/AccountTree"
+import AirplaneTicketOutlinedIcon from "@mui/icons-material/AirplaneTicketOutlined"
+import AddIcon from "@mui/icons-material/Add"
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined"
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined"
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
+import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined"
+import CardMembershipOutlinedIcon from "@mui/icons-material/CardMembershipOutlined"
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined"
+import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined"
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined"
+import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined"
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
+export const IconName = {
+	tickets: "tickets",
+	newTicket: "newTicket",
+	documentation: "documentation",
+	users: "users",
+	settings: "settings",
+	members: "members",
+	pages: "pages",
+	application: "application",
+	support: "support",
+	account: "support",
+	profile: "profile",
+}
+
 const IconLib = {
-	"0": <AssessmentIcon />,
-	"1": <AssessmentIcon />,
-	"2": <CreditCardIcon />,
-	"3": <AccountTreeIcon />,
-	"4": <BarChartIcon />,
-	"5": <CategoryIcon />,
-	"6": <AssessmentIcon />
+	[IconName.tickets]: <AirplaneTicketOutlinedIcon />,
+	[IconName.newTicket]: <AddIcon />,
+	[IconName.documentation]: <ArticleOutlinedIcon />,
+	[IconName.users]: <PeopleAltOutlinedIcon />,
+	[IconName.settings]: <SettingsApplicationsOutlinedIcon />,
+	[IconName.members]: <CardMembershipOutlinedIcon />,
+	[IconName.pages]: <LayersOutlinedIcon />,
+	[IconName.application]: <AppsOutlinedIcon />,
+	[IconName.support]: <SupportAgentOutlinedIcon />,
+	[IconName.account]: <ManageAccountsOutlinedIcon />,
+	[IconName.profile]: <AccountCircleOutlinedIcon />,
 }
 
 function SideBarContentExpanded({ data }) {
@@ -230,7 +254,7 @@ function SideBarContentCollapsed({ data }) {
 							}}
 						>
 							{group.items.map((item) => (
-								<Tooltip arrow key={item.id} title={item.text} placement="right">
+								<Tooltip arrow key={item.id} title={item.alt ?? item.text} placement="right">
 									<ButtonBase sx={{ display: "block", width: "100%", textAlign: "left" }}>
 										<li>
 											<Link href={item.url} passHref>

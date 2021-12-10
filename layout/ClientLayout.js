@@ -41,7 +41,7 @@ import { setIsSmallScreen } from "@redux/slices/uiSettings"
 import AuthCheck from "@components/AuthCheck"
 import Footer from "@components/common/Footer"
 import Header from "@components/BackEnd/Header"
-import SideBar from "@components/BackEnd/SideBar"
+import SideBar, { IconName } from "@components/BackEnd/SideBar"
 import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions"
 import usePrefetchImmediately from "@helpers/usePrefetchImmediately"
 
@@ -56,24 +56,24 @@ const CLIENT_MENU = [
 		id: "menu_support",
 		type: MENU_ITEM_TYPE.GROUP,
 		expanded: true,
-		icon: "0",
+		icon: IconName.support,
 		title: "Support",
 		description: "Getting supports",
 		items: [
-			{ id: "submenu_tickets", icon: "1", text: "All tickets", url: "/client/tickets" },
-			{ id: "submenu_newticket", icon: "1", text: "Open ticket", url: "/client/tickets/new-ticket" },
+			{ id: "submenu_tickets", icon: IconName.tickets, text: "All tickets", url: "/client/tickets" },
+			{ id: "submenu_newticket", icon: IconName.newTicket, text: "Open ticket", url: "/client/tickets/new-ticket" },
 		]
 	},
 	{
 		id: "menu_profile",
 		type: MENU_ITEM_TYPE.GROUP,
 		expanded: false,
-		icon: "0",
+		icon: IconName.account,
 		title: "Account",
 		description: "Managing your account",
 		items: [
-			{ id: "submenu_editprofile", icon: "1", text: "Edit profile", url: "/client/edit-profile" },
-			{ id: "submenu_account", icon: "1", text: "Accounts", url: "/client/account" },
+			{ id: "submenu_editprofile", icon: IconName.profile, text: "Edit profile", url: "/client/edit-profile" },
+			{ id: "submenu_account", icon: IconName.account, text: "Accounts", url: "/client/account" },
 		]
 	},
 ]

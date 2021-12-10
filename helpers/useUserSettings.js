@@ -39,9 +39,13 @@ import {
  *****************************************************************/
 
 export default function useUserSettings(username, settingName) {
-	const { permissions, group } = useGetProfileByUsername(username)
+	const {
+		permissions = {},
+		group
+	} = useGetProfileByUsername(username)
 
-	let defaultPermissions
+	let defaultPermissions = {}
+
 	switch (group) {
 		case USERGROUP.SUPERADMIN.code:
 			defaultPermissions = DEFAULT_SUPERADMIN_SETTINGS

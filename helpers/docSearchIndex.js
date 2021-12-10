@@ -36,9 +36,9 @@ import {
 } from "@helpers/constants"
 
 import {
-	_getAllDocs,
-	_updateDocSearchIndex
-} from "./firebase/_"
+	_getDocs,
+	updateDocSearchIndex
+} from "@redux/slices/firestoreApiBase"
 
 /*****************************************************************
  * INIT                                                          *
@@ -159,7 +159,7 @@ export function useCreateDocSearchIndex() {
  */
 export async function _createDocSearchIndex(username) {
 
-	const docs = await _getAllDocs()
+	const docs = await _getDocs()
 
 	let searchIndexes = []
 
@@ -191,7 +191,7 @@ export async function _createDocSearchIndex(username) {
 	})
 
 	//save to firestore
-	await _updateDocSearchIndex({
+	await updateDocSearchIndex({
 		searchIndexes,
 		// fuseIndex,
 		updatedAt: dayjs().valueOf(),

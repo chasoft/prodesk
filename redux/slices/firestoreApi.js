@@ -54,6 +54,7 @@ export const firestoreApi = createApi({
 		TYPE.LABELS,
 		TYPE.CATEGORIES,
 		TYPE.INSTALL,
+		TYPE.THEME,
 	],
 	baseQuery: fireStoreBaseQuery,
 	keepUnusedDataFor: 3 * 60,	//default 3 minutes
@@ -1253,6 +1254,37 @@ export const firestoreApi = createApi({
 			},
 		}),
 
+		/*****************************************************************
+		 * THEME                                                         *
+		 *****************************************************************/
+
+		getThemeSettings: builder.query({
+			query: (themeName) => ({ action: ACTIONS.GET_THEME_SETTINGS, themeName }),
+			providesTags: (result, error, themeName) => [{ type: TYPE.THEME, id: themeName }],
+			keepUnusedDataFor: 60 * 60,
+		}),
+
+		updateThemeSettings: builder.mutation({
+			//body = { themeName: "...", blockA: {...}, blockB: {..}}
+			query: (body) => ({ action: ACTIONS.UPDATE_THEME_SETTINGS, body }),
+			invalidatesTags: (result, error, body) => [{ type: TYPE.THEME, id: body.themeName }],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
+				const patchResult = dispatch(
+					firestoreApi.util.updateQueryData(
+						ACTIONS.GET_THEME_SETTINGS,
+						body.themeName,
+						(draft) => { Object.assign(draft, body) }
+					)
+				)
+				try { await queryFulfilled }
+				catch {
+					console.log("error when updating theme settings and undo")
+					patchResult.undo()
+				}
+			},
+		}),
+
+
 	}),
 })
 
@@ -1352,4 +1384,10 @@ export const {
 
 	/* */
 	useRequestRefetchingMutation,
+
+
+	/* THEME */
+	useGetThemeSettingsQuery,
+	useUpdateThemeSettingsMutation,
+
 } = firestoreApi

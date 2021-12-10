@@ -1140,7 +1140,9 @@ function DetailsFormExternal({ docItem, handleClose }) {
 					url
 				</TypographyHeader>
 				<InputBaseStyled
-					id="external-url" value={localCache.url}
+					id="external-url"
+					value={localCache.url}
+					placeholder="https://example.com"
 					onChange={(e) => setLocalCache(e.target.value, "url")} />
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>

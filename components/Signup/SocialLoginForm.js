@@ -51,7 +51,7 @@ import { LoginLink } from "@components/common"
 
 import { regRule } from "@helpers/regex"
 import { REDIRECT_URL } from "@helpers/constants"
-import { isUsernameAvailable } from "@helpers/firebase/user"
+import { isUsernameAvailable } from "@redux/slices/firestoreApiBase"
 
 import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"

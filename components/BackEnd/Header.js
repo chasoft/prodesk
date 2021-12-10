@@ -22,7 +22,6 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import Link from "next/link"
 import PropTypes from "prop-types"
 import React, { useEffect, useState } from "react"
 
@@ -30,6 +29,7 @@ import React, { useEffect, useState } from "react"
 import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useKBar } from "kbar"
 import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
@@ -45,6 +45,7 @@ import { getAuth, getPageMeta, getUiSettings } from "@redux/selectors"
 //ASSETS
 import MenuIcon from "@mui/icons-material/Menu"
 import NotificationsIcon from "@mui/icons-material/Notifications"
+import SearchIcon from "@mui/icons-material/Search"
 
 /*****************************************************************
  * INIT                                                          *
@@ -63,6 +64,8 @@ function Header() {
 	const { isSmallScreen } = useSelector(getUiSettings)
 	const { notis, counter } = useNotifications(currentUser.username, enqueueSnackbar, closeSnackbar)
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
+
+	const { query } = useKBar()
 
 	useEffect(() => {
 		const handleSetScrolled = () => {
@@ -131,16 +134,20 @@ function Header() {
 					"& > *": { ml: 1 }
 				}}
 			>
-				<Tooltip arrow title="Help Center" placement="left">
+				<Tooltip arrow title="Searching..." placement="left">
 					<Typography
 						sx={{
+							display: "flex",
+							alignItems: "center",
 							fontFamily: "\"Google Sans\", Roboto, sans-serif",
 							cursor: "pointer",
 							fontSize: "1rem",
 							"&:hover": { fontWeight: 500 }
 						}}
+						onClick={query.toggle}
 					>
-						<Link href="/docs">Go to Docs</Link>
+						<SearchIcon />
+						Ctrl+K
 					</Typography>
 				</Tooltip>
 

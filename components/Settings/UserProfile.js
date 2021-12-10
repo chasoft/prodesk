@@ -58,7 +58,7 @@ import { loginSuccess } from "@redux/slices/auth"
 import { useUpdateProfileMutation } from "@redux/slices/firestoreApi"
 
 import { getLayout } from "@layout/ClientLayout"
-import { changePassword } from "@helpers/firebase/user"
+import { changePassword } from "@redux/slices/firestoreApiBase"
 
 //ASSETS
 

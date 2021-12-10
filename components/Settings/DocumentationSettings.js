@@ -101,7 +101,7 @@ function DocTheme() {
 		setSelectedTheme(activeTheme)
 	}
 	return (
-		<ContentGroup title="Settings">
+		<ContentGroup title="Theme">
 			<ContentRow title="Active theme">
 				<EditButton
 					defaultState={
@@ -165,6 +165,34 @@ function DocTheme() {
 
 				</EditButton>
 			</ContentRow>
+
+			<ContentRow title="Callout Block">
+				<EditButton
+					defaultState={
+						<Box>
+							hello
+						</Box>
+					}
+					saveAction={handleSaveSelectedTheme}
+					cancelAction={handleCancel}
+				>
+					<Box
+						sx={{
+							display: "flex",
+							flexWrap: "wrap",
+							"& > :not(style)": {
+								m: 1,
+								width: 128,
+								height: 128,
+							},
+						}}
+					>
+						helllllllllllllllllllllll
+					</Box>
+
+				</EditButton>
+			</ContentRow>
+
 		</ContentGroup>
 	)
 }
