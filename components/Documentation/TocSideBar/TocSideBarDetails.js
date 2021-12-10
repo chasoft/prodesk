@@ -40,13 +40,14 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import slugify from "react-slugify"
 
 //PROJECT IMPORT
+import { CircularProgressBox, LinearProgressWithLabel } from "@components/common"
+import { deleteFile, STORAGE_DESTINATION, useUploadFile } from "@helpers/storageApi"
+import { regURL } from "@helpers/regex"
+import { SettingsSwitch } from "@components/common/Settings"
 import { useGetDoc } from "@helpers/useGetDocs"
 import useAppSettings from "@helpers/useAppSettings"
-import { deleteFile, STORAGE_DESTINATION, useUploadFile } from "@helpers/storageApi"
-import { CircularProgressBox, LinearProgressWithLabel } from "@components/common"
-import { SettingsSwitch } from "@components/common/Settings"
-import usePopupContainer from "@components/common/usePopupContainer"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
+import usePopupContainer from "@components/common/usePopupContainer"
 
 import {
 	CODE,
@@ -57,9 +58,9 @@ import {
 } from "@helpers/constants"
 
 import {
-	getUiSettings,
+	getAuth,
 	getDocsCenter,
-	getAuth
+	getUiSettings,
 } from "@redux/selectors"
 
 import {
@@ -68,18 +69,18 @@ import {
 } from "@components/Documentation/DocumentTocSideBar"
 
 import {
+	useUpdateAppSettingsMutation,
 	useUpdateDocMutation,
-	useUpdateAppSettingsMutation
 } from "@redux/slices/firestoreApi"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
-import CheckBoxIcon from "@mui/icons-material/CheckBox"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import CheckBoxIcon from "@mui/icons-material/CheckBox"
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"
-import UploadIcon from "@mui/icons-material/Upload"
-import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined"
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle"
+import RemoveCircleOutlineOutlinedIcon from "@mui/icons-material/RemoveCircleOutlineOutlined"
+import UploadIcon from "@mui/icons-material/Upload"
 
 /*****************************************************************
  * INIT                                                          *
@@ -107,7 +108,7 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 	color: theme.palette.grey[500]
 }))
 
-function InputBaseStyled(props) {
+function InputBaseStyled({ sx, ...others }) {
 	const [minRows, setMinRows] = useState(1)
 	return (
 		<TextField
@@ -119,9 +120,13 @@ function InputBaseStyled(props) {
 			sx={{
 				color: "grey.800",
 				borderColor: "divider",
+				...sx
 			}}
-			{...props} />
+			{...others} />
 	)
+}
+InputBaseStyled.propTypes = {
+	sx: PropTypes.object
 }
 
 function PublishStatusSwitch({ status, setStatus }) {
@@ -1119,7 +1124,10 @@ function DetailsFormExternal({ docItem, handleClose }) {
 			<PerfectScrollbar
 				component="div"
 				options={{ suppressScrollX: true }}
-				style={{ height: "calc(100vh - 340px)", paddingRight: "2px" }}
+				style={{
+					height: "calc(100vh - 340px)",
+					paddingRight: "2px"
+				}}
 			>
 				<AddEmojiButton
 					emoji={localCache.emoji}
@@ -1144,6 +1152,12 @@ function DetailsFormExternal({ docItem, handleClose }) {
 					value={localCache.url}
 					placeholder="https://example.com"
 					onChange={(e) => setLocalCache(e.target.value, "url")} />
+
+				{(!!localCache.url && !regURL.test(localCache.url))
+					? <Typography sx={{ color: "#c70000" }}>
+						» Invalid URL, kindly use full URL
+					</Typography>
+					: null}
 
 				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
 					Description

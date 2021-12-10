@@ -90,8 +90,5 @@ export default function useDocsActions() {
 		[searchActions]
 	)
 
-	console.log({ rootSearchAction })
-	console.log({ searchActions })
-
-	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean))
+	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean), [docSearchIndex.searchIndexes.length])
 }

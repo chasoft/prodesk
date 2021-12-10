@@ -29,6 +29,7 @@ import dayjs from "dayjs"
 
 //PROJECT IMPORT
 import { useUpdateDocSearchIndexMutation } from "@redux/slices/firestoreApi"
+import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 import {
 	DOC_TYPE,
@@ -39,6 +40,11 @@ import {
 	_getDocs,
 	updateDocSearchIndex
 } from "@redux/slices/firestoreApiBase"
+
+import {
+	ACTIONS,
+	TYPE
+} from "@redux/slices/firestoreApiConstants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -146,6 +152,16 @@ export function useCreateDocSearchIndex() {
 		setProgress(p => p + progressIncrement)
 		setIsCreating(false)
 
+		const invalidatesTags = {
+			trigger: "__",
+			tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
+			target: {
+				isForUser: true,
+				isForAdmin: true,
+			}
+		}
+		await requestSilentRefetching(invalidatesTags)
+
 		return true
 
 	}, [updateDocSearchIndex])
@@ -197,4 +213,15 @@ export async function _createDocSearchIndex(username) {
 		updatedAt: dayjs().valueOf(),
 		updatedBy: username
 	})
+
+	//silence refetch
+	const invalidatesTags = {
+		trigger: "__",
+		tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
+		target: {
+			isForUser: true,
+			isForAdmin: true,
+		}
+	}
+	await requestSilentRefetching(invalidatesTags)
 }
