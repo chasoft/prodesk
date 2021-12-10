@@ -1197,7 +1197,7 @@ function TocSideBarDetails({ handleClose }) {
 	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
 
 	const {
-		isSideBarExpanded, sideBarLeft, showTocSideBarDetails
+		sideBarLeft, showTocSideBarDetails
 	} = useSelector(getUiSettings)
 
 	const {
@@ -1208,11 +1208,12 @@ function TocSideBarDetails({ handleClose }) {
 		<>
 			<Box id="TocSideBarDetails" sx={{
 				position: "fixed",
-				zIndex: 150,
+				zIndex: 151,
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "stretch",
-				left: `${sideBarLeft + (isSideBarExpanded ? 257 : 69)}px`,
+				// left: `${sideBarLeft + (isSideBarExpanded ? 257 : 69)}px`,
+				left: `${sideBarLeft}px`,
 				minWidth: "385px",
 				height: "100%",
 				backgroundColor: "#FFF",
@@ -1314,10 +1315,11 @@ function TocSideBarDetails({ handleClose }) {
 
 			{/* This is the backdrop when TocSideBarDetails showed */}
 			<Box
+				id="backdrop-closeTocSideBarDetails"
 				onClick={() => { handleClose() }}
 				sx={{
 					position: "fixed",
-					zIndex: 149,
+					zIndex: 150,
 					display: showTocSideBarDetails ? "block" : "none",
 					left: `${sideBarLeft + 300}px`,
 					minWidth: "100%",

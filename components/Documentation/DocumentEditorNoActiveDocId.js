@@ -46,7 +46,7 @@ import { Box, Paper, Typography } from "@mui/material"
 
 function DocumentEditorNoActiveDocId() {
 	return (
-		<Box sx={{
+		<Box id="no-document-space" sx={{
 			display: "flex",
 			flexDirection: "column",
 			backgroundColor: "#FFF",

@@ -287,6 +287,7 @@ function SideBar({ homeUrl, settingsUrl, settingsTooltip, data = [] }) {
 	return (
 		<>
 			<Box
+				id="SideBar"
 				sx={{
 					position: isMobile ? "fixed" : { xs: "fixed", sm: "sticky" },
 					top: 0,
@@ -307,6 +308,7 @@ function SideBar({ homeUrl, settingsUrl, settingsTooltip, data = [] }) {
 			>
 
 				<Box
+					id="SideBar-Logo"
 					sx={{
 						display: "flex",
 						alignItems: "center",
@@ -360,15 +362,18 @@ function SideBar({ homeUrl, settingsUrl, settingsTooltip, data = [] }) {
 			</Box>
 
 			<Box
+				id="hideSideBar-mobile"
 				sx={{
 					position: "fixed",
 					display: showSideBar ? "absolute" : "none",
-					backgroundColor: "action.hover",
+					// backgroundColor: "action.hover",
+					backgroundColor: "rgba(0,0,0,0.2)",
 					zIndex: 164,
 					width: "100%",
 					height: "100%"
 				}}
-				onClick={() => { dispatch(setShowSideBar(false)) }} />
+				onClick={() => { dispatch(setShowSideBar(false)) }}
+			/>
 
 		</>
 	)

@@ -28,13 +28,15 @@ import { Box, Button, IconButton } from "@mui/material"
 import { useKBar } from "kbar"
 
 //PROJECT IMPORT
+import { AuthFalse, AuthTrue } from "@components/AuthCheck"
+import { LoginButton } from "@components/Themes/Simplicity/Buttons/Login"
 import { Logo } from "@components/common"
 import { TopMenu } from "@components/Themes/Simplicity/Blocks/TopMenu"
+import UserIcon from "@components/BackEnd/UserIcon"
 
 //ASSETS
 import MenuIcon from "@mui/icons-material/Menu"
 import SearchIcon from "@mui/icons-material/Search"
-import { SignUpButton } from "@components/Themes/Simplicity/Buttons/SignUp"
 
 /*****************************************************************
  * CUSTOM COMPONENTS                                             *
@@ -81,7 +83,6 @@ export function Header() {
 				}}>
 					<Box
 						id="search-wrapper header-search"
-						sx={{ mr: 1 }}
 						onClick={query.toggle}
 					>
 						<Box sx={{
@@ -92,7 +93,8 @@ export function Header() {
 							</IconButton>
 						</Box>
 						<Button id="searchButton" startIcon={<SearchIcon />} sx={{
-							display: { xs: "none", mdd: "flex" }
+							display: { xs: "none", mdd: "flex" },
+							mr: 2
 						}}>
 							Ctrl+K
 						</Button>
@@ -103,7 +105,7 @@ export function Header() {
 						component="span"
 						sx={{
 							display: { xs: "block", mdd: "none" },
-							mr: 1
+							mr: { xs: 0, xss: 1 }
 						}}
 					>
 						<IconButton>
@@ -111,19 +113,25 @@ export function Header() {
 						</IconButton>
 					</Box>
 
-					<Link
-						id="header-signup"
-						component="a"
-						href="https://chasoft.net"
-						sx={{
-							display: { xs: "none", mdd: "block" },
-						}}
-						passHref
-					>
-						<SignUpButton>
-							Sign up
-						</SignUpButton>
-					</Link>
+					<AuthFalse>
+						<Link
+							id="header-signup"
+							component="a"
+							href="/login"
+							sx={{
+								display: { xs: "none", mdd: "block" },
+							}}
+							passHref
+						>
+							<LoginButton>
+								Login
+							</LoginButton>
+						</Link>
+					</AuthFalse>
+
+					<AuthTrue>
+						<UserIcon />
+					</AuthTrue>
 				</Box>
 			</Box>
 		</Box>

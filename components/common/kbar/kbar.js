@@ -79,6 +79,7 @@ export const groupNameStyle = {
 
 export function ClientCommandBar() {
 	useDocsActions()
+	console.log("ClientCommandBar")
 	return (
 		<KBarPortal>
 			<KBarPositioner>

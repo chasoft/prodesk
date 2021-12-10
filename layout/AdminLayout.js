@@ -117,9 +117,9 @@ function AdminLayout({ children }) {
 		<KBarProvider actions={defaultAdminActions} >
 			<AuthCheck>
 
-				<Box sx={{ ...backgroundForLoggedinPage }} />
+				<Box id="backgroundForLoggedinPage" sx={{ ...backgroundForLoggedinPage }} />
 
-				<Box style={{ display: "flex", minHeight: "100vh" }}>
+				<Box id="mainContain" style={{ display: "flex", minHeight: "100vh" }}>
 
 					<AdminCommandBar />
 

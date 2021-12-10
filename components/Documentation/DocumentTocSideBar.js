@@ -563,7 +563,7 @@ function DocumentTocSideBar() {
 	} = useGetDoc(activeDocId)
 
 	return (
-		<Box sx={{
+		<Box id="DocumentTocSideBar" sx={{
 			position: "sticky",
 			display: { xs: "none", lg: "flex" },
 			flexDirection: "column",

@@ -62,6 +62,7 @@ function Documentation() {
 
 	return (
 		<Container
+			id="documentation"
 			maxWidth="xl"
 			sx={{
 				display: "flex",

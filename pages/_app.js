@@ -25,7 +25,7 @@
 import React from "react"
 import Head from "next/head"
 import PropTypes from "prop-types"
-import Router, { useRouter } from "next/router"
+import Router from "next/router"
 
 // MATERIAL-UI
 import { CssBaseline, ThemeProvider } from "@mui/material"
@@ -40,7 +40,6 @@ import { configureStore } from "@reduxjs/toolkit"
 //PROJECT IMPORT
 import { firestoreApi } from "@redux/slices/firestoreApi"
 import createEmotionCache from "@helpers/createEmotionCache"
-import PageTransition from "@components/PageTransition"
 import rootReducer from "@redux/slices"
 import { systemTheme } from "@components/Themes/systemTheme"
 
@@ -75,8 +74,6 @@ Router.events.on("routeChangeError", () => NProgress.done())
  *****************************************************************/
 
 function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) {
-	const router = useRouter()
-
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector("#jss-server-side")
@@ -104,12 +101,7 @@ function MyApp({ Component, emotionCache = clientSideEmotionCache, pageProps }) 
 							}}
 							maxSnack={3}
 						>
-							{getLayout(
-								<PageTransition location={router.pathname}>
-									<CssBaseline />
-									<Component {...pageProps} />
-								</PageTransition>
-							)}
+							{getLayout(<Component {...pageProps} />)}
 						</SnackbarProvider>
 					</ThemeProvider>
 				</Provider>

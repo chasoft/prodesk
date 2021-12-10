@@ -30,7 +30,7 @@ import ButtonUnstyled, { buttonUnstyledClasses } from "@mui/base/ButtonUnstyled"
  * INIT                                                          *
  *****************************************************************/
 
-const SignUpButtonRoot = styled("button")`
+const LoginButtonRoot = styled("button")`
   background-color: #000;
   padding: 15px 20px;
   border-radius: 8px;
@@ -63,7 +63,7 @@ const SignUpButtonRoot = styled("button")`
   }
 `
 
-export const SignUpButton = React.forwardRef((props, ref) => {
-	return <ButtonUnstyled {...props} component={SignUpButtonRoot} ref={ref} />
+export const LoginButton = React.forwardRef((props, ref) => {
+	return <ButtonUnstyled {...props} component={LoginButtonRoot} ref={ref} />
 })
-SignUpButton.displayName = "SignUpButton"
+LoginButton.displayName = "SignUpButton"
