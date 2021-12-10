@@ -118,7 +118,7 @@ function CannedRepliesGroup({ backBtnClick }) {
 			fullList: newList
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],

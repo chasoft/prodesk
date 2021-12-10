@@ -30,6 +30,7 @@ import { Box, Button, Grid, Paper, Typography } from "@mui/material"
 //THIRD-PARTY
 import { find, map, size } from "lodash"
 import { useSelector } from "react-redux"
+import { useSnackbar } from "notistack"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 
@@ -58,6 +59,7 @@ import {
 
 import {
 	APP_SETTINGS,
+	CODE,
 	DATE_FORMAT
 } from "@helpers/constants"
 
@@ -210,11 +212,17 @@ function DocSearchIndex() {
 
 	const { currentUser } = useSelector(getAuth)
 
+	const { enqueueSnackbar } = useSnackbar()
+
 	const [createSearchIndex, { isCreating, progress }] = useCreateDocSearchIndex()
 
 	const handleCreateDocSearchIndex = useCallback(async () => {
-		await createSearchIndex(docs, currentUser.username)
-	}, [docs, createSearchIndex, currentUser.username])
+		const res = await createSearchIndex(docs, currentUser.username)
+		if (res?.data?.code === CODE.SUCCESS)
+			enqueueSnackbar("Searching Index created successfully", { variant: "success" })
+		else
+			enqueueSnackbar("Fail to create Searching Index!", { variant: "error" })
+	}, [docs, createSearchIndex, currentUser.username, enqueueSnackbar])
 
 	dayjs.extend(relativeTime)
 

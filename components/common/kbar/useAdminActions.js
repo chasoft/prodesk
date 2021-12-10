@@ -26,7 +26,7 @@ import { useSnackbar } from "notistack"
 //PROJECT IMPORT
 import { _createDocSearchIndex } from "@helpers/docSearchIndex"
 import { updateAppSettings } from "@redux/slices/firestoreApiBase"
-import { APP_SETTINGS } from "@helpers/constants"
+import { APP_SETTINGS, CODE } from "@helpers/constants"
 import { getAuth } from "@redux/selectors"
 import { THEME_NAME } from "@components/Themes/themeInfo"
 
@@ -96,8 +96,11 @@ export default function useAdminActions() {
 				section: "Searching Index",
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
-					await _createDocSearchIndex(currentUser.username)
-					enqueueSnackbar("Searching Index created successfully", { variant: "success" })
+					const res = await _createDocSearchIndex(currentUser.username)
+					if (res?.data?.code === CODE.SUCCESS)
+						enqueueSnackbar("Searching Index created successfully", { variant: "success" })
+					else
+						enqueueSnackbar("Fail to create Searching Index!", { variant: "error" })
 				}
 			},
 

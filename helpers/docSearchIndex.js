@@ -32,6 +32,7 @@ import { useUpdateDocSearchIndexMutation } from "@redux/slices/firestoreApi"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 import {
+	CODE,
 	DOC_TYPE,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
@@ -117,7 +118,11 @@ export function useCreateDocSearchIndex() {
 				slug: doc.slug
 					? `/articles/${doc.docId}-${doc.slug}`
 					: doc.url,
-				subtitle: doc.description,
+				subtitle: doc.description
+					? doc.description
+					: doc.url
+						? doc.url
+						: "",
 				icon: doc.emoji,
 				keywords: doc.tags.join(" "),
 				section: (cat ? cat.title : "Uncategoried") +
@@ -142,7 +147,7 @@ export function useCreateDocSearchIndex() {
 		// const fuseIndex = JSON.stringify(docIndexes.toJSON())
 
 		//save to firestore
-		await updateDocSearchIndex({
+		const res = await updateDocSearchIndex({
 			searchIndexes,
 			// fuseIndex,
 			updatedAt: dayjs().valueOf(),
@@ -152,17 +157,21 @@ export function useCreateDocSearchIndex() {
 		setProgress(p => p + progressIncrement)
 		setIsCreating(false)
 
-		const invalidatesTags = {
-			trigger: "__",
-			tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
-			target: {
-				isForUser: true,
-				isForAdmin: true,
+		//silence refetch
+		if (res?.data?.code === CODE.SUCCESS) {
+			const invalidatesTags = {
+				trigger: "__",
+				tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
+				target: {
+					isForUser: true,
+					isForAdmin: true,
+					isForPublic: true
+				}
 			}
+			await requestSilentRefetching(invalidatesTags)
 		}
-		await requestSilentRefetching(invalidatesTags)
 
-		return true
+		return res
 
 	}, [updateDocSearchIndex])
 
@@ -175,7 +184,7 @@ export function useCreateDocSearchIndex() {
  */
 export async function _createDocSearchIndex(username) {
 
-	const docs = await _getDocs()
+	const { data: docs } = await _getDocs()
 
 	let searchIndexes = []
 
@@ -198,7 +207,11 @@ export async function _createDocSearchIndex(username) {
 			slug: doc.slug
 				? `/articles/${doc.docId}-${doc.slug}`
 				: doc.url,
-			subtitle: doc.description,
+			subtitle: doc.description
+				? doc.description
+				: doc.url
+					? doc.url
+					: "",
 			icon: doc.emoji,
 			keywords: doc.tags.join(" "),
 			section: (cat ? cat.title : "Uncategoried") +
@@ -206,22 +219,31 @@ export async function _createDocSearchIndex(username) {
 		})
 	})
 
+	console.log({ searchIndexes })
+
 	//save to firestore
-	await updateDocSearchIndex({
-		searchIndexes,
-		// fuseIndex,
-		updatedAt: dayjs().valueOf(),
-		updatedBy: username
+	const res = await updateDocSearchIndex({
+		body: {
+			searchIndexes: searchIndexes,
+			// fuseIndex,
+			updatedAt: dayjs().valueOf(),
+			updatedBy: username
+		}
 	})
 
 	//silence refetch
-	const invalidatesTags = {
-		trigger: "__",
-		tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
-		target: {
-			isForUser: true,
-			isForAdmin: true,
+	if (res?.data?.code === CODE.SUCCESS) {
+		const invalidatesTags = {
+			trigger: "__",
+			tag: [{ type: TYPE.DOCS, id: ACTIONS.GET_DOC_SEARCH_INDEX }],
+			target: {
+				isForUser: true,
+				isForAdmin: true,
+				isForPublic: true
+			}
 		}
+		await requestSilentRefetching(invalidatesTags)
 	}
-	await requestSilentRefetching(invalidatesTags)
+
+	return res
 }

@@ -298,7 +298,7 @@ function PageLabels({ backBtnClick }) {
 			updatedAt: dayjs().valueOf()
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.LABELS, id: "LIST" }],

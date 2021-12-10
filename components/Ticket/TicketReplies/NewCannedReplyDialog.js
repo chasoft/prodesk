@@ -106,7 +106,7 @@ function NewCannedReplyDialog({
 			// dispatchActions,
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: createdBy,
 				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],

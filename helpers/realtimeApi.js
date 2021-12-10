@@ -208,6 +208,7 @@ export function useNotificationsBase(username, enqueueSnackbar, closeSnackbar) {
 		 *		target: {
 		 *			isForUser: bool,
 		 *			isForAdmin: bool,
+		 *			isForPublic: bool, //not-login-users
 		 *		},
 		 *		randomId: random(1000)
 		 *	}
@@ -235,6 +236,39 @@ export function useNotificationsBase(username, enqueueSnackbar, closeSnackbar) {
 	}, [])
 
 	return orderBy(notis, ["createdAt"], ["desc"])
+}
+
+export function useClientAutoRefetching() {
+	const [requestRefetching] = useRequestRefetchingMutation()
+	useEffect(() => {
+		/**
+		 * 	FOR AUTO DATA-FETCHING
+		 *	{
+		 *		tag: invalidatesTags,
+		 *		target: {
+		 *			isForUser: bool,
+		 *			isForAdmin: bool,
+		 *			isForPublic: bool, //not-login-users
+		 *		},
+		 *		randomId: random(1000)
+		 *	}
+		 */
+		const unsubscribeFetchingOnChildChanged = onChildChanged(
+			ref(realtimeDB, STRINGS.invalidatesTags),
+			async (data) => {
+				if (data.val().target?.isForPublic === true) {
+					await requestRefetching(data.val().tag)
+					console.log("background data refetching done!")
+				}
+			}
+		)
+		return () => {
+			unsubscribeFetchingOnChildChanged()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	return null
 }
 
 export function useNotifications(username, enqueueSnackbar, closeSnackbar) {

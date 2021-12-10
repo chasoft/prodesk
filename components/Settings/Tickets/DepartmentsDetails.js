@@ -123,7 +123,7 @@ function DepartmentsDetails({ backBtnClick }) {
 		})
 
 		//broadcast refetching-request
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],
@@ -157,7 +157,7 @@ function DepartmentsDetails({ backBtnClick }) {
 		const res = await updateDepartment(departmentItem)
 
 		//broadcast refetching-request
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],

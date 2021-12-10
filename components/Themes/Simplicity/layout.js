@@ -33,14 +33,14 @@ import { Container, ThemeProvider } from "@mui/material"
 import { KBarProvider } from "kbar"
 
 //PROJECT IMPORT
-import { simplicityTheme } from "@components/Themes/Simplicity/theme"
-import { Header } from "@components/Themes/Simplicity/Header"
-import { Footer } from "@components/Themes/Simplicity/Footer"
 import { ClientCommandBar } from "@components/common/kbar/kbar"
+import { Footer } from "@components/Themes/Simplicity/Footer"
+import { Header } from "@components/Themes/Simplicity/Header"
+import { simplicityTheme } from "@components/Themes/Simplicity/theme"
+import { useClientAutoRefetching } from "@helpers/realtimeApi"
 import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions"
 
 //ASSETS
-
 
 /*****************************************************************
  * INIT                                                          *
@@ -53,6 +53,8 @@ import useDefaultKbarActions from "@components/common/kbar/useDefaultKbarActions
 function SimplicityLayout({ children }) {
 
 	const { defaultPublicActions } = useDefaultKbarActions()
+
+	useClientAutoRefetching()
 
 	return (
 		<KBarProvider actions={defaultPublicActions}>

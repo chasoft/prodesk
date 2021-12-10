@@ -103,7 +103,7 @@ function CannedRepliesDetails({ selectedCannedReply, isFullCannedReply }) {
 		dispatch(setActiveSettingPanel(localCache.departmentId))
 		const res = await updateCannedReply(updatedContent)
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.CANNED_REPLIES, id: "LIST" }],

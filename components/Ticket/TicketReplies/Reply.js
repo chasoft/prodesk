@@ -234,7 +234,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmen
 			}
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],
@@ -257,7 +257,7 @@ function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmen
 			trid: replyItem.trid
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.TICKETS, id: replyItem.tid.concat("_replies") }],

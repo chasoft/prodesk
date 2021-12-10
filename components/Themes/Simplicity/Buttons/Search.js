@@ -48,6 +48,10 @@ const SearchButtonRoot = styled("button")`
   &:hover {
     background-color: rgba(0, 0, 0, 0.9);
   }
+@media only screen and (max-width: 900px) {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
 
   &.${buttonUnstyledClasses.active} {
     background-color: #000;

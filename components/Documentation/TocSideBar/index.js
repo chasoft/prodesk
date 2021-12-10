@@ -191,7 +191,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 			affectedItems: []
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: username,
 				tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -230,7 +230,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 	// 				categoryId: targetItem.categoryId
 	// 			}
 	// 		})
-	// 		if (res?.data.code === CODE.SUCCESS) {
+	// 		if (res?.data?.code === CODE.SUCCESS) {
 	// 			const invalidatesTags = {
 	// 				trigger: username,
 	// 				tag: [
@@ -266,7 +266,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 				affectedItems: []
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 				const invalidatesTags = {
 					trigger: username,
 					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -296,7 +296,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 				affectedItems: []
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 				const invalidatesTags = {
 					trigger: username,
 					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -332,7 +332,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 				affectedItems: []
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 				const invalidatesTags = {
 					trigger: username,
 					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -370,7 +370,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 		// 				categoryId: targetItem.categoryId
 		// 			}
 		// 		})
-		// 		if (res?.data.code === CODE.SUCCESS) {
+		// 		if (res?.data?.code === CODE.SUCCESS) {
 		// 			const invalidatesTags = {
 		// 				trigger: username,
 		// 				tag: [
@@ -405,7 +405,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 				affectedItems: []
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 				const invalidatesTags = {
 					trigger: username,
 					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -434,7 +434,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 				affectedItems: []
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 				const invalidatesTags = {
 					trigger: username,
 					tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],
@@ -477,7 +477,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 			affectedItems: []
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: username,
 				tag: [{ type: TYPE.DOCS, id: sourceItem.docId }],

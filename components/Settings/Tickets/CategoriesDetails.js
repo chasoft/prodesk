@@ -161,7 +161,7 @@ function CategoriesDetails({ backBtnClick }) {
 		})
 
 		//broadcast refetching-request
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.CATEGORIES, id: "LIST" }],

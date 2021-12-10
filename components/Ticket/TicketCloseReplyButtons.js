@@ -61,7 +61,7 @@ export async function handleCloseTicketBase({
 
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 
-	if (res?.data.code === CODE.SUCCESS) {
+	if (res?.data?.code === CODE.SUCCESS) {
 		//prepare notification content
 		const notisContent = {
 			actionType: ACTIONS.UPDATE_TICKET,

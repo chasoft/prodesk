@@ -103,7 +103,7 @@ function DepartmentsAddNew({ backBtnClick }) {
 		const res = await addDepartment(departmentItem)
 
 		//broadcast refetching-request
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.DEPARTMENTS, id: "LIST" }],

@@ -118,7 +118,7 @@ export async function handleSubmitReplyBase({
 	}
 	const res = await addTicketReply(newReplyItem)
 
-	if (res?.data.code === CODE.SUCCESS) {
+	if (res?.data?.code === CODE.SUCCESS) {
 		//prepare notification content
 		const notisContent = {
 			tid: ticket.tid,

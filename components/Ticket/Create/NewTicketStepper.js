@@ -195,7 +195,7 @@ function StepperControlButtons() {
 				content: editorData
 			})
 
-			if (res?.data.code === CODE.SUCCESS) {
+			if (res?.data?.code === CODE.SUCCESS) {
 
 				const invalidatesTags = {
 					trigger: currentUser.username,

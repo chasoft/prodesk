@@ -227,7 +227,7 @@ function CategoriesAddNew({ backBtnClick }) {
 			fullList
 		})
 
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 			const invalidatesTags = {
 				trigger: currentUser.username,
 				tag: [{ type: TYPE.CATEGORIES, id: "LIST" }],

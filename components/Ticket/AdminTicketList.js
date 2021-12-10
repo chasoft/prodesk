@@ -195,7 +195,7 @@ function AssignButton({ departments }) {
 			Assignee - who is the support of the ticket
 			Ticket's owners - tell him/her that his/her ticket is initial processing...
 		*/
-		if (res?.data.code === CODE.SUCCESS) {
+		if (res?.data?.code === CODE.SUCCESS) {
 
 			const invalidatesTags = {
 				trigger: currentUser.username,

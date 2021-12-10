@@ -104,8 +104,8 @@ export function FrontSearchBox(props) {
 						border: "3px solid #000000",
 						borderTopLeftRadius: "10px",
 						borderBottomLeftRadius: "10px",
-						borderBottomRightRadius: 0,
-						borderTopRightRadius: 0,
+						borderBottomRightRadius: { xs: "10px", md: 0 },
+						borderTopRightRadius: { xs: "10px", md: 0 },
 					}}>
 
 						<InputBase
