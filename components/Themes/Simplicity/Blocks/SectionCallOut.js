@@ -23,10 +23,19 @@ import React from "react"
 //MATERIAL-UI
 import { Box, Typography } from "@mui/material"
 
+//THIRD-PARTY
+import { useDispatch } from "react-redux"
+
 //PROJECT IMPORT
-import { CustomContainer } from "@components/Themes/Simplicity/Blocks/CustomContainer"
+import { APP_SETTINGS } from "@helpers/constants"
+import { CircularProgressBox } from "@components/common"
 import { CustomButtonContained } from "@components/Themes/Simplicity/Buttons/Contained"
 import { CustomButtonOutlined } from "@components/Themes/Simplicity/Buttons/Outlined"
+import { CustomContainer } from "@components/Themes/Simplicity/Blocks/CustomContainer"
+import { regURL } from "@helpers/regex"
+import { setRedirect } from "@redux/slices/redirect"
+import { useGetThemeSettingsQuery } from "@redux/slices/firestoreApi"
+import useAppSettings from "@helpers/useAppSettings"
 
 /*****************************************************************
  * CUSTOM COMPONENTS                                             *
@@ -38,15 +47,37 @@ import { CustomButtonOutlined } from "@components/Themes/Simplicity/Buttons/Outl
  *****************************************************************/
 
 export function SectionCallOut() {
+	const {
+		data: activeTheme,
+		isLoading: isLoadingActiveTheme
+	} = useAppSettings(APP_SETTINGS.activeTheme)
+
+	const {
+		data: themeSettings,
+		isLoading: isLoadingThemeSettings
+	} = useGetThemeSettingsQuery(activeTheme)
+
+	const dispatch = useDispatch()
+
+	if (isLoadingActiveTheme || isLoadingThemeSettings)
+		return <CircularProgressBox />
+
+	const handleOpenSlug = (slug) => {
+		if (regURL.test(slug))
+			window.open(slug, "_blank")
+		else
+			dispatch(setRedirect(slug))
+	}
+
 	return (
 		<Box component="section" sx={{
 			margin: "24px 0 80px 0"
 		}}>
 			<CustomContainer>
 				<Box id="callout-inner" sx={{
-					backgroundColor: "rgb(162, 89, 255)",
+					backgroundColor: themeSettings.callout.background.color,
 					outline: "none",
-					backgroundImage: { xs: "", xss: "url(//theme.zdassets.com/theme_assets/9325143/421fc1fc882a9ace8270807bce4c4d081115b299.svg)" },
+					backgroundImage: { xs: "", xss: `url(${themeSettings.callout.background.imgUrl})` },
 					backgroundPosition: { xs: "bottom right -240px", md: "bottom right" },
 					backgroundRepeat: "no-repeat",
 					borderRadius: "8px",
@@ -74,26 +105,50 @@ export function SectionCallOut() {
 							marginBottom: "40px",
 							marginTop: "0px"
 						}}>
-							Welcome to<br />FigJam
+							{themeSettings.callout.heading.text}
 						</Typography>
 						<Box id="callout-buttons" sx={{
 							display: "flex",
 							flexDirection: { xs: "column", md: "row" },
 							width: "fit-content"
 						}}>
-							<CustomButtonContained sx={{
-								marginRight: { xs: 0, md: 2 },
-								marginBottom: { xs: 2, md: 0 },
-								width: "fit-content"
-							}}>
-								Learn more
-							</CustomButtonContained>
 
-							<CustomButtonOutlined sx={{
-								width: "fit-content"
-							}}>
-								Join the discussions
-							</CustomButtonOutlined>
+							{["button1", "button2"].map(
+								item => {
+									if (themeSettings.callout[item].variant === "outlined"
+										&& themeSettings.callout[item].display) {
+										return (
+											<CustomButtonOutlined
+												key={item}
+												sx={{
+													marginRight: { xs: 0, md: 2 },
+													marginBottom: { xs: 2, md: 0 },
+													width: "fit-content",
+												}}
+												onClick={() => { handleOpenSlug(item.slug) }}
+											>
+												{themeSettings.callout[item].text}
+											</CustomButtonOutlined>
+										)
+									}
+									if (themeSettings.callout[item].variant === "contained"
+										&& themeSettings.callout[item].display) {
+										return (
+											<CustomButtonContained
+												key={item}
+												sx={{
+													marginRight: { xs: 0, md: 2 },
+													marginBottom: { xs: 2, md: 0 },
+													width: "fit-content"
+												}}
+												onClick={() => { handleOpenSlug(item.slug) }}
+											>
+												{themeSettings.callout[item].text}
+											</CustomButtonContained>
+										)
+									}
+								})}
+
 						</Box>
 					</Box>
 				</Box>

@@ -40,11 +40,12 @@ import { STATE_CHANGED, storage } from "@helpers/firebase"
  *****************************************************************/
 
 export const STORAGE_DESTINATION = {
-	USER: "User", //ticket
 	BLOG: "Blog",
-	PAGES: "Pages",
 	DOCS: "Documentation",
-	SETTINGS: "Settings"
+	PAGES: "Pages",
+	SETTINGS: "Settings",
+	THEME: "Theme",
+	USER: "User", //ticket
 }
 
 export async function getFileURL(fullDestinationFilePath) {
@@ -127,3 +128,42 @@ export function useUploadFile() {
 // 		console.log(e.code)
 // 	}
 // }
+
+/**
+ * Upload a single file
+ * @param {event} e - event
+ * @param {func} uploadFile - get from useUploadFile()
+ * @param {*} fileLocation - file location at firebase storage
+ * @returns 
+ */
+export async function uploadSingleFile(e, uploadFile, fileLocation) {
+	const file = e.target.files[0]
+
+	if (!file) {
+		return {
+			error: {
+				message: "No file selected"
+			}
+		}
+	}
+
+	if (file.size > 1024000) {
+		return {
+			error: {
+				message: "File size cannot exceed more than 1MB"
+			}
+		}
+	}
+
+	// const extension = file.type.split("/")[1]
+	/*
+		Currently, i don't want to deal with searching files
+		then, I use fixed fileRef which distinguish by docId
+	*/
+	const fileURL = await uploadFile(
+		file,
+		fileLocation
+	)
+
+	return fileURL
+}

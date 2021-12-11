@@ -18,78 +18,71 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import { useMemo } from "react"
+/*****************************************************************
+ * IMPORTING                                                     *
+ *****************************************************************/
+
+import React from "react"
+
+// MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
-import { keyBy } from "lodash"
-import { useDispatch } from "react-redux"
-import { useRegisterActions } from "kbar"
 
 //PROJECT IMPORT
-import { regURL } from "@helpers/regex"
-import { setRedirect } from "@redux/slices/redirect"
-import { useGetDocSearchIndexQuery } from "@redux/slices/firestoreApi"
+import {
+	ContentRow,
+	EditButton,
+} from "@components/common/Settings"
+
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const DOCUMENTATION_ID = "documentationSectionId"
+/**
+ * 
+ * @returns !ContentRow
+ */
+export function ThemeSettings() {
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
 
-export default function useDocsActions() {
-	const {
-		data: docSearchIndex = { searchIndexes: [] },
-	} = useGetDocSearchIndexQuery(undefined)
+	const handleSave = () => {
 
-	const dispatch = useDispatch()
+	}
 
-	const searchActions = useMemo(() => {
-		let actions = []
-		const collectDocs = (tree) => {
-			Object.keys(tree).forEach((key) => {
-				const curr = tree[key]
-				if (curr.children) {
-					collectDocs(curr.children)
+	const handleCancel = () => {
+
+	}
+
+	return (
+		<ContentRow title="Callout Block">
+			<EditButton
+				defaultState={
+					<Box>
+						hello Google
+					</Box>
 				}
-				if (!curr.children) {
-					actions.push({
-						...curr,
-						parent: DOCUMENTATION_ID,
-						shortcut: [],
-						perform: () => {
-							if (regURL.test(curr.slug))
-								window.open(curr.slug, "_blank")
-							else
-								dispatch(setRedirect(curr.slug))
+				saveAction={handleSave}
+				cancelAction={handleCancel}
+			>
+				<Box
+					sx={{
+						display: "flex",
+						flexWrap: "wrap",
+						"& > :not(style)": {
+							m: 1,
+							width: 128,
+							height: 128,
 						},
-					})
-				}
-			})
-			return actions
-		}
+					}}
+				>
+					helllllllllllllllllllllll
+				</Box>
 
-		const shortedList = keyBy(docSearchIndex.searchIndexes, "id")
-
-		return collectDocs(shortedList)
-	}, [dispatch, docSearchIndex.searchIndexes])
-
-	const rootSearchAction = useMemo(
-		() =>
-			searchActions.length
-				? {
-					id: DOCUMENTATION_ID,
-					name: "Search docs…",
-					shortcut: ["?"],
-					keywords: "find",
-					section: "Documentation",
-				}
-				: null,
-		[searchActions]
+			</EditButton>
+		</ContentRow>
 	)
-
-	useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean), [docSearchIndex.searchIndexes.length])
 }

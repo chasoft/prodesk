@@ -37,7 +37,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 //PROJECT IMPORT
 import { getAuth } from "@redux/selectors"
 import { getLayout } from "@layout/ClientLayout"
-import { themeInfo } from "@components/Themes/themeInfo"
+import { themeInfo, THEME_NAME } from "@components/Themes/themeInfo"
 import { useCreateDocSearchIndex } from "@helpers/docSearchIndex"
 import useAppSettings from "@helpers/useAppSettings"
 
@@ -67,6 +67,9 @@ import {
 	CircularProgressBox,
 	LinearProgressWithLabel
 } from "@components/common"
+import { ThemeSettings as SimplicityThemeSettings } from "@components/Themes/Simplicity/ThemeSettings"
+import { ThemeSettings as TraditionalThemeSettings } from "@components/Themes/Traditional/ThemeSettings"
+import { ThemeSettings as GoogleThemeSettings } from "@components/Themes/Google/ThemeSettings"
 
 //ASSETS
 
@@ -168,32 +171,17 @@ function DocTheme() {
 				</EditButton>
 			</ContentRow>
 
-			<ContentRow title="Callout Block">
-				<EditButton
-					defaultState={
-						<Box>
-							hello
-						</Box>
-					}
-					saveAction={handleSaveSelectedTheme}
-					cancelAction={handleCancel}
-				>
-					<Box
-						sx={{
-							display: "flex",
-							flexWrap: "wrap",
-							"& > :not(style)": {
-								m: 1,
-								width: 128,
-								height: 128,
-							},
-						}}
-					>
-						helllllllllllllllllllllll
-					</Box>
+			{(activeTheme === THEME_NAME.themeSimplicity)
+				? <SimplicityThemeSettings />
+				: null}
 
-				</EditButton>
-			</ContentRow>
+			{(activeTheme === THEME_NAME.themeTraditional)
+				? <TraditionalThemeSettings />
+				: null}
+
+			{(activeTheme === THEME_NAME.themeGoogle)
+				? <GoogleThemeSettings />
+				: null}
 
 		</ContentGroup>
 	)

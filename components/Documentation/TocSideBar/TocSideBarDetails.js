@@ -41,7 +41,7 @@ import slugify from "react-slugify"
 
 //PROJECT IMPORT
 import { CircularProgressBox, LinearProgressWithLabel } from "@components/common"
-import { deleteFile, STORAGE_DESTINATION, useUploadFile } from "@helpers/storageApi"
+import { deleteFile, STORAGE_DESTINATION, useUploadFile, uploadSingleFile } from "@helpers/storageApi"
 import { regURL } from "@helpers/regex"
 import { SettingsSwitch } from "@components/common/Settings"
 import { useGetDoc } from "@helpers/useGetDocs"
@@ -389,29 +389,20 @@ function DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
 	}, [message])
 
 	const handleSelectAndUploadFile = async (e) => {
-		const file = e.target.files[0]
 
-		if (!file)
-			return
+		const photoURL = await uploadSingleFile(
+			e,
+			uploadFile,
+			`${STORAGE_DESTINATION.DOCS}/${docId}.png`
+		)
 
-		if (file.size > 1024000) {
+		if (photoURL?.error) {
 			setMessage({
 				code: CODE.FAILED,
-				message: "File size cannot exceed more than 1MB"
+				message: photoURL.error.message
 			})
 			return
 		}
-
-		// const extension = file.type.split("/")[1]
-		/*
-			Currently, i don't want to deal with searching files
-			then, I use fixed fileRef which distinguish by docId
-		*/
-		const extension = "png"
-		const photoURL = await uploadFile(
-			file,
-			`${STORAGE_DESTINATION.DOCS}/${docId}.${extension}`
-		)
 
 		await updateDoc({
 			docItem: {
