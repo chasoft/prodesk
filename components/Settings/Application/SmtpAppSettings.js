@@ -25,13 +25,17 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import useUiSettings from "@helpers/useUiSettings"
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
+
+import {
+	ContentGroup,
+	ContentRow,
+	ContentDescription,
+} from "@components/common/Settings"
 
 //ASSETS
 
@@ -40,25 +44,48 @@ import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/Inne
  *****************************************************************/
 
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
 
-function ApplicationSettingsAds() {
-
-	useUiSettings({
-		activeTab: APPLICATION_SETTINGS_NAMES.ADS,
-		background: {
-			backgroundImage: ""
-		}
-	})
+export default function SmtpAppSettings() {
 
 	return (
-		<>
-			<Typography variant="h2">Admin Application Settings - ADS</Typography>
-		</>
+		<ContentGroup title="Sending Emails">
+
+			<ContentDescription>
+				Emails sending
+			</ContentDescription>
+
+			<ContentRow
+				title="Two factor authentication"
+				defaultContent={
+					<Box>
+						hello
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						hehe
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
+
+			<ContentRow
+				title="Login timeout"
+				defaultContent={
+					<Box>
+						set timeout to secure your account
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						hehe
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
+
+		</ContentGroup >
 	)
 }
-
-ApplicationSettingsAds.getLayout = getLayout
-export default ApplicationSettingsAds

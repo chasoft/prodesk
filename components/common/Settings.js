@@ -114,119 +114,158 @@ ContentDescription.propTypes = {
 	children: PropTypes.node
 }
 
-export function ContentRow({ title, tooltip, removePadding = false, sx, children }) {
+export function ContentRow({
+	title,
+	tooltip,
+	sx,
+	defaultContent,
+	editModeContent,
+	isUpdating,
+	isModified,
+	handleSave,
+	handleCancel,
+	children
+}) {
+
+	const [isEditMode, setIsEditMode] = useState(false)
+
 	return (
-		<Box sx={{
+		<Box id="ContentRow" sx={{
 			display: "flex",
-			flexDirection: { xs: "column", sm: "row" },
-			px: 4,
-			py: { xs: 2, sm: removePadding ? 0 : 1 },
+			flexDirection: {
+				xs: "column",
+				md: isEditMode ? "column" : "row"
+			},
+			px: { xs: 2, xss: 4 },
+			py: 2,
+			backgroundColor: isEditMode ? "action.hover" : "",
 			":hover": {
 				backgroundColor: "action.hover"
 			},
 			transition: "height .3s cubic-bezier(0.4, 0, 0.2, 1)",
 			...sx
 		}}>
-			<Box sx={{
-				width: "201px",
-				display: "flex",
-				alignItems: "center"
-			}}>
-				<Typography variant="caption" color="grey.600">
-					{title}
-				</Typography>
-				{tooltip &&
-					<Tooltip arrow title={tooltip} placement="top">
-						<HelpOutlineIcon
-							sx={{
-								ml: 0.5,
-								cursor: "pointer",
-								fill: (theme) => theme.palette.grey[600],
-								fontSize: "1rem"
-							}} />
-					</Tooltip>}
+			{title
+				? <Box id="rowHeader" sx={{
+					display: "flex",
+					alignItems: "center",
+					...(isEditMode
+						? {
+							mx: { xs: -2, xss: -4 },
+							px: 4,
+							py: 1,
+							flexGrow: 1,
+							backgroundColor: "primary.main"
+						}
+						: {
+							width: "200px"
+						})
+				}}>
+					<Typography
+						variant="caption"
+						sx={{
+							color: isEditMode ? "#FFF" : "grey.600",
+							fontWeight: isEditMode ? "700" : "500"
+						}}
+
+					>
+						{title}
+					</Typography>
+					{tooltip &&
+						<Tooltip arrow title={tooltip} placement="top">
+							<HelpOutlineIcon
+								sx={{
+									ml: 0.5,
+									cursor: "pointer",
+									fill: (theme) => isEditMode ? "#FFF" : theme.palette.grey[600],
+									fontSize: "1rem"
+								}} />
+						</Tooltip>}
+				</Box>
+				: null}
+
+			<Box id="rowContent" sx={{ width: "100%" }}>
+				{children
+					? children
+					: <>
+						<Collapse in={!isEditMode}>
+							<Box sx={{
+								display: "flex",
+								alignItems: "center",
+								visibility: isEditMode ? "hidden" : "visible"
+							}}>
+
+								{defaultContent}
+
+								<IconButton onClick={() => { setIsEditMode(true) }} disabled={isUpdating}>
+									<EditIcon fontSize="small" />
+								</IconButton>
+
+								{isUpdating && <CircularProgress size={16} />}
+
+							</Box>
+						</Collapse>
+
+						<Collapse in={isEditMode}>
+							<Box sx={{ width: "100%" }}>
+								<Box sx={{ pt: 2 }}>
+									{editModeContent}
+								</Box>
+								<Box sx={{
+									display: "flex",
+									justifyContent: "flex-end",
+									pb: 3, pt: 2, mt: 2,
+									borderTop: "1px solid transparent",
+									borderColor: "divider",
+								}}>
+									<Button
+										onClick={() => {
+											if (typeof handleCancel === "function") {
+												handleCancel()
+											}
+											setIsEditMode(false)
+										}}
+										variant="outlined"
+										color="primary"
+										size="small"
+										sx={{ px: 3, minWidth: "100px" }}
+									>
+										Cancel
+									</Button>
+									<Button
+										onClick={() => {
+											if (typeof handleSave === "function") {
+												handleSave()
+											}
+											setIsEditMode(false)
+										}}
+										type="submit"
+										variant="contained"
+										color="primary"
+										size="small"
+										sx={{ px: 3, ml: 2, minWidth: "100px" }}
+										disabled={!isModified}
+									>
+										Save
+									</Button>
+								</Box>
+							</Box>
+						</Collapse>
+					</>}
 			</Box>
-			<Box sx={{ width: "100%" }}>
-				{children}
-			</Box>
-		</Box>
+		</Box >
 	)
 }
 ContentRow.propTypes = {
 	title: PropTypes.node,
 	tooltip: PropTypes.string,
-	removePadding: PropTypes.bool,
 	sx: PropTypes.object,
-	children: PropTypes.node
-}
-
-export function EditButton({ defaultState, saveAction, cancelAction, isUpdating = false, canSave = true, children }) {
-	const [isEditMode, setIsEditMode] = useState(false)
-	return (
-		<>
-			<Collapse in={!isEditMode}>
-				<Box sx={{
-					display: "flex",
-					alignItems: "center"
-				}}>
-					{defaultState}
-					<IconButton onClick={() => { setIsEditMode(true) }} disabled={isUpdating}>
-						<EditIcon fontSize="small" />
-					</IconButton>
-					{isUpdating && <CircularProgress size={16} />}
-				</Box>
-			</Collapse>
-
-			<Collapse in={isEditMode}>
-				<Box sx={{ width: "100%" }}>
-					<Box sx={{ pt: 3 }}>
-						{children}
-					</Box>
-					<Box sx={{
-						display: "flex",
-						justifyContent: "flex-end",
-						pb: 3, pt: 2, mt: 2,
-						borderTop: "1px solid transparent",
-						borderColor: "divider",
-					}}>
-						<Button
-							onClick={() => {
-								if (typeof cancelAction === "function") { cancelAction() }
-								setIsEditMode(false)
-							}}
-							variant="outlined"
-							color="primary"
-							size="small"
-							sx={{ px: 3, minWidth: "100px" }}
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={() => {
-								saveAction()
-								setIsEditMode(false)
-							}}
-							type="submit"
-							variant="contained"
-							color="primary"
-							size="small"
-							sx={{ px: 3, ml: 2, minWidth: "100px" }}
-							disabled={!canSave}
-						>
-							Save
-						</Button>
-					</Box>
-				</Box>
-			</Collapse>
-		</>
-	)
-}
-EditButton.propTypes = {
-	defaultState: PropTypes.node,
-	saveAction: PropTypes.func,
-	cancelAction: PropTypes.func,
+	defaultContent: PropTypes.node,
+	editModeContent: PropTypes.node,
 	isUpdating: PropTypes.bool,
-	canSave: PropTypes.bool,
+	isModified: PropTypes.bool,
+	handleSave: PropTypes.func,
+	handleCancel: PropTypes.func,
 	children: PropTypes.node
 }
 
@@ -385,21 +424,27 @@ SettingsContentDetails.propTypes = {
 	children: PropTypes.node
 }
 
-function ContentHeader({ children }) {
+function ContentHeader({ sx, children }) {
 	return (
-		<Box sx={{
-			display: "flex",
-			alignItems: "center",
-			justifyContent: "space-between",
-			px: 3,
-			py: { xs: 1, sm: 2 },
-			borderTopLeftRadius: 8,
-			borderTopRightRadius: 8,
-			backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
-		}}> {children} </Box>
+		<Box
+			sx={{
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
+				px: 3,
+				py: { xs: 1, sm: 2 },
+				borderTopLeftRadius: 8,
+				borderTopRightRadius: 8,
+				backgroundColor: { xs: "#F0F0F0", sm: "transparent" },
+				...sx
+			}}
+		>
+			{children}
+		</Box>
 	)
 }
 ContentHeader.propTypes = {
+	sx: PropTypes.object,
 	children: PropTypes.node
 }
 
@@ -409,9 +454,18 @@ export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () =
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
-			<ContentHeader>
-				<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-					<Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+			<ContentHeader sx={{ mb: 2 }}>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+					flexGrow: 1,
+				}}>
+
+					<Box sx={{
+						display: "flex",
+						alignItems: "center",
+						flexGrow: 1
+					}}>
 						<Tooltip title="Go back" placement="top">
 							<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
 								<NavigateBeforeIcon />
@@ -419,7 +473,9 @@ export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () =
 						</Tooltip>
 						<Typography variant="h4" style={{ margin: 0 }}>{children}</Typography>
 					</Box>
+
 					{rightButton}
+
 				</Box>
 			</ContentHeader>
 		)
@@ -460,7 +516,7 @@ SettingsContentHelper.propTypes = {
 	children: PropTypes.node
 }
 
-function ContentHelperText({ children }) {
+export function ContentHelperText({ children }) {
 	return (
 		<Box sx={{
 			color: (theme) => theme.palette.grey[600],

@@ -44,19 +44,20 @@ import { setIsSideBarExpanded, setShowSideBar } from "@redux/slices/uiSettings"
 
 //ASSETS
 import "react-perfect-scrollbar/dist/css/styles.css"
-import AirplaneTicketOutlinedIcon from "@mui/icons-material/AirplaneTicketOutlined"
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
 import AddIcon from "@mui/icons-material/Add"
-import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined"
-import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined"
+import AirplaneTicketOutlinedIcon from "@mui/icons-material/AirplaneTicketOutlined"
+import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined"
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
-import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined"
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined"
 import CardMembershipOutlinedIcon from "@mui/icons-material/CardMembershipOutlined"
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined"
-import AppsOutlinedIcon from "@mui/icons-material/AppsOutlined"
-import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined"
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined"
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
+import MenuIcon from "@mui/icons-material/Menu"
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined"
+import SettingsApplicationsOutlinedIcon from "@mui/icons-material/SettingsApplicationsOutlined"
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined"
 
 /*****************************************************************
  * INIT                                                          *
@@ -69,6 +70,7 @@ export const IconName = {
 	users: "users",
 	settings: "settings",
 	members: "members",
+	menu: "menu",
 	pages: "pages",
 	application: "application",
 	support: "support",
@@ -77,17 +79,18 @@ export const IconName = {
 }
 
 const IconLib = {
-	[IconName.tickets]: <AirplaneTicketOutlinedIcon />,
-	[IconName.newTicket]: <AddIcon />,
-	[IconName.documentation]: <ArticleOutlinedIcon />,
-	[IconName.users]: <PeopleAltOutlinedIcon />,
-	[IconName.settings]: <SettingsApplicationsOutlinedIcon />,
-	[IconName.members]: <CardMembershipOutlinedIcon />,
-	[IconName.pages]: <LayersOutlinedIcon />,
-	[IconName.application]: <AppsOutlinedIcon />,
-	[IconName.support]: <SupportAgentOutlinedIcon />,
 	[IconName.account]: <ManageAccountsOutlinedIcon />,
+	[IconName.application]: <AppsOutlinedIcon />,
+	[IconName.documentation]: <ArticleOutlinedIcon />,
+	[IconName.users]: <CardMembershipOutlinedIcon />,
+	[IconName.menu]: <MenuIcon />,
+	[IconName.newTicket]: <AddIcon />,
+	[IconName.pages]: <LayersOutlinedIcon />,
 	[IconName.profile]: <AccountCircleOutlinedIcon />,
+	[IconName.settings]: <SettingsApplicationsOutlinedIcon />,
+	[IconName.support]: <SupportAgentOutlinedIcon />,
+	[IconName.tickets]: <AirplaneTicketOutlinedIcon />,
+	[IconName.users]: <PeopleAltOutlinedIcon />,
 }
 
 function SideBarContentExpanded({ data }) {

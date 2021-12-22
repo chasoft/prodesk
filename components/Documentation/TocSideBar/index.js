@@ -556,7 +556,6 @@ function TocSideBar() {
 
 	return (
 		<DndProvider backend={HTML5Backend}>
-
 			<PerfectScrollbar
 				id="TocSideBar-PerfectScrollbar"
 				component="div"
@@ -568,6 +567,7 @@ function TocSideBar() {
 					onClick={handleCloseDetails}
 					ref={sideBarRef}
 					sx={{
+						position: "fixed",
 						display: { xs: "none", md: "flex" },
 						flexDirection: { flexDirection: "column" },
 						minWidth: "300px",
@@ -575,10 +575,11 @@ function TocSideBar() {
 						borderRight: "1px solid transparent",
 						borderColor: "divider",
 						backgroundColor: "#F0F0F0",
-						marginBottom: "50px"
+						marginBottom: "50px",
+						height: "100%"
 					}}
 				>
-					<div style={{ position: "sticky", display: "flex", flexDirection: "column" }}>
+					<div style={{ display: "flex", flexDirection: "column" }}>
 						{isLoadingDocs
 							? <CircularProgressBox />
 							: docs.map((cat) => {
@@ -690,7 +691,6 @@ function TocSideBar() {
 								)
 							})}
 					</div>
-
 					<TocSideBarActionsGroup />
 				</Box>
 			</PerfectScrollbar>

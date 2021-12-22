@@ -31,14 +31,12 @@ import { size } from "lodash"
 
 //PROJECT IMPORT
 import { useGetDoc } from "@helpers/useGetDocs"
-import SimplicityLayout from "@components/Themes/Simplicity/layout"
-import { CustomButtonContained } from "@components/Themes/Simplicity/Buttons/Contained"
 import { CircularProgressBox } from "@components/common"
 import ThemeSimplicity404 from "@components/Themes/Simplicity/404"
 import TextEditor from "@components/common/TextEditor"
 import { useGetDocContentQuery } from "@redux/slices/firestoreApi"
 import useScrollSpy from "@helpers/useScrollSpy"
-
+import SimplicityLayout from "@components/Themes/Simplicity/layout"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
@@ -263,68 +261,6 @@ function Article({ docItem }) {
 					</Box>
 
 					<Box component="footer">
-						<Box id="article-votes" sx={{
-							padding: "0 0 10px",
-							textAlign: "center",
-							marginTop: "100px",
-							marginBottom: "100px"
-						}}>
-							<Box component="span" sx={{
-								color: "#282828",
-								fontSize: "18px",
-								lineHeight: "19px",
-								fontWeight: "500"
-							}}>
-								Was this article helpful?
-							</Box>
-							<Box id="article-votes-controls" sx={{
-								marginTop: "20px",
-								"&button": {
-									background: "#fff",
-									margin: "10px 5px",
-									minWidth: "125px",
-									width: "auto",
-									padding: "2px 16px",
-									border: "2px solid #000",
-									borderRadius: "8px"
-								},
-								"&button:hover": {
-									backgroundColor: "#efefef"
-								}
-							}}>
-								<CustomButtonContained
-									variant="outlined"
-									sx={{
-										minWidth: "125px",
-										border: "2px solid #000",
-										marginRight: "25px",
-										fontSize: "16px",
-										boxShadow: "none",
-										":hover": {
-											backgroundColor: "#efefef"
-										}
-									}}
-								>
-									Yes, thanks!
-								</CustomButtonContained>
-
-								<CustomButtonContained
-									variant="outlined"
-									sx={{
-										minWidth: "125px",
-										border: "2px solid #000",
-										boxShadow: "none",
-										fontSize: "16px",
-										":hover": {
-											backgroundColor: "#efefef"
-										}
-									}}
-								>
-									Not really
-								</CustomButtonContained>
-							</Box>
-
-						</Box>
 
 					</Box>
 				</>}
@@ -465,7 +401,7 @@ function ArticleSideBar({ docItem }) {
 						<Box component="h3" sx={{
 							display: { xs: "none", mdd: "block" },
 						}}>
-							Article outline
+							In this article
 						</Box>
 						<Box component="ol" sx={{
 							listStyle: "none",
@@ -528,20 +464,23 @@ ArticleSideBar.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function ThemeSimplicityArticles({ slug }) {
+const ThemeSimplicityArticles = React.memo(function ThemeSimplicityArticles({ slug }) {
 	const {
 		data: docItem = {},
 		isLoading: isLoadingDoc
 	} = useGetDoc(undefined, slug)
 
-	if (isLoadingDoc)
+	if (isLoadingDoc) {
 		return (
 			<SimplicityLayout>
-				<CircularProgressBox minHeight="70vh" />
+				<CircularProgressBox text="Reading database..." minHeight="70vh" />
 			</SimplicityLayout>
 		)
+	}
 
 	if (size(docItem) === 0) return <ThemeSimplicity404 />
+
+	console.log("ThemeSimplicityArticles executed (expected)")
 
 	return (
 		<SimplicityLayout>
@@ -560,9 +499,9 @@ function ThemeSimplicityArticles({ slug }) {
 
 			</Box>
 
-		</SimplicityLayout >
+		</SimplicityLayout>
 	)
-}
+})
 ThemeSimplicityArticles.propTypes = {
 	slug: PropTypes.string
 }

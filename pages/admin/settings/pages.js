@@ -25,14 +25,14 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
-
+import PageSettings from "@components/Settings/PageSettings"
 //ASSETS
 
 /*****************************************************************
@@ -44,7 +44,7 @@ import useUiSettings from "@helpers/useUiSettings"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Pages() {
+function AdminPageSettings() {
 
 	useUiSettings({
 		background: {
@@ -54,10 +54,13 @@ function Pages() {
 
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Pages</Typography>
+
+			<PageSettings />
+
+
 		</Container>
 	)
 }
 
-Pages.getLayout = getLayout
-export default Pages
+AdminPageSettings.getLayout = getLayout
+export default AdminPageSettings

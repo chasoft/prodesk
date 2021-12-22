@@ -59,7 +59,7 @@ const ThemeTraditional = dynamic(
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Categories() {
+function CategoryIndex() {
 	const {
 		data: activeTheme,
 		isLoading: isLoadingActiveTheme
@@ -70,20 +70,14 @@ function Categories() {
 
 	switch (activeTheme) {
 		case THEME_NAME.themeGoogle:
-			return (
-				<ThemeGoogle />
-			)
+			return <ThemeGoogle />
 		case THEME_NAME.themeTraditional:
-			return (
-				<ThemeTraditional />
-			)
+			return <ThemeTraditional />
 		default:
-			return (
-				<ThemeSimplicityCategories />
-			)
+			return <ThemeSimplicityCategories />
 	}
 }
 
-Categories.getLayout = getRootLayout
+CategoryIndex.getLayout = getRootLayout
 
-export default Categories
+export default CategoryIndex

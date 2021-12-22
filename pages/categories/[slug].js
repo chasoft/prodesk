@@ -80,17 +80,11 @@ function SingleCategory() {
 
 	switch (activeTheme) {
 		case THEME_NAME.themeGoogle:
-			return (
-				<ThemeGoogle />
-			)
+			return <ThemeGoogle />
 		case THEME_NAME.themeTraditional:
-			return (
-				<ThemeTraditional />
-			)
+			return <ThemeTraditional />
 		default:
-			return (
-				<ThemeSimplicityCategories slug={slug} />
-			)
+			return <ThemeSimplicityCategories slug={slug} />
 	}
 }
 

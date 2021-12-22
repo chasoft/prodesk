@@ -27,7 +27,7 @@ import PropTypes from "prop-types"
 import Link from "next/link"
 
 // MATERIAL-UI
-import { Avatar, Box, CircularProgress, Collapse, Grid, LinearProgress, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, Collapse, Grid, LinearProgress, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -194,7 +194,7 @@ function DefaultAvatarPanel({ size = 45, callback }) {
 }
 DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }
 
-function CircularProgressBox({ minHeight = "200px", sx }) {
+function CircularProgressBox({ text, minHeight = "200px", sx }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -203,11 +203,14 @@ function CircularProgressBox({ minHeight = "200px", sx }) {
 			minHeight: { minHeight },
 			...sx
 		}}>
-			<CircularProgress />
+			<Box sx={{ display: "flex", alignItems: "center" }}>
+				<CircularProgress />{text ? <Typography ml={2}>{text}</Typography> : null}
+			</Box>
 		</Box>
 	)
 }
 CircularProgressBox.propTypes = {
+	text: PropTypes.string,
 	minHeight: PropTypes.string,
 	sx: PropTypes.object
 }
@@ -228,6 +231,30 @@ function LinearProgressWithLabel(props) {
 }
 LinearProgressWithLabel.propTypes = {
 	value: PropTypes.number.isRequired,
+	sx: PropTypes.object
+}
+
+export function InputBaseStyled({ sx, ...others }) {
+	const [minRows, setMinRows] = useState(1)
+	return (
+		<TextField
+			fullWidth
+			variant="outlined"
+			minRows={minRows}
+			onBlur={() => setMinRows(1)}
+			onFocus={() => setMinRows(3)}
+			sx={{
+				color: "grey.800",
+				borderColor: "divider",
+				"& > div input": {
+					padding: "12px 14px"
+				},
+				...sx
+			}}
+			{...others} />
+	)
+}
+InputBaseStyled.propTypes = {
 	sx: PropTypes.object
 }
 

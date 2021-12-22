@@ -37,10 +37,10 @@ import { useUpdateCategoryMutation } from "@redux/slices/firestoreApi"
 import { CircularProgressBox } from "@components/common"
 
 import {
+	ContentHelperText,
 	SettingsContentHeader,
 	SettingsContentHelper,
 	SettingsContentDetails,
-	SettingsContentHelperText,
 	SettingsContentHelperLearnMore,
 } from "@components/common/Settings"
 
@@ -93,10 +93,12 @@ function CategoriesOverview({ backBtnClick }) {
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
-				<SettingsContentHelperText>
-					You can create as many category and sub-category as you want to support your business.
-					<SettingsContentHelperLearnMore target="/docs" />
-				</SettingsContentHelperText>
+				<ContentHelperText>
+					<Typography paragraph>
+						You can create as many category and sub-category as you want to support your business.
+						<SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
+				</ContentHelperText>
 			</SettingsContentHelper>
 
 			{isLoading ?

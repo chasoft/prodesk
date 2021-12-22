@@ -74,7 +74,7 @@ async function fireStoreBaseQuery(args) {
 		case ACTIONS.UPDATE_DOC: return _updateDoc(args)
 
 		//APPLICATION SETTINGS
-		case ACTIONS.GET_APPSETTINGS: return getAppSettings()
+		case ACTIONS.GET_APPSETTINGS: return getAppSettings(args)
 		case ACTIONS.UPDATE_APPSETTINGS: return updateAppSettings(args)
 
 		//USER SETTINGS

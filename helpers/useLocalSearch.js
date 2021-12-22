@@ -22,59 +22,32 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
-import dynamic from "next/dynamic"
+import { useEffect, useMemo, useState } from "react"
 
 //THIRD-PARTY
+import Fuse from "fuse.js"
 
 //PROJECT IMPORT
-import useAppSettings from "@helpers/useAppSettings"
-import { APP_SETTINGS } from "@helpers/constants"
-import { THEME_NAME } from "@components/Themes/themeInfo"
-import { CircularProgressBox } from "@components/common"
-import { getRootLayout } from "@layout/RootLayout"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ThemeSimplicity = dynamic(
-	() => import("@components/Themes/Simplicity"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
-
-const ThemeGoogle = dynamic(
-	() => import("@components/Themes/Google"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
-
-const ThemeTraditional = dynamic(
-	() => import("@components/Themes/Traditional"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Home() {
-	const {
-		data: activeTheme,
-		isLoading: isLoadingActiveTheme
-	} = useAppSettings(APP_SETTINGS.activeTheme)
+export default function useLocalSearch(source, options, searchText) {
+	const [searchResult, setSearchResult] = useState([])
 
-	if (isLoadingActiveTheme)
-		return <CircularProgressBox minHeight="70vh" />
+	const fuse = useMemo(() => new Fuse(source, options), [source, options])
 
-	switch (activeTheme) {
-		case THEME_NAME.themeGoogle:
-			return <ThemeGoogle />
-		case THEME_NAME.themeTraditional:
-			return <ThemeTraditional />
-		default:
-			return <ThemeSimplicity />
-	}
+	useEffect(() => {
+		if (searchText.length > 2)
+			setSearchResult(fuse.search(searchText))
+		else
+			setSearchResult([])
+	}, [fuse, searchText])
+
+	return searchResult
 }
-Home.getLayout = getRootLayout
-
-export default Home

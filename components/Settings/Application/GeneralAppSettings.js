@@ -25,13 +25,17 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { getLayout } from "@layout/AdminLayout"
-import useUiSettings from "@helpers/useUiSettings"
+
+import {
+	ContentGroup,
+	ContentRow,
+	ContentDescription,
+} from "@components/common/Settings"
 
 //ASSETS
 
@@ -40,25 +44,46 @@ import useUiSettings from "@helpers/useUiSettings"
  *****************************************************************/
 
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+export default function GeneralAppSettings() {
 
-function Members() {
-
-	useUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
-			<Typography variant="h1">Admin Members</Typography>
+		<ContentGroup title="Site Identity">
 
+			<ContentDescription>
+				Change the name, title, icon for your site here
+			</ContentDescription>
 
-		</Container>
+			<ContentRow
+				title="Site Info"
+				defaultContent={
+					<Box>
+						Default state
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						Edit state
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
+
+			<ContentRow
+				title="Login methods"
+				defaultContent={
+					<Box>
+						Active login methods
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						login via Email, Google Account, Github Account, Twitter account
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
+		</ContentGroup >
 	)
 }
-
-Members.getLayout = getLayout
-export default Members

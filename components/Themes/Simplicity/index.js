@@ -24,10 +24,10 @@ import React from "react"
 import { Box, Typography } from "@mui/material"
 
 //PROJECT IMPORT
-import SimplicityLayout from "@components/Themes/Simplicity/layout"
 import { SectionCallOut } from "@components/Themes/Simplicity/Blocks/SectionCallOut"
 import { SectionCategoryBlocks } from "@components/Themes/Simplicity/Blocks/SectionCategoryBlocks"
 import { SectionHero } from "@components/Themes/Simplicity/Blocks/SectionHero"
+import SimplicityLayout from "@components/Themes/Simplicity/layout"
 
 /*****************************************************************
  * INIT                                                          *

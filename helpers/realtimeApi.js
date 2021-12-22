@@ -258,7 +258,7 @@ export function useClientAutoRefetching() {
 			async (data) => {
 				if (data.val().target?.isForPublic === true) {
 					await requestRefetching(data.val().tag)
-					console.log("background data refetching done!")
+					console.log("background data refetching done!", data.val().tag)
 				}
 			}
 		)

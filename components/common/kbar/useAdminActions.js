@@ -64,7 +64,9 @@ export default function useAdminActions() {
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
 					await updateAppSettings({
-						[APP_SETTINGS.activeTheme]: THEME_NAME.themeSimplicity
+						data: {
+							[APP_SETTINGS.activeTheme]: THEME_NAME.themeSimplicity
+						}
 					})
 					enqueueSnackbar("Simplicity theme selected successfully", { variant: "success" })
 				}
@@ -75,7 +77,9 @@ export default function useAdminActions() {
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
 					await updateAppSettings({
-						[APP_SETTINGS.activeTheme]: THEME_NAME.themeTraditional
+						data: {
+							[APP_SETTINGS.activeTheme]: THEME_NAME.themeTraditional
+						}
 					})
 					enqueueSnackbar("Traditional theme selected successfully", { variant: "success" })
 				}
@@ -86,7 +90,9 @@ export default function useAdminActions() {
 				parent: ID_GROUP.DOCUMENTATION,
 				perform: async () => {
 					await updateAppSettings({
-						[APP_SETTINGS.activeTheme]: THEME_NAME.themeGoogle
+						data: {
+							[APP_SETTINGS.activeTheme]: THEME_NAME.themeGoogle
+						}
 					})
 					enqueueSnackbar("Google theme selected successfully", { variant: "success" })
 				}

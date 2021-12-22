@@ -46,17 +46,17 @@ import { THEME_NAME } from "@components/Themes/themeInfo"
  *****************************************************************/
 
 const ThemeSimplicityArticles = dynamic(
-	() => import("../../components/Themes/Simplicity/articles"),
+	() => import("@components/Themes/Simplicity/articles"),
 	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
 )
 
 const ThemeGoogle = dynamic(
-	() => import("../../components/Themes/Google"),
+	() => import("@components/Themes/Google"),
 	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
 )
 
 const ThemeTraditional = dynamic(
-	() => import("../../components/Themes/Traditional"),
+	() => import("@components/Themes/Traditional"),
 	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
 )
 
@@ -80,17 +80,11 @@ function SingleArticle() {
 
 	switch (activeTheme) {
 		case THEME_NAME.themeGoogle:
-			return (
-				<ThemeGoogle />
-			)
+			return <ThemeGoogle />
 		case THEME_NAME.themeTraditional:
-			return (
-				<ThemeTraditional />
-			)
+			return <ThemeTraditional />
 		default:
-			return (
-				<ThemeSimplicityArticles slug={slug} />
-			)
+			return <ThemeSimplicityArticles slug={slug} />
 	}
 }
 

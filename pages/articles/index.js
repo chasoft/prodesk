@@ -42,17 +42,23 @@ import { getRootLayout } from "@layout/RootLayout"
 
 //This is default Theme
 const ThemeSimplicityArticles = dynamic(
-	() => import("./../../components/Themes/Simplicity/articles"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
+	() => import("@components/Themes/Simplicity/articles"),
+	{
+		loading: () =>
+			<CircularProgressBox
+				text="Rendering..."
+				minHeight="70vh"
+			/>
+	}
 )
 
 const ThemeGoogle = dynamic(
-	() => import("./../../components/Themes/Google"),
+	() => import("@components/Themes/Google"),
 	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
 )
 
 const ThemeTraditional = dynamic(
-	() => import("./../../components/Themes/Traditional"),
+	() => import("@components/Themes/Traditional"),
 	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
 )
 
@@ -60,7 +66,7 @@ const ThemeTraditional = dynamic(
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Categories() {
+function ArticleIndex() {
 	const {
 		data: activeTheme,
 		isLoading: isLoadingActiveTheme
@@ -69,22 +75,18 @@ function Categories() {
 	if (isLoadingActiveTheme)
 		return <CircularProgressBox minHeight="70vh" />
 
+	console.log("Render > ArticleIndex")
+
 	switch (activeTheme) {
 		case THEME_NAME.themeGoogle:
-			return (
-				<ThemeGoogle />
-			)
+			return <ThemeGoogle />
 		case THEME_NAME.themeTraditional:
-			return (
-				<ThemeTraditional />
-			)
+			return <ThemeTraditional />
 		default:
-			return (
-				<ThemeSimplicityArticles />
-			)
+			return <ThemeSimplicityArticles />
 	}
 }
 
-Categories.getLayout = getRootLayout
+ArticleIndex.getLayout = getRootLayout
 
-export default Categories
+export default ArticleIndex

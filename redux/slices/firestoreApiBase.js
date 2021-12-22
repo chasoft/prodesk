@@ -30,7 +30,7 @@ import { keyBy } from "lodash"
 //PROJECT IMPORT
 import { auth, db } from "@helpers/firebase"
 import { ACTIONS, COLLECTION, GROUP } from "./firestoreApiConstants"
-import { CODE, DOC_TYPE, USERGROUP, REDIRECT_URL } from "@helpers/constants"
+import { APP_SETTINGS, CODE, DOC_TYPE, USERGROUP, REDIRECT_URL } from "@helpers/constants"
 
 /*****************************************************************
  * UTILS FUNCTIONS                                               *
@@ -222,7 +222,7 @@ export async function finalizeInstallation(args) {
 		}, { merge: true })
 
 		//popular default settings
-		batch.set(doc(db, COLLECTION.SETTINGS, "settings"), {
+		batch.set(doc(db, COLLECTION.SETTINGS, APP_SETTINGS.defaultDocName), {
 			restrictedUsernames: ["admin", "admins", "superadmin", "superadmins", "staff", "staffs", "member", "members", "user", "users", "password", "ticket", "department", "label", "labels", "category", "categories", "default", "profile", "profiles", "setting", "settings", "application"]
 		}, { merge: true })
 
@@ -859,14 +859,18 @@ export async function _deleteDoc(args) {
 	}
 }
 
-export async function getAppSettings() {
+export async function getAppSettings(args) {
 	try {
 		let settings = {}
+		const docName = args.docName ?? APP_SETTINGS.defaultDocName
 		const docSnap = await getDoc(
-			doc(db, COLLECTION.SETTINGS, "settings")
+			doc(db, COLLECTION.SETTINGS, docName)
 		)
 		if (docSnap.exists()) settings = docSnap.data()
-		return { data: settings }
+		return {
+			data: settings,
+			docName: docName
+		}
 	} catch (e) {
 		return throwError(CODE.FAILED, ACTIONS.GET_APPSETTINGS, e, null)
 	}
@@ -874,16 +878,19 @@ export async function getAppSettings() {
 
 export async function updateAppSettings(args) {
 	try {
+		const docName = args.body?.options?.docName ?? APP_SETTINGS.defaultDocName
 		await setDoc(
-			doc(db, COLLECTION.SETTINGS, "settings"),
-			{ ...args.body },
-			{ merge: true }
+			doc(db, COLLECTION.SETTINGS, docName),
+			args.body.data,
+			{
+				merge: args.body.options?.merge ?? true
+			}
 		)
 		return {
 			data: {
 				code: CODE.SUCCESS,
 				action: ACTIONS.UPDATE_APPSETTINGS,
-				message: "Settings updated successfully"
+				message: `Settings at "${docName}" updated successfully`
 			}
 		}
 	} catch (e) {

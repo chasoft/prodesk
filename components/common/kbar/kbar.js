@@ -159,7 +159,7 @@ const ResultItem = React.forwardRef(({ action, active, currentRootActionId }, re
 					fontSize: 14,
 				}}
 			>
-				{action.icon && action.icon}
+				{action.emoji && action.emoji}
 				<div style={{ display: "flex", flexDirection: "column" }}>
 					<div>
 						{ancestors.length > 0 &&

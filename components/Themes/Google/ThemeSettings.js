@@ -32,7 +32,6 @@ import { Box } from "@mui/material"
 //PROJECT IMPORT
 import {
 	ContentRow,
-	EditButton,
 } from "@components/common/Settings"
 
 
@@ -58,31 +57,20 @@ export function ThemeSettings() {
 	}
 
 	return (
-		<ContentRow title="Callout Block">
-			<EditButton
-				defaultState={
-					<Box>
-						hello Google
-					</Box>
-				}
-				saveAction={handleSave}
-				cancelAction={handleCancel}
-			>
-				<Box
-					sx={{
-						display: "flex",
-						flexWrap: "wrap",
-						"& > :not(style)": {
-							m: 1,
-							width: 128,
-							height: 128,
-						},
-					}}
-				>
+		<ContentRow
+			title="Callout Block"
+			defaultContent={
+				<Box>
+					hello Google
+				</Box>
+			}
+			editModeContent={
+				<Box>
 					helllllllllllllllllllllll
 				</Box>
-
-			</EditButton>
-		</ContentRow>
+			}
+			handleSave={handleSave}
+			handleCancel={handleCancel}
+		/>
 	)
 }

@@ -27,16 +27,16 @@ import Link from "next/link"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import {
+	ContentHelperText,
 	SettingsContentHeader,
 	SettingsContentHelper,
 	SettingsContentHelperLearnMore,
-	SettingsContentHelperText
 } from "@components/common/Settings"
 
 //ASSETS
@@ -57,19 +57,19 @@ function CannedRepliesOverview({ departmentCreated, backBtnClick }) {
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
-				<SettingsContentHelperText>
-					Canned-replies are great to speed up your supporting or prevent repeative actions. They are linked & grouped by departments.
-					<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
-					You can create new canned-replies here or convert any existing replies to canned-replies.
-					<SettingsContentHelperLearnMore target="/docs" />
+				<ContentHelperText>
+					<Typography paragraph>
+						Canned-replies are great to speed up your supporting or prevent repeative actions. They are linked & grouped by departments.
+					</Typography>
+					<Typography paragraph>
+						You can create new canned-replies here or convert any existing replies to canned-replies.
+						<SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
 					{!departmentCreated &&
-						<>
-							<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
-							<span>
-								You can not add any new canned-reply for there is no department created.Click here to go to <Link href="/admin/settings/tickets/department" passHref><Box component="a" href="just-a-placeholder" sx={{ color: "primary.main" }}>department settings</Box></Link>, create at least one department and come back later.
-							</span>
-						</>}
-				</SettingsContentHelperText>
+						<Typography paragraph>
+							You can not add any new canned-reply for there is no department created.Click here to go to <Link href="/admin/settings/tickets/department" passHref><Box component="a" href="just-a-placeholder" sx={{ color: "primary.main" }}>department settings</Box></Link>, create at least one department and come back later.
+						</Typography>}
+				</ContentHelperText>
 			</SettingsContentHelper>
 		</>
 	)

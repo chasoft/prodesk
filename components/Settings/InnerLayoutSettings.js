@@ -42,18 +42,14 @@ import { getLayout as getAdminLayout } from "@layout/AdminLayout"
 
 export const APPLICATION_SETTINGS_NAMES = {
 	GENERAL: "General",
-	USER: "Users",
 	SECURITY: "Security",
 	SMTP: "SMTP",
-	ADS: "Ads",
 }
 
 export const APPLICATION_SETTINGS_TABS = [
 	{ index: 0, name: APPLICATION_SETTINGS_NAMES.GENERAL, path: "/admin/settings/application" },
-	{ index: 1, name: APPLICATION_SETTINGS_NAMES.USER, path: "/admin/settings/application/users" },
-	{ index: 2, name: APPLICATION_SETTINGS_NAMES.SECURITY, path: "/admin/settings/application/security" },
-	{ index: 3, name: APPLICATION_SETTINGS_NAMES.SMTP, path: "/admin/settings/application/smtp" },
-	{ index: 4, name: APPLICATION_SETTINGS_NAMES.ADS, path: "/admin/settings/application/ads" },
+	{ index: 1, name: APPLICATION_SETTINGS_NAMES.SECURITY, path: "/admin/settings/application/security" },
+	{ index: 2, name: APPLICATION_SETTINGS_NAMES.SMTP, path: "/admin/settings/application/smtp" },
 ]
 
 /*****************************************************************

@@ -54,7 +54,6 @@ import {
 
 import {
 	ContentRow,
-	EditButton,
 } from "@components/common/Settings"
 
 import {
@@ -320,69 +319,66 @@ function CalloutBlock(props) {
 	}
 
 	return (
-		<ContentRow title="Callout Block">
-			<EditButton
-				defaultState={
+		<ContentRow
+			title="Callout Block"
+			defaultContent={
+				<Box sx={{
+					display: "flex",
+					flexDirection: { xs: "column", xss: "row" }
+				}}>
 					<Box sx={{
-						display: "flex",
-						flexDirection: { xs: "column", xss: "row" }
+						width: "200px",
+						height: "96px",
+						backgroundColor: localCache.background.color,
+						backgroundImage: `url(${localCache.background.imgUrl})`,
+						backgroundPosition: "bottom right",
+						backgroundRepeat: "no-repeat",
+						backgroundSize: "100px 96px"
 					}}>
-						<Box sx={{
-							width: "200px",
-							height: "96px",
-							backgroundColor: localCache.background.color,
-							backgroundImage: `url(${localCache.background.imgUrl})`,
-							backgroundPosition: "bottom right",
-							backgroundRepeat: "no-repeat",
-							backgroundSize: "100px 96px"
+						<Typography sx={{
+							fontSize: "14px",
+							fontWeight: 700,
+							mt: 4,
+							ml: 1,
+							color: "#FFF"
 						}}>
-							<Typography sx={{
-								fontSize: "14px",
-								fontWeight: 700,
-								mt: 4,
+							{localCache.heading.text}
+						</Typography>
+
+						<Box sx={{ display: "flex", mt: 1 }}>
+							<Box sx={{
+								width: "35px",
+								height: "14px",
+								fontSize: "5px",
 								ml: 1,
-								color: "#FFF"
-							}}>
-								{localCache.heading.text}
-							</Typography>
+								border: "2px solid white",
+								backgroundColor: "white",
+								borderRadius: "4px"
+							}} />
 
-							<Box sx={{ display: "flex", mt: 1 }}>
-								<Box sx={{
-									width: "35px",
-									height: "14px",
-									fontSize: "5px",
-									ml: 1,
-									border: "2px solid white",
-									backgroundColor: "white",
-									borderRadius: "4px"
-								}} />
-
-								<Box sx={{
-									width: "40px",
-									height: "14px",
-									fontSize: "5px",
-									ml: 1,
-									border: "2px solid white",
-									borderRadius: "4px"
-								}} />
-							</Box>
-						</Box>
-						<Box sx={{
-							display: "flex",
-							flexDirection: "column",
-							flexGrow: 1,
-							justifyContent: "center",
-							px: { xs: 0, xss: 2 },
-							py: { xs: 2, xss: 0 }
-						}}>
-							This block would be appear just below the search box in the frontpage.
+							<Box sx={{
+								width: "40px",
+								height: "14px",
+								fontSize: "5px",
+								ml: 1,
+								border: "2px solid white",
+								borderRadius: "4px"
+							}} />
 						</Box>
 					</Box>
-				}
-				saveAction={handleSaveCalloutBlock}
-				cancelAction={handleCancelCalloutBlock}
-				canSave={isModified}
-			>
+					<Box sx={{
+						display: "flex",
+						flexDirection: "column",
+						flexGrow: 1,
+						justifyContent: "center",
+						px: { xs: 0, xss: 2 },
+						py: { xs: 2, xss: 0 }
+					}}>
+						This block would be appear just below the search box in the frontpage.
+					</Box>
+				</Box>
+			}
+			editModeContent={
 				<Box>
 					<CustomContainer>
 						<Box id="preview" sx={{
@@ -517,7 +513,7 @@ function CalloutBlock(props) {
 											checked={localCache[item].display}
 											onChange={(e) => {
 												e.stopPropagation()
-												setLocalCache(null, `${item}.display`, true)
+												setLocalCache(null, `${item}.display`, "toggle")
 											}}
 										/>
 										<Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, mr: 2 }}>
@@ -547,6 +543,7 @@ function CalloutBlock(props) {
 												}}
 											/>
 										</Box>
+
 										<VariantSelect
 											value={localCache[item].variant}
 											setValue={(e, v) => {
@@ -578,13 +575,14 @@ function CalloutBlock(props) {
 
 							</Box>
 
-
 						</Box>
 					</Box>
 				</Box>
-
-			</EditButton>
-		</ContentRow>
+			}
+			handleSave={handleSaveCalloutBlock}
+			handleCancel={handleCancelCalloutBlock}
+			isModified={isModified}
+		/>
 	)
 }
 CalloutBlock.propTypes = {

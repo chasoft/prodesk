@@ -23,58 +23,91 @@
  *****************************************************************/
 
 import React from "react"
-import dynamic from "next/dynamic"
+
+// MATERIAL-UI
+import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import useAppSettings from "@helpers/useAppSettings"
-import { APP_SETTINGS } from "@helpers/constants"
-import { THEME_NAME } from "@components/Themes/themeInfo"
-import { CircularProgressBox } from "@components/common"
-import { getRootLayout } from "@layout/RootLayout"
+
+import { getLayout } from "@layout/AdminLayout"
+
+import {
+	ContentGroup,
+	ContentRow,
+	ContentDescription,
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader
+} from "@components/common/Settings"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ThemeSimplicity = dynamic(
-	() => import("@components/Themes/Simplicity"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
+function SampleBlock() {
+	return (
 
-const ThemeGoogle = dynamic(
-	() => import("@components/Themes/Google"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
+		<ContentGroup title="User Settings">
+			<ContentDescription>
+				Yes please
+			</ContentDescription>
 
-const ThemeTraditional = dynamic(
-	() => import("@components/Themes/Traditional"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
+			<ContentRow title="Users">
+				<Box sx={{
+					display: "flex",
+					flexDirection: { xs: "column", xss: "row" },
+					py: 2
+				}}>
+
+					helllooo....
+
+				</Box>
+			</ContentRow>
+
+			<ContentRow title="Members">
+				<Box sx={{
+					display: "flex",
+					flexDirection: { xs: "column", xss: "row" },
+					py: 2
+				}}>
+
+					helllooo....
+
+				</Box>
+			</ContentRow>
+
+		</ContentGroup >
+	)
+}
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Home() {
-	const {
-		data: activeTheme,
-		isLoading: isLoadingActiveTheme
-	} = useAppSettings(APP_SETTINGS.activeTheme)
+function UserSettings() {
+	return (
+		<>
+			<SettingsHeader>
+				<Typography variant="h1" sx={{ mt: 5 }}>
+					User Settings
+				</Typography>
+			</SettingsHeader>
 
-	if (isLoadingActiveTheme)
-		return <CircularProgressBox minHeight="70vh" />
+			<SettingsContainer>
+				<SettingsContent>
 
-	switch (activeTheme) {
-		case THEME_NAME.themeGoogle:
-			return <ThemeGoogle />
-		case THEME_NAME.themeTraditional:
-			return <ThemeTraditional />
-		default:
-			return <ThemeSimplicity />
-	}
+					<SampleBlock />
+
+				</SettingsContent>
+			</SettingsContainer>
+		</>
+	)
 }
-Home.getLayout = getRootLayout
 
-export default Home
+UserSettings.getLayout = getLayout
+
+export default UserSettings

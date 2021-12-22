@@ -234,12 +234,11 @@ function ThemeSimplicityCategories({ slug }) {
 	if (isLoadingDocs)
 		return (
 			<SimplicityLayout>
-				<CircularProgressBox minHeight="70vh" />
+				<CircularProgressBox text="Reading database..." minHeight="70vh" />
 			</SimplicityLayout>
 		)
 
-	if (docs.length === 0)
-		return <ThemeSimplicity404 />
+	if (docs.length === 0) return <ThemeSimplicity404 />
 
 	//if the very first element is not Array,
 	//it mean, this is list docs in subCategory

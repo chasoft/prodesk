@@ -45,7 +45,6 @@ import {
 	ContentGroup,
 	ContentRow,
 	ContentDescription,
-	EditButton,
 	SettingsContainer,
 	SettingsContent,
 	SettingsHeader
@@ -98,7 +97,9 @@ function DocTheme() {
 
 	const handleSaveSelectedTheme = async () => {
 		await updateAppSettings({
-			[APP_SETTINGS.activeTheme]: selectedTheme
+			data: {
+				[APP_SETTINGS.activeTheme]: selectedTheme
+			}
 		})
 	}
 
@@ -107,26 +108,23 @@ function DocTheme() {
 	}
 	return (
 		<ContentGroup title="Theme">
-			<ContentRow title="Active theme">
-				<EditButton
-					defaultState={
-						isLoadingActiveTheme
-							? <CircularProgressBox minHeight="128px" />
-							: <Grid container spacing={2}>
-								<Grid item>
-									<Paper sx={{ width: 128, height: 128 }}>
-										{themeDetails.name}
-									</Paper>
-								</Grid>
-								<Grid item>
-									<Typography>name: {themeDetails.name}</Typography>
-									<Typography>description: {themeDetails.description}</Typography>
-								</Grid>
+			<ContentRow
+				defaultContent={
+					isLoadingActiveTheme
+						? <CircularProgressBox minHeight="128px" />
+						: <Grid container spacing={2}>
+							<Grid item>
+								<Paper sx={{ width: 128, height: 128 }}>
+									{themeDetails.name}
+								</Paper>
 							</Grid>
-					}
-					saveAction={handleSaveSelectedTheme}
-					cancelAction={handleCancel}
-				>
+							<Grid item>
+								<Typography>name: {themeDetails.name}</Typography>
+								<Typography>description: {themeDetails.description}</Typography>
+							</Grid>
+						</Grid>
+				}
+				editModeContent={
 					<Box
 						sx={{
 							display: "flex",
@@ -167,9 +165,11 @@ function DocTheme() {
 							)
 						})}
 					</Box>
-
-				</EditButton>
-			</ContentRow>
+				}
+				title="Active theme"
+				handleSave={handleSaveSelectedTheme}
+				handleCancel={handleCancel}
+			/>
 
 			{(activeTheme === THEME_NAME.themeSimplicity)
 				? <SimplicityThemeSettings />

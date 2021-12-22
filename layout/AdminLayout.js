@@ -74,7 +74,7 @@ const ADMIN_MENUS = [
 		type: MENU_ITEM_TYPE.ITEM,
 		icon: IconName.users,
 		title: "Users",
-		description: "List all users with quick summary",
+		description: "Users management",
 		url: "/admin/users"
 	},
 	{
@@ -85,11 +85,12 @@ const ADMIN_MENUS = [
 		title: "Settings",
 		description: "Configuring your ProDesk",
 		items: [
-			{ id: 1, icon: IconName.members, text: "Members", alt: "Members settings", url: "/admin/settings/members" },
-			{ id: 2, icon: IconName.pages, text: "Site Pages", alt: "Site Pages settings", url: "/admin/settings/pages" },
-			{ id: 3, icon: IconName.tickets, text: "Tickets", alt: "Tickets settings", url: "/admin/settings/tickets/department" },
-			{ id: 4, icon: IconName.documentation, text: "Documentation", alt: "Documentation settings", url: "/admin/settings/documentation" },
-			{ id: 5, icon: IconName.application, text: "Application Settings", url: "/admin/settings/application" },
+			{ id: 1, icon: IconName.menu, text: "Menu", alt: "Managing Menu", url: "/admin/settings/menu" },
+			{ id: 2, icon: IconName.users, text: "Users", alt: "Users/Members settings", url: "/admin/settings/users" },
+			{ id: 3, icon: IconName.pages, text: "Site Pages", alt: "Site Pages settings", url: "/admin/settings/pages" },
+			{ id: 4, icon: IconName.tickets, text: "Tickets", alt: "Tickets settings", url: "/admin/settings/tickets/department" },
+			{ id: 5, icon: IconName.documentation, text: "Documentation", alt: "Documentation settings", url: "/admin/settings/documentation" },
+			{ id: 6, icon: IconName.application, text: "Application Settings", url: "/admin/settings/application" },
 		]
 	},
 

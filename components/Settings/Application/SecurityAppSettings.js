@@ -23,58 +23,69 @@
  *****************************************************************/
 
 import React from "react"
-import dynamic from "next/dynamic"
+
+// MATERIAL-UI
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import useAppSettings from "@helpers/useAppSettings"
-import { APP_SETTINGS } from "@helpers/constants"
-import { THEME_NAME } from "@components/Themes/themeInfo"
-import { CircularProgressBox } from "@components/common"
-import { getRootLayout } from "@layout/RootLayout"
+
+import {
+	ContentGroup,
+	ContentRow,
+	ContentDescription,
+} from "@components/common/Settings"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ThemeSimplicity = dynamic(
-	() => import("@components/Themes/Simplicity"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
 
-const ThemeGoogle = dynamic(
-	() => import("@components/Themes/Google"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
 
-const ThemeTraditional = dynamic(
-	() => import("@components/Themes/Traditional"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
+export default function SecurityAppSettings() {
 
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
+	return (
+		<ContentGroup title="Top Menu">
 
-function Home() {
-	const {
-		data: activeTheme,
-		isLoading: isLoadingActiveTheme
-	} = useAppSettings(APP_SETTINGS.activeTheme)
+			<ContentDescription>
+				Security... protect your site from attacks
+			</ContentDescription>
 
-	if (isLoadingActiveTheme)
-		return <CircularProgressBox minHeight="70vh" />
+			<ContentRow
+				title="Two factor authentication"
+				defaultContent={
+					<Box>
+						hello
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						hehe
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
 
-	switch (activeTheme) {
-		case THEME_NAME.themeGoogle:
-			return <ThemeGoogle />
-		case THEME_NAME.themeTraditional:
-			return <ThemeTraditional />
-		default:
-			return <ThemeSimplicity />
-	}
+			<ContentRow
+				title="Login timeout"
+				defaultContent={
+					<Box>
+						set timeout to secure your account
+					</Box>
+				}
+				editModeContent={
+					<Box>
+						hehe
+					</Box>
+				}
+				handleSave={() => { }}
+				handleCancel={() => { }}
+			/>
+
+		</ContentGroup >
+	)
 }
-Home.getLayout = getRootLayout
-
-export default Home

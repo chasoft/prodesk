@@ -31,7 +31,7 @@ import { createApi } from "@reduxjs/toolkit/query/react"
 import { ACTIONS, TYPE } from "./firestoreApiConstants"
 import fireStoreBaseQuery from "./firestoreApiBaseQuery"
 import { fix_datetime_list, fix_datetime_single } from "@helpers/firebase"
-import { DOC_TYPE, STATUS_FILTER } from "@helpers/constants"
+import { APP_SETTINGS, DOC_TYPE, STATUS_FILTER } from "@helpers/constants"
 import { setActiveDocId, setActiveDocIdOfTocSideBarDetails } from "@redux/slices/docsCenter"
 import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
 import { setEditorDefaultData } from "@redux/slices/textEditor"
@@ -350,21 +350,45 @@ export const firestoreApi = createApi({
 		 *****************************************************************/
 
 		getAppSettings: builder.query({
-			query: () => ({ action: ACTIONS.GET_APPSETTINGS }),
-			providesTags: [TYPE.SETTINGS],
+			/*
+			body = string (docName)
+			*/
+			query: (docName) => ({ action: ACTIONS.GET_APPSETTINGS, docName }),
+			providesTags: (result, error, docName) => {
+				return [
+					{
+						type: TYPE.SETTINGS,
+						id: docName ?? APP_SETTINGS.defaultDocName
+					}
+				]
+			},
 			keepUnusedDataFor: 60 * 60,
 		}),
 
 		updateAppSettings: builder.mutation({
+			/*
+			body = 	{
+						data: { settingNames: string },
+						options: {
+									docName : string
+									merge: bool 
+								}
+					}
+			*/
 			query: (body) => ({ action: ACTIONS.UPDATE_APPSETTINGS, body }),
-			invalidatesTags: () => [TYPE.SETTINGS],
-			async onQueryStarted(newSettings, { dispatch, queryFulfilled }) {
+			invalidatesTags: (result, error, body) => [
+				{
+					type: TYPE.SETTINGS,
+					id: body?.options?.docName ?? APP_SETTINGS.defaultDocName
+				}
+			],
+			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTIONS.GET_APPSETTINGS,
-						undefined,
+						body?.options?.docName ?? APP_SETTINGS.defaultDocName,
 						(draft) => {
-							Object.assign(draft, newSettings)
+							Object.assign(draft, body.data)
 						}
 					)
 				)
@@ -1384,7 +1408,6 @@ export const {
 
 	/* */
 	useRequestRefetchingMutation,
-
 
 	/* THEME */
 	useGetThemeSettingsQuery,

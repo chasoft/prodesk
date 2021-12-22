@@ -28,21 +28,24 @@ import React, { useEffect, useRef } from "react"
 import { Box, InputBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+import { random, trim } from "lodash"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { random, trim } from "lodash"
-import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
+import slugify from "react-slugify"
 
 //PROJECT IMPORT
-import TextEditor from "@components/common/TextEditor"
-import DocumentTemplate from "@components/Documentation/DocumentTemplate"
 import { CircularProgressBox } from "@components/common"
-
 import { useGetDoc } from "@helpers/useGetDocs"
+import DocumentTemplate from "@components/Documentation/DocumentTemplate"
+import TextEditor from "@components/common/TextEditor"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
+import useUpdateLinkedMenuItem from "@components/Settings/MenuSettings/useUpdateLinkedMenuItem"
+import useAppSettings from "@helpers/useAppSettings"
 
 import {
 	DATE_FORMAT,
+	SETTINGS_NAME
 } from "@helpers/constants"
 
 import {
@@ -92,6 +95,10 @@ function DocumentEditor() {
 	} = useGetDoc(activeDocId)
 
 	const {
+		data: autoGenerateSlugFromTitle
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
 		data: docItemContent = {}, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(activeDocId)
 	//
@@ -103,6 +110,11 @@ function DocumentEditor() {
 		title: docItem?.title,
 		description: docItem?.description,
 	})
+
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
 
 	/*
 		Effect, to update status of mounted controls
@@ -145,6 +157,13 @@ function DocumentEditor() {
 			await updateDoc({
 				docItem: newDocMeta,
 				affectedItems: []
+			})
+
+			await updateLinkedMenuItem(docItem.docId, {
+				newLabel: localCache.title,
+				...(autoGenerateSlugFromTitle
+					? { newSlug: `/articles/${docItem.docId}-${slugify(localCache.title)}` }
+					: {})
 			})
 		}
 	}

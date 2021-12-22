@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 //THIRD-PARTY
-import { get, set, cloneDeep } from "lodash"
+import { cloneDeep, get, has, set, unset } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
@@ -43,23 +43,29 @@ export default function useLocalComponentCache(_object = {}) {
 
 	const handlers = React.useMemo(
 		() => ({
-			setLocalCache: (value, path = "", toggle = false) => {
-				if (path === "")
+			//option: isOneOf(["toggle", "delete"])
+			setLocalCache: (value, path, option) => {
+				if (!path)
 					setCache(value)
-				else
+				else {
 					setCache(
 						(prevState) => {
 							let newCache = cloneDeep(prevState)
-							set(
-								newCache,
-								path,
-								toggle
-									? !get(prevState, path)
-									: value
-							)
+							switch (option) {
+								case "toggle":
+									set(newCache, path, !get(prevState, path))
+									break
+								case "delete":
+									unset(newCache, path)
+									break
+								default:
+									set(newCache, path, value)
+									break
+							}
 							return newCache
 						}
 					)
+				}
 			}
 		}), [])
 

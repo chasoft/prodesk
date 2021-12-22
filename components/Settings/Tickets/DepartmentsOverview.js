@@ -33,10 +33,10 @@ import { useDispatch } from "react-redux"
 import AvatarList from "@components/common/AvatarList"
 
 import {
+	ContentHelperText,
 	SettingsContentDetails,
 	SettingsContentHeader,
 	SettingsContentHelper,
-	SettingsContentHelperText,
 	SettingsContentHelperLearnMore,
 } from "@components/common/Settings"
 
@@ -93,13 +93,16 @@ function DepartmentsOverview({ backBtnClick }) {
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
-				<SettingsContentHelperText>
-					Departments are your basic support blocks. They are usually Sales, Technical, Accounting,..etc.
-					Administrators can view all tickets of any departments but only members of department will receive related notifications.
-					<hr style={{ borderColor: "transparent", marginTop: "3px" }} />
-					After deploying your support system, try avoid to delete any departments for they would affect existing tickets. In almost all cases, renaming would be better than deleting.
-					<SettingsContentHelperLearnMore target="/docs" />
-				</SettingsContentHelperText>
+				<ContentHelperText>
+					<Typography paragraph>
+						Departments are your basic support blocks. They are usually Sales, Technical, Accounting,..etc.
+						Administrators can view all tickets of any departments but only members of department will receive related notifications.
+					</Typography>
+					<Typography paragraph>
+						After deploying your support system, try avoid to delete any departments for they would affect existing tickets. In almost all cases, renaming would be better than deleting.
+						<SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
+				</ContentHelperText>
 			</SettingsContentHelper>
 
 			{isLoading ?

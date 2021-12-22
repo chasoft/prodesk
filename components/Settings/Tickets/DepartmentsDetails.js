@@ -234,7 +234,7 @@ function DepartmentsDetails({ backBtnClick }) {
 									title="Public"
 									state={localCache.isPublic}
 									setState={() => {
-										setLocalCache(undefined, "isPublic", true)
+										setLocalCache(undefined, "isPublic", "toggle")
 									}}
 									stateDescription={["For internal use only", "Available for all users"]}
 									description="If the department is public, it allows users to select this department when creating the ticket. Normally, you will keep this setting being on." />
@@ -244,7 +244,7 @@ function DepartmentsDetails({ backBtnClick }) {
 									title="All staffs/agents"
 									state={localCache.availableForAll}
 									setState={() => {
-										setLocalCache(undefined, "availableForAll", true)
+										setLocalCache(undefined, "availableForAll", "toggle")
 									}}
 									stateDescription={["Only selected staffs/agents", "All staffs/agents"]}
 									description="Allow access to the department to all staffs/agents, or exclusively to a specified group of staffs/agents. Eg: you only want sale-staffs view/support sales' tickets only; you don't want technician see sales's tickets" />

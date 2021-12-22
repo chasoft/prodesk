@@ -25,13 +25,14 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import useUiSettings from "@helpers/useUiSettings"
-import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
+import { TopMenu } from "@components/Themes/Simplicity/Blocks/TopMenu"
+import { FooterBase } from "@components/Themes/Simplicity/Footer"
+
 
 //ASSETS
 
@@ -39,26 +40,30 @@ import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/Inne
  * INIT                                                          *
  *****************************************************************/
 
-
-/*****************************************************************
- * EXPORT DEFAULT                                                *
- *****************************************************************/
-
-function ApplicationSettingsUsers() {
-	useUiSettings({
-		activeTab: APPLICATION_SETTINGS_NAMES.USER,
-		background: {
-			backgroundImage: ""
-		}
-	})
-
+export function TopMenuPreview() {
 	return (
-		<>
-			<Typography variant="h1">Admin Application Settings - USERS</Typography>
-		</>
+		<Box sx={{
+			display: "flex",
+			flexGrow: 1,
+			flexDirection: { xs: "column", xss: "row" },
+			py: 2,
+			justifyContent: "center",
+		}}>
+			<TopMenu isPreview />
+		</Box>
 	)
 }
 
-ApplicationSettingsUsers.getLayout = getLayout
-
-export default ApplicationSettingsUsers
+export function FooterMenuPreview() {
+	return (
+		<Box sx={{
+			display: "flex",
+			flexGrow: 1,
+			flexDirection: { xs: "column", xss: "row" },
+			py: 2,
+			justifyContent: "center",
+		}}>
+			<FooterBase isPreview />
+		</Box>
+	)
+}

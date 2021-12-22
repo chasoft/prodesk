@@ -24,7 +24,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
-import { Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip } from "@mui/material"
+import { Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputBase, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
@@ -44,11 +44,11 @@ import {
 } from "@components/common/ColorPicker"
 
 import {
+	ContentHelperText,
 	SettingsContentDetails,
 	SettingsContentHeader,
 	SettingsContentHelper,
 	SettingsContentHelperLearnMore,
-	SettingsContentHelperText
 } from "@components/common/Settings"
 
 import {
@@ -328,10 +328,12 @@ function PageLabels({ backBtnClick }) {
 			</SettingsContentHeader>
 
 			<SettingsContentHelper>
-				<SettingsContentHelperText>
-					Support tickets are categorized by Department, Category &amp; Sub-Category and now you can have deeper categorization by creating labels.
-					<SettingsContentHelperLearnMore target="/docs" />
-				</SettingsContentHelperText>
+				<ContentHelperText>
+					<Typography paragraph>
+						Support tickets are categorized by Department, Category &amp; Sub-Category and now you can have deeper categorization by creating labels.
+						<SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
+				</ContentHelperText>
 			</SettingsContentHelper>
 
 			<SettingsContentDetails>

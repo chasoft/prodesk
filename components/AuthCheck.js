@@ -79,8 +79,6 @@ export function ReduxRedirect(props) {
 	const { currentUser, isAuthenticated } = useSelector(getAuth)
 	const { redirectURL, redirectAfterLoginURL } = useSelector(getRedirect)
 
-	console.log("ReduxRedirect", { redirectURL })
-
 	if (redirectURL === "" || (redirectURL === "" && currentUser.justInstalled === true)) {
 		return props.children
 	}
@@ -107,6 +105,9 @@ export function ReduxRedirect(props) {
 
 	router.push(redirectAfterLoginURL)
 	return null
+}
+ReduxRedirect.propTypes = {
+	children: PropTypes.node
 }
 
 /**

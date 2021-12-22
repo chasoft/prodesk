@@ -213,29 +213,53 @@ LogoAndSocial.propTypes = {
 	socialLinks: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 
-export function Footer() {
+function FooterWrapper({ children }) {
 	return (
 		<Container id="wrap" sx={{
 			marginTop: "auto",
 			padding: { xs: "32px", md: "48px" }
 		}}>
-			<Box component="footer" sx={{
-				display: "grid",
-				gridColumn: 2,
-				margin: "64px 0 112px 0",
-				gridTemplateColumns: {
-					xs: "repeat(2, 1fr)",
-					md: "repeat(5, 1fr)"
-				},
-				gridGap: "48px",
-				justifyContent: "space-between"
-			}}>
-				<LogoAndSocial socialLinks={socialLinks} />
-				<FooterLinks linkGroup={footerLink1} />
-				<FooterLinks linkGroup={footerLink1} />
-				<FooterLinks linkGroup={footerLink1} />
-				<FooterLinks linkGroup={footerLink1} />
-			</Box>
+			{children}
 		</Container>
+	)
+}
+FooterWrapper.propTypes = {
+	children: PropTypes.node.isRequired,
+}
+
+export function FooterBase({ isPreview = false }) {
+	return (
+		<Box component="footer" sx={{
+			display: "grid",
+			gridColumn: 2,
+			...(isPreview
+				? {}
+				: { margin: "64px 0 112px" }
+			),
+			gridTemplateColumns: {
+				xs: "repeat(1, 1fr)",
+				md: "repeat(4, 1fr)"
+			},
+			gridGap: "48px",
+			justifyContent: "space-between"
+		}}>
+			<LogoAndSocial socialLinks={socialLinks} />
+
+			<FooterLinks linkGroup={footerLink1} />
+			<FooterLinks linkGroup={footerLink1} />
+			<LogoAndSocial socialLinks={socialLinks} />
+
+		</Box>
+	)
+}
+FooterBase.propTypes = {
+	isPreview: PropTypes.bool
+}
+
+export function Footer() {
+	return (
+		<FooterWrapper>
+			<FooterBase />
+		</FooterWrapper>
 	)
 }

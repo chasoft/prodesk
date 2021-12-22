@@ -53,6 +53,7 @@ function AdminDocSettings() {
 			backgroundImage: ""
 		}
 	})
+
 	return (
 		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
 

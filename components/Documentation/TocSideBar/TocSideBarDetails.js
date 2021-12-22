@@ -31,7 +31,7 @@ import { emphasize, styled } from "@mui/material/styles"
 import { Autocomplete, Avatar, Box, Button, Checkbox, Chip, FormControl, FormControlLabel, IconButton, InputBase, Switch, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { isEqual } from "lodash"
+import { isEqual, size } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useSelector } from "react-redux"
 import dayjs from "dayjs"
@@ -40,14 +40,26 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import slugify from "react-slugify"
 
 //PROJECT IMPORT
-import { CircularProgressBox, LinearProgressWithLabel } from "@components/common"
-import { deleteFile, STORAGE_DESTINATION, useUploadFile, uploadSingleFile } from "@helpers/storageApi"
 import { regURL } from "@helpers/regex"
 import { SettingsSwitch } from "@components/common/Settings"
 import { useGetDoc } from "@helpers/useGetDocs"
 import useAppSettings from "@helpers/useAppSettings"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
 import usePopupContainer from "@components/common/usePopupContainer"
+import useUpdateLinkedMenuItem from "@components/Settings/MenuSettings/useUpdateLinkedMenuItem"
+
+import {
+	CircularProgressBox,
+	InputBaseStyled,
+	LinearProgressWithLabel,
+} from "@components/common"
+
+import {
+	deleteFile,
+	STORAGE_DESTINATION,
+	uploadSingleFile,
+	useUploadFile,
+} from "@helpers/storageApi"
 
 import {
 	CODE,
@@ -107,27 +119,6 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 	textTransform: "uppercase",
 	color: theme.palette.grey[500]
 }))
-
-function InputBaseStyled({ sx, ...others }) {
-	const [minRows, setMinRows] = useState(1)
-	return (
-		<TextField
-			fullWidth
-			variant="outlined"
-			minRows={minRows}
-			onBlur={() => setMinRows(1)}
-			onFocus={() => setMinRows(3)}
-			sx={{
-				color: "grey.800",
-				borderColor: "divider",
-				...sx
-			}}
-			{...others} />
-	)
-}
-InputBaseStyled.propTypes = {
-	sx: PropTypes.object
-}
 
 function PublishStatusSwitch({ status, setStatus }) {
 	const isPublished = status === DOC_STATUS.PUBLISHED
@@ -604,12 +595,17 @@ function DetailsFormCategory({ docItem, handleClose }) {
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
 	const {
-		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
+		data: autoGenerateSlugFromTitle, isLoading: isLoadingAutoGenerateSlugFromTitle
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
 		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
+
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
 
 	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
@@ -650,6 +646,22 @@ function DetailsFormCategory({ docItem, handleClose }) {
 			docItem: updatedDocItem,
 			affectedItems: []
 		})
+
+		const updateLinkedMenuData = {
+			...((localCache.title !== docItem.title)
+				? { newLabel: localCache.title }
+				: {}),
+			...((localCache.slug !== docItem.slug)
+				? { newSlug: `/categories/${docItem.docId}-${localCache.slug}` }
+				: {}),
+			...((localCache.emoji !== docItem.emoji)
+				? { newEmoji: localCache.emoji }
+				: {}),
+		}
+
+		if (size(updateLinkedMenuData) > 0) {
+			await updateLinkedMenuItem(docItem.docId, updateLinkedMenuData)
+		}
 	}
 
 	return (
@@ -689,13 +701,15 @@ function DetailsFormCategory({ docItem, handleClose }) {
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					{!isLoadingSettings &&
+					{!isLoadingAutoGenerateSlugFromTitle &&
 						<FormControlLabel label="Auto-generate" labelPlacement="start"
 							control={<Switch
 								checked={autoGenerateSlugFromTitle}
 								onChange={async () => {
 									await updateAppSettings({
-										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										data: {
+											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										}
 									})
 								}} />} />}
 				</Box>
@@ -768,6 +782,11 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
+
 	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| docItem.description !== localCache.description
@@ -808,6 +827,22 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 			docItem: updatedDocItem,
 			affectedItems: []
 		})
+
+		const updateLinkedMenuData = {
+			...((localCache.title !== docItem.title)
+				? { newLabel: localCache.title }
+				: {}),
+			...((localCache.slug !== docItem.slug)
+				? { newSlug: `/categories/${docItem.docId}-${localCache.slug}` }
+				: {}),
+			...((localCache.emoji !== docItem.emoji)
+				? { newEmoji: localCache.emoji }
+				: {}),
+		}
+
+		if (size(updateLinkedMenuData) > 0) {
+			await updateLinkedMenuItem(docItem.docId, updateLinkedMenuData)
+		}
 	}
 
 	return (
@@ -853,7 +888,9 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 								checked={autoGenerateSlugFromTitle}
 								onChange={async () => {
 									await updateAppSettings({
-										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										data: {
+											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										}
 									})
 								}} />} />}
 				</Box>
@@ -924,6 +961,11 @@ function DetailsFormDoc({ docItem, handleClose }) {
 		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
+
 	const isModified = docItem.title !== localCache.title
 		|| docItem.slug !== localCache.slug
 		|| isEqual(docItem.tags, localCache.tags) === false
@@ -964,6 +1006,22 @@ function DetailsFormDoc({ docItem, handleClose }) {
 			docItem: newDocMeta,
 			affectedItems: [ /* no affectedItems! */]
 		})
+
+		const updateLinkedMenuData = {
+			...((localCache.title !== docItem.title)
+				? { newLabel: localCache.title }
+				: {}),
+			...((localCache.slug !== docItem.slug)
+				? { newSlug: `/articles/${docItem.docId}-${localCache.slug}` }
+				: {}),
+			...((localCache.emoji !== docItem.emoji)
+				? { newEmoji: localCache.emoji }
+				: {}),
+		}
+
+		if (size(updateLinkedMenuData) > 0) {
+			await updateLinkedMenuItem(docItem.docId, updateLinkedMenuData)
+		}
 	}
 
 	return (
@@ -1009,7 +1067,9 @@ function DetailsFormDoc({ docItem, handleClose }) {
 								checked={autoGenerateSlugFromTitle}
 								onChange={async () => {
 									await updateAppSettings({
-										[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										data: {
+											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+										}
 									})
 								}} />} />}
 				</Box>
@@ -1067,6 +1127,11 @@ function DetailsFormExternal({ docItem, handleClose }) {
 		localCache, handlers: { setLocalCache }
 	} = useLocalComponentCache(docItem)
 
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
+
 	const isModified = docItem.title !== localCache.title
 		|| docItem.url !== localCache.url
 		|| docItem.description !== localCache.description
@@ -1108,6 +1173,22 @@ function DetailsFormExternal({ docItem, handleClose }) {
 			docItem: newExternalMeta,
 			affectedItems: [ /* no affectedItems */]
 		})
+
+		const updateLinkedMenuData = {
+			...((localCache.title !== docItem.title)
+				? { newLabel: localCache.title }
+				: {}),
+			...((localCache.slug !== docItem.slug)
+				? { newSlug: localCache.url }
+				: {}),
+			...((localCache.emoji !== docItem.emoji)
+				? { newEmoji: localCache.emoji }
+				: {}),
+		}
+
+		if (size(updateLinkedMenuData) > 0) {
+			await updateLinkedMenuItem(docItem.docId, updateLinkedMenuData)
+		}
 	}
 
 	return (
@@ -1145,8 +1226,8 @@ function DetailsFormExternal({ docItem, handleClose }) {
 					onChange={(e) => setLocalCache(e.target.value, "url")} />
 
 				{(!!localCache.url && !regURL.test(localCache.url))
-					? <Typography sx={{ color: "#c70000" }}>
-						» Invalid URL, kindly use full URL
+					? <Typography sx={{ color: "#c70000", mt: 1 }}>
+						Error: Invalid URL, please use full URL
 					</Typography>
 					: null}
 
@@ -1221,6 +1302,7 @@ function TocSideBarDetails({ handleClose }) {
 				left: `${sideBarLeft}px`,
 				minWidth: "385px",
 				height: "100%",
+				flexGrow: 1,
 				backgroundColor: "#FFF",
 				borderRight: "1px solid",
 				borderColor: "divider",
@@ -1256,7 +1338,7 @@ function TocSideBarDetails({ handleClose }) {
 					: (docItem !== undefined)
 						? <div>
 							<Box sx={{
-								mx: 3, pt: 3, pb: 3,
+								mx: 3, pt: 1, pb: 3,
 								borderColor: "divider",
 								borderBottom: "1px solid transparent",
 							}}>

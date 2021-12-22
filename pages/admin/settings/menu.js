@@ -23,58 +23,44 @@
  *****************************************************************/
 
 import React from "react"
-import dynamic from "next/dynamic"
+
+// MATERIAL-UI
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
+// import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import useAppSettings from "@helpers/useAppSettings"
-import { APP_SETTINGS } from "@helpers/constants"
-import { THEME_NAME } from "@components/Themes/themeInfo"
-import { CircularProgressBox } from "@components/common"
-import { getRootLayout } from "@layout/RootLayout"
+import { getLayout } from "@layout/AdminLayout"
+import useUiSettings from "@helpers/useUiSettings"
+import MenuSettings from "@components/Settings/MenuSettings"
+
+//ASSETS
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-const ThemeSimplicity = dynamic(
-	() => import("@components/Themes/Simplicity"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
-
-const ThemeGoogle = dynamic(
-	() => import("@components/Themes/Google"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
-
-const ThemeTraditional = dynamic(
-	() => import("@components/Themes/Traditional"),
-	{ loading: () => <CircularProgressBox minHeight="70vh" /> }
-)
 
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function Home() {
-	const {
-		data: activeTheme,
-		isLoading: isLoadingActiveTheme
-	} = useAppSettings(APP_SETTINGS.activeTheme)
+function AdminSiteMenu() {
 
-	if (isLoadingActiveTheme)
-		return <CircularProgressBox minHeight="70vh" />
+	useUiSettings({
+		background: {
+			backgroundImage: ""
+		}
+	})
+	return (
+		<Container maxWidth="xl" style={{ minHeight: "calc(100vh - 150px)" }}>
 
-	switch (activeTheme) {
-		case THEME_NAME.themeGoogle:
-			return <ThemeGoogle />
-		case THEME_NAME.themeTraditional:
-			return <ThemeTraditional />
-		default:
-			return <ThemeSimplicity />
-	}
+			<MenuSettings />
+
+		</Container>
+	)
 }
-Home.getLayout = getRootLayout
 
-export default Home
+AdminSiteMenu.getLayout = getLayout
+export default AdminSiteMenu

@@ -45,18 +45,45 @@ const defaultAppSettings = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-export default function useAppSettings(settingName) {
-	const {
-		data: _appSettings = {},
-		isLoading: isLoadingAppSettings
-	} = useGetAppSettingsQuery(undefined)
+// export default function useAppSettings(settingName, docName) {
+// 	const [appSettings, setAppSettings] = useState(defaultAppSettings)
+// 	const [localDocName, setLocalDocName] = useState(docName ?? APP_SETTINGS.defaultDocName)
 
+// 	const {
+// 		data: appSettingsFromDB = {},
+// 		isLoading: isLoadingAppSettings
+// 	} = useGetAppSettingsQuery(localDocName)
+
+// 	useDeepCompareEffect(() => {
+// 		setAppSettings({ ...defaultAppSettings, ...appSettingsFromDB })
+// 	}, [appSettingsFromDB])
+
+// 	useEffect(() => {
+// 		setLocalDocName(docName ?? APP_SETTINGS.defaultDocName)
+// 	}, [docName])
+
+// 	console.log({ appSettingsFromDB })
+
+// 	return {
+// 		data: (localDocName === APP_SETTINGS.defaultDocName)
+// 			? appSettings[settingName]
+// 			: appSettingsFromDB,
+// 		isLoading: isLoadingAppSettings
+// 	}
+// }
+
+export default function useAppSettings(settingName, docName) {
 	const appSettings = useRef()
 
-	appSettings.current = { ...defaultAppSettings, ..._appSettings }
+	const {
+		data: appSettingsFromDB = {},
+		isLoading: isLoadingAppSettings
+	} = useGetAppSettingsQuery(docName)
+
+	appSettings.current = { ...defaultAppSettings, ...appSettingsFromDB }
 
 	return {
-		data: appSettings.current[settingName] ?? false,
+		data: settingName ? appSettings.current[settingName] : appSettingsFromDB,
 		isLoading: isLoadingAppSettings
 	}
 }

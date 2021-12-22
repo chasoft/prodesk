@@ -33,6 +33,13 @@ import { Typography } from "@mui/material"
 import useUiSettings from "@helpers/useUiSettings"
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
 
+import {
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader,
+} from "@components/common/Settings"
+import SecurityAppSettings from "@components/Settings/Application/SecurityAppSettings"
+
 //ASSETS
 
 /*****************************************************************
@@ -55,7 +62,19 @@ function ApplicationSettingsSecurity() {
 
 	return (
 		<>
-			<Typography variant="h1">Admin Application Settings - SEC</Typography>
+			<SettingsHeader>
+				<Typography variant="h1" sx={{ mt: 1 }}>
+					General Settings
+				</Typography>
+			</SettingsHeader>
+
+			<SettingsContainer>
+				<SettingsContent>
+
+					<SecurityAppSettings />
+
+				</SettingsContent>
+			</SettingsContainer>
 		</>
 	)
 }

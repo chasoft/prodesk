@@ -33,6 +33,14 @@ import { Typography } from "@mui/material"
 import useUiSettings from "@helpers/useUiSettings"
 import { getLayout, APPLICATION_SETTINGS_NAMES } from "@components/Settings/InnerLayoutSettings"
 
+import {
+	SettingsContainer,
+	SettingsContent,
+	SettingsHeader,
+} from "@components/common/Settings"
+import SmtpAppSettings from "@components/Settings/Application/SmtpAppSettings"
+
+
 //ASSETS
 
 /*****************************************************************
@@ -55,7 +63,19 @@ function ApplicationSettingsSmtp() {
 
 	return (
 		<>
-			<Typography variant="h1">Admin Application Settings - SMTP</Typography>
+			<SettingsHeader>
+				<Typography variant="h1" sx={{ mt: 1 }}>
+					General Settings
+				</Typography>
+			</SettingsHeader>
+
+			<SettingsContainer>
+				<SettingsContent>
+
+					<SmtpAppSettings />
+
+				</SettingsContent>
+			</SettingsContainer>
 		</>
 	)
 }

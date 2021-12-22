@@ -34,6 +34,7 @@ import { requestSilentRefetching } from "@helpers/realtimeApi"
 import {
 	CODE,
 	DOC_TYPE,
+	DOC_STATUS,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
 
@@ -100,10 +101,7 @@ export function useCreateDocSearchIndex() {
 		let searchIndexes = []
 
 		docs.forEach(doc => {
-			if (
-				doc.type === DOC_TYPE.CATEGORY
-				|| doc.type === DOC_TYPE.SUBCATEGORY
-			) return
+			if (doc.status === DOC_STATUS.DRAFT) return
 
 			const cat = docs.find((item) => item.docId === doc.categoryId)
 				?? ""
@@ -115,36 +113,25 @@ export function useCreateDocSearchIndex() {
 			searchIndexes.push({
 				id: doc.docId,
 				name: doc.title,
-				slug: doc.slug
-					? `/articles/${doc.docId}-${doc.slug}`
-					: doc.url,
+				slug: (doc.type === DOC_TYPE.CATEGORY || doc.type === DOC_TYPE.SUBCATEGORY)
+					? `/categories/${doc.docId}-${doc.slug}`
+					: doc.slug
+						? `/articles/${doc.docId}-${doc.slug}`
+						: doc.url,
 				subtitle: doc.description
 					? doc.description
 					: doc.url
 						? doc.url
 						: "",
-				icon: doc.emoji,
+				emoji: doc.emoji,
 				keywords: doc.tags.join(" "),
-				section: (cat ? cat.title : "Uncategoried") +
-					(subCat ? (" / " + subCat.title) : "")
+				section: (cat ? cat.title : "Uncategoried")
+					+ (subCat ? (" / " + subCat.title) : ""),
+				type: doc.type //this entry is used for in menuEditor (menutype)
 			})
 		})
 
 		setProgress(p => p + progressIncrement)
-
-		//serialized
-		// const docIndexes = Fuse.createIndex(
-		// 	[
-		// 		"title",
-		// 		"slug",
-		// 		"description",
-		// 		"content",
-		// 		"section",
-		// 	],
-		// 	shortedList
-		// )
-
-		// const fuseIndex = JSON.stringify(docIndexes.toJSON())
 
 		//save to firestore
 		const res = await updateDocSearchIndex({
@@ -189,10 +176,7 @@ export async function _createDocSearchIndex(username) {
 	let searchIndexes = []
 
 	docs.forEach(doc => {
-		if (
-			doc.type === DOC_TYPE.CATEGORY
-			|| doc.type === DOC_TYPE.SUBCATEGORY
-		) return
+		if (doc.status === DOC_STATUS.DRAFT) return
 
 		const cat = docs.find((item) => item.docId === doc.categoryId)
 			?? ""
@@ -204,22 +188,23 @@ export async function _createDocSearchIndex(username) {
 		searchIndexes.push({
 			id: doc.docId,
 			name: doc.title,
-			slug: doc.slug
-				? `/articles/${doc.docId}-${doc.slug}`
-				: doc.url,
+			slug: (doc.type === DOC_TYPE.CATEGORY || doc.type === DOC_TYPE.SUBCATEGORY)
+				? `/categories/${doc.docId}-${doc.slug}`
+				: doc.slug
+					? `/articles/${doc.docId}-${doc.slug}`
+					: doc.url,
 			subtitle: doc.description
 				? doc.description
 				: doc.url
 					? doc.url
 					: "",
-			icon: doc.emoji,
+			emoji: doc.emoji,
 			keywords: doc.tags.join(" "),
-			section: (cat ? cat.title : "Uncategoried") +
-				(subCat ? (" / " + subCat.title) : "")
+			section: (cat ? cat.title : "Uncategoried")
+				+ (subCat ? (" / " + subCat.title) : ""),
+			type: doc.type //this entry is used for in menuEditor (menutype)
 		})
 	})
-
-	console.log({ searchIndexes })
 
 	//save to firestore
 	const res = await updateDocSearchIndex({

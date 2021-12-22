@@ -254,9 +254,15 @@ export const ACTION = {
 }
 
 export const APP_SETTINGS = {
+	defaultDocName: "settings",
 	activeTheme: "activeTheme",
-	/* DOCUMENTATION */
-	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle"
+	//DOCUMENTATION
+	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle",
+
+	//MenuEditor
+	topMenu: "topMenu",
+	footerMenu: "footerMenu"
+
 }
 
 export const PERMISSIONS_LEVELS = {

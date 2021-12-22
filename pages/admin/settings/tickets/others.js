@@ -47,13 +47,13 @@ import {
 import {
 	ListItem,
 	ListTitle,
+	ContentHelperText,
 	SettingsContainer,
 	SettingsContent,
 	SettingsContentDetails,
 	SettingsContentHeader,
 	SettingsContentHelper,
 	SettingsContentHelperLearnMore,
-	SettingsContentHelperText,
 	SettingsHeader,
 	SettingsList
 } from "@components/common/Settings"
@@ -84,9 +84,12 @@ const PagePriorities = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 
-				<SettingsContentHelperText>
-					<p>Prodesk only support 3 default levels of priotity:&nbsp;</p>
-					<div>
+				<ContentHelperText>
+					<Typography paragraph>
+						Prodesk only support 3 default levels of priotity:&nbsp;
+					</Typography>
+
+					<div style={{ paddingBottom: "16px" }}>
 						<Chip
 							label="Low"
 							size="small"
@@ -104,9 +107,12 @@ const PagePriorities = ({ backBtnClick }) => {
 							color="warning"
 						/>
 					</div>
-					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
 
-				</SettingsContentHelperText>
+					<Typography paragraph>
+						There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
+
+				</ContentHelperText>
 
 			</SettingsContentHelper>
 
@@ -130,15 +136,32 @@ const PageStatuses = ({ backBtnClick }) => {
 
 			<SettingsContentHelper>
 
-				<SettingsContentHelperText>
-					<p>Prodesk only support 4 default ticket statuses:</p>
-					<div>1. {<TicketStatus status={STATUS_FILTER.OPEN} />} newly created ticket</div>
-					<div>2. {<TicketStatus status={STATUS_FILTER.PENDING} />} ticket is waiting reply from supporter</div>
-					<div>3. {<TicketStatus status={STATUS_FILTER.REPLIED} />} ticket is replied, may be waiting for responding from customer</div>
-					<div>4. {<TicketStatus status={STATUS_FILTER.CLOSED} />} solved ticket</div>
-					<span>There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" /></span>
+				<ContentHelperText>
 
-				</SettingsContentHelperText>
+					<Typography paragraphp>
+						Prodesk only support 4 default ticket statuses:
+					</Typography>
+
+					<div style={{ paddingTop: "16px", paddingBottom: "16px" }}>
+						<div>
+							1. {<TicketStatus status={STATUS_FILTER.OPEN} />} newly created ticket
+						</div>
+						<div>
+							2. {<TicketStatus status={STATUS_FILTER.PENDING} />} ticket is waiting reply from supporter
+						</div>
+						<div>
+							3. {<TicketStatus status={STATUS_FILTER.REPLIED} />} ticket is replied, may be waiting for responding from customer
+						</div>
+						<div>
+							4. {<TicketStatus status={STATUS_FILTER.CLOSED} />} solved ticket
+						</div>
+					</div>
+
+					<Typography paragraph>
+						There is no customization for this setting. <SettingsContentHelperLearnMore target="/docs" />
+					</Typography>
+
+				</ContentHelperText>
 
 			</SettingsContentHelper>
 

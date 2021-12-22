@@ -18,10 +18,6 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-/*****************************************************************
- * IMPORTING                                                     *
- *****************************************************************/
-
 import Head from "next/head"
 import PropTypes from "prop-types"
 import { useRouter } from "next/router"
@@ -61,6 +57,8 @@ import {
 function RootLayout({ children }) {
 	const router = useRouter()
 	const dispatch = useDispatch()
+
+	console.log("Render > RootLayout")
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {

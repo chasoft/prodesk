@@ -45,7 +45,6 @@ import {
 	ContentDescription,
 	ContentGroup,
 	ContentRow,
-	EditButton,
 	SettingsContainer,
 	SettingsContent,
 	SettingsHeader,
@@ -116,7 +115,7 @@ const validationChangePassword = yup.object({
 		.required("Confirm your password"),
 })
 
-function ChangePasswordForm() {
+function ChangePasswordRow() {
 
 	const { currentUser } = useSelector(getAuth)
 	const { enqueueSnackbar } = useSnackbar()
@@ -143,56 +142,57 @@ function ChangePasswordForm() {
 	})
 
 	return (
-		<EditButton
-			defaultState="Username and password"
-			saveAction={() => {
+		<ContentRow
+			title="Login method"
+			defaultContent="Username and password"
+			editModeContent={
+				<form onSubmit={formik.handleSubmit}>
+					<Grid container spacing={3}>
+						<Grid item xs={12}>
+							<TextField
+								id="currentPassword"
+								label="Current password"
+								value={formik.values.currentPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								error={formik.touched.currentPassword && Boolean(formik.errors.currentPassword)}
+								helperText={formik.touched.currentPassword && formik.errors.currentPassword}
+								type="password" />
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								id="newPassword"
+								label="New password"
+								value={formik.values.newPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
+								helperText={formik.touched.newPassword && formik.errors.newPassword}
+								type="password" />
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								id="confirmPassword"
+								label="Confirm new password"
+								value={formik.values.confirmPassword}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+								helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+								type="password" />
+						</Grid>
+					</Grid>
+				</form>
+			}
+			handleSave={() => {
 				if (!formik.isValid)
 					return false
 				formik.handleSubmit()
 			}}
-			cancelAction={formik.handleReset}
+			handleCancel={formik.handleReset}
 			isLoading={isUpdatingPassword}
-			canSave={formik.isValid}
-		>
-			<form onSubmit={formik.handleSubmit}>
-				<Grid container spacing={3}>
-					<Grid item xs={12}>
-						<TextField
-							id="currentPassword"
-							label="Current password"
-							value={formik.values.currentPassword}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.currentPassword && Boolean(formik.errors.currentPassword)}
-							helperText={formik.touched.currentPassword && formik.errors.currentPassword}
-							type="password" />
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							id="newPassword"
-							label="New password"
-							value={formik.values.newPassword}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
-							helperText={formik.touched.newPassword && formik.errors.newPassword}
-							type="password" />
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							id="confirmPassword"
-							label="Confirm new password"
-							value={formik.values.confirmPassword}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-							helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-							type="password" />
-					</Grid>
-				</Grid>
-			</form>
-
-		</EditButton>
+			isModified={formik.isValid}
+		/>
 	)
 }
 
@@ -250,13 +250,15 @@ function UserProfile() {
 				<SettingsContent>
 
 					<ContentGroup title="Profile">
-						<ContentRow title="Avatar">
-							<EditButton
-								defaultState={<Avatar variant="square" src={avatar} sx={{ width: 64, height: 64 }} />}
-								saveAction={handleSaveAvatar}
-								cancelAction={handleCancelAvatar}
-								isUpdating={isUpdatingAvatar}
-							>
+						<ContentRow
+							title="Avatar"
+							defaultContent={
+								<Avatar
+									variant="square"
+									src={avatar}
+									sx={{ width: 64, height: 64 }} />
+							}
+							editModeContent={
 								<Grid container spacing={2}>
 									<Grid item>
 										<Avatar src={avatar} sx={{ width: 128, height: 128 }} />
@@ -271,62 +273,74 @@ function UserProfile() {
 										</SimpleTogglePanel>
 									</Grid>
 								</Grid>
-							</EditButton>
-						</ContentRow>
+							}
+							handleSave={handleSaveAvatar}
+							handleCancel={handleCancelAvatar}
+							isUpdating={isUpdatingAvatar}
+						/>
+
 						<ContentRow title="Username">
 							{currentUser.username}
 						</ContentRow>
-						<ContentRow tooltip="For decoration only" title="Display name" removePadding>
-							<EditButton
-								defaultState={displayName}
-								saveAction={() => { handleSaveDisplayName() }}
-								cancelAction={() => { handleCancelDisplayName() }}
-								isUpdating={isUpdatingDisplayName}
-							>
+
+						<ContentRow
+							tooltip="For decoration only"
+							title="Display name"
+							defaultContent={displayName}
+							editModeContent={
 								<TextField
 									label="Display name"
 									value={displayName}
 									onChange={(e) => { setDisplayName(e.target.value) }}
 								/>
-							</EditButton>
-						</ContentRow>
+							}
+							handleSave={() => { handleSaveDisplayName() }}
+							handleCancel={() => { handleCancelDisplayName() }}
+							isUpdating={isUpdatingDisplayName}
+						/>
+
 						<ContentRow title="User type">
 							Customer
 						</ContentRow>
+
 						<ContentRow title="Description">
 							You are currently an customer
 						</ContentRow>
+
 					</ContentGroup>
 
 					<ContentGroup title="Login">
 						<ContentDescription>
 							You can change your password by click on the edit icon below
 						</ContentDescription>
-						<ContentRow title="Login method" removePadding>
 
-							<ChangePasswordForm />
 
-						</ContentRow>
+
+						<ChangePasswordRow />
+
+
 					</ContentGroup>
 
 					<ContentGroup title="Preferences">
-						<ContentRow title="Language" removePadding>
-							<EditButton
-								defaultState="United States"
-								saveAction={() => { }}
-							>
-								<CountrySelect />
-							</EditButton>
-						</ContentRow>
-						<ContentRow title="Timezone" removePadding>
 
-							<EditButton
-								defaultState="(UTC+07:00) Bangkok, Hanoi, Jakarta"
-								saveAction={() => { }}
-							>
+						<ContentRow
+							title="Language"
+							defaultContent="United States"
+							editModeContent={
+								<CountrySelect />
+							}
+							handleSave={() => { }}
+						/>
+
+						<ContentRow
+							title="Timezone"
+							defaultContent="(UTC+07:00) Bangkok, Hanoi, Jakarta"
+							editModeContent={
 								<TimezoneSelect />
-							</EditButton>
-						</ContentRow>
+							}
+							saveAction={() => { }}
+						/>
+
 					</ContentGroup>
 
 				</SettingsContent>
