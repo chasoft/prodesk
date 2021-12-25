@@ -83,7 +83,7 @@ SettingsSwitch.propTypes = {
 
 export function ContentGroup({ title, children }) {
 	return (
-		<Box sx={{
+		<Box id="ContentGroup" sx={{
 			borderBottom: "1px solid transparent",
 			borderColor: "divider",
 			py: 4,
@@ -151,6 +151,7 @@ export function ContentRow({
 					alignItems: "center",
 					...(isEditMode
 						? {
+							mt: -2,
 							mx: { xs: -2, xss: -4 },
 							px: 4,
 							py: 1,
@@ -393,14 +394,16 @@ export function SettingsContent({ showContent = true, children }) {
 	// const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
 	return (
 		<Box
+			id="SettingsContent"
 			sx={{
-				flexGrow: 1,
+				// flexGrow: 1,
 				// borderBottomLeftRadius: 1,
 				// borderBottomRightRadius: 1,
 				// flexGrow: showContent ? 1 : 0,
 				display: {
 					xs: showContent ? "initial" : "none", sm: "initial",
-				}
+				},
+				width: "100%"
 			}}
 		>
 			{children}

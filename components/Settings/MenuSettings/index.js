@@ -29,7 +29,7 @@ import React, { useCallback, useRef, useState } from "react"
 import { Box, Button, Checkbox, ClickAwayListener, FormControlLabel, Grid, IconButton, InputBase, TextField, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { debounce, isEqual, } from "lodash"
+import { debounce, isEqual, uniqueId } from "lodash"
 import { DndProvider, useDrag } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import PerfectScrollbar from "react-perfect-scrollbar"
@@ -203,9 +203,10 @@ RemoveIconButton.propTypes = {
 }
 
 function addMenuItem(sourceItem, targetItem, setLocalCache) {
+	const incNumber = uniqueId()
 	let data = {
 		id: nanoid(),
-		order: 100,
+		order: incNumber + 100,
 		slug: "#",
 		visibility: true,
 		...sourceItem.details,
@@ -377,9 +378,6 @@ export const AddNewMenuItemPanel = React.memo(function _AddNewMenuItemPanel({ ty
 
 	const handleClose = useCallback(() => { setShowDrawer(false) }, [setShowDrawer])
 
-	console.log("d", `"calc(50vh - ${(ref?.current?.clientHeight ?? 150) + 150}px)"`)
-	console.log({ ss: ref?.current })
-
 	return (
 		<ClickAwayListener onClickAway={handleClose}>
 			<Box
@@ -442,7 +440,7 @@ export const AddNewMenuItemPanel = React.memo(function _AddNewMenuItemPanel({ ty
 							onChange={handleSearchTextOnChange}
 						/>
 						<PerfectScrollbar component="div" style={{
-							height: `calc(50vh - ${type === MENU_LOCATION.TOP ? 90 : 170}px)`
+							height: (searchResult.length === 0) ? "200px" : "calc(50vh - 30px)"
 						}}>
 							<Box sx={{
 								display: "flex",
@@ -503,6 +501,13 @@ export const AddNewMenuItemPanel = React.memo(function _AddNewMenuItemPanel({ ty
 					{(type !== MENU_LOCATION.TOP
 						&& searchResult.length === 0)
 						? <div ref={ref}>
+							<NewMenuItem
+								menuItem={{
+									type: MENU_TYPE.CUSTOM_LINK,
+									label: "Untitled Menu Item"
+								}}
+								setLocalCache={setLocalCache}
+							/>
 							<NewMenuItem
 								menuItem={{
 									type: MENU_TYPE.SOCIAL,

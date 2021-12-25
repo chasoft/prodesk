@@ -33,7 +33,8 @@ import { auth } from "@helpers/firebase"
 import { regAdminURL } from "@helpers/regex"
 import { ReduxRedirect } from "@components/AuthCheck"
 import { getUserProfile } from "@redux/slices/firestoreApiBase"
-import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { APP_SETTINGS, REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import useAppSettings from "@helpers/useAppSettings"
 
 import {
 	loginSuccess,
@@ -58,7 +59,10 @@ function RootLayout({ children }) {
 	const router = useRouter()
 	const dispatch = useDispatch()
 
-	console.log("Render > RootLayout")
+	const {
+		data: siteMetaInfo = {},
+		// isLoading: isLoadingSiteMetaInfo
+	} = useAppSettings(null, APP_SETTINGS.siteMetaInfo)
 
 	useEffect(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -131,8 +135,8 @@ function RootLayout({ children }) {
 		<>
 			<Head>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
-				<title>ProDesk - Your Elegant &amp; Powerful Ticket System</title>
-				<meta name="description" content="Elegant &amp; Powerful Ticket System, Documentation, Blog" />
+				<title>{siteMetaInfo.siteName}</title>
+				<meta name="description" content={siteMetaInfo?.siteDescription ?? ""} />
 				<meta httpEquiv="Content-Type" content="text/html;charset=UTF-8" />
 			</Head>
 

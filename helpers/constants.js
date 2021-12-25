@@ -256,6 +256,8 @@ export const ACTION = {
 export const APP_SETTINGS = {
 	defaultDocName: "settings",
 	activeTheme: "activeTheme",
+	siteMetaInfo: "siteMetaInfo",
+
 	//DOCUMENTATION
 	autoGenerateSlugFromTitle: "autoGenerateSlugFromTitle",
 
@@ -330,5 +332,9 @@ export const DEFAULT_ADMIN_SETTINGS = {
 export const DEFAULT_SUPERADMIN_SETTINGS = {
 	...DEFAULT_ADMIN_SETTINGS,
 	//Superadmin's permissions
+}
 
+export const LOGO_TYPE = {
+	LIGHT: "logoUrl",
+	DARK: "logoDarkUrl",
 }

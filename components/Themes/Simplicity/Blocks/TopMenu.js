@@ -102,7 +102,7 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 					overflowY: "auto",
 					padding: "8px 0",
 					top: "46px",
-					whiteSpace: "pre-wrap",
+					// whiteSpace: "pre-wrap",
 					width: "max-content",
 					zIndex: "9999",
 					minWidth: "250px"
@@ -111,6 +111,26 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 					display: "block",
 					padding: "12px 22px"
 				},
+				".topMenuLink": {
+					position: "relative"
+				},
+				".topMenuLink:before": {
+					content: "\"\"",
+					display: "block",
+					position: "absolute",
+					bottom: "-5px",
+					left: "0px",
+					right: "0px",
+					width: "0px",
+					height: "3px",
+					backgroundColor: "rgb(0, 0, 0)",
+					WebkitTransition: "all 0.4s ease 0s",
+					transition: "all 0.4s ease 0s"
+				},
+				".topMenuLink:hover::before": {
+					width: "100%",
+					textUnderlineOffset: "5px"
+				},
 				"&>ul>li>.sub-menu>li>a": {
 					border: "0",
 					color: "#000000",
@@ -118,16 +138,24 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 					fontSize: "18px",
 					fontWeight: "400",
 					width: "auto",
-					letterSpacing: "0.03em"
+					letterSpacing: "0.03em",
+					position: "relative"
 				},
-				"&>ul>li>.sub-menu>li>a:hover": {
-					textDecoration: "underline",
-					textDecorationThickness: "3px",
-					textUnderlineOffset: "5px"
-				}
+				// "&>ul>li>.sub-menu>li>a:hover": {
+				// textDecoration: "underline",
+				// textDecorationThickness: "3px",
+				// textUnderlineOffset: "5px"
+				// width: "100%"
+				// },
+
 			}}
 		>
-			<ul>
+			<Box component="ul" sx={{
+				...(isPreview
+					? { display: "flex", flexDirection: { xs: "column", md: "row" } }
+					: {}
+				)
+			}}>
 				{(groupedMenu.current[NO_PARENT] ?? []).map((menu) => {
 					return (
 						<li key={menu.id}>
@@ -140,7 +168,7 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 										return (
 											<li key={subMenu.id}>
 												<Link href={subMenu.slug} passHref>
-													<a href="just-a-placeholder">{subMenu.emoji ? subMenu.emoji : null} {subMenu.label}</a>
+													<a href="just-a-placeholder" className="topMenuLink">{subMenu.emoji ? subMenu.emoji : null} {subMenu.label}</a>
 												</Link>
 											</li>
 										)
@@ -149,7 +177,7 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 						</li>
 					)
 				})}
-			</ul>
+			</Box>
 
 		</Box>
 	)

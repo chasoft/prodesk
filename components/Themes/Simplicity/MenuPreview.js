@@ -42,7 +42,7 @@ import { FooterBase } from "@components/Themes/Simplicity/Footer"
 
 export function TopMenuPreview() {
 	return (
-		<Box sx={{
+		<Box id="TopMenuPreviewWrapper" sx={{
 			display: "flex",
 			flexGrow: 1,
 			flexDirection: { xs: "column", xss: "row" },

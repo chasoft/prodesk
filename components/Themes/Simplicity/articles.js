@@ -210,7 +210,8 @@ function Article({ docItem }) {
 			minWidth: { xs: 0, mdd: "400px" },
 			marginRight: { xs: 0, mdd: "66px" },
 			"& *>a": { color: "primary.main" },
-			"& *>h1, h2, h3": { fontWeight: 700 }
+			"& *>a:hover": { textDecoration: "none" },
+			"& *>h1, h2, h3": { fontWeight: 700 },
 		}}>
 
 			{isLoadingDocItemContent
@@ -252,7 +253,27 @@ function Article({ docItem }) {
 						},
 						"& .ProseMirror h3": {
 							padding: "20px 0 16px"
-						}
+						},
+						"a": {
+							position: "relative"
+						},
+						"a:before": {
+							content: "\"\"",
+							display: "block",
+							position: "absolute",
+							bottom: "0px",
+							left: "0px",
+							right: "0px",
+							width: "0px",
+							height: "2px",
+							backgroundColor: "rgb(26, 182, 255)",
+							WebkitTransition: "all 0.4s ease 0s",
+							transition: "all 0.4s ease 0s"
+						},
+						"a:hover::before": {
+							width: "100%",
+							textUnderlineOffset: "5px"
+						},
 					}}>
 						<TextEditor
 							value={docItemContent?.text ?? ""}
@@ -375,12 +396,11 @@ function ArticleSideBar({ docItem }) {
 				zIndex: "0",
 			},
 		}}>
-
 			<Box component="section" sx={{
 				flex: { xs: 1, mdd: "0 0 20%" },
 				margin: 0,
 				zIndex: 1,
-				maxHeight: { xs: "45px", mdd: "none" },
+				// maxHeight: { xs: "45px", mdd: "none" },
 				[theme.breakpoints.up("mdd")]: {
 					position: "sticky",
 					right: "auto",
@@ -388,7 +408,6 @@ function ArticleSideBar({ docItem }) {
 					zIndex: 0,
 				},
 			}}>
-
 				{(groupedHeadings.length > 0) &&
 					<Box id="article-toc" sx={{
 						[theme.breakpoints.down("mdd")]: {
@@ -453,7 +472,7 @@ function ArticleSideBar({ docItem }) {
 						</Box>
 					</Box>}
 			</Box>
-		</Box >
+		</Box>
 	)
 }
 ArticleSideBar.propTypes = {

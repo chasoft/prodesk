@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import React, { useMemo, useRef, useState } from "react"
 
 // MATERIAL-UI
-import { Box, Collapse, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material"
+import { Box, Collapse, Grid, Stack, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { groupBy, isEqual, orderBy, size } from "lodash"
@@ -62,7 +62,6 @@ import {
 import { AddNewMenuItemPanel, DuplicateIconButton, ExpandIndicator, FormCustomLink, FormDocLink, MENU_DRAG_TYPE, MENU_TYPE, NO_PARENT, DRAG_TARGET, RemoveIconButton, VisibilityIconButton } from "@components/Settings/MenuSettings"
 
 //ASSETS
-import RefreshIcon from "@mui/icons-material/Refresh"
 
 /*****************************************************************
  * INIT                                                          *
@@ -335,7 +334,14 @@ const TopMenuItemBase = React.memo(function _TopMenuItemBase({ menuItem, subMenu
 						onClick={(e) => {
 							e.stopPropagation()
 							const newId = nanoid()
-							setLocalCache({ ...menuItem, id: newId }, newId)
+							setLocalCache(
+								{
+									...menuItem,
+									order: menuItem.order + 10,
+									id: newId
+								},
+								newId
+							)
 						}}
 					/>
 

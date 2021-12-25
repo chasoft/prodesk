@@ -85,7 +85,7 @@ function Client() {
 					</Typography>
 				</div>
 				<div>
-					<Link href="/client/tickets/new-ticket" alt="Open New Ticket">
+					<Link href="/client/tickets/new-ticket" alt="Open New Ticket" passHref>
 						<Tooltip title="Open New Ticket" placement="left">
 							<IconButton color="inherit" size="large">
 								<ArrowForwardIcon />

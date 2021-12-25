@@ -26,9 +26,10 @@ import PropTypes from "prop-types"
 import React, { useMemo, useRef, useState } from "react"
 
 // MATERIAL-UI
-import { Avatar, Box, Checkbox, FormControl, Collapse, FormControlLabel, Grid, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material"
+import { Avatar, Box, FormControl, Collapse, Grid, IconButton, Stack, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { useDeepCompareEffect } from "react-use"
 import { debounce, keyBy, isEqual, orderBy, size } from "lodash"
 import { useDrag, useDrop } from "react-dnd"
 
@@ -52,7 +53,6 @@ import {
 
 import {
 	APP_SETTINGS,
-	DOC_TYPE,
 	CODE
 } from "@helpers/constants"
 
@@ -88,7 +88,6 @@ import {
 } from "@components/Settings/MenuSettings"
 
 //ASSETS
-import RefreshIcon from "@mui/icons-material/Refresh"
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle"
 import UploadIcon from "@mui/icons-material/Upload"
 
@@ -192,7 +191,11 @@ const FooterMenuItemBase = React.memo(function _FooterMenuItemBase({ menuItem, e
 	const [{ canDrop, isOverCurrent }, drop] = useDrop(() => ({
 		accept: [MENU_DRAG_TYPE.NEW_ITEM, MENU_DRAG_TYPE.EXISTED],
 		// canDrop: (sourceItem) => isValidDropExistedTopMenuItems(sourceItem, menuItem),
-		canDrop: () => true,
+		canDrop: (sourceItem) => {
+			if (sourceItem.details?.type === MENU_TYPE.SOCIAL
+				&& menuItem.type !== MENU_TYPE.SOCIAL) return false
+			return true
+		},
 		drop: (_, monitor) => {
 			if (monitor.didDrop()) return
 			return ({
@@ -270,10 +273,24 @@ const FooterMenuItemBase = React.memo(function _FooterMenuItemBase({ menuItem, e
 			{/* <InsertTopMenuItemToRoot menuItem={menuItem} /> */}
 			<Box sx={{
 				display: "flex",
-				alignItems: "baseline",
+				alignItems: "center",
 				flexGrow: 1,
 				overflow: "hidden"
 			}}>
+
+				{(menuItem?.logoUrl)
+					? <Avatar
+						variant="square"
+						src={menuItem?.logoUrl ? menuItem.logoUrl : "/img/no-image.png"}
+						sx={{
+							width: 32,
+							height: 32,
+							ml: 1,
+							"& >img": {
+								objectFit: "contain"
+							}
+						}} /> : null}
+
 				<Typography noWrap sx={{
 					pl: 1.5,
 					pr: 0.5,
@@ -310,7 +327,11 @@ const FooterMenuItemBase = React.memo(function _FooterMenuItemBase({ menuItem, e
 							e.stopPropagation()
 							const newId = nanoid()
 							setLocalCache(
-								{ ...menuItem, id: newId },
+								{
+									...menuItem,
+									order: menuItem.order + 10,
+									id: newId
+								},
 								`${menuItem.parentId}.children.${newId}`
 							)
 						}}
@@ -343,6 +364,17 @@ FooterMenuItemBase.propTypes = {
 }
 
 const FormSocialLink = React.memo(function _FormSocialLink({ menuItem, setLocalCache, path }) {
+
+	const [message, setMessage] = useState({ code: "", message: "" })
+	const [uploadFile, { uploading, progress }] = useUploadFile()
+
+	useDeepCompareEffect(() => {
+		const timeoutId = setTimeout(() => { setMessage({ code: "none", message: "" }) }, 2000)
+		return function cleanup() {
+			clearTimeout(timeoutId)
+		}
+	}, [message])
+
 	const handleTextFieldOnChange = debounce((e) => {
 		setLocalCache(
 			e.target.value,
@@ -350,64 +382,128 @@ const FormSocialLink = React.memo(function _FormSocialLink({ menuItem, setLocalC
 		)
 	}, 300)
 
+	const handleSelectAndUploadLogo = async (e) => {
+		const logoUrl = await uploadSingleFile(
+			e,
+			uploadFile,
+			`${STORAGE_DESTINATION.SETTINGS}/footer.${menuItem.id}.png`
+		)
+
+		if (logoUrl?.error) {
+			setMessage({
+				code: CODE.FAILED,
+				message: logoUrl.error.message
+			})
+			return
+		}
+
+		setLocalCache(
+			logoUrl,
+			`${path ? (path + ".") : ""}${menuItem.id}.logoUrl`
+		)
+	}
+
+	const handleRemovePhoto = async () => {
+		const res = await deleteFile(`/${STORAGE_DESTINATION.SETTINGS}/footer.${menuItem.id}.png`)
+
+		setMessage({
+			code: res?.data?.code,
+			message: res?.data?.message,
+		})
+
+		setLocalCache("", `${path ? (path + ".") : ""}${menuItem.id}.logoUrl`)
+	}
+
 	return (
-		<Grid container spacing={2}>
+		<Grid container spacing={2} >
+			<Grid item xs={12} sx={{ position: "relative", display: "flex" }}>
+				<Box id="image-preview" sx={{
+					display: "flex",
+					height: "50px",
+					width: "50px",
+					mr: 2, mb: 1,
+					"& #removePhotoBtn": {
+						display: "none"
+					},
+					":hover #removePhotoBtn": {
+						display: "block"
+					}
+				}}>
+					<Avatar
+						variant="square"
+						src={menuItem?.logoUrl ? menuItem.logoUrl : "/img/no-image.png"}
+						sx={{
+							position: "absolute",
+							width: 50,
+							height: 50,
+							"& >img": {
+								objectFit: "contain"
+							}
+						}} />
+
+					{menuItem?.logoUrl && <IconButton
+						id="removePhotoBtn"
+						size="small"
+						variant="outlined"
+						disabled={!menuItem?.logoUrl}
+						onClick={handleRemovePhoto}
+						sx={{
+							float: "right",
+							position: "relative"
+						}}
+					>
+						<RemoveCircleIcon sx={{ fontSize: 24 }} />
+					</IconButton>}
+				</Box>
+
+				<Box id="uploadIconBtn" sx={{
+					flexGrow: 1,
+					ml: 1
+				}}>
+					<form id={menuItem.id}>
+						<FormControl sx={{
+							"& [type=\"file\"]": {
+								display: "none"
+							},
+						}}>
+							<label
+								htmlFor={"photo-file-upload" + menuItem.id}
+								style={{
+									border: "1px solid #ccc",
+									display: "inline-block",
+									padding: "6px 12px",
+									cursor: "pointer"
+								}}
+							>
+								<span style={{ display: "flex", alignItems: "center" }}>
+									<UploadIcon fontSize="small" /> &nbsp; Upload Social Icon
+								</span>
+							</label>
+							<input
+								id={"photo-file-upload" + menuItem.id}
+								aria-describedby="my-helper-text"
+								type="file"
+								accept="image/*"
+								onChange={handleSelectAndUploadLogo}
+							/>
+						</FormControl>
+					</form>
+				</Box>
+
+				{uploading
+					&& <LinearProgressWithLabel value={progress} sx={{
+						"& > div > p": { fontSize: "0.8rem" },
+						zIndex: 300
+					}} />}
+			</Grid>
 			<Grid item xs={12}>
 				<TextField fullWidth
-					id="slug"
-					label="Slug"
-					size="small"
-					disabled
-					defaultValue={menuItem?.slug ?? ""}
-				/>
-			</Grid>
-			<Grid item xs={12} sx={{ position: "relative" }}>
-				<TextField fullWidth
-					defaultValue={menuItem?.label ?? ""}
 					id="label"
-					label="Navigation Label"
+					label="Label"
 					size="small"
+					defaultValue={menuItem?.label ?? ""}
 					onChange={handleTextFieldOnChange}
-					sx={{ border: "1px solid red" }}
 				/>
-			</Grid>
-			{(menuItem.type === DOC_TYPE.EXTERNAL)
-				? <Grid item xs={12} sx={{ my: -1.5 }}>
-					<Box>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={menuItem?.newtab ?? false}
-									onChange={() =>
-										setLocalCache(null, menuItem.id + ".newtab", "toggle")
-									}
-								/>
-							}
-							label="Open link in a new tab"
-						/>
-					</Box>
-				</Grid>
-				: null}
-
-			<Grid item container spacing={2}>
-				<Grid item xs={6}>
-					<TextField fullWidth
-						id="attribute"
-						label="Title Attribute"
-						size="small"
-						defaultValue={menuItem?.attribute ?? ""}
-						onChange={handleTextFieldOnChange}
-					/>
-				</Grid>
-				<Grid item xs={6}>
-					<TextField fullWidth
-						id="classes"
-						label="CSS Classes (optional)"
-						size="small"
-						defaultValue={menuItem?.classes ?? ""}
-						onChange={handleTextFieldOnChange}
-					/>
-				</Grid>
 			</Grid>
 			<Grid item xs={12}>
 				<TextField fullWidth
@@ -415,7 +511,7 @@ const FormSocialLink = React.memo(function _FormSocialLink({ menuItem, setLocalC
 					label="Description"
 					size="small"
 					multiline
-					rows={2}
+					rows={3}
 					defaultValue={menuItem?.description ?? ""}
 					onChange={handleTextFieldOnChange}
 				/>
@@ -423,6 +519,17 @@ const FormSocialLink = React.memo(function _FormSocialLink({ menuItem, setLocalC
 					The description will be displayed in the menu if the current theme supports it.
 				</Typography>
 			</Grid>
+
+			{message.code
+				? <Grid item xs={12}>
+					<Typography
+						color={(message.code === CODE.FAILED)
+							? "error.main"
+							: "primary.main"}
+					>
+						{message.message}
+					</Typography>
+				</Grid> : null}
 		</Grid>
 	)
 }, (prevProps, nextProps) => isEqual(prevProps, nextProps))
@@ -519,7 +626,7 @@ export const TextHeader = React.memo(function _TextHeader({ column, setLocalCach
 			</Grid>
 		</Grid>
 	)
-}, (prevProps, nextProps) => isEqual(prevProps, nextProps))
+}, (prevProps, nextProps) => isEqual(prevProps.column, nextProps.column))
 TextHeader.propTypes = {
 	column: PropTypes.object.isRequired,
 	setLocalCache: PropTypes.func.isRequired,
@@ -529,6 +636,13 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 	const [message, setMessage] = useState({ code: "", message: "" })
 	const [uploadFile, { uploading, progress }] = useUploadFile()
 
+	useDeepCompareEffect(() => {
+		const timeoutId = setTimeout(() => { setMessage({ code: "none", message: "" }) }, 2000)
+		return function cleanup() {
+			clearTimeout(timeoutId)
+		}
+	}, [message])
+
 	const handleTextFieldOnChange = debounce((e) => {
 		setLocalCache(
 			e.target.value,
@@ -537,21 +651,21 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 	}, 300)
 
 	const handleSelectAndUploadFile = async (e) => {
-		const photoURL = await uploadSingleFile(
+		const logoUrl = await uploadSingleFile(
 			e,
 			uploadFile,
 			`${STORAGE_DESTINATION.SETTINGS}/footer.${column.id}.png`
 		)
 
-		if (photoURL?.error) {
+		if (logoUrl?.error) {
 			setMessage({
 				code: CODE.FAILED,
-				message: photoURL.error.message
+				message: logoUrl.error.message
 			})
 			return
 		}
 
-		setLocalCache(photoURL, column.id + ".photoUrl")
+		setLocalCache(logoUrl, column.id + ".logoUrl")
 	}
 
 	const handleRemovePhoto = async () => {
@@ -562,7 +676,7 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 			message: res?.data?.message,
 		})
 
-		setLocalCache("", column.id + ".photoUrl")
+		setLocalCache("", column.id + ".logoUrl")
 	}
 
 	return (
@@ -583,21 +697,20 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 					<div>
 						<Avatar
 							variant="square"
-							src={column?.photoUrl ?? "/img/no-image.png"}
+							src={column?.logoUrl ? column.logoUrl : "/img/no-image.png"}
 							sx={{
 								position: "absolute",
-								width: "calc(100% - 16px)",
-								height: 100,
+								width: column?.maxWidth ?? 200,
 								"& >img": {
 									objectFit: "contain"
 								}
 							}} />
 
-						{column?.photoUrl && <IconButton
+						{column?.logoUrl && <IconButton
 							id="removePhotoBtn"
 							size="small"
 							variant="outlined"
-							disabled={column?.photoUrl === ""}
+							disabled={column?.logoUrl === ""}
 							onClick={handleRemovePhoto}
 							sx={{
 								float: "right",
@@ -615,6 +728,17 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 						}} />}
 				</Box>
 
+				{message.code
+					? <Grid item xs={12}>
+						<Typography
+							color={(message.code === CODE.FAILED)
+								? "error.main"
+								: "primary.main"}
+						>
+							{message.message}
+						</Typography>
+					</Grid> : null}
+
 				<Box sx={{
 					display: "flex",
 					flexDirection: "column",
@@ -622,33 +746,44 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 					width: "100%",
 					mt: 1
 				}}>
-					<FormControl sx={{
-						"& [type=\"file\"]": {
-							display: "none"
-						},
-					}}>
-						<label
-							htmlFor="photo-file-upload"
-							style={{
-								border: "1px solid #ccc",
-								display: "inline-block",
-								padding: "6px 12px",
-								cursor: "pointer"
-							}}
-						>
-							<span style={{ display: "flex", alignItems: "center" }}>
-								<UploadIcon fontSize="small" /> &nbsp; Upload Photo
-							</span>
-						</label>
-						<input
-							id="photo-file-upload"
-							aria-describedby="my-helper-text"
-							type="file"
-							accept="image/*"
-							onChange={handleSelectAndUploadFile}
-						/>
-					</FormControl>
+					<form id={column.id}>
+						<FormControl id={column.id} sx={{
+							"& [type=\"file\"]": {
+								display: "none"
+							},
+						}}>
+							<label
+								htmlFor={"photo-file-upload" + column.id}
+								style={{
+									border: "1px solid #ccc",
+									display: "inline-block",
+									padding: "6px 12px",
+									cursor: "pointer",
+								}}
+							>
+								<span style={{ display: "flex", alignItems: "center" }}>
+									<UploadIcon fontSize="small" /> &nbsp; Upload Photo
+								</span>
+							</label>
+							<input
+								id={"photo-file-upload" + column.id}
+								aria-describedby="my-helper-text"
+								type="file"
+								accept="image/*"
+								onChange={handleSelectAndUploadFile}
+							/>
+						</FormControl>
+					</form>
 				</Box>
+			</Grid>
+			<Grid item xs={12}>
+				<TextField fullWidth
+					id="maxWidth"
+					label="maxWidth in px"
+					size="small"
+					defaultValue={column?.maxWidth ?? "200px"}
+					onChange={handleTextFieldOnChange}
+				/>
 			</Grid>
 			<Grid item xs={12}>
 				<TextField fullWidth
@@ -656,25 +791,16 @@ export const ImageHeader = React.memo(function _ImageHeader({ column, setLocalCa
 					label="Description"
 					size="small"
 					multiline
-					rows={3}
+					rows={(column?.description.length < 100)
+						? 3
+						: Math.ceil(column?.description.length / 36)}
 					defaultValue={column?.description ?? ""}
 					onChange={handleTextFieldOnChange}
 				/>
 			</Grid>
-
-			{message.code
-				? <Grid item xs={12}>
-					<Typography
-						color={(message.code === CODE.FAILED)
-							? "error.main"
-							: "primary.main"}
-					>
-						{message.message}
-					</Typography>
-				</Grid> : null}
 		</Grid>
 	)
-}, (prevProps, nextProps) => isEqual(prevProps, nextProps))
+}, (prevProps, nextProps) => isEqual(prevProps.column, nextProps.column))
 ImageHeader.propTypes = {
 	column: PropTypes.object.isRequired,
 	setLocalCache: PropTypes.func.isRequired,
@@ -690,6 +816,8 @@ const FooterColumnBase = React.memo(function _FooterColumnBase({ column, expande
 			if (sourceItem.details?.parentId === column.id) return false
 			if (sourceItem.details?.type === MENU_TYPE.SOCIAL
 				&& column.type !== COLUMN_TYPE.IMAGE) return false
+			if (sourceItem.details?.type !== MENU_TYPE.SOCIAL
+				&& column.type === COLUMN_TYPE.IMAGE) return false
 			return true
 		},
 		drop: (_, monitor) => {
@@ -764,10 +892,24 @@ const FooterColumnBase = React.memo(function _FooterColumnBase({ column, expande
 		>
 			<Box sx={{
 				display: "flex",
-				alignItems: "baseline",
+				alignItems: "center",
 				flexGrow: 1,
 				overflow: "hidden"
 			}}>
+
+				{(column?.logoUrl)
+					? <Avatar
+						variant="square"
+						src={column?.logoUrl ? column.logoUrl : "/img/no-image.png"}
+						sx={{
+							width: 32,
+							height: 32,
+							ml: 1,
+							"& >img": {
+								objectFit: "contain"
+							}
+						}} /> : null}
+
 				<Typography noWrap sx={{
 					pl: 1.5,
 					pr: 0.5,
@@ -806,6 +948,7 @@ const FooterColumnBase = React.memo(function _FooterColumnBase({ column, expande
 							setLocalCache(
 								{
 									...column,
+									order: column.order + 10,
 									id: newId,
 									children: {}
 								},
@@ -882,8 +1025,6 @@ FooterColumn.propTypes = {
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
-
-//TODO: add social menu item block
 
 export default function FooterMenu({ themeSettings }) {
 	const ref = useRef(null)

@@ -18,98 +18,30 @@
  * ╚═══════════════════════════════════════════════════════════════════╝ *
  ************************************************************************/
 
-import React from "react"
+import React, { useMemo, useRef } from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
 
 //MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
-import { Box, Container, Typography } from "@mui/material"
+import { orderBy } from "lodash"
+import { Avatar, Box, Container, Typography } from "@mui/material"
 
 //PROJECT IMPORT
-import { Logo } from "@components/common"
+import useAppSettings from "@helpers/useAppSettings"
+import { COLUMN_TYPE } from "@components/Settings/MenuSettings"
+
+import {
+	APP_SETTINGS,
+} from "@helpers/constants"
 
 //ASSETS
-import GoogleIcon from "@mui/icons-material/Google"
-
-
-/*****************************************************************
- * DUMMYDATA                                                     *
- *****************************************************************/
-
-const footerLink1 = {
-	title: "Use cases",
-	links: [
-		{
-			name: "UX design",
-			url: "https://chasoft.net"
-		}, {
-			name: "UI design",
-			url: "https://chasoft.net"
-		},
-		{
-			name: "Prototyping",
-			url: "https://chasoft.net"
-		},
-		{
-			name: "Graphic design",
-			url: "https://chasoft.net"
-		},
-		{
-			name: "Wireframing",
-			url: "https://chasoft.net"
-		},
-		{
-			name: "Brainstorming",
-			url: "https://chasoft.net"
-		},
-		{
-			name: "Template",
-			url: "https://chasoft.net"
-		}
-	]
-}
-
-const socialLinks = [
-	{
-		name: "Twitter",
-		url: "https://twitter.com",
-		logo: {
-			light: "",
-			dark: ""
-		}
-	},
-	{
-		name: "Youtube",
-		url: "https://twitter.com",
-		logo: {
-			light: "",
-			dark: ""
-		}
-	},
-	{
-		name: "Instagram",
-		url: "https://twitter.com",
-		logo: {
-			light: "",
-			dark: ""
-		}
-	},
-	{
-		name: "Facebook",
-		url: "https://twitter.com",
-		logo: {
-			light: "",
-			dark: ""
-		}
-	}
-]
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export function FooterLinks({ linkGroup }) {
+export function FooterLinks({ column }) {
 	return (
 		<Box id="footer-links" sx={{
 			"&>ul": {
@@ -124,30 +56,33 @@ export function FooterLinks({ linkGroup }) {
 			},
 		}}>
 			<Typography variant="h4">
-				{linkGroup.title}
+				{column.label}
 			</Typography>
 			<ul>
-				{linkGroup.links.map((link, idx) => (
-					<li key={idx}>
-						<Link href={link.url} passHref>
-							<a href="just-a-placeholder">{link.name}</a>
-						</Link>
-					</li>
-				))}
+				{orderBy(column.children, ["order"]).map(item => {
+					return (
+						<li key={item.id} >
+							<Link href={item.slug} passHref>
+								<a href="just-a-placeholder" className="aniLink">{item.label}</a>
+							</Link>
+						</li>
+					)
+				})}
 			</ul>
 		</Box>
 	)
 }
 FooterLinks.propTypes = {
-	linkGroup: PropTypes.object.isRequired,
+	column: PropTypes.object.isRequired,
 }
 
-function LogoAndSocial({ socialLinks }) {
+function LogoAndSocial({ column }) {
 	const theme = useTheme()
 	return (
 		<Box
 			id="logo-and-social"
 			sx={{
+				marginRight: { xs: 0, md: 5 },
 				"&>ul": {
 					listStyle: "none",
 					padding: "0",
@@ -173,7 +108,7 @@ function LogoAndSocial({ socialLinks }) {
 						margin: 0,
 					},
 					"&>ul>li>a": {
-						marginBottom: "0px"
+						marginBottom: "0px",
 					},
 					marginTop: "28px",
 				},
@@ -186,22 +121,48 @@ function LogoAndSocial({ socialLinks }) {
 		>
 			<Link href="/">
 				<a href="just-a-placeholder">
-					<Logo height="25px" />
+					<img
+						style={{
+							maxWidth: column?.maxWidth ?? "200px"
+						}}
+						alt="Footer logo"
+						src={column?.logoUrl ? column.logoUrl : "/img/no-image.png"}
+					/>
 				</a>
 			</Link>
 
+			{column.description ?
+				<Typography sx={{
+					pt: 2,
+					pb: { xs: 2, md: 0 },
+					fontSize: "0.9rem",
+					textAlign: "justify"
+				}}>
+					{column.description}
+				</Typography> : null}
+
 			<ul>
-				{socialLinks.map((social, idx) => (
-					<li key={idx}>
-						<Link href={social.url}>
-							<a href="just-a-placeholder" style={{
+				{orderBy(column.children, ["order"]).map((social) => (
+					<li key={social.id}>
+						<Link href={social.slug} passHref>
+							<Box component="a" href="just-a-placeholder" sx={{
 								display: "flex",
 								alignItems: "center",
-								marginLeft: "1.25rem"
+								marginLeft: { xs: "0.35rem", sm: "1.2rem", md: 0 }
 							}}>
-								<GoogleIcon sx={{ fontSize: 20, mr: 1 }} />
-								<span>{social.name}</span>
-							</a>
+								<Avatar
+									variant="square"
+									src={social?.logoUrl ? social.logoUrl : "/img/no-image.png"}
+									sx={{
+										width: 28,
+										height: 28,
+										mr: 1,
+										"& >img": {
+											objectFit: "contain"
+										}
+									}} />
+								<span>{social.label}</span>
+							</Box>
 						</Link>
 					</li>
 				))}
@@ -210,7 +171,7 @@ function LogoAndSocial({ socialLinks }) {
 	)
 }
 LogoAndSocial.propTypes = {
-	socialLinks: PropTypes.arrayOf(PropTypes.object).isRequired,
+	column: PropTypes.object.isRequired,
 }
 
 function FooterWrapper({ children }) {
@@ -228,6 +189,19 @@ FooterWrapper.propTypes = {
 }
 
 export function FooterBase({ isPreview = false }) {
+	const sortedList = useRef([])
+
+	const {
+		data: { footerMenu = {} },
+		isLoading: isLoadingFooterMenu
+	} = useAppSettings(null, APP_SETTINGS.footerMenu)
+
+	sortedList.current = useMemo(() => {
+		return orderBy(footerMenu, ["order"])
+	}, [footerMenu])
+
+	if (isLoadingFooterMenu) return null
+
 	return (
 		<Box component="footer" sx={{
 			display: "grid",
@@ -237,18 +211,30 @@ export function FooterBase({ isPreview = false }) {
 				: { margin: "64px 0 112px" }
 			),
 			gridTemplateColumns: {
-				xs: "repeat(1, 1fr)",
-				md: "repeat(4, 1fr)"
+				xs: "repeat(2, 1fr)",
+				md: `repeat(${sortedList.current.length}, 1fr)`
 			},
 			gridGap: "48px",
 			justifyContent: "space-between"
 		}}>
-			<LogoAndSocial socialLinks={socialLinks} />
+			{sortedList.current.map(column => {
 
-			<FooterLinks linkGroup={footerLink1} />
-			<FooterLinks linkGroup={footerLink1} />
-			<LogoAndSocial socialLinks={socialLinks} />
+				if (column.type === COLUMN_TYPE.LINK)
+					return (
+						<FooterLinks
+							key={column.id}
+							column={column}
+						/>
+					)
 
+				if (column.type === COLUMN_TYPE.IMAGE)
+					return (
+						<LogoAndSocial
+							key={column.id}
+							column={column}
+						/>
+					)
+			})}
 		</Box>
 	)
 }

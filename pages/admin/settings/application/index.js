@@ -65,8 +65,6 @@ function ApplicationSettings() {
 		}
 	})
 
-	console.log("ApplicationSettings! Why?")
-
 	return (
 		<>
 			<SettingsHeader>
