@@ -34,7 +34,6 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import { CircularProgressBox } from "@components/common"
 import useTicketCategories from "@helpers/useTicketCategories"
-import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import CategoriesAddNew from "@components/Settings/Tickets/CategoriesAddNew"
@@ -92,7 +91,7 @@ function TicketSettingsCategory() {
 
 	const dispatch = useDispatch()
 	const [showContent, setShowContent] = useState(false)
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const { data: categories, isLoading } = useTicketCategories()
 

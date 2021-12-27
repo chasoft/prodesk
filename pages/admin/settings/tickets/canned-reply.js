@@ -25,7 +25,7 @@
 import React, { useState } from "react"
 
 // MATERIAL-UI
-import { Box, Button, CircularProgress, Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { some } from "lodash"
@@ -33,7 +33,6 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { CircularProgressBox } from "@components/common"
-import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 import CannedRepliesGroup from "@components/Settings/CannedReplies/CannedRepliesGroup"
@@ -92,10 +91,9 @@ function TicketSettingsCannedReply() {
 	const dispatch = useDispatch()
 	const [showContent, setShowContent] = useState(false)
 
-	const {
-		activeSettingPanel,
-		isAddNewPanel
-	} = useSelector(getUiSettings)	// used to keep selected canned-replies group (aka department)
+	// used to keep selected canned-replies group (aka department)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
+	const isAddNewPanel = useSelector(s => s.uiSettingsState.isAddNewPanel)
 
 	const {
 		data: departments = [],

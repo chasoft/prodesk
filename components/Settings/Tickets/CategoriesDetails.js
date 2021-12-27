@@ -51,11 +51,6 @@ import {
 } from "@components/common/Settings"
 
 import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
-
-import {
 	useDeleteCategoryMutation,
 	useUpdateCategoryMutation
 } from "@redux/slices/firestoreApi"
@@ -69,15 +64,15 @@ import DeleteIcon from "@mui/icons-material/Delete"
 
 function CategoriesDetails({ backBtnClick }) {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { enqueueSnackbar } = useSnackbar()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	const [deleteCategory] = useDeleteCategoryMutation()
 	const [updateCategory] = useUpdateCategoryMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	//
 	const { data: categories, isLoading } = useTicketCategories()
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 	const selectedCategory = find(categories, { name: activeSettingPanel })
 
 	//Local memory

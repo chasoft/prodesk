@@ -29,7 +29,7 @@ import { Box, InputBase, Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
-import { random, trim } from "lodash"
+import { isEqual, random, trim } from "lodash"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import slugify from "react-slugify"
@@ -47,12 +47,6 @@ import {
 	DATE_FORMAT,
 	SETTINGS_NAME
 } from "@helpers/constants"
-
-import {
-	getAuth,
-	getDocsCenter,
-	getTextEditor
-} from "@redux/selectors"
 
 import {
 	setEditorData,
@@ -86,9 +80,9 @@ function DocumentEditor() {
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateDocContent] = useUpdateDocContentMutation()
 	// Current document
-	const { currentUser } = useSelector(getAuth)
-	const { activeDocId } = useSelector(getDocsCenter)
-	const { editorDataHeadings } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
+	const editorDataHeadings = useSelector(s => s.textEditorState.editorDataHeadings, isEqual)
 	// Get all required data from database
 	const {
 		data: docItem, isLoading: isLoadingDocItem
@@ -102,7 +96,8 @@ function DocumentEditor() {
 		data: docItemContent = {}, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(activeDocId)
 	//
-	const { editorData, editorDefaultData } = useSelector(getTextEditor)
+	const editorData = useSelector(s => s.textEditorState.editorData)
+	const editorDefaultData = useSelector(s => s.textEditorState.editorDefaultData)
 
 	const {
 		localCache, handlers: { setLocalCache }

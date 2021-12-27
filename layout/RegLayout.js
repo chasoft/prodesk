@@ -35,7 +35,6 @@ import { useDispatch, useSelector } from "react-redux"
 //PROJECT IMPORT
 import Footer from "@components/common/Footer"
 import { getRootLayout } from "@layout/RootLayout"
-import { getUiSettings } from "@redux/selectors"
 import { setflexDirection } from "@redux/slices/uiSettings"
 import { useGetInstallStatusQuery } from "@redux/slices/firestoreApi"
 import { CircularProgressBox } from "@components/common"
@@ -159,7 +158,7 @@ export function useFlexDirection(props) {
 
 function RegLayout({ children }) {
 	const router = useRouter()
-	const { flexDirection } = useSelector(getUiSettings)
+	const flexDirection = useSelector(s => s.uiSettingsState.flexDirection)
 
 	//Checking install status, if not installed, go install
 	const { data: installStatus, isLoading } = useGetInstallStatusQuery()

@@ -29,6 +29,7 @@ import PropTypes from "prop-types"
 import { Box, Collapse, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
 import { useDrag, useDrop } from "react-dnd"
 
@@ -41,11 +42,6 @@ import { CollapseIconButton } from "@components/Documentation/TocSideBar/TocSide
 import useAddNewDocumentationPopupMenu from "@components/Documentation/TocSideBar/useAddNewDocumentationPopupMenu"
 
 import { useUpdateDocMutation } from "@redux/slices/firestoreApi"
-
-import {
-	getAuth,
-	getDocsCenter
-} from "@redux/selectors"
 
 import {
 	DOCS_ADD,
@@ -66,7 +62,7 @@ import {
 function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [{ canDrop, isOver }, drop] = useDrop(() => ({
 		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL, DOC_TYPE.SUBCATEGORY],
@@ -120,7 +116,7 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 	])
 
 	const [expanded, setExpanded] = useState(true)
-	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
 	const [
 		AddNewPopupMenu, open, anchorRef, {

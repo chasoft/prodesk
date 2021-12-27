@@ -30,14 +30,13 @@ import { ref as getStorageRef, getDownloadURL, uploadBytesResumable } from "fire
 
 //THIRD-PARTY
 import nanoid from "@helpers/nanoid"
-import { isFunction } from "lodash"
+import { isEqual, isFunction } from "lodash"
 import { useSnackbar } from "notistack"
 import Editor from "rich-markdown-editor"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { setEditorData } from "@redux/slices/textEditor"
-import { getAuth, getTextEditor } from "@redux/selectors"
 import { STATE_CHANGED, storage } from "@helpers/firebase"
 import { EditorLightTheme } from "@components/Themes/Editor/defaultEditorTheme"
 import { STORAGE_DESTINATION } from "@helpers/storageApi"
@@ -62,8 +61,8 @@ import { LinearProgressWithLabel } from "@components/common"
 const TextEditor = React.forwardRef((props, ref) => {
 	const { defaultValue = "", readOnly = false, storageDestination = "uploads", onChange, ...otherProps } = props
 
-	const { scrollTo } = useSelector(getTextEditor)
-	const { currentUser } = useSelector(getAuth)
+	// const { scrollTo } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [progress, setProgress] = useState(0)
 	const [uploading, setUploading] = useState(false)
 
@@ -126,7 +125,7 @@ const TextEditor = React.forwardRef((props, ref) => {
 		<>
 			<Editor
 				ref={ref}
-				scrollTo={scrollTo}
+				// scrollTo={scrollTo}
 				readOnly={readOnly}
 				defaultValue={defaultValue}
 				onChange={handleOnChange}

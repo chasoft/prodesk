@@ -27,11 +27,10 @@ import { useState } from "react"
 //THIRD-PARTY
 import { useSelector } from "react-redux"
 import { useDeepCompareEffect } from "react-use"
-import { filter, groupBy, orderBy, pickBy, size } from "lodash"
+import { filter, groupBy, isEqual, orderBy, pickBy, size } from "lodash"
 
 //PROJECT IMPORT
 import { STATUS_FILTER } from "./constants"
-import { getAuth, getUiSettings } from "@redux/selectors"
 import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
 
 //ASSETS
@@ -42,11 +41,12 @@ import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
 
 function useFilteredTicketsForUser() {
 	const [res, setRes] = useState([])
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
-	const {
-		filteredGroupBy, filteredByDepartment, filteredByPriority, filteredByStatusRaw,
-	} = useSelector(getUiSettings)
+	const filteredGroupBy = useSelector(s => s.uiSettingsState.filteredGroupBy)
+	const filteredByDepartment = useSelector(s => s.uiSettingsState.filteredByDepartment)
+	const filteredByPriority = useSelector(s => s.uiSettingsState.filteredByPriority)
+	const filteredByStatusRaw = useSelector(s => s.uiSettingsState.filteredByStatusRaw)
 
 	const {
 		data: tickets, isLoading: isLoadingTickets

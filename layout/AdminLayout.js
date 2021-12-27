@@ -30,13 +30,13 @@ import { Box } from "@mui/material"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { KBarProvider } from "kbar"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { AdminCommandBar } from "@components/common/kbar/kbar"
 import { getRootLayout } from "@layout/RootLayout"
-import { getUiSettings } from "@redux/selectors"
 import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
 import { setIsSmallScreen } from "@redux/slices/uiSettings"
 import AuthCheck from "@components/AuthCheck"
@@ -101,7 +101,7 @@ const ADMIN_MENUS = [
  *****************************************************************/
 
 function AdminLayout({ children }) {
-	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
+	const backgroundForLoggedinPage = useSelector(s => s.uiSettingsState.backgroundForLoggedinPage, isEqual)
 
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")

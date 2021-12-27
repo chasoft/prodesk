@@ -33,7 +33,6 @@ import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { CircularProgressBox } from "@components/common"
-import { getUiSettings } from "@redux/selectors"
 import useUiSettings from "@helpers/useUiSettings"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
@@ -85,7 +84,7 @@ function TicketSettingsDepartment() {
 
 	const dispatch = useDispatch()
 	const [showContent, setShowContent] = useState(false)
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
 		data: departments,

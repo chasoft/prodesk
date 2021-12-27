@@ -35,10 +35,12 @@ import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
 import relativeTime from "dayjs/plugin/relativeTime"
 import CopyToClipboard from "react-copy-to-clipboard"
+import { useRouter } from "next/router"
 
 import {
 	trim,
 	random,
+	isEqual,
 } from "lodash"
 
 import {
@@ -47,16 +49,12 @@ import {
 } from "react-redux"
 
 //PROJECT IMPORT
+import NewCannedReplyDialog from "./NewCannedReplyDialog"
 import TextEditor from "@components/common/TextEditor"
 import ConfirmDialog from "@components/common/ConfirmDialog"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { setEditorData } from "@redux/slices/textEditor"
-import {
-	getAuth,
-	getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
 import {
 	useDeleteTicketReplyMutation,
 	useUpdateTicketReplyMutation
@@ -78,8 +76,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert"
 import AccessTimeIcon from "@mui/icons-material/AccessTime"
 import DescriptionIcon from "@mui/icons-material/Description"
 import useMenuContainer from "@components/common/useMenuContainer"
-import NewCannedReplyDialog from "./NewCannedReplyDialog"
-import { useRouter } from "next/router"
 
 /*****************************************************************
  * INIT                                                          *
@@ -206,9 +202,9 @@ ReplyItemPopupMenu.propTypes = {
 
 function ReplyItem({ isAdmin, replyItem, ticketUsername, ticketStatus, departmentId, isFirst = false }) {
 	const dispatch = useDispatch()
-	const { editorData } = useSelector(getTextEditor)
-	const { currentUser } = useSelector(getAuth)
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const editorData = useSelector(s => s.textEditorState.editorData)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const [editMode, setEditMode] = useState(false)
 	const [replyItemContent, setReplyItemContent] = useState(replyItem.content)

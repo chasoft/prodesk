@@ -33,7 +33,6 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "@redux/selectors"
 import { getLayout } from "@layout/ClientLayout"
 import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import TicketReplies from "@components/Ticket/TicketReplies"
@@ -48,6 +47,7 @@ import HomeIcon from "@mui/icons-material/Home"
 import ErrorIcon from "@mui/icons-material/Error"
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket"
 import useProfilesGroup from "@helpers/useProfilesGroup"
+import { isEqual } from "lodash"
 
 /*****************************************************************
  * INIT                                                          *
@@ -60,7 +60,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
 function SingleTicket() {
 	const router = useRouter()
 	const { slug } = router.query
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	//
 	const {
 		data: tickets = [],

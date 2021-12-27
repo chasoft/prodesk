@@ -39,7 +39,6 @@ import { countBy, forEach, filter, size, orderBy, random, isEqual } from "lodash
 //PROJECT IMPORT
 import useAdmin from "./useAdmin"
 import { realtimeDB } from "./firebase"
-import { getUiSettings } from "@redux/selectors"
 import { CODE, STATUS_FILTER } from "@helpers/constants"
 import { useRequestRefetchingMutation } from "@redux/slices/firestoreApi"
 import { ACTIONS } from "@redux/slices/firestoreApiConstants"
@@ -272,7 +271,9 @@ export function useClientAutoRefetching() {
 }
 
 export function useNotifications(username, enqueueSnackbar, closeSnackbar) {
-	const { notificationInbox, forceRefreshId } = useSelector(getUiSettings)
+	const notificationInbox = useSelector(s => s.uiSettingsState.notificationInbox)
+	const forceRefreshId = useSelector(s => s.uiSettingsState.forceRefreshId)
+
 	const notis = useNotificationsBase(username, enqueueSnackbar, closeSnackbar)
 
 	const filteredList = useRef([])

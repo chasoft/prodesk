@@ -32,12 +32,16 @@ import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, T
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { trim } from "lodash"
+import { isEqual, trim } from "lodash"
 import { useSelector } from "react-redux"
 import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
+import useAdmin from "@helpers/useAdmin"
+import { getStaffInCharge } from "@helpers/utils"
+import { addNewNotification } from "@helpers/realtimeApi"
+import useProfilesGroup from "@helpers/useProfilesGroup"
 
 import {
 	ACTIONS,
@@ -45,24 +49,14 @@ import {
 } from "@redux/slices/firestoreApiConstants"
 
 import {
-	getAuth,
-	getTextEditor,
-} from "@redux/selectors"
-
-import {
 	useUpdateTicketMutation
 } from "@redux/slices/firestoreApi"
-
-import useAdmin from "@helpers/useAdmin"
-import { getStaffInCharge } from "@helpers/utils"
-import { addNewNotification } from "@helpers/realtimeApi"
 
 import {
 	CODE,
 	DATE_FORMAT,
 	USERGROUP,
 } from "@helpers/constants"
-import useProfilesGroup from "@helpers/useProfilesGroup"
 
 //ASSETS
 
@@ -81,8 +75,8 @@ function TicketNoteDialog({ ticket, departments, open, setOpen }) {
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { isAdminURL } = useAdmin()
-	const { currentUser } = useSelector(getAuth)
-	const { editorData } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [updateTicket] = useUpdateTicketMutation()
 
 	const {

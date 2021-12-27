@@ -19,6 +19,7 @@
  ************************************************************************/
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
 import { useRegisterActions } from "kbar"
 import { useSnackbar } from "notistack"
@@ -27,7 +28,6 @@ import { useSnackbar } from "notistack"
 import { _createDocSearchIndex } from "@helpers/docSearchIndex"
 import { updateAppSettings } from "@redux/slices/firestoreApiBase"
 import { APP_SETTINGS, CODE } from "@helpers/constants"
-import { getAuth } from "@redux/selectors"
 import { THEME_NAME } from "@components/Themes/themeInfo"
 
 /*****************************************************************
@@ -46,7 +46,7 @@ const ID_GROUP = {
 
 export default function useAdminActions() {
 	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	useRegisterActions(
 		[

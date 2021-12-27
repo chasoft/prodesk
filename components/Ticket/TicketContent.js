@@ -30,6 +30,7 @@ import { Avatar, Box, IconButton, MenuItem, Paper, Typography } from "@mui/mater
 
 //THIRD-PARTY
 import dayjs from "dayjs"
+import { isEqual } from "lodash"
 import { useSnackbar } from "notistack"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
@@ -39,6 +40,7 @@ import TextEditor from "@components/common/TextEditor"
 import useMenuContainer from "@components/common/useMenuContainer"
 import ReplyDialog from "@components/Ticket/TicketReplies/ReplyDialog"
 import { handleCloseTicketBase } from "@components/Ticket/TicketCloseReplyButtons"
+import { setRedirect } from "@redux/slices/redirect"
 
 import {
 	TicketCategory,
@@ -50,9 +52,6 @@ import {
 	TicketStatus,
 	TicketNote
 } from "@components/Ticket/AdminTicketListItem"
-
-import { getAuth } from "@redux/selectors"
-import { setRedirect } from "@redux/slices/redirect"
 
 import {
 	useGetDepartmentsQuery,
@@ -96,7 +95,7 @@ MenuItemStyled.propTypes = {
 function PopupMenu({ ticket, allAdminProfiles }) {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { enqueueSnackbar } = useSnackbar()
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 
@@ -214,7 +213,7 @@ TicketCreatedAt.propTypes = {
  *****************************************************************/
 
 function TicketContent({ ticket, allAdminProfiles }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const profile = useGetProfileByUsername(ticket.username)
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 

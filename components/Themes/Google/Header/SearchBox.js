@@ -34,7 +34,6 @@ import { InputBase } from "@mui/material"
 //ASSETS
 import SearchIcon from "@mui/icons-material/Search"
 import { useSelector } from "react-redux"
-import { getUiSettings } from "@redux/selectors"
 import { FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
 import { styled } from "@mui/system"
 
@@ -104,7 +103,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
  *****************************************************************/
 
 function SearchBox() {
-	const { activeSettingTab } = useSelector(getUiSettings)
+	const activeSettingTab = useSelector(s => s.uiSettingsState.activeSettingTab)
 
 	//Only show this SearchBox when not at HOME!
 	//(that means... user would be at Docs || troubleshoot page)

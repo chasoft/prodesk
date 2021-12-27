@@ -30,9 +30,11 @@ import { Box, Button, Collapse, Dialog, DialogActions, DialogContent, DialogCont
 import dayjs from "dayjs"
 import nanoid from "@helpers/nanoid"
 import { useSelector } from "react-redux"
-import { filter, random, uniqueId } from "lodash"
+import { filter, isEqual, random, uniqueId } from "lodash"
+import { TransitionGroup } from "react-transition-group"
 
 //PROJECT IMPORT
+import { CircularProgressBox } from "@components/common"
 import { CODE } from "@helpers/constants"
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
@@ -52,11 +54,6 @@ import {
 } from "@components/common/Settings"
 
 import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
-
-import {
 	useAddLabelMutation,
 	useDeleteLabelMutation,
 	useGetLabelsQuery,
@@ -69,8 +66,6 @@ import SaveIcon from "@mui/icons-material/Save"
 import LabelIcon from "@mui/icons-material/Label"
 import CloseIcon from "@mui/icons-material/Close"
 import DeleteIcon from "@mui/icons-material/Delete"
-import { CircularProgressBox } from "@components/common"
-import { TransitionGroup } from "react-transition-group"
 
 /*****************************************************************
  * INIT                                                          *
@@ -78,7 +73,7 @@ import { TransitionGroup } from "react-transition-group"
 
 export function LabelEditorDialog({ open, handleClose }) {
 	const [addLabel] = useAddLabelMutation()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	const { data: labels, isLoading } = useGetLabelsQuery()
 
 	const handleAddNewLabel = async () => {
@@ -138,7 +133,7 @@ LabelEditorDialog.propTypes = {
 }
 
 export function SubCatItem({ currentItem, labels }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateLabel] = useUpdateLabelMutation()
 	const [deleteLabel] = useDeleteLabelMutation()
 
@@ -282,7 +277,7 @@ SubCatItem.propTypes = {
 
 function PageLabels({ backBtnClick }) {
 	const [addLabel] = useAddLabelMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { data: labels, isLoading } = useGetLabelsQuery()
 
 	const handleAddNewLabel = async () => {

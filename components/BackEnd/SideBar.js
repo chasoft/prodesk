@@ -38,7 +38,6 @@ import PerfectScrollbar from "react-perfect-scrollbar"
 import { Logo } from "@components/common"
 import HomeButton from "./HomeButton"
 import NavCollapse from "./NavCollapse"
-import { getUiSettings } from "@redux/selectors"
 import { MENU_ITEM_TYPE } from "@helpers/constants"
 import { setIsSideBarExpanded, setShowSideBar } from "@redux/slices/uiSettings"
 
@@ -285,7 +284,9 @@ SideBarContentCollapsed.propTypes = { data: PropTypes.array }
  *****************************************************************/
 
 function SideBar({ homeUrl, settingsUrl, settingsTooltip, data = [] }) {
-	const { showSideBar, isSmallScreen, isSideBarExpanded } = useSelector(getUiSettings)
+	const showSideBar = useSelector(s => s.uiSettingsState.showSideBar)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
+	const isSideBarExpanded = useSelector(s => s.uiSettingsState.isSideBarExpanded)
 	const dispatch = useDispatch()
 	return (
 		<>

@@ -38,7 +38,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { CircularProgressBox } from "@components/common"
 
 import { setRedirect } from "@redux/slices/redirect"
-import { getUiSettings } from "@redux/selectors"
 
 import useProfilesGroup from "@helpers/useProfilesGroup"
 import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
@@ -52,7 +51,7 @@ import AddIcon from "@mui/icons-material/Add"
 
 export function AddMembersDialog({ open, members, addMemberCallback, handleClose }) {
 	const [selected, setSelected] = useState(members)
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const {
 		userList: supporterList = [], isLoading: isLoadingSupporterList

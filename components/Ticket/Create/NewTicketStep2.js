@@ -32,7 +32,6 @@ import { Select, MenuItem, InputLabel, Grid, FormControl } from "@mui/material"
 import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
-import { getNewTicket } from "@redux/selectors"
 import { useGetDepartmentsQuery, useGetCategoriesQuery } from "@redux/slices/firestoreApi"
 import {
 	setSelectedCategory, setSelectedSubCategory,
@@ -56,7 +55,7 @@ import { useGetTicketDetails } from "@components/Ticket/Create/NewTicketStepper"
 function DepartmentBlock() {
 	const dispatch = useDispatch()
 	const { data: departments, isLoading } = useGetDepartmentsQuery()
-	const { selectedDepartmentId } = useSelector(getNewTicket)
+	const selectedDepartmentId = useSelector(s => s.newTicketState.selectedDepartmentId)
 
 	if (isLoading)
 		return (
@@ -99,7 +98,7 @@ function DepartmentBlock() {
 function PriorityBlock() {
 	const dispatch = useDispatch()
 	const priorities = ["Low", "Normal", "High"]
-	const { selectedPriority } = useSelector(getNewTicket)
+	const selectedPriority = useSelector(s => s.newTicketState.selectedPriority)
 
 	return (
 		<FormControl sx={{ formControl: { m: 1, minWidth: 120 } }} fullWidth>
@@ -126,7 +125,7 @@ function PriorityBlock() {
 
 function CategoryBlock() {
 	const dispatch = useDispatch()
-	const { selectedCategory } = useSelector(getNewTicket)
+	const selectedCategory = useSelector(s => s.newTicketState.selectedCategory)
 	const { data: categories, isLoading } = useGetCategoriesQuery()
 
 	if (isLoading)
@@ -160,7 +159,7 @@ function CategoryBlock() {
 
 function SubCategoryBlock() {
 	const dispatch = useDispatch()
-	const { selectedSubCategory } = useSelector(getNewTicket)
+	const selectedSubCategory = useSelector(s => s.newTicketState.selectedSubCategory)
 	const { subCategories, defaultSubCategory, isLoading } = useGetTicketDetails()
 
 	if (isLoading)

@@ -29,18 +29,14 @@ import PropTypes from "prop-types"
 import { Box, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { useDrag, useDrop } from "react-dnd"
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
+import { useDrag, useDrop } from "react-dnd"
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
 import { isValidDnD, moveDocItem } from "@components/Documentation/TocSideBar"
 import { useUpdateDocMutation } from "@redux/slices/firestoreApi"
-
-import {
-	getAuth,
-	getDocsCenter
-} from "@redux/selectors"
 
 import {
 	DOC_STATUS,
@@ -61,7 +57,7 @@ import LaunchIcon from "@mui/icons-material/Launch"
 function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [{ canDrop, isOver }, drop] = useDrop(() => ({
 		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL],
@@ -114,7 +110,7 @@ function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 		targetDocItem?.subCategoryId,
 	])
 
-	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
 	drag(drop(ref))
 	const isActive = canDrop && isOver

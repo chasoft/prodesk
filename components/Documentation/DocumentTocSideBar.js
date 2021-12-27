@@ -29,7 +29,7 @@ import PropTypes from "prop-types"
 import { Box, List, ListItemButton, Typography, ListItemAvatar, ListItemText } from "@mui/material"
 
 //THIRD-PARTY
-import { filter } from "lodash"
+import { filter, isEqual } from "lodash"
 import { useSnackbar } from "notistack"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
@@ -46,13 +46,6 @@ import {
 	DOCS_ADD,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
-
-import {
-	getAuth,
-	getDocsCenter,
-	getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
 
 import {
 	setActiveDocId,
@@ -153,7 +146,7 @@ RightMenuItemBase.propTypes = {
 
 export function RightMenuItemAddNewDoc({ categoryId, subCategoryId, sx }) {
 	const [addDoc] = useAddDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const handleAddNewDoc = async () => {
 		//Prepare skeleton document
@@ -217,7 +210,8 @@ export function RightMenuItemDelete({ title = "Delete", targetDocItem, sx }) {
 	const allDocsRaw = useGetDocsQuery(undefined)
 	const [deleteDoc] = useDeleteDocMutation()
 	const { enqueueSnackbar } = useSnackbar()
-	const { isSmallScreen } = useSelector(getUiSettings)
+
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
@@ -529,7 +523,7 @@ RightMenuItemDelete.propTypes = {
 
 export function RightMenuItemMore({ sx }) {
 	const dispatch = useDispatch()
-	const { activeDocId } = useSelector(getDocsCenter)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
 	return (
 		<RightMenuItemBase
 			Icon={<MoreHorizIcon />} sx={{ ...sx }}
@@ -555,8 +549,8 @@ RightMenuItemMore.propTypes = {
  *****************************************************************/
 
 function DocumentTocSideBar() {
-	const { activeDocId } = useSelector(getDocsCenter)
-	const { editorDataHeadings } = useSelector(getTextEditor)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
+	const editorDataHeadings = useSelector(s => s.textEditorState.editorDataHeadings, isEqual)
 
 	const {
 		data: activeDoc, isLoading: isLoadingActiveDoc

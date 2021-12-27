@@ -31,12 +31,11 @@ import PropTypes from "prop-types"
 import { LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { once } from "lodash"
+import { isEqual, once } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { Logo } from "@components/common"
-import { getAuth } from "@redux/selectors"
 import { loginSuccess } from "@redux/slices/auth"
 import { REDIRECT_URL } from "@helpers/constants"
 import { getInstallLayout } from "./InstallLayout"
@@ -54,7 +53,7 @@ function InstallCompleted() {
 	const [progress, setProgress] = useState(0)
 	const progressRef = useRef(() => { })
 	//
-	const { currentUser } = useSelector(getAuth)	//we have uid from previus step which kept here!
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)	//we have uid from previus step which kept here!
 	const [finalizeInstallation] = useFinalizeInstallationMutation()
 
 	const redirectAdmin = once(async () => {

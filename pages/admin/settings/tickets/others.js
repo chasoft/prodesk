@@ -32,7 +32,6 @@ import { Chip, Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "@redux/selectors"
 import PageLabels from "@components/Settings/Tickets/Labels"
 import useUiSettings from "@helpers/useUiSettings"
 import { STATUS_FILTER } from "@helpers/constants"
@@ -190,7 +189,7 @@ function TicketSettingsOthers() {
 
 	const dispatch = useDispatch()
 	const [showContent, setShowContent] = useState(false)
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	return (
 		<>

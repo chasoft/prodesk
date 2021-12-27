@@ -31,7 +31,6 @@ import { Box, Button, Paper, Typography } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "@redux/selectors"
 import { REDIRECT_URL } from "@helpers/constants"
 import { setRedirect } from "@redux/slices/redirect"
 
@@ -49,7 +48,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 
 function AskNow() {
 	const dispatch = useDispatch()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	return (
 		<Box sx={{ my: { xs: 2, md: 4 } }}>
 			<Paper elevation={2}

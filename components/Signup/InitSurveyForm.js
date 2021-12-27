@@ -29,11 +29,11 @@ import { Box, Button, FormControlLabel, Paper, Radio, RadioGroup, Typography } f
 
 //THIRD-PARTY
 import { useFormik } from "formik"
+import { isEqual } from "lodash"
 // import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 import { useSignUpSurveyMutation } from "@redux/slices/firestoreApi"
 
@@ -61,7 +61,7 @@ import { RegContainer } from "@layout/RegLayout"
 function InitSurveyForm() {
 	const dispatch = useDispatch()
 	// const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [signUpSurvey] = useSignUpSurveyMutation()
 
 	const formik = useFormik({

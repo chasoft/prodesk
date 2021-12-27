@@ -3,22 +3,20 @@
  *****************************************************************/
 
 import React, { useState, useRef, useEffect } from "react"
-import dynamic from "next/dynamic"
 import PropTypes from "prop-types"
-import Link from "next/link"
 
 // MATERIAL-UI
-import { Box, Button, Container, Grid, LinearProgress, Popover, Typography } from "@mui/material"
+import { Box, Button, Container, Grid, LinearProgress, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import Editor from "rich-markdown-editor"
+import { isEqual } from "lodash"
 import { useSnackbar } from "notistack"
+import Editor from "rich-markdown-editor"
 
 //PROJECT IMPORT
 import { getRootLayout } from "@layout/RootLayout"
-import { imageUploader, STATE_CHANGED, storage } from "@helpers/firebase"
+import { STATE_CHANGED, storage } from "@helpers/firebase"
 import { useSelector } from "react-redux"
-import { getAuth } from "@redux/selectors"
 import nanoid from "@helpers/nanoid"
 import Gallery from "@components/Gallery"
 import AuthCheck from "@components/AuthCheck"
@@ -64,7 +62,7 @@ FaceBookEmbed.propTypes = { attrs: PropTypes.any }
 
 const Test = () => {
 	const [toggle, setToggle] = useState(false)
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [uploading, setUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
 

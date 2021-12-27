@@ -10,12 +10,12 @@ import Link from "next/link"
 import { Avatar, Box, Tooltip, IconButton, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import useAdmin from "@helpers/useAdmin"
-import { getAuth } from "@redux/selectors"
 import { REDIRECT_URL } from "@helpers/constants"
 import { signOut } from "@helpers/firebase/logout"
 import usePopupContainer from "@components/common/usePopupContainer"
@@ -44,7 +44,7 @@ function UserIcon() {
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()
 	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	return <>
 		<Tooltip arrow title="User Menu" placement="bottom">

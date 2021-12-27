@@ -30,7 +30,6 @@ import { findIndex } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "@redux/selectors"
 
 //ASSETS
 
@@ -41,7 +40,7 @@ import { getUiSettings } from "@redux/selectors"
 function TabsSettings({ tabsList }) {
 	const router = useRouter()
 	const isScreenBigEnough = useMediaQuery("(min-width: 1000px)")
-	const { activeSettingTab } = useSelector(getUiSettings)
+	const activeSettingTab = useSelector(s => s.uiSettingsState.activeSettingTab)
 
 	const handleChange = useCallback((event, selectedTabIndex) => {
 		const path = tabsList.find(i => i.index === selectedTabIndex).path

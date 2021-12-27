@@ -39,7 +39,6 @@ import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
 import { setEditorData } from "@redux/slices/textEditor"
 import TicketStepper from "@components/Ticket/Create/NewTicketStepper"
 import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
-import { getNewTicket, getUiSettings } from "@redux/selectors"
 import { resetNewTicket, setOnBehalf } from "@redux/slices/newTicket"
 
 //ASSETS
@@ -59,9 +58,9 @@ function AdminNewTicket() {
 
 	const dispatch = useDispatch()
 	const { userList, isLoading } = useProfiles([USERGROUP.MEMBER.code, USERGROUP.USER.code])
-	const { onBehalf } = useSelector(getNewTicket)
-	const { currentStep } = useSelector(getNewTicket)
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const onBehalf = useSelector(s => s.newTicketState.onBehalf)
+	const currentStep = useSelector(s => s.newTicketState.currentStep)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	useUiSettings({
 		title: "Open New Ticket",

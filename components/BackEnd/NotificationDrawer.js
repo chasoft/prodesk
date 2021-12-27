@@ -33,6 +33,7 @@ import { Avatar, Box, Button, Drawer, IconButton, ListItem, ListItemAvatar, List
 
 //THIRD-PARTY
 import dayjs from "dayjs"
+import { isEqual } from "lodash"
 import relativeTime from "dayjs/plugin/relativeTime"
 import PerfectScrollbar from "react-perfect-scrollbar"
 import { useDispatch, useSelector } from "react-redux"
@@ -40,7 +41,6 @@ import { CSSTransition, TransitionGroup } from "react-transition-group"
 
 //PROJECT IMPORT
 import useAdmin from "@helpers/useAdmin"
-import { getAuth, getUiSettings } from "@redux/selectors"
 import { ACTIONS } from "@redux/slices/firestoreApiConstants"
 import { STATUS_FILTER, DATE_FORMAT } from "@helpers/constants"
 import { setForceRefreshId, setNotificationInbox } from "@redux/slices/uiSettings"
@@ -78,7 +78,7 @@ export const NOTIFICATION_INBOXES_LIST = [
 
 function NotificationInbox({ counter }) {
 	const dispatch = useDispatch()
-	const { notificationInbox } = useSelector(getUiSettings)
+	const notificationInbox = useSelector(s => s.uiSettingsState.notificationInbox)
 
 	return (
 		<ToggleButtonGroup
@@ -218,8 +218,8 @@ NotisItemLink.propTypes = {
 function NotificationDrawer({ isOpen, handleClose, notis, counter }) {
 	const classes = useStyles()
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
-	const { notificationInbox } = useSelector(getUiSettings)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const notificationInbox = useSelector(s => s.uiSettingsState.notificationInbox)
 
 	dayjs.extend(relativeTime)
 

@@ -33,7 +33,6 @@ import { isMobile } from "react-device-detect"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getUiSettings } from "@redux/selectors"
 
 /*****************************************************************
  * INIT                                                          *
@@ -54,7 +53,7 @@ function ConfirmDialog({
 	children
 }) {
 
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const handleCancel = () => {
 		setOpen(false)

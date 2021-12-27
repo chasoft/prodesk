@@ -26,7 +26,7 @@ import PropTypes from "prop-types"
 import { Box, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { findKey } from "lodash"
+import { findKey, isEqual } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -34,7 +34,6 @@ import { DOC_TYPE, DOC_STATUS, RESERVED_KEYWORDS } from "@helpers/constants"
 import SimplicityLayout from "@components/Themes/Simplicity/layout"
 import { CircularProgressBox } from "@components/common"
 import { useGetDocsGrouped } from "@helpers/useGetDocs"
-import { getAuth } from "@redux/selectors"
 import { docItemNewCategory, docItemNewSubCategory } from "@helpers/firebase/docs"
 
 //ASSETS
@@ -225,7 +224,7 @@ ArticlesList.propTypes = {
  *****************************************************************/
 
 function ThemeSimplicityCategories({ slug }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const {
 		data: docs = [], isLoading: isLoadingDocs

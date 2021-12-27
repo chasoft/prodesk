@@ -29,15 +29,13 @@ import PropTypes from "prop-types"
 import { Box, Button } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSnackbar } from "notistack"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { ReplyButton } from "@components/Ticket/TicketReplies"
-
 import { CODE, STATUS_FILTER } from "@helpers/constants"
-
-import { getAuth } from "@redux/selectors"
 import { useGetDepartmentsQuery, useUpdateTicketMutation } from "@redux/slices/firestoreApi"
 
 //ASSETS
@@ -104,7 +102,7 @@ export async function handleCloseTicketBase({
 //When they click close, then a dialog appear to get their feedback (star rating, small feedback TextField)
 function TicketActionButtons({ ticket, allAdminProfiles }) {
 	const [updateTicket] = useUpdateTicketMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { enqueueSnackbar } = useSnackbar()
 
 	const {

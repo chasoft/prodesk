@@ -35,6 +35,7 @@ import { useDispatch, useSelector } from "react-redux"
 import {
 	cloneDeep,
 	filter,
+	isEqual,
 	some,
 	sortBy,
 	trim
@@ -46,11 +47,6 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { CircularProgressBox } from "@components/common"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import useTicketCategories from "@helpers/useTicketCategories"
-
-import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
 
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useAddCategoryMutation } from "@redux/slices/firestoreApi"
@@ -159,8 +155,8 @@ SubCatItem.propTypes = {
 
 function CategoriesAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	//
 	const [isDefault, setIsDefault] = useState(false)
 	const [categoryName, setCategoryName] = useState("")

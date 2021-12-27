@@ -28,15 +28,11 @@ import React from "react"
 import { Box, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { useUpdateDocContentMutation } from "@redux/slices/firestoreApi"
-
-import {
-	getAuth,
-	getDocsCenter
-} from "@redux/selectors"
 
 //ASSETS
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined"
@@ -119,9 +115,8 @@ Yes, after a few months we finally found the answer. Sadly, Mike is on vacation 
  *****************************************************************/
 
 function DocumentTemplate() {
-
-	const { currentUser } = useSelector(getAuth)
-	const { activeDocId } = useSelector(getDocsCenter)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
 	const [updateDocContent] = useUpdateDocContentMutation()
 
 	const handleSelectDocTemplate = async (templateContent) => {

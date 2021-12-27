@@ -32,7 +32,7 @@ import { Avatar, Box, CircularProgress, Collapse, Grid, LinearProgress, TextFiel
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { APP_SETTINGS, REDIRECT_URL } from "@helpers/constants"
+import { APP_SETTINGS, REDIRECT_URL, LOGO_TYPE } from "@helpers/constants"
 import useAppSettings from "@helpers/useAppSettings"
 
 //ASSETS
@@ -91,7 +91,7 @@ function SignUpLink() {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-function Logo({ isSmall = false, height = "30px", style = {} }) {
+function Logo({ isSmall = false, theme = "light", height = "30px", style = {} }) {
 
 	const {
 		data: siteMetaInfo = {
@@ -110,7 +110,9 @@ function Logo({ isSmall = false, height = "30px", style = {} }) {
 			<Link href="/" passHref>
 				{/* eslint-disable-next-line @next/next/no-img-element */}
 				<img
-					src={siteMetaInfo.logoUrl}
+					src={(theme === "light")
+						? siteMetaInfo[LOGO_TYPE.LIGHT]
+						: siteMetaInfo[LOGO_TYPE.DARK]}
 					height={height} width={height}
 					alt={siteMetaInfo.siteName}
 					style={{ cursor: "pointer", ...style }}
@@ -123,7 +125,9 @@ function Logo({ isSmall = false, height = "30px", style = {} }) {
 		<Link href="/" passHref>
 			{/* eslint-disable-next-line @next/next/no-img-element */}
 			<img
-				src={siteMetaInfo.logoUrl}
+				src={(theme === "light")
+					? siteMetaInfo[LOGO_TYPE.LIGHT]
+					: siteMetaInfo[LOGO_TYPE.DARK]}
 				height={height} width={Math.round(height * 5.25).toString()}
 				alt="Logo of ProDesk"
 				style={{ cursor: "pointer", ...style }}
@@ -133,6 +137,7 @@ function Logo({ isSmall = false, height = "30px", style = {} }) {
 }
 Logo.propTypes = {
 	isSmall: PropTypes.bool,
+	theme: PropTypes.string,
 	height: PropTypes.string,
 	style: PropTypes.object
 }

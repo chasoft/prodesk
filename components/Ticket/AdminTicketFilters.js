@@ -27,14 +27,12 @@ import PropTypes from "prop-types"
 import { Badge, Box, Button, CircularProgress, FormControl, FormControlLabel, FormGroup, InputAdornment, MenuItem, OutlinedInput, Select, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { size } from "lodash"
+import { isEqual, size } from "lodash"
 import PerfectScrollbar from "react-perfect-scrollbar"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import CustomCheckbox from "@components/common/CustomCheckbox"
-
-import { getUiSettings } from "@redux/selectors"
 import {
 	useGetDepartmentsQuery,
 	useGetLabelsQuery
@@ -99,9 +97,9 @@ export const TICKET_INBOXES_LIST = [
 
 function FilterTicketInbox() {
 	const dispatch = useDispatch()
-	const { ticketCounter, filteredByInbox } = useSelector(getUiSettings)
 
-	console.log({ ticketCounter })
+	const ticketCounter = useSelector(s => s.uiSettingsState.ticketCounter, isEqual)
+	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
 
 	const handleChangeInbox = (e, filteredByInbox) => {
 		if (filteredByInbox) {
@@ -138,7 +136,7 @@ function FilterTicketInbox() {
 
 export function FilterTicketDepartments() {
 	const dispatch = useDispatch()
-	const { filteredByDepartment } = useSelector(getUiSettings)
+	const filteredByDepartment = useSelector(s => s.uiSettingsState.filteredByDepartment)
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
@@ -181,7 +179,7 @@ export function FilterTicketDepartments() {
 
 export function FilterTicketGroupBy({ groupBy, sx }) {
 	const dispatch = useDispatch()
-	const { filteredGroupBy } = useSelector(getUiSettings)
+	const filteredGroupBy = useSelector(s => s.uiSettingsState.filteredGroupBy)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 1, mb: 1, ...sx }}>Group by</Typography>
@@ -211,7 +209,8 @@ FilterTicketGroupBy.propTypes = {
 
 export function FilterTicketStatus() {
 	const dispatch = useDispatch()
-	const { filteredByStatusRaw } = useSelector(getUiSettings)
+	const filteredByStatusRaw = useSelector(s => s.uiSettingsState.filteredByStatusRaw)
+
 	const handleSelectTicketStatus = (e) => {
 		dispatch(setSelectedStatusRaw({ [e.target.name]: e.target.checked }))
 	}
@@ -276,7 +275,7 @@ export function FilterTicketStatus() {
 
 export function FilterTicketPriorities() {
 	const dispatch = useDispatch()
-	const { filteredByPriority } = useSelector(getUiSettings)
+	const filteredByPriority = useSelector(s => s.uiSettingsState.filteredByPriority)
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Priority</Typography>
@@ -307,7 +306,7 @@ export function FilterTicketPriorities() {
 
 function FilterTicketLabels() {
 	const dispatch = useDispatch()
-	const { filteredByLabel } = useSelector(getUiSettings)
+	const filteredByLabel = useSelector(s => s.uiSettingsState.filteredByLabel)
 	const { data: labels, isLoading: isLoadingLabels } = useGetLabelsQuery()
 
 	if (size(labels) === 0 || isLoadingLabels)
@@ -356,7 +355,9 @@ function FilterTicketLabels() {
 
 export function FilterTicketHasWord() {
 	const dispatch = useDispatch()
-	const { filteredByWord } = useSelector(getUiSettings)
+
+	const filteredByWord = useSelector(s => s.uiSettingsState.filteredByWord)
+
 	return (
 		<Box onClick={(e) => e.stopPropagation()}>
 			<Typography sx={{ fontWeight: 500, mt: 3, mb: 1 }}>Has word</Typography>

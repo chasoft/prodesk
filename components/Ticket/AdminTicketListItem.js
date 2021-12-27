@@ -32,7 +32,7 @@ import { Avatar, Checkbox, Box, Chip, IconButton, Tooltip, Typography } from "@m
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { find, keyBy, size, isFunction } from "lodash"
+import { find, keyBy, size, isFunction, isEqual } from "lodash"
 import relativeTime from "dayjs/plugin/relativeTime"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -41,11 +41,6 @@ import { getStaffInCharge } from "@helpers/utils"
 import { setRedirect } from "@redux/slices/redirect"
 import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
 import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
-
-import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
 
 import {
 	DATE_FORMAT,
@@ -149,7 +144,7 @@ function TicketDateTimeSmallScreen({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	if (isSmallScreen === false)
 		return null
 
@@ -190,7 +185,7 @@ function TicketDateTime({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	if (isSmallScreen)
 		return null
 
@@ -232,7 +227,7 @@ function TicketDateTime({ ticket }) {
 TicketDateTime.propTypes = { ticket: PropTypes.object }
 
 export function TicketLabels({ ticket, callback, sx }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { data, isLoading } = useGetLabelsQuery()
 	const [updateTicket] = useUpdateTicketMutation()
 
@@ -580,9 +575,9 @@ TicketCreatedBy.propTypes = {
 
 function AdminTicketListItem({ ticket, isFirst = false, isLast = false }) {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
-	const { selectedTickets } = useSelector(getUiSettings)
-	//ticketItem = {ticketId, department...}
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
 
 	const handleSelectTicket = useCallback((event, ticketItem) => {
 		const idArray = selectedTickets.map(i => i.tid)

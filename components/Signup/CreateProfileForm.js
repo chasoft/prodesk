@@ -28,18 +28,15 @@ import React, { useState } from "react"
 import { Avatar, Box, Button, Grid, TextField, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 import { loginSuccess } from "@redux/slices/auth"
 import { useSignUpCreateProfileMutation } from "@redux/slices/firestoreApi"
-
 import { REDIRECT_URL } from "@helpers/constants"
-
 import { RegContainer } from "@layout/RegLayout"
-
 import { SimpleTogglePanel, DefaultAvatarPanel } from "@components/common"
 
 /*****************************************************************
@@ -53,7 +50,7 @@ import { SimpleTogglePanel, DefaultAvatarPanel } from "@components/common"
 function CreateProfileForm() {
 	const dispatch = useDispatch()
 	// const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [signUpCreateProfile] = useSignUpCreateProfileMutation()
 
 	const [location, setLocation] = useState("")

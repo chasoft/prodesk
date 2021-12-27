@@ -30,12 +30,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { Box, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { KBarProvider } from "kbar"
 
 //PROJECT IMPORT
 import { ClientCommandBar } from "@components/common/kbar/kbar"
 import { getRootLayout } from "@layout/RootLayout"
-import { getUiSettings } from "@redux/selectors"
 import { MENU_ITEM_TYPE, REDIRECT_URL } from "@helpers/constants"
 import { setIsSmallScreen } from "@redux/slices/uiSettings"
 import AuthCheck from "@components/AuthCheck"
@@ -83,7 +83,7 @@ const CLIENT_MENU = [
  *****************************************************************/
 
 function ClientLayout({ children }) {
-	const { backgroundForLoggedinPage } = useSelector(getUiSettings)
+	const backgroundForLoggedinPage = useSelector(s => s.uiSettingsState.backgroundForLoggedinPage, isEqual)
 
 	const dispatch = useDispatch()
 	const isSmallScreen = useMediaQuery("(max-width:600px)")

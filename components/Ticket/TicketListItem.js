@@ -39,11 +39,6 @@ import { getStaffInCharge } from "@helpers/utils"
 import { setRedirect } from "@redux/slices/redirect"
 
 import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
-
-import {
 	DATE_FORMAT,
 	PRIORITY,
 	REDIRECT_URL
@@ -61,6 +56,7 @@ import {
 //ASSETS
 import LowPriorityIcon from "@mui/icons-material/LowPriority"
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh"
+import { isEqual } from "lodash"
 
 /*****************************************************************
  * INIT                                                          *
@@ -112,7 +108,7 @@ UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTyp
 function TicketDateTimeSmallScreen({ ticket }) {
 	dayjs.extend(relativeTime)
 
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	//Hide at bigScreen
 	if (!isSmallScreen)
 		return null
@@ -153,7 +149,7 @@ TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
 function TicketDateTime({ ticket }) {
 	dayjs.extend(relativeTime)
 
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 	//Hide at smallScreen
 	if (isSmallScreen)
 		return null
@@ -203,9 +199,9 @@ TicketDateTime.propTypes = { ticket: PropTypes.object }
  *****************************************************************/
 
 function TicketListItem({ ticket, isFirst = false, isLast = false }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const dispatch = useDispatch()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const latestStaffInCharge = getStaffInCharge(ticket.staffInCharge)
 

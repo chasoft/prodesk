@@ -31,7 +31,6 @@ import { Box } from "@mui/material"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getTextEditor } from "@redux/selectors"
 import TextEditor from "@components/common/TextEditor"
 
 //ASSETS
@@ -45,7 +44,7 @@ import TextEditor from "@components/common/TextEditor"
  *****************************************************************/
 
 function NewTicketStep3() {
-	const { editorData } = useSelector(getTextEditor)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	return (
 		<Box sx={{
 			pl: 4, py: 1, my: 0,

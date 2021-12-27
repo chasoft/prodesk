@@ -36,8 +36,6 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { ForgotPasswordLink, SignUpLink } from "@components/common"
-
-import { getRedirect } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 import { loginSuccess } from "@redux/slices/auth"
 
@@ -83,7 +81,7 @@ function LoginForm() {
 	const dispatch = useDispatch()
 	const [isLoading, setIsLoading] = useState(false)
 	//
-	const { redirectAfterLoginURL } = useSelector(getRedirect)
+	const redirectAfterLoginURL = useSelector(s => s.redirectState.redirectAfterLoginURL)
 	//
 	const [signInWithEmail] = useSignInWithEmailMutation()
 	const [signInWithGoogle] = useSignInWithGoogleMutation()

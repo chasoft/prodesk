@@ -30,6 +30,7 @@ import { Avatar, Box, Button, ButtonGroup, CircularProgress, Divider, Fab, ListI
 
 //THIRD-PARTY
 import dayjs from "dayjs"
+import { isEqual } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -47,7 +48,6 @@ import {
 	USERGROUP
 } from "@helpers/constants"
 
-import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 
 import {
@@ -71,7 +71,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
 export function ReplyButton({ ticket, tooltip = "", disabled = false, sx }) {
 	const dispatch = useDispatch()
 	const { isAdminURL } = useAdmin()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [showReplyDialog, setShowReplyDialog] = useState(false)
 	const [addTicketReply] = useAddTicketReplyMutation()
 	const [isSubmitingCannedReply, setIsSubmitingCannedReply] = useState(false)
@@ -292,7 +292,7 @@ RepliesContainer.propTypes = {
 
 function TicketReplies({ ticket }) {
 
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
 	const { data: ticketReplies, isLoading: isLoadingReplies } = useGetTicketRepliesQuery({

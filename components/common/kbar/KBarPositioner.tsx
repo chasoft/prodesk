@@ -24,6 +24,7 @@ const defaultStyle: React.CSSProperties = {
 export default function KBarPositioner(props: Props) {
 	const { isAdminURL } = useAdmin()
 	const { isSideBarExpanded } = useSelector(getUiSettings)
+	// const isSideBarExpanded = useSelector(s => s.uiSettingsState.isSideBarExpanded)
 	return (
 		<Box
 			style={{

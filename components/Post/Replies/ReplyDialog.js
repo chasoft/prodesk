@@ -30,19 +30,15 @@ import { useTheme } from "@mui/material/styles"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
-import nanoid from "@helpers/nanoid"
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
+import nanoid from "@helpers/nanoid"
 
 //PROJECT IMPORT
 import TextEditor from "@components/common/TextEditor"
 import { LearnMoreAdvancedTextEditor } from "@components/common"
 import { useAddTicketReplyMutation } from "@redux/slices/firestoreApi"
 
-import {
-	getAuth,
-	getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
 
 //ASSETS
 
@@ -59,9 +55,9 @@ const ReplyDialog = ({ children }) => {
 	const [open, setOpen] = useState(false)
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
-	const { currentUser } = useSelector(getAuth)
-	const { ticketId } = useSelector(getUiSettings)
-	const { editorData } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const ticketId = useSelector(s => s.uiSettingsState.ticketId)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [addTicketReply] = useAddTicketReplyMutation()
 
 	const handleClose = () => { setOpen(false) }

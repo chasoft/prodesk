@@ -32,14 +32,12 @@ import DefaultErrorPage from "next/error"
 import { Box, CircularProgress, Container } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
-
 
 //PROJECT IMPORT
 import Footer from "@components/common/Footer"
 import { ReduxRedirect } from "@components/AuthCheck"
-
-import { getAuth } from "@redux/selectors"
 import { useGetInstallStatusQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
@@ -74,7 +72,7 @@ const bgImgList = {
 
 function InstallLayout({ children }) {
 	const router = useRouter()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { data: installStatus, isLoading } = useGetInstallStatusQuery()
 
 	if ((installStatus?.isInstalled === true && currentUser.justInstalled !== true))

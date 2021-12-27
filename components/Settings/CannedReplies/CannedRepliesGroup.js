@@ -29,7 +29,7 @@ import React, { useState } from "react"
 import { Box, IconButton, Tooltip, Typography } from "@mui/material"
 
 //THIRD-PARTY]
-import { filter, size } from "lodash"
+import { filter, isEqual, size } from "lodash"
 import { useDeepCompareEffect } from "react-use"
 import { useDispatch, useSelector } from "react-redux"
 
@@ -50,7 +50,6 @@ import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { setSelectedCrid } from "@redux/slices/uiSettings"
-import { getAuth, getUiSettings } from "@redux/selectors"
 
 import {
 	useDeleteCannedReplyMutation,
@@ -68,13 +67,12 @@ import DeleteIcon from "@mui/icons-material/Delete"
 
 function CannedRepliesGroup({ backBtnClick }) {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
-	const {
-		selectedCrid, activeSettingPanel
-	} = useSelector(getUiSettings)
+	const selectedCrid = useSelector(s => s.uiSettingsState.selectedCrid)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
 		data: departments, isLoading: isLoadingDepartments

@@ -33,7 +33,6 @@ import { useSelector, useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import { setSubject } from "@redux/slices/newTicket"
-import { getNewTicket } from "@redux/selectors"
 
 //ASSETS
 
@@ -47,7 +46,7 @@ import { getNewTicket } from "@redux/selectors"
 
 function NewTicketStep1({ goNextStep }) {
 	const dispatch = useDispatch()
-	const { subject } = useSelector(getNewTicket)
+	const subject = useSelector(s => s.newTicketState.subject)
 
 	return (
 		<form onSubmit={(e) => {

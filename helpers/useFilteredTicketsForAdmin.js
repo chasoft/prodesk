@@ -27,13 +27,13 @@ import { useState } from "react"
 //THIRD-PARTY
 import { useDispatch, useSelector } from "react-redux"
 import { useDeepCompareEffect } from "react-use"
-import { countBy, filter, groupBy, orderBy, pickBy } from "lodash"
+import { countBy, filter, groupBy, isEqual, orderBy, pickBy } from "lodash"
 
 //PROJECT IMPORT
-import useUserSettings from "./useUserSettings"
 import { getStaffInCharge } from "@helpers/utils"
-import { getAuth, getUiSettings } from "@redux/selectors"
 import { setTicketCounter } from "@redux/slices/uiSettings"
+import useProfilesGroup from "@helpers/useProfilesGroup"
+import useUserSettings from "./useUserSettings"
 
 import {
 	SETTINGS_NAME,
@@ -46,7 +46,6 @@ import {
 	useGetDepartmentsQuery,
 	useGetTicketsForAdminQuery
 } from "@redux/slices/firestoreApi"
-import useProfilesGroup from "@helpers/useProfilesGroup"
 
 /*****************************************************************
  * INIT                                                          *
@@ -58,7 +57,7 @@ export default function useFilteredTicketsForAdmin() {
 		tickets: [],
 		counter: 0
 	})
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [availableTicketsByInbox, setAvailableTicketsByInbox] = useState({})
 
 	const {
@@ -83,14 +82,12 @@ export default function useFilteredTicketsForAdmin() {
 
 	const hasAdminPermissions = useUserSettings(currentUser.username, SETTINGS_NAME.hasAdminPermissions)
 
-	const {
-		filteredGroupBy,
-		filteredByInbox,
-		filteredByLabel,
-		filteredByPriority,
-		filteredByStatusRaw,
-		filteredByDepartment
-	} = useSelector(getUiSettings)
+	const filteredGroupBy = useSelector(s => s.uiSettingsState.filteredGroupBy)
+	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
+	const filteredByLabel = useSelector(s => s.uiSettingsState.filteredByLabel)
+	const filteredByPriority = useSelector(s => s.uiSettingsState.filteredByPriority)
+	const filteredByStatusRaw = useSelector(s => s.uiSettingsState.filteredByStatusRaw)
+	const filteredByDepartment = useSelector(s => s.uiSettingsState.filteredByDepartment)
 
 	console.log("hasAdminPermissions", hasAdminPermissions)
 

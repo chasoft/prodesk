@@ -31,8 +31,6 @@ import { Paper, Tab, Tabs } from "@mui/material"
 
 //THIRD-PARTY
 import { useSelector } from "react-redux"
-import { getUiSettings } from "@redux/selectors"
-// import { setRedirect } from "@redux/slices/redirect"
 import { FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
 
 //PROJECT IMPORT
@@ -59,7 +57,7 @@ function TopNavigatorBar({ dataSet }) {
 	// const dispatch = useDispatch()
 	const router = useRouter()
 
-	const { activeSettingTab } = useSelector(getUiSettings)
+	const activeSettingTab = useSelector(s => s.uiSettingsState.activeSettingTab)
 
 	const handleChange = (event, selectedTabId) => {
 		// dispatch(setRedirect(dataSet[selectedTabId][1]))

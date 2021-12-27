@@ -27,7 +27,7 @@ import { Button, Grid, TextField } from "@mui/material"
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { some } from "lodash"
+import { isEqual, some } from "lodash"
 import nanoid from "@helpers/nanoid"
 import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
@@ -43,7 +43,6 @@ import {
 } from "@components/common/Settings"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
-import { getAuth } from "@redux/selectors"
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 
 import {
@@ -67,7 +66,7 @@ import useLocalComponentCache from "@helpers/useLocalComponentCache"
 function DepartmentsAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [addDepartment] = useAddDepartmentMutation()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery(undefined)
 

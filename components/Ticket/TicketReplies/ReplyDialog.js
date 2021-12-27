@@ -32,7 +32,7 @@ import { Box, Button, CircularProgress, Chip, Dialog, DialogActions, DialogConte
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { size } from "lodash"
+import { isEqual, size } from "lodash"
 import nanoid from "@helpers/nanoid"
 import { useDispatch, useSelector } from "react-redux"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -48,14 +48,6 @@ import {
 	ACTIONS,
 	TYPE
 } from "@redux/slices/firestoreApiConstants"
-
-// import { setIsLoadingSomething } from "@redux/slices/uiSettings"
-
-import {
-	getAuth,
-	// getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
 
 import {
 	useAddTicketReplyMutation,
@@ -168,10 +160,10 @@ function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 	const fullScreen = useMediaQuery(theme.breakpoints.down("sm"))
 
 	const { isAdminURL } = useAdmin()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [addTicketReply] = useAddTicketReplyMutation()
-	const { isLoadingSomething } = useSelector(getUiSettings)
+	const isLoadingSomething = useSelector(s => s.uiSettingsState.isLoadingSomething)
 	const [justCopied, setJustCopied] = useState(false)
 
 	const [replyEditorData, setReplyEditorData] = useState("")

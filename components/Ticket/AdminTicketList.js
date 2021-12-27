@@ -30,7 +30,7 @@ import { Avatar, Box, Button, CircularProgress, List, ListItemAvatar, ListItemTe
 //THIRD-PARTY
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { every, size } from "lodash"
+import { every, isEqual, size } from "lodash"
 import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
@@ -53,11 +53,6 @@ import {
 	TICKET_INBOXES,
 	USERGROUP
 } from "@helpers/constants"
-
-import {
-	getAuth,
-	getUiSettings,
-} from "@redux/selectors"
 
 import {
 	ACTIONS,
@@ -115,12 +110,11 @@ AdminFilterDrawer.propTypes = {
 }
 
 function AssignButton({ departments }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateTicket] = useUpdateTicketMutation()
 
-	const {
-		filteredByInbox, selectedTickets
-	} = useSelector(getUiSettings)
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
+	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
 
 	const {
 		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
@@ -315,7 +309,7 @@ AssignButton.propTypes = {
 function StatusButton() {
 	const dispatch = useDispatch()
 	const [updateTicket] = useUpdateTicketMutation()
-	const { selectedTickets } = useSelector(getUiSettings)
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
 	const [
 		MenuContainer, open, anchorRef, {
 			handleToggle, handleClose, handleListKeyDown
@@ -373,7 +367,7 @@ function StatusButton() {
 
 function LabelButton() {
 	const [updateTicket] = useUpdateTicketMutation()
-	const { selectedTickets } = useSelector(getUiSettings)
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
 	const [openNewLableDialog, setOpenNewLableDialog] = useState(false)
 
 	const {
@@ -475,9 +469,8 @@ function DeleteTicketsButton() {
 	const [deleteTicketTemp] = useDeleteTicketTempMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
-	const {
-		selectedTickets, isSmallScreen
-	} = useSelector(getUiSettings)
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const {
 		userList: allUsers, isLoading: isLoadingAllUsers
@@ -631,7 +624,7 @@ function ClearSelectedTicketsButton() {
 
 function AdminTicketList() {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [showFilter, setShowFilter] = useState(false)
 
 	const {
@@ -639,10 +632,8 @@ function AdminTicketList() {
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery()
 
-	const {
-		selectedTickets,
-		filteredByInbox
-	} = useSelector(getUiSettings)
+	const selectedTickets = useSelector(s => s.uiSettingsState.selectedTickets, isEqual)
+	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
 
 	const {
 		data: tickets = [],

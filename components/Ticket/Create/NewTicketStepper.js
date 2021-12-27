@@ -28,7 +28,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { Box, Button, CircularProgress, Paper, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { size } from "lodash"
+import { isEqual, size } from "lodash"
 import nanoid from "@helpers/nanoid"
 import slugify from "react-slugify"
 import { useDeepCompareEffect } from "react-use"
@@ -48,7 +48,6 @@ import { CODE, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "@helpers/constants
 
 import { setRedirect } from "@redux/slices/redirect"
 import { ACTIONS, TYPE } from "@redux/slices/firestoreApiConstants"
-import { getAuth, getNewTicket, getTextEditor } from "@redux/selectors"
 import { setCurrentStep, setNewlyAddedTicketSlug } from "@redux/slices/newTicket"
 import { useAddTicketMutation, useGetCategoriesQuery, useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 
@@ -68,7 +67,11 @@ export function useGetTicketDetails() {
 	const { data: categories, isLoading: isLoadingCategories } = useGetCategoriesQuery()
 	const { data: departments, isLoading: isLoadingDepartments } = useGetDepartmentsQuery()
 
-	const { selectedDepartmentId, selectedCategory, selectedSubCategory, selectedPriority } = useSelector(getNewTicket)
+	const selectedDepartmentId = useSelector(s => s.newTicketState.selectedDepartmentId)
+	const selectedCategory = useSelector(s => s.newTicketState.selectedCategory)
+	const selectedSubCategory = useSelector(s => s.newTicketState.selectedSubCategory)
+	const selectedPriority = useSelector(s => s.newTicketState.selectedPriority)
+
 	const defaultCategory = categories?.find(i => i.default === true)?.name ?? ""
 	const subCategories = categories?.find(i => i.name === (selectedCategory ?? defaultCategory))?.subCategories ?? []
 	const defaultSubCategory = subCategories?.find(i => i.default === true)?.name ?? ""
@@ -94,8 +97,9 @@ export function useGetTicketDetails() {
 
 export function useGetNewTicketData() {
 	const res = useRef([])
-	const { editorData } = useSelector(getTextEditor)
-	const { subject, selectedPriority } = useSelector(getNewTicket)
+	const editorData = useSelector(s => s.textEditorState.editorData)
+	const subject = useSelector(s => s.newTicketState.subject)
+	const selectedPriority = useSelector(s => s.newTicketState.selectedPriority)
 
 	const {
 		selectedCategory, selectedDepartmentId, selectedSubCategory
@@ -135,13 +139,13 @@ export function useGetNewTicketData() {
 
 function StepperControlButtons() {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
-	const { editorData } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [isProcessingNewTicket, setIsProcessingNewTicket] = useState(false)
 
-	const {
-		currentStep, onBehalf, subject
-	} = useSelector(getNewTicket)
+	const subject = useSelector(s => s.newTicketState.subject)
+	const onBehalf = useSelector(s => s.newTicketState.onBehalf)
+	const currentStep = useSelector(s => s.newTicketState.currentStep)
 
 	const [addTicket] = useAddTicketMutation()
 	const { isAdminURL } = useAdmin()
@@ -305,10 +309,8 @@ export default function TicketStepper() {
 		isLoading
 	} = useGetNewTicketData()
 
-	const {
-		currentStep,
-		newlyAddedTicketSlug
-	} = useSelector(getNewTicket)
+	const currentStep = useSelector(s => s.newTicketState.currentStep)
+	const newlyAddedTicketSlug = useSelector(s => s.newTicketState.newlyAddedTicketSlug)
 
 	const { isAdminURL } = useAdmin()
 

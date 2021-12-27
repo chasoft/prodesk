@@ -28,14 +28,13 @@ import React, { useEffect, useState, useCallback } from "react"
 import { Box, Button, Grid, Paper, Typography } from "@mui/material"
 
 //THIRD-PARTY
-import { find, map, size } from "lodash"
+import { find, isEqual, map, size } from "lodash"
 import { useSelector } from "react-redux"
 import { useSnackbar } from "notistack"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 
 //PROJECT IMPORT
-import { getAuth } from "@redux/selectors"
 import { getLayout } from "@layout/ClientLayout"
 import { themeInfo, THEME_NAME } from "@components/Themes/themeInfo"
 import { useCreateDocSearchIndex } from "@helpers/docSearchIndex"
@@ -198,7 +197,7 @@ function DocSearchIndex() {
 		isLoading: isLoadingDocSearchIndex
 	} = useGetDocSearchIndexQuery(undefined)
 
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const { enqueueSnackbar } = useSnackbar()
 

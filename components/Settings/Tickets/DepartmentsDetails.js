@@ -49,11 +49,6 @@ import {
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 
-import {
-	getAuth,
-	getUiSettings
-} from "@redux/selectors"
-
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 
 import {
@@ -78,7 +73,7 @@ import DeleteIcon from "@mui/icons-material/Delete"
 function DepartmentsDetails({ backBtnClick }) {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [deleteDepartment] = useDeleteDepartmentMutation()
 	const [updateDepartment] = useUpdateDepartmentMutation()
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
@@ -87,7 +82,7 @@ function DepartmentsDetails({ backBtnClick }) {
 		data: cannedReplies, isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
 		data: departments = [], isLoading: isLoadingDepartments

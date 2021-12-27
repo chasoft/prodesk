@@ -30,6 +30,7 @@ import { AppBar, Badge, Box, IconButton, Tooltip, Typography } from "@mui/materi
 
 //THIRD-PARTY
 import { useKBar } from "kbar"
+import { isEqual } from "lodash"
 import { useSnackbar } from "notistack"
 import { isMobile } from "react-device-detect"
 import { useDeepCompareEffect } from "react-use"
@@ -40,7 +41,6 @@ import UserIcon from "./UserIcon"
 import NotificationDrawer from "./NotificationDrawer"
 import { useNotifications } from "@helpers/realtimeApi"
 import { setShowSideBar } from "@redux/slices/uiSettings"
-import { getAuth, getPageMeta, getUiSettings } from "@redux/selectors"
 
 //ASSETS
 import MenuIcon from "@mui/icons-material/Menu"
@@ -58,10 +58,12 @@ import SearchIcon from "@mui/icons-material/Search"
 function Header() {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-	const { title } = useSelector(getPageMeta)
-	const { currentUser } = useSelector(getAuth)
 	const [scrolled, setScrolled] = useState(false)
-	const { isSmallScreen } = useSelector(getUiSettings)
+
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const title = useSelector(s => s.pageMetaState.title)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
+
 	const { notis, counter } = useNotifications(currentUser.username, enqueueSnackbar, closeSnackbar)
 	const [showNotificationDrawer, setShowNotificationDraw] = useState(false)
 

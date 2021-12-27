@@ -29,6 +29,7 @@ import { Autocomplete, Avatar, Box, Button, Grid, TextField, Typography } from "
 
 //THIRD-PARTY
 import * as yup from "yup"
+import { isEqual } from "lodash"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
 import { useDispatch, useSelector } from "react-redux"
@@ -50,9 +51,6 @@ import {
 	SettingsHeader,
 } from "@components/common/Settings"
 
-
-
-import { getAuth } from "@redux/selectors"
 import { loginSuccess } from "@redux/slices/auth"
 import { useUpdateProfileMutation } from "@redux/slices/firestoreApi"
 
@@ -117,7 +115,7 @@ const validationChangePassword = yup.object({
 
 function ChangePasswordRow() {
 
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const { enqueueSnackbar } = useSnackbar()
 	const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
 
@@ -201,7 +199,7 @@ function ChangePasswordRow() {
  *****************************************************************/
 
 function UserProfile() {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const dispatch = useDispatch()
 	const [displayName, setDisplayName] = useState(currentUser.displayName)
 	const [avatar, setAvatar] = useState(currentUser.photoURL ?? "/avatar/default.png")

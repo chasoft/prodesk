@@ -70,12 +70,6 @@ import {
 } from "@helpers/constants"
 
 import {
-	getAuth,
-	getDocsCenter,
-	getUiSettings,
-} from "@redux/selectors"
-
-import {
 	RightMenuItemAddNewDoc,
 	RightMenuItemDelete,
 } from "@components/Documentation/DocumentTocSideBar"
@@ -201,7 +195,7 @@ Tags.propTypes = {
 }
 
 function PublishStatusSection({ localCache, setLocalCache }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
 			<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -589,7 +583,7 @@ DocPhoto.propTypes = {
 }
 
 function DetailsFormCategory({ docItem, handleClose }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
@@ -769,7 +763,7 @@ DetailsFormCategory.propTypes = {
 }
 
 function DetailsFormSubCategory({ docItem, handleClose }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [updateDoc] = useUpdateDocMutation()
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
@@ -949,7 +943,7 @@ DetailsFormSubCategory.propTypes = {
 }
 
 function DetailsFormDoc({ docItem, handleClose }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateDoc] = useUpdateDocMutation()
 
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
@@ -1120,7 +1114,7 @@ DetailsFormDoc.propTypes = {
 }
 
 function DetailsFormExternal({ docItem, handleClose }) {
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateDoc] = useUpdateDocMutation()
 
 	const {
@@ -1280,11 +1274,10 @@ DetailsFormExternal.propTypes = {
  *****************************************************************/
 
 function TocSideBarDetails({ handleClose }) {
-	const { activeDocIdOfTocSideBarDetails } = useSelector(getDocsCenter)
+	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
-	const {
-		sideBarLeft, showTocSideBarDetails
-	} = useSelector(getUiSettings)
+	const sideBarLeft = useSelector(s => s.uiSettingsState.sideBarLeft)
+	const showTocSideBarDetails = useSelector(s => s.uiSettingsState.showTocSideBarDetails)
 
 	const {
 		data: docItem, isLoading: isLoadingDocItem

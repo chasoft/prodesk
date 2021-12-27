@@ -36,6 +36,7 @@ import {
 
 //THIRD-PARTY
 import * as yup from "yup"
+import { isEqual } from "lodash"
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack"
 import { useSelector, useDispatch } from "react-redux"
@@ -52,8 +53,6 @@ import { LoginLink } from "@components/common"
 import { regRule } from "@helpers/regex"
 import { REDIRECT_URL } from "@helpers/constants"
 import { isUsernameAvailable } from "@redux/slices/firestoreApiBase"
-
-import { getAuth } from "@redux/selectors"
 import { setRedirect } from "@redux/slices/redirect"
 import { useSignUpViaGoogleMutation } from "@redux/slices/firestoreApi"
 
@@ -88,7 +87,7 @@ const validationSchema = yup.object({
 function SocialLoginForm() {
 	const dispatch = useDispatch()
 	const { enqueueSnackbar } = useSnackbar()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [signUpViaGoogle] = useSignUpViaGoogleMutation()
 
 	useFlexDirection({ payload: "row" })

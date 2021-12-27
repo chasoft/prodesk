@@ -29,10 +29,10 @@ import React, { useEffect, useRef, useState } from "react"
 import { Box, ClickAwayListener, Grow, Paper, Popper, Typography } from "@mui/material"
 
 //THIRD-PARTY
+import { isEqual } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { getAuth } from "@redux/selectors"
 import { DOCS_ADD } from "@helpers/constants"
 import { useAddDocMutation } from "@redux/slices/firestoreApi"
 
@@ -120,7 +120,7 @@ export const Divider = () => (
 
 function PopupMenuItemAddCategory({ actionType, handleClose }) {
 	const [addDoc] = useAddDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const handleAddCategory = async () => {
 		//Prepare skeleton category
@@ -148,7 +148,7 @@ PopupMenuItemAddCategory.propTypes = {
 
 function PopupMenuItemAddSubCategory({ actionType, categoryId, handleClose }) {
 	const [addDoc] = useAddDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const handleAddSubCategory = async () => {
 		//Prepare skeleton sub-category
@@ -177,7 +177,7 @@ PopupMenuItemAddSubCategory.propTypes = {
 
 function PopupMenuItemAddExternalLink({ actionType, categoryId, subCategoryId, handleClose }) {
 	const [addDoc] = useAddDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const handleAddExternalLink = async () => {
 		//Prepare skeleton external link
@@ -205,7 +205,7 @@ PopupMenuItemAddExternalLink.propTypes = {
 
 function PopupMenuItemAddDoc({ actionType, categoryId, subCategoryId, handleClose }) {
 	const [addDoc] = useAddDocMutation()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const handleAddDoc = async () => {
 		//Prepare skeleton document

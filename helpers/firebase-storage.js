@@ -1,6 +1,6 @@
+import { isEqual } from "lodash"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
-import { getAuth } from "@redux/selectors"
 import { storage } from "./firebase"
 
 /**
@@ -8,7 +8,9 @@ import { storage } from "./firebase"
  * @returns a list of object { filename, thumb, original }
  */
 export const useGetAllFiles = () => {
-	const { isAuthenticated, currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const isAuthenticated = useSelector(s => s.authState.isAuthenticated)
+
 	const [fileList, setFileList] = useState([])
 
 	useEffect(() => {

@@ -56,10 +56,6 @@ import {
 } from "@helpers/constants"
 
 import {
-	getAuth,
-} from "@redux/selectors"
-
-import {
 	setActiveSettingPanel,
 	setIsAddNewPanel,
 	setSelectedCrid
@@ -80,7 +76,7 @@ import {
 
 function CannedRepliesDetails({ selectedCannedReply, isFullCannedReply }) {
 	const dispatch = useDispatch()
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateCannedReply] = useUpdateCannedReplyMutation()
 
 	const {

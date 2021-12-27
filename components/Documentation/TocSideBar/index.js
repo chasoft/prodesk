@@ -32,7 +32,7 @@ import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 //THIRD-PARTY
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
-import { findKey } from "lodash"
+import { findKey, isEqual } from "lodash"
 import PerfectScrollbar from "react-perfect-scrollbar"
 
 //PROJECT IMPORT
@@ -47,11 +47,6 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { useGetDocsGrouped } from "@helpers/useGetDocs"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { CircularProgressBox } from "@components/common"
-
-import {
-	getAuth,
-	getDocsCenter,
-} from "@redux/selectors"
 
 import {
 	setShowTocSideBarDetails,
@@ -498,7 +493,7 @@ export async function moveDocItem(sourceItem, targetItem, updateDoc, username) {
 function TocSideBar() {
 	const dispatch = useDispatch()
 	const sideBarRef = useRef(null)
-	const { currentUser } = useSelector(getAuth)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const {
 		data: docs = [], //grouped docs
@@ -507,7 +502,7 @@ function TocSideBar() {
 
 	console.log("TocSideBar => ", { docs })
 
-	const { activeDocId } = useSelector(getDocsCenter)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
 
 	const handleCloseDetails = () => {
 		reduxBatch(() => {

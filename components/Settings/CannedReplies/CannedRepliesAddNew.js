@@ -27,7 +27,7 @@ import { Box, Button, FormControl, FormControlLabel, InputLabel, MenuItem, Selec
 
 //THIRD-PARTY
 import dayjs from "dayjs"
-import { trim } from "lodash"
+import { isEqual, trim } from "lodash"
 import nanoid from "@helpers/nanoid"
 import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
@@ -54,13 +54,6 @@ import {
 
 import { CODE } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
-
-import {
-	getAuth,
-	getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
-
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 
 //PROJECT IMPORT
@@ -179,7 +172,7 @@ export async function handleAddNewCannedReplyBase({
 
 function CannedRepliesAddNew({ backBtnClick }) {
 	const dispatch = useDispatch()
-	const { activeSettingPanel } = useSelector(getUiSettings)
+	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
 		data: departments = [], isLoading: isLoadingDepartments
@@ -188,8 +181,8 @@ function CannedRepliesAddNew({ backBtnClick }) {
 	const [description, setDescription] = useState("")
 	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 
-	const { currentUser } = useSelector(getAuth)
-	const { editorData } = useSelector(getTextEditor)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [addCannedReply] = useAddCannedReplyMutation()
 
 	const handleCancel = () => {

@@ -44,11 +44,6 @@ import {
 } from "@components/Settings/CannedReplies/CannedRepliesAddNew"
 
 import {
-	getTextEditor,
-	getUiSettings
-} from "@redux/selectors"
-
-import {
 	useAddCannedReplyMutation,
 	useGetDepartmentsQuery
 } from "@redux/slices/firestoreApi"
@@ -74,12 +69,12 @@ function NewCannedReplyDialog({
 	open, setOpen
 }) {
 	const dispatch = useDispatch()
-	const { isSmallScreen } = useSelector(getUiSettings)
+	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const [description, setDescription] = useState("")
 	const [isFullCannedReply, setIsFullCannedReply] = useState(false)
 
-	const { editorData } = useSelector(getTextEditor)
+	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [addCannedReply] = useAddCannedReplyMutation()
 
 	const {
