@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useCallback } from "react"
 
 // MATERIAL-UI
 import { Box, Button, Typography } from "@mui/material"
@@ -113,16 +113,20 @@ function CannedRepliesDetails({ selectedCannedReply, isFullCannedReply }) {
 		}
 	}
 
-	const handleCancelUpdateCannedReply = () => {
+	const handleCancelUpdateCannedReply = useCallback(() => {
 		reduxBatch(() => {
 			dispatch(setSelectedCrid(""))
 			dispatch(setIsAddNewPanel(false))
 		})
-	}
+	}, [dispatch])
 
-	const handleTextEditorOnChange = (data) => {
+	const handleTextEditorOnChange = useCallback((data) => {
 		setLocalCache(data, "content")
-	}
+	}, [setLocalCache])
+
+	const handleSetDescription = useCallback((e) => {
+		setLocalCache(e.target.value, "description")
+	}, [setLocalCache])
 
 	return (
 		<>
@@ -143,9 +147,7 @@ function CannedRepliesDetails({ selectedCannedReply, isFullCannedReply }) {
 				<Box sx={{ py: 2 }}>
 					<DescriptionTextField
 						description={localCache.description}
-						handleSetDescription={(e) => {
-							setLocalCache(e.target.value, "description")
-						}} />
+						handleSetDescription={handleSetDescription} />
 				</Box>
 
 				<Box sx={{ pl: 4, py: 1, mb: 3, border: "1px solid #f0f0f0" }}>

@@ -134,67 +134,99 @@ PublishStatusSwitch.propTypes = {
 	setStatus: PropTypes.func.isRequired,
 }
 
-function Tags({ tags, setTags }) {
+const AutoGenerateSlugSwitch = React.memo(function _AutoGenerateSlugSwitch() {
+
+	console.log("AutoGenerateSlugSwitch re-render")
+
+	const [updateAppSettings] = useUpdateAppSettingsMutation()
+
+	const {
+		data: autoGenerateSlugFromTitle, isLoading: isLoadingAutoGenerateSlugFromTitle
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	if (isLoadingAutoGenerateSlugFromTitle) return null
+
+
+	return (
+		<FormControlLabel label="Auto-generate" labelPlacement="start"
+			control={<Switch
+				checked={autoGenerateSlugFromTitle}
+				onChange={async () => {
+					await updateAppSettings({
+						data: {
+							[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+						}
+					})
+				}} />} />
+	)
+})
+
+const Tags = React.memo(function _Tags({ tags, setTags }) {
 	const [inputText, setInputText] = useState("")
 	const icon = <CheckBoxOutlineBlankIcon fontSize="small" />
 	const checkedIcon = <CheckBoxIcon fontSize="small" />
 
 	return (
-		<Autocomplete
-			id="tags-input"
-			multiple
-			disableCloseOnSelect
-			limitTags={3}
-			options={tags}
-			getOptionLabel={(option) => option}
-			value={tags}
-			noOptionsText="Enter to add new tag"
-			renderOption={(props, tag, { selected }) => <li {...props}>
-				<Checkbox
-					icon={icon}
-					checkedIcon={checkedIcon}
-					style={{ marginRight: 8 }}
-					checked={selected} />
-				{tag}
-			</li>}
-			renderInput={(params) => <TextField
-				{...params}
-				variant="standard"
-				value={inputText}
-				onChange={(e) => {
-					e.stopPropagation()
-					setInputText(e.target.value)
-				}}
-				onKeyPress={(e) => {
-					e.stopPropagation()
-					if (e.key === "Enter") {
-						if (tags.includes(inputText) === false && !!inputText)
-							setTags([...tags, inputText].sort(), "tags")
-						setInputText("")
-					}
-				}} />}
-			renderTags={(tags, getTagProps) => tags.map((selectedTag, index) => (
-				<Chip
-					key={index}
-					label={selectedTag}
-					{...getTagProps({ index })}
-					onDelete={(e) => {
+		<>
+			<TypographyHeader sx={{ mt: 3, mb: 1 }}>
+				Tags
+			</TypographyHeader>
+			<Autocomplete
+				id="tags-input"
+				multiple
+				disableCloseOnSelect
+				limitTags={3}
+				options={tags}
+				getOptionLabel={(option) => option}
+				value={tags}
+				noOptionsText="Enter to add new tag"
+				renderOption={(props, tag, { selected }) => <li {...props}>
+					<Checkbox
+						icon={icon}
+						checkedIcon={checkedIcon}
+						style={{ marginRight: 8 }}
+						checked={selected} />
+					{tag}
+				</li>}
+				renderInput={(params) => <TextField
+					{...params}
+					variant="standard"
+					value={inputText}
+					onChange={(e) => {
 						e.stopPropagation()
-						const tagIndex = tags.findIndex(tag => tag === selectedTag)
-						const newTags = [...tags]
-						newTags.splice(tagIndex, 1)
-						setTags(newTags, "tags")
-					}} />
-			))}
-			onChange={(event, value) => { setTags(value, "tags") }} />
+						setInputText(e.target.value)
+					}}
+					onKeyPress={(e) => {
+						e.stopPropagation()
+						if (e.key === "Enter") {
+							if (tags.includes(inputText) === false && !!inputText)
+								setTags([...tags, inputText].sort(), "tags")
+							setInputText("")
+						}
+					}} />}
+				renderTags={(tags, getTagProps) => tags.map((selectedTag, index) => (
+					<Chip
+						key={index}
+						label={selectedTag}
+						{...getTagProps({ index })}
+						onDelete={(e) => {
+							e.stopPropagation()
+							const tagIndex = tags.findIndex(tag => tag === selectedTag)
+							const newTags = [...tags]
+							newTags.splice(tagIndex, 1)
+							setTags(newTags, "tags")
+						}} />
+				))}
+				onChange={(event, value) => { setTags(value, "tags") }} />
+		</>
 	)
-}
+}, (prevProps, nextProps) => isEqual(prevProps.tags, nextProps.tags))
 Tags.propTypes = {
 	tags: PropTypes.array.isRequired,
 	setTags: PropTypes.func.isRequired
 }
 
-function PublishStatusSection({ localCache, setLocalCache }) {
+const PublishStatusSection = React.memo(function _PublishStatusSection({ localCache, setLocalCache }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
@@ -219,7 +251,7 @@ function PublishStatusSection({ localCache, setLocalCache }) {
 				</Typography>}
 		</Box>
 	)
-}
+}, (prevProps, nextProps) => isEqual(prevProps.localCache.status, nextProps.localCache.status))
 PublishStatusSection.propTypes = {
 	localCache: PropTypes.object.isRequired,
 	setLocalCache: PropTypes.func.isRequired
@@ -261,7 +293,7 @@ CancelSaveButtons.propTypes = {
 	handleClose: PropTypes.func.isRequired
 }
 
-export function AddEmojiButton({ emoji, handleSelectEmoji, removeEmoji, flexDirection, children }) {
+export const AddEmojiButton = React.memo(function _AddEmojiButton({ emoji, handleSelectEmoji, removeEmoji, children }) {
 
 	const [
 		PopupContainer, open, anchorRef, {
@@ -280,7 +312,6 @@ export function AddEmojiButton({ emoji, handleSelectEmoji, removeEmoji, flexDire
 			<Box sx={{
 				display: "flex",
 				alignItems: "center",
-				flexDirection: flexDirection ?? "row"
 			}}>
 				{children}
 				<Box sx={{
@@ -344,17 +375,16 @@ export function AddEmojiButton({ emoji, handleSelectEmoji, removeEmoji, flexDire
 			</PopupContainer>
 		</>
 	)
-}
+}, (prevProps, nextProps) => isEqual(prevProps.emoji, nextProps.emoji))
 AddEmojiButton.propTypes = {
 	isLoading: PropTypes.bool,
 	emoji: PropTypes.string,
 	removeEmoji: PropTypes.func,
 	handleSelectEmoji: PropTypes.func,
-	flexDirection: PropTypes.string,
 	children: PropTypes.node
 }
 
-function DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
+const DocPhoto = React.memo(function _DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
 	const [message, setMessage] = useState({ code: "", message: "" })
 	const [uploadFile, { uploading, progress }] = useUploadFile()
 
@@ -365,6 +395,8 @@ function DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
 			handleToggle, handleClose
 		}
 	] = usePopupContainer()
+
+	console.log("DocPhoto rerender")
 
 	useDeepCompareEffect(() => {
 		const timeoutId = setTimeout(() => { setMessage({ code: "none", message: "" }) }, 2000)
@@ -573,7 +605,7 @@ function DocPhoto({ username, docId, photo = "", photoColor, setPhotoColor }) {
 			</PopupContainer>
 		</>
 	)
-}
+}, (prevProps, nextProps) => (prevProps.photo === nextProps.photo && prevProps.photoColor === nextProps.photoColor))
 DocPhoto.propTypes = {
 	username: PropTypes.string.isRequired,
 	docId: PropTypes.string.isRequired,
@@ -586,10 +618,9 @@ function DetailsFormCategory({ docItem, handleClose }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [updateDoc] = useUpdateDocMutation()
-	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
 	const {
-		data: autoGenerateSlugFromTitle, isLoading: isLoadingAutoGenerateSlugFromTitle
+		data: autoGenerateSlugFromTitle
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
@@ -695,17 +726,9 @@ function DetailsFormCategory({ docItem, handleClose }) {
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					{!isLoadingAutoGenerateSlugFromTitle &&
-						<FormControlLabel label="Auto-generate" labelPlacement="start"
-							control={<Switch
-								checked={autoGenerateSlugFromTitle}
-								onChange={async () => {
-									await updateAppSettings({
-										data: {
-											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-										}
-									})
-								}} />} />}
+
+					<AutoGenerateSlugSwitch />
+
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -728,9 +751,6 @@ function DetailsFormCategory({ docItem, handleClose }) {
 					// minRows={3}
 					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Tags
-				</TypographyHeader>
 				<Tags
 					tags={localCache.tags}
 					setTags={setLocalCache} />
@@ -766,11 +786,8 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const [updateDoc] = useUpdateDocMutation()
-	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
-	const {
-		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
-	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+	const { data: autoGenerateSlugFromTitle } = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
 		localCache, handlers: { setLocalCache }
@@ -876,17 +893,7 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					{!isLoadingSettings &&
-						<FormControlLabel label="Auto-generate" labelPlacement="start"
-							control={<Switch
-								checked={autoGenerateSlugFromTitle}
-								onChange={async () => {
-									await updateAppSettings({
-										data: {
-											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-										}
-									})
-								}} />} />}
+					<AutoGenerateSlugSwitch />
 				</Box>
 				<InputBaseStyled
 					id="cat-slug"
@@ -908,9 +915,6 @@ function DetailsFormSubCategory({ docItem, handleClose }) {
 					multiline={true}
 					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Tags
-				</TypographyHeader>
 				<Tags
 					tags={localCache.tags}
 					setTags={setLocalCache} />
@@ -946,9 +950,8 @@ function DetailsFormDoc({ docItem, handleClose }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [updateDoc] = useUpdateDocMutation()
 
-	const [updateAppSettings] = useUpdateAppSettingsMutation()
 	const {
-		data: autoGenerateSlugFromTitle, isLoading: isLoadingSettings
+		data: autoGenerateSlugFromTitle
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
 
 	const {
@@ -1055,17 +1058,7 @@ function DetailsFormDoc({ docItem, handleClose }) {
 					<TypographyHeader sx={{ flexGrow: 1 }}>
 						Slug
 					</TypographyHeader>
-					{!isLoadingSettings &&
-						<FormControlLabel label="Auto-generate" labelPlacement="start"
-							control={<Switch
-								checked={autoGenerateSlugFromTitle}
-								onChange={async () => {
-									await updateAppSettings({
-										data: {
-											[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
-										}
-									})
-								}} />} />}
+					<AutoGenerateSlugSwitch />
 				</Box>
 				<InputBaseStyled
 					id="doc-slug" value={localCache.slug}
@@ -1077,10 +1070,6 @@ function DetailsFormDoc({ docItem, handleClose }) {
 							borderRadius: "0.25rem"
 						})
 					}} />
-
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Tags
-				</TypographyHeader>
 
 				<Tags
 					tags={localCache?.tags ?? []}
@@ -1234,9 +1223,6 @@ function DetailsFormExternal({ docItem, handleClose }) {
 					// minRows={3}
 					onChange={(e) => setLocalCache(e.target.value, "description")} />
 
-				<TypographyHeader sx={{ mt: 3, mb: 1 }}>
-					Tags
-				</TypographyHeader>
 				<Tags
 					tags={localCache?.tags ?? []}
 					setTags={setLocalCache} />
@@ -1268,12 +1254,11 @@ DetailsFormExternal.propTypes = {
 	handleClose: PropTypes.func
 }
 
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TocSideBarDetails({ handleClose }) {
+const TocSideBarDetails = React.memo(function _TocSideBarDetails({ handleClose }) {
 	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
 	const sideBarLeft = useSelector(s => s.uiSettingsState.sideBarLeft)
@@ -1282,6 +1267,8 @@ function TocSideBarDetails({ handleClose }) {
 	const {
 		data: docItem, isLoading: isLoadingDocItem
 	} = useGetDoc(activeDocIdOfTocSideBarDetails)
+
+	console.log("TocSideBarDetails - rerender")
 
 	return (
 		<>
@@ -1408,7 +1395,7 @@ function TocSideBarDetails({ handleClose }) {
 				}} />
 		</>
 	)
-}
+})
 TocSideBarDetails.propTypes = {
 	handleClose: PropTypes.func,
 }

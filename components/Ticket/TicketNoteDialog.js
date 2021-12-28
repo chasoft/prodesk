@@ -55,6 +55,7 @@ import {
 import {
 	CODE,
 	DATE_FORMAT,
+	EMPTY,
 	USERGROUP,
 } from "@helpers/constants"
 
@@ -80,7 +81,7 @@ function TicketNoteDialog({ ticket, departments, open, setOpen }) {
 	const [updateTicket] = useUpdateTicketMutation()
 
 	const {
-		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = EMPTY.ARRAY, isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
 		USERGROUP.ADMIN.code,
@@ -128,7 +129,7 @@ function TicketNoteDialog({ ticket, departments, open, setOpen }) {
 			const receivers = (latestStaffInCharge.assignee)
 				? (latestStaffInCharge.assignee !== currentUser.username)
 					? [latestStaffInCharge.assignee]
-					: []
+					: EMPTY.ARRAY
 				: (departmentDetails.availableForAll)
 					? allAdminProfiles.map(profile => profile.username)
 					: departmentDetails.members

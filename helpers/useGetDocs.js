@@ -30,7 +30,7 @@ import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
 import { useGetDocsQuery } from "@redux/slices/firestoreApi"
-import { DOC_TYPE } from "@helpers/constants"
+import { DOC_TYPE, EMPTY } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -46,7 +46,7 @@ function useGetDoc(docId, slug) {
 	const [res, setRes] = useState({})
 
 	const {
-		data: docs = [],
+		data: docs = EMPTY.ARRAY,
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 
@@ -74,7 +74,7 @@ function useGetDoc(docId, slug) {
  */
 function useGetDocsGrouped(slug) {
 	const {
-		data: docs = [],
+		data: docs = EMPTY.ARRAY,
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 
@@ -142,7 +142,7 @@ function useGetDocsCategoriesList() {
 	const [list, setList] = useState([])
 
 	const {
-		data: docs = [],
+		data: docs = EMPTY.ARRAY,
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 

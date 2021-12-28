@@ -44,6 +44,7 @@ import { CircularProgressBox } from "@components/common"
 import {
 	DOC_TYPE,
 	DOCS_ADD,
+	EMPTY,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
 
@@ -216,7 +217,7 @@ export function RightMenuItemDelete({ title = "Delete", targetDocItem, sx }) {
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
 	const {
-		data: docItemContent = {}, isLoading: isLoadingDocItemContent
+		data: docItemContent = EMPTY.OBJECT, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(targetDocItem.docId)
 
 	const {

@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useRef } from "react"
+import React, { useCallback, useRef } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -30,13 +30,20 @@ import { Typography } from "@mui/material"
 
 //THIRD-PARTY
 import { isEqual } from "lodash"
-import { useSelector } from "react-redux"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 import { useDrag, useDrop } from "react-dnd"
 
 //PROJECT IMPORT
 import TocSideBarItemBase from "./TocSideBarItemBase"
 import { isValidDnD, moveDocItem } from "@components/Documentation/TocSideBar"
 import { useUpdateDocMutation } from "@redux/slices/firestoreApi"
+
+import {
+	setActiveDocId,
+	setActiveDocIdOfTocSideBarDetails
+} from "@redux/slices/docsCenter"
+
+import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
 
 import {
 	DOC_STATUS,
@@ -53,10 +60,12 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TocSideBarDoc({ active, onClick, handleOpen, targetDocItem, children }) {
+function TocSideBarDoc({ targetDocItem }) {
 	const ref = useRef(null)
+	const dispatch = useDispatch()
 	const [updateDoc] = useUpdateDocMutation()
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
 
 	const [{ canDrop, isOver }, drop] = useDrop(() => ({
 		accept: [DOC_TYPE.DOC, DOC_TYPE.EXTERNAL],
@@ -109,42 +118,45 @@ function TocSideBarDoc({ active, onClick, handleOpen, targetDocItem, children })
 		targetDocItem?.subCategoryId,
 	])
 
-	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
-
 	drag(drop(ref))
 	const isActive = canDrop && isOver
 	const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
+	console.log("TocSideBarDoc => ", targetDocItem.docId)
+
+	const loadDocContent = useCallback((e) => {
+		e.stopPropagation()
+		reduxBatch(() => {
+			dispatch(setActiveDocId(targetDocItem.docId))
+			dispatch(setShowTocSideBarDetails(false))
+			dispatch(setActiveDocIdOfTocSideBarDetails(null))
+		})
+	}, [dispatch, targetDocItem.docId])
+
 	return (
 		<div style={{ order: targetDocItem.position }}>
 			<TocSideBarItemBase
 				ref={ref}
-				active={active}
-				onClick={onClick}
-				handleOpen={handleOpen}
+				docId={targetDocItem.docId}
+				handleOpen={loadDocContent}
+				activeDocId={activeDocId}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
 				sx={{
 					border: "2px solid transparent",
-					color: (activeDocIdOfTocSideBarDetails === targetDocItem.docId || active)
-						? "primary.main"
-						: "initial",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {}),
 					...(isNotActive ? { backgroundColor: "error.light", color: "error.contrastText" } : {}),
 				}}
 			>
-				<Typography> {targetDocItem.emoji} {children}</Typography>
+				<Typography> {targetDocItem.emoji} {targetDocItem.title}</Typography>
 			</TocSideBarItemBase>
 		</div>
 	)
 }
 TocSideBarDoc.propTypes = {
-	active: PropTypes.bool,
 	onClick: PropTypes.func,
-	handleOpen: PropTypes.func,
 	targetDocItem: PropTypes.object,
-	children: PropTypes.node
 }
 
 export default TocSideBarDoc

@@ -19,9 +19,10 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
+import { EMPTY } from "@helpers/constants"
 
 export const initialState = {
-	currentUser: {},
+	currentUser: EMPTY.OBJECT,
 	isAuthenticated: false,
 	error: "",
 	//at the very first time, loading is TRUE,

@@ -50,7 +50,7 @@ import {
 	useGetDepartmentsQuery
 } from "@redux/slices/firestoreApi"
 
-import { CODE } from "@helpers/constants"
+import { CODE, EMPTY } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { DEPARTMENT_PAGES } from "@pages/admin/settings/tickets/department"
 import useLocalComponentCache from "@helpers/useLocalComponentCache"
@@ -76,7 +76,7 @@ function DepartmentsAddNew({ backBtnClick }) {
 		isPublic: true,
 		name: "",
 		description: "",
-		members: [],
+		members: EMPTY.ARRAY,
 		availableForAll: false
 	})
 

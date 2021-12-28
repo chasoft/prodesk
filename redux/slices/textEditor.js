@@ -19,11 +19,12 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
+import { EMPTY } from "@helpers/constants"
 
 export const initialState = {
 	editorData: "",
 	editorDefaultData: "",
-	editorDataHeadings: [],
+	editorDataHeadings: EMPTY.ARRAY,
 }
 
 const textEditorSlice = createSlice({

@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from "react"
 import { throttle } from "lodash"
 
 //PROJECT IMPORT
+import { EMPTY } from "@helpers/constants"
 
 
 /*****************************************************************
@@ -31,7 +32,7 @@ import { throttle } from "lodash"
  *****************************************************************/
 
 //Note: I get idea from //github/pettiboy/react-ui-scrollspy/blob/main/src/ScrollSpy/ScrollSpy.tsx
-export default function useScrollSpy({ headings, options = {} }) {
+export default function useScrollSpy({ headings, options = EMPTY.OBJECT }) {
 	const { offsetTop = 0, offsetBottom = 0 } = options
 
 	const [activeHeadingId, setActiveHeadingId] = useState()

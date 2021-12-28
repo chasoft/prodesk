@@ -58,6 +58,7 @@ import {
 import {
 	APP_SETTINGS,
 	DOC_TYPE,
+	EMPTY
 } from "@helpers/constants"
 
 import {
@@ -367,7 +368,7 @@ export const AddNewMenuItemPanel = React.memo(function _AddNewMenuItemPanel({ ty
 	const [searchText, setSearchText] = useState("")
 
 	const {
-		data: docSearchIndex = { searchIndexes: [] },
+		data: docSearchIndex = { searchIndexes: EMPTY.ARRAY },
 	} = useGetDocSearchIndexQuery(undefined)
 
 	const searchResult = useLocalSearch(docSearchIndex.searchIndexes, searchOptions, searchText)

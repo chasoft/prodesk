@@ -30,7 +30,7 @@ import { useCallback } from "react"
 import { filter, set, size } from "lodash"
 
 //PROJECT IMPORT
-import { APP_SETTINGS, CODE } from "@helpers/constants"
+import { APP_SETTINGS, CODE, EMPTY } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { useUpdateAppSettingsMutation } from "@redux/slices/firestoreApi"
@@ -48,12 +48,12 @@ import useAppSettings from "@helpers/useAppSettings"
  */
 export default function useUpdateLinkedMenuItem() {
 	const {
-		data: { topMenu = {} },
+		data: { topMenu = EMPTY.OBJECT },
 		isLoading: isLoadingTopMenu
 	} = useAppSettings(null, APP_SETTINGS.topMenu)
 
 	const {
-		data: { footerMenu = {} },
+		data: { footerMenu = EMPTY.OBJECT },
 		isLoading: isLoadingFooterMenu
 	} = useAppSettings(null, APP_SETTINGS.footerMenu)
 

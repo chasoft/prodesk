@@ -24,7 +24,7 @@ import PropTypes from "prop-types"
 
 //MATERIAL-UI
 import { Box } from "@mui/material"
-import { APP_SETTINGS } from "@helpers/constants"
+import { APP_SETTINGS, EMPTY } from "@helpers/constants"
 import useAppSettings from "@helpers/useAppSettings"
 import { groupBy, orderBy } from "lodash"
 import { NO_PARENT } from "@components/Settings/MenuSettings"
@@ -41,7 +41,7 @@ export const TopMenu = React.memo(function _TopMenu({ isPreview = false }) {
 	const groupedMenu = useRef({})
 
 	const {
-		data: { topMenu = {} },
+		data: { topMenu = EMPTY.OBJECT },
 		// isLoading: isLoadingTopMenu
 	} = useAppSettings(null, APP_SETTINGS.topMenu)
 

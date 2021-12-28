@@ -40,8 +40,9 @@ import useLocalComponentCache from "@helpers/useLocalComponentCache"
 import { useUpdateAppSettingsMutation } from "@redux/slices/firestoreApi"
 import {
 	APP_SETTINGS,
+	CODE,
+	EMPTY,
 	LOGO_TYPE,
-	CODE
 } from "@helpers/constants"
 
 import {
@@ -216,7 +217,7 @@ LogoUploader.propTypes = {
 
 export default function GeneralAppSettings() {
 	const {
-		data: siteMetaInfo = {},
+		data: siteMetaInfo = EMPTY.OBJECT,
 		isLoading: isLoadingSiteMetaInfo
 	} = useAppSettings(null, APP_SETTINGS.siteMetaInfo)
 

@@ -44,6 +44,7 @@ import TicketNoteDialog from "@components/Ticket/TicketNoteDialog"
 
 import {
 	DATE_FORMAT,
+	EMPTY,
 	PRIORITY,
 	REDIRECT_URL,
 	STATUS_FILTER,
@@ -498,7 +499,7 @@ export function TicketNote({ ticket }) {
 	const [openNoteDialog, setOpenNoteDialog] = useState(false)
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	if (isLoadingDepartments)

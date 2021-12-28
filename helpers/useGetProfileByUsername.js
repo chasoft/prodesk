@@ -27,6 +27,7 @@ import { useGetProfilesQuery } from "@redux/slices/firestoreApi"
 //THIRD-PARTY
 
 //PROJECT IMPORT
+import { EMPTY } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -38,7 +39,7 @@ import { useGetProfilesQuery } from "@redux/slices/firestoreApi"
  * @returns array of profiles
  */
 export default function useGetProfileByUsername(usernames) {
-	const { data: profiles = [], isLoading } = useGetProfilesQuery()
+	const { data: profiles = EMPTY.ARRAY, isLoading } = useGetProfilesQuery()
 
 	if (isLoading || usernames === undefined) return undefined
 

@@ -54,7 +54,7 @@ import LaunchIcon from "@mui/icons-material/Launch"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
+function TocSideBarExternal({ targetDocItem }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
@@ -110,22 +110,21 @@ function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 		targetDocItem?.subCategoryId,
 	])
 
-	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
-
 	drag(drop(ref))
 	const isActive = canDrop && isOver
 	const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
+	console.log("TocSideBarExternal => ", targetDocItem.docId)
+
 	return (
 		<div style={{ order: targetDocItem.position }}>
 			<TocSideBarItemBase
 				ref={ref}
-				onClick={handleOpen}
-				handleOpen={handleOpen}
+				docId={targetDocItem.docId}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
-				additionalButton={<Tooltip arrow title={url ? url : "Empty"} placement="top">
-					<a href={url} target="_blank" rel="noopener noreferrer">
+				additionalButton={<Tooltip arrow title={targetDocItem.url ? targetDocItem.url : "Empty"} placement="top">
+					<a href={targetDocItem.url} target="_blank" rel="noopener noreferrer">
 						<LaunchIcon
 							sx={{
 								mx: 0.5,
@@ -139,9 +138,6 @@ function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 				</Tooltip>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-						? "action.hover"
-						: "transparent",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light" } : {}),
 					...(isNotActive ? { backgroundColor: "error.light" } : {}),
@@ -156,26 +152,21 @@ function TocSideBarExternal({ url, handleOpen, targetDocItem, children }) {
 						? "primary.contrastText"
 						: isNotActive
 							? "error.contrastText"
-							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-								? "primary.main"
-								: "initial",
+							: null,
 					":hover": {
 						"&>svg": {
 							color: "grey.700"
 						}
 					}
 				}}>
-					<Typography>{targetDocItem.emoji} {children}</Typography>
+					<Typography>{targetDocItem.emoji} {targetDocItem.title}</Typography>
 				</Box>
 			</TocSideBarItemBase>
 		</div>
 	)
 }
 TocSideBarExternal.propTypes = {
-	url: PropTypes.string,
-	handleOpen: PropTypes.func,
 	targetDocItem: PropTypes.object,
-	children: PropTypes.node
 }
 
 export default TocSideBarExternal

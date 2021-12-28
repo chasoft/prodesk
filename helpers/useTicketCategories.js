@@ -29,6 +29,7 @@ import { usePrevious } from "react-use"
 import { isEqual, sortBy } from "lodash"
 
 //PROJECT IMPORT
+import { EMPTY } from "@helpers/constants"
 import { useGetCategoriesQuery } from "@redux/slices/firestoreApi"
 
 /*****************************************************************
@@ -42,7 +43,7 @@ export default function useTicketCategories() {
 	//and, this hook will not be re-render,
 	const ticketCategories = useRef()
 
-	if (isLoading) { return ({ data: [], isLoading: true }) }
+	if (isLoading) { return ({ data: EMPTY.ARRAY, isLoading: true }) }
 
 	if (isEqual(prevData, data) === false) {
 		//sort the docs list

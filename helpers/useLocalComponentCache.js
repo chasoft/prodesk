@@ -25,8 +25,9 @@
 import React, { useState } from "react"
 
 //THIRD-PARTY
-import { cloneDeep, get, has, set, unset } from "lodash"
+import { cloneDeep, get, set, unset } from "lodash"
 import { useDeepCompareEffect } from "react-use"
+import { EMPTY } from "@helpers/constants"
 
 //PROJECT IMPORT
 
@@ -34,8 +35,8 @@ import { useDeepCompareEffect } from "react-use"
  * INIT                                                          *
  *****************************************************************/
 
-export default function useLocalComponentCache(_object = {}) {
-	const [cache, setCache] = useState(_object)
+export default function useLocalComponentCache(_object) {
+	const [cache, setCache] = useState(_object ?? EMPTY.OBJECT)
 
 	useDeepCompareEffect(() => {
 		setCache(_object)

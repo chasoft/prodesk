@@ -30,7 +30,7 @@ import { findKey, isEqual } from "lodash"
 import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
-import { DOC_TYPE, DOC_STATUS, RESERVED_KEYWORDS } from "@helpers/constants"
+import { DOC_TYPE, DOC_STATUS, EMPTY, RESERVED_KEYWORDS } from "@helpers/constants"
 import SimplicityLayout from "@components/Themes/Simplicity/layout"
 import { CircularProgressBox } from "@components/common"
 import { useGetDocsGrouped } from "@helpers/useGetDocs"
@@ -227,7 +227,7 @@ function ThemeSimplicityCategories({ slug }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const {
-		data: docs = [], isLoading: isLoadingDocs
+		data: docs = EMPTY.ARRAY, isLoading: isLoadingDocs
 	} = useGetDocsGrouped(slug)
 
 	if (isLoadingDocs)

@@ -29,12 +29,13 @@ import { useEffect } from "react"
 //PROJECT IMPORT
 import { firestoreApi } from "@redux/slices/firestoreApi"
 import { useDispatch } from "react-redux"
+import { EMPTY } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-export default function usePrefetchImmediately(endpoint, arg, options = {}) {
+export default function usePrefetchImmediately(endpoint, arg, options = EMPTY.OBJECT) {
 	const dispatch = useDispatch()
 	useEffect(() => {
 		dispatch(firestoreApi.util.prefetch(endpoint, arg, options))

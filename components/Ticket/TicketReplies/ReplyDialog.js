@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -62,6 +62,7 @@ import { addNewNotification } from "@helpers/realtimeApi"
 import {
 	CODE,
 	DATE_FORMAT,
+	EMPTY,
 	REDIRECT_URL,
 	STATUS_FILTER,
 	USERGROUP,
@@ -169,7 +170,7 @@ function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 	const [replyEditorData, setReplyEditorData] = useState("")
 
 	const {
-		userList: allAdminProfiles = [],
+		userList: allAdminProfiles = EMPTY.ARRAY,
 		// isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
@@ -179,7 +180,7 @@ function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 	])
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [
@@ -189,7 +190,7 @@ function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 	] = useMenuContainer()
 
 	const {
-		data: cannedReplies = [], isLoading: isLoadingCannedReplies
+		data: cannedReplies = EMPTY.ARRAY, isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const filterCannedReplies = cannedReplies.filter(
@@ -197,12 +198,12 @@ function ReplyDialog({ ticket, showReplyDialog, setShowReplyDialog }) {
 			&& cannedReply.full === false
 	)
 
-	const getEditorData = (data) => { setReplyEditorData(data) }
+	const getEditorData = useCallback((data) => { setReplyEditorData(data) }, [])
 
-	const handleCancelReply = () => {
+	const handleCancelReply = useCallback(() => {
 		setShowReplyDialog(false)
 		setReplyEditorData("")
-	}
+	}, [setShowReplyDialog])
 
 	const departmentDetails = departments.find(
 		department => department.did === ticket.departmentId

@@ -60,7 +60,7 @@ import {
 
 import { DEPARTMENT_PAGES } from "@pages/admin/settings/tickets/department"
 
-import { CODE } from "@helpers/constants"
+import { CODE, EMPTY } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 //ASSETS
@@ -85,7 +85,7 @@ function DepartmentsDetails({ backBtnClick }) {
 	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const selectedDepartment = departments.find(department => department.name === activeSettingPanel)

@@ -47,10 +47,8 @@ import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { CircularProgressBox } from "@components/common"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import useTicketCategories from "@helpers/useTicketCategories"
-
 import { setActiveSettingPanel } from "@redux/slices/uiSettings"
 import { useAddCategoryMutation } from "@redux/slices/firestoreApi"
-
 import { CATEGORY_PAGES } from "@pages/admin/settings/tickets/category"
 
 import {
@@ -69,6 +67,7 @@ import { TransitionGroup } from "react-transition-group"
  *****************************************************************/
 
 export function SubCatItem({ currentItem, list, setList }) {
+
 	const handleSetDefault = () => {
 		console.log("change default item")
 		const newArray = Array.from(list)
@@ -244,13 +243,18 @@ function CategoriesAddNew({ backBtnClick }) {
 		<>
 			<SettingsContentHeader
 				backBtnOnClick={() => backBtnClick(false)}
-				rightButton={<FormControlLabel
-					control={<Switch
-						checked={isDefault}
-						onChange={() => setIsDefault(p => !p)}
-						name="checkedB"
-						color="primary" />}
-					label={(isMobile || isSmallScreen) ? "Default " : "Set as default"} />}
+				rightButton={
+					<FormControlLabel
+						control={
+							<Switch
+								checked={isDefault}
+								onChange={() => setIsDefault(p => !p)}
+								name="checkedB"
+								color="primary" />
+						}
+						label={(isMobile || isSmallScreen) ? "Default " : "Set as default"}
+					/>
+				}
 			>
 				Add new category
 			</SettingsContentHeader>

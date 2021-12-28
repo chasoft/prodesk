@@ -52,7 +52,7 @@ import {
 	SettingsContentHeader
 } from "@components/common/Settings"
 
-import { CODE } from "@helpers/constants"
+import { CODE, EMPTY } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 
@@ -82,9 +82,7 @@ FullCannedReplySwitch.propTypes = {
 	setIsFullCannedReply: PropTypes.func.isRequired,
 }
 
-export function DepartmentSelect({
-	departmentId, departments, handleSelectDepartment
-}) {
+export const DepartmentSelect = React.memo(function _DepartmentSelect({ departmentId, departments, handleSelectDepartment }) {
 	return (
 		<FormControl variant="standard" fullWidth>
 			<InputLabel id="department-select-label">
@@ -107,14 +105,14 @@ export function DepartmentSelect({
 			</Select>
 		</FormControl>
 	)
-}
+}, (prevProps, nextProps) => isEqual(prevProps.departments, nextProps.departments) && prevProps.departmentId === nextProps.departmentId)
 DepartmentSelect.propTypes = {
 	departmentId: PropTypes.string.isRequired,
 	departments: PropTypes.array.isRequired,
 	handleSelectDepartment: PropTypes.func.isRequired,
 }
 
-export function DescriptionTextField({ description, handleSetDescription }) {
+export const DescriptionTextField = React.memo(function _DescriptionTextField({ description, handleSetDescription }) {
 	return (
 		<TextField
 			id="cannedReply-description"
@@ -124,7 +122,7 @@ export function DescriptionTextField({ description, handleSetDescription }) {
 			onChange={handleSetDescription}
 			fullWidth />
 	)
-}
+}, (prevProps, nextProps) => prevProps.description === nextProps.description)
 DescriptionTextField.propTypes = {
 	description: PropTypes.string.isRequired,
 	handleSetDescription: PropTypes.func.isRequired,
@@ -132,7 +130,6 @@ DescriptionTextField.propTypes = {
 
 export async function handleAddNewCannedReplyBase({
 	content, createdBy, departmentId, description, isFullCannedReply,
-	//
 	dispatchActions, addCannedReply
 }) {
 	const crid = nanoid()
@@ -175,7 +172,7 @@ function CannedRepliesAddNew({ backBtnClick }) {
 	const activeSettingPanel = useSelector(s => s.uiSettingsState.activeSettingPanel)
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [description, setDescription] = useState("")

@@ -22,7 +22,8 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, InputBase, Typography } from "@mui/material"
@@ -39,12 +40,12 @@ import { CircularProgressBox } from "@components/common"
 import { useGetDoc } from "@helpers/useGetDocs"
 import DocumentTemplate from "@components/Documentation/DocumentTemplate"
 import TextEditor from "@components/common/TextEditor"
-import useLocalComponentCache from "@helpers/useLocalComponentCache"
 import useUpdateLinkedMenuItem from "@components/Settings/MenuSettings/useUpdateLinkedMenuItem"
 import useAppSettings from "@helpers/useAppSettings"
 
 import {
 	DATE_FORMAT,
+	EMPTY,
 	SETTINGS_NAME
 } from "@helpers/constants"
 
@@ -66,18 +67,115 @@ import {
  * INIT                                                          *
  *****************************************************************/
 
+function DocTitle({ docId, title }) {
+	const [localTitle, setLocalTitle] = useState(title)
+	const [updateDoc] = useUpdateDocMutation()
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+
+	const {
+		data: autoGenerateSlugFromTitle
+	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	const {
+		updateLinkedMenuItem,
+		// isLoading: isLoadingUseUpdateMenuLabel
+	} = useUpdateLinkedMenuItem()
+
+	useEffect(() => {
+		setLocalTitle(title)
+	}, [title])
+
+	const handleUpdateTitleOnBlur = async () => {
+		if (localTitle !== title) {
+			const newDocMeta = {
+				docId: docId,
+				title: localTitle,
+				updatedBy: currentUser.username,
+			}
+			await updateDoc({
+				docItem: newDocMeta,
+				affectedItems: []
+			})
+
+			await updateLinkedMenuItem(docId, {
+				newLabel: localTitle,
+				...(autoGenerateSlugFromTitle
+					? { newSlug: `/articles/${docId}-${slugify(localTitle)}` }
+					: {})
+			})
+		}
+	}
+
+	return (
+		<InputBase
+			id="doc-title" placeholder="Page title" variant="outlined"
+			value={localTitle}
+			onChange={(e) => setLocalTitle(e.target.value)}
+			sx={{
+				fontSize: { xs: "1.5rem", md: "1.75rem" },
+				lineHeight: "2rem", fontWeight: "bold",
+				color: "grey.800"
+			}}
+			onBlur={handleUpdateTitleOnBlur} />
+	)
+}
+DocTitle.propTypes = {
+	docId: PropTypes.string,
+	title: PropTypes.string
+}
+
+function DocDescription({ docId, description }) {
+	const [localDescription, setLocalDescription] = useState(description)
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	const [updateDoc] = useUpdateDocMutation()
+
+	useEffect(() => {
+		setLocalDescription(description)
+	}, [description])
+
+	const handleUpdateDescriptionOnBlur = async () => {
+		if (localDescription !== description) {
+			const newDocMeta = {
+				docId: docId,
+				description: localDescription,
+				updatedBy: currentUser.username,
+			}
+			await updateDoc({
+				docItem: newDocMeta,
+				affectedItems: []
+			})
+		}
+	}
+
+	return (
+		<InputBase
+			id="doc-description"
+			variant="outlined"
+			placeholder="Page description (optional)"
+			value={localDescription}
+			onChange={(e) => setLocalDescription(e.target.value)}
+			multiline={true}
+			sx={{
+				fontSize: "1rem",
+				fontWeight: "500",
+				lineHeight: "2rem"
+			}}
+			onBlur={handleUpdateDescriptionOnBlur} />
+	)
+}
+DocDescription.propTypes = {
+	docId: PropTypes.string,
+	description: PropTypes.string
+}
+
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
 function DocumentEditor() {
-	/*
-		Prepare all necessary variables
-	*/
 	const dispatch = useDispatch()
 	const editorRef = useRef(null)
 	//
-	const [updateDoc] = useUpdateDocMutation()
 	const [updateDocContent] = useUpdateDocContentMutation()
 	// Current document
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
@@ -89,27 +187,11 @@ function DocumentEditor() {
 	} = useGetDoc(activeDocId)
 
 	const {
-		data: autoGenerateSlugFromTitle
-	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
-
-	const {
-		data: docItemContent = {}, isLoading: isLoadingDocItemContent
+		data: docItemContent = EMPTY.OBJECT, isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(activeDocId)
 	//
 	const editorData = useSelector(s => s.textEditorState.editorData)
 	const editorDefaultData = useSelector(s => s.textEditorState.editorDefaultData)
-
-	const {
-		localCache, handlers: { setLocalCache }
-	} = useLocalComponentCache({
-		title: docItem?.title,
-		description: docItem?.description,
-	})
-
-	const {
-		updateLinkedMenuItem,
-		// isLoading: isLoadingUseUpdateMenuLabel
-	} = useUpdateLinkedMenuItem()
 
 	/*
 		Effect, to update status of mounted controls
@@ -134,6 +216,8 @@ function DocumentEditor() {
 
 	const isEmptyContent = !trim(editorData) || trim(editorData) === "\\"
 
+	console.log("DocumentEditor - re-render")
+
 	//fix bug
 	// if (prevActiveDocId !== activeDocId) {
 	// 	const text = docItemContent?.data + " ".repeat(random(20))
@@ -142,40 +226,6 @@ function DocumentEditor() {
 	// 		dispatch(setEditorDefaultData(text))
 	// 	})
 	// }
-	const handleUpdateTitleOnBlur = async () => {
-		if (localCache.title !== docItem.title) {
-			const newDocMeta = {
-				docId: docItem.docId,
-				title: localCache.title,
-				updatedBy: currentUser.username,
-			}
-			await updateDoc({
-				docItem: newDocMeta,
-				affectedItems: []
-			})
-
-			await updateLinkedMenuItem(docItem.docId, {
-				newLabel: localCache.title,
-				...(autoGenerateSlugFromTitle
-					? { newSlug: `/articles/${docItem.docId}-${slugify(localCache.title)}` }
-					: {})
-			})
-		}
-	}
-
-	const handleUpdateDescriptionOnBlur = async () => {
-		if (localCache.description !== docItem.description) {
-			const newDocMeta = {
-				docId: docItem.docId,
-				description: localCache.description,
-				updatedBy: currentUser.username,
-			}
-			await updateDoc({
-				docItem: newDocMeta,
-				affectedItems: []
-			})
-		}
-	}
 
 	const handleUpdateContentOnBlur = async () => {
 		/*******************************
@@ -205,32 +255,16 @@ function DocumentEditor() {
 			px: 5, py: 4,
 			zIndex: 149
 		}}>
-			<InputBase
-				id="doc-title" placeholder="Page title" variant="outlined"
-				value={localCache.title}
-				onChange={(e) => setLocalCache(e.target.value, "title")}
-				sx={{
-					fontSize: { xs: "1.5rem", md: "1.75rem" },
-					lineHeight: "2rem", fontWeight: "bold",
-					color: "grey.800"
-				}}
-				onBlur={handleUpdateTitleOnBlur} />
 
-			{/* {Max 200 characters} */}
+			<DocTitle
+				docId={docItem.docId}
+				title={docItem.title}
+			/>
 
-			<InputBase
-				id="doc-description"
-				variant="outlined"
-				placeholder="Page description (optional)"
-				value={localCache.description}
-				onChange={(e) => setLocalCache(e.target.value, "description")}
-				multiline={true}
-				sx={{
-					fontSize: "1rem",
-					fontWeight: "500",
-					lineHeight: "2rem"
-				}}
-				onBlur={handleUpdateDescriptionOnBlur} />
+			<DocDescription
+				docId={docItem.docId}
+				description={docItem.description}
+			/>
 
 			<Box id="doc-content" sx={{
 				my: 2,
@@ -243,8 +277,8 @@ function DocumentEditor() {
 				: <>
 					<Box sx={{
 						"& .ProseMirror > p": {
-							marginBottom: "20px",
-							lineHeight: "1.8rem"
+							marginBottom: "10px",
+							lineHeight: "1.2rem"
 						},
 						"& .ProseMirror li": {
 							marginBottom: "8px",

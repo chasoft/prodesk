@@ -30,6 +30,8 @@ import { isEqual, filter } from "lodash"
 import { useDeepCompareEffect, usePrevious } from "react-use"
 
 //PROJECT IMPORT
+import { EMPTY } from "@helpers/constants"
+
 
 /*****************************************************************
  * INIT                                                          *
@@ -41,8 +43,8 @@ import { useDeepCompareEffect, usePrevious } from "react-use"
  * @param {array} minus
  * @returns array of profiles in one or more usergroups
  */
-export default function useProfilesGroup(userGroups = [], { inverting } = { inverting: false }) {
-	const { data = [], isLoading } = useGetProfilesQuery()
+export default function useProfilesGroup(userGroups = EMPTY.ARRAY, { inverting } = { inverting: false }) {
+	const { data = EMPTY.ARRAY, isLoading } = useGetProfilesQuery()
 	const [filteredList, setFilteredList] = useState([])
 	const prevFilteredList = usePrevious(filteredList)
 

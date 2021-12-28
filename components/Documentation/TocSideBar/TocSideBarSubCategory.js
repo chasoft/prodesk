@@ -59,7 +59,7 @@ import {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
+function TocSideBarSubCategory({ targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
@@ -116,7 +116,6 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 	])
 
 	const [expanded, setExpanded] = useState(true)
-	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
 	const [
 		AddNewPopupMenu, open, anchorRef, {
@@ -129,16 +128,15 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 	const isNotActive = !canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
+	console.log("TocSideBarSubCategory => ", targetDocItem.docId)
+
 	return (
 		<div id={targetDocItem.slug} style={{ order: targetDocItem.position }}>
 			<TocSideBarItemBase
 				ref={ref}
 				id={targetDocItem.slug + "-button"}
-				onClick={() => {
-					handleOpen()
-				}}
-				handleOpen={handleOpen}
 				showDetailsButton={false}
+				docId={targetDocItem.docId}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
 				additionalButton={<>
 					<TocSideBarAddNew
@@ -162,9 +160,6 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 				</>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-						? "action.hover"
-						: "initial",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light" } : {}),
 					...(isNotActive ? { backgroundColor: "error.light" } : {}),
@@ -175,9 +170,7 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 						? "primary.contrastText"
 						: isNotActive
 							? "error.contrastText"
-							: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-								? "primary.main"
-								: "grey.500",
+							: null,
 					fontWeight: "bold",
 					":hover": { color: "primary.main" }
 				}}>
@@ -202,7 +195,6 @@ function TocSideBarSubCategory({ handleOpen, targetDocItem, children }) {
 TocSideBarSubCategory.propTypes = {
 	title: PropTypes.string,
 	onClick: PropTypes.func,
-	handleOpen: PropTypes.func,
 	targetDocItem: PropTypes.object,
 	children: PropTypes.node
 }

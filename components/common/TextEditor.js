@@ -58,7 +58,7 @@ import { LinearProgressWithLabel } from "@components/common"
 	=> Music => turn to HTML5 player for .mp3, .wav...v.v.
  */
 
-const TextEditor = React.forwardRef((props, ref) => {
+const TextEditor = React.memo(React.forwardRef((props, ref) => {
 	const { defaultValue = "", readOnly = false, storageDestination = "uploads", onChange, ...otherProps } = props
 
 	// const { scrollTo } = useSelector(getTextEditor)
@@ -70,6 +70,8 @@ const TextEditor = React.forwardRef((props, ref) => {
 
 	// const editorInstance = useRef()
 	const { enqueueSnackbar } = useSnackbar()
+
+	console.log("TextEditor - rerender")
 
 	const uploaderPromise = useCallback(
 		(file) => {
@@ -107,19 +109,19 @@ const TextEditor = React.forwardRef((props, ref) => {
 		}, [currentUser.username, storageDestination]
 	)
 
-	const doImageUpload = async (file) => {
+	const doImageUpload = useCallback(async (file) => {
 		const imageURL = await uploaderPromise(file)
 		setUploading(false)
 		return imageURL
-	}
+	}, [uploaderPromise])
 
-	const handleOnChange = (aFunctionToGetEditorData) => {
+	const handleOnChange = useCallback((aFunctionToGetEditorData) => {
 		if (isFunction(onChange)) {
 			onChange(aFunctionToGetEditorData())
 		} else {
 			dispatch(setEditorData(aFunctionToGetEditorData()))
 		}
-	}
+	}, [dispatch, onChange])
 
 	return (
 		<>
@@ -137,8 +139,7 @@ const TextEditor = React.forwardRef((props, ref) => {
 			{uploading && <LinearProgressWithLabel value={progress} />}
 		</>
 	)
-})
-
+}))
 TextEditor.displayName = "TextEditor"
 
 TextEditor.propTypes = {

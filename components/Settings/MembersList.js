@@ -40,7 +40,7 @@ import { CircularProgressBox } from "@components/common"
 import { setRedirect } from "@redux/slices/redirect"
 
 import useProfilesGroup from "@helpers/useProfilesGroup"
-import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { EMPTY, REDIRECT_URL, USERGROUP } from "@helpers/constants"
 
 //ASSETS
 import AddIcon from "@mui/icons-material/Add"
@@ -54,7 +54,7 @@ export function AddMembersDialog({ open, members, addMemberCallback, handleClose
 	const isSmallScreen = useSelector(s => s.uiSettingsState.isSmallScreen)
 
 	const {
-		userList: supporterList = [], isLoading: isLoadingSupporterList
+		userList: supporterList = EMPTY.ARRAY, isLoading: isLoadingSupporterList
 	} = useProfilesGroup(
 		[
 			USERGROUP.USER.code,
@@ -119,11 +119,13 @@ export function AddMembersDialog({ open, members, addMemberCallback, handleClose
 								return (
 									<ListItem
 										key={staff.username}
-										secondaryAction={<Checkbox
-											edge="end"
-											onChange={handleToggleStaff(staff.username)}
-											checked={selected.indexOf(staff.username) !== -1}
-											inputProps={{ "aria-labelledby": labelId }} />}
+										secondaryAction={
+											<Checkbox
+												edge="end"
+												onChange={handleToggleStaff(staff.username)}
+												checked={selected.indexOf(staff.username) !== -1}
+												inputProps={{ "aria-labelledby": labelId }} />
+										}
 										disablePadding
 									>
 										<ListItemButton>
@@ -174,13 +176,13 @@ AddMembersDialog.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function MembersList({ members, addMemberCallback }) {
+const MembersList = React.memo(function _MembersList({ members, addMemberCallback }) {
 	const dispatch = useDispatch()
 	const [membersCache, setMembersCache] = useState(members)
 	const [memberProfiles, setMemberProfiles] = useState([])
 
 	const {
-		userList: administrativeUsers = [], isLoading: isLoadingStaffList
+		userList: administrativeUsers = EMPTY.ARRAY, isLoading: isLoadingStaffList
 	} = useProfilesGroup(
 		[
 			USERGROUP.USER.code,
@@ -262,7 +264,7 @@ function MembersList({ members, addMemberCallback }) {
 		</Box>
 
 	</>
-}
+}, (prevProps, nextProps) => isEqual(prevProps.members, nextProps.members))
 MembersList.propTypes = {
 	members: PropTypes.array,
 	addMemberCallback: PropTypes.func

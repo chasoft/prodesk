@@ -29,6 +29,7 @@ import { useRegisterActions } from "kbar"
 import { regURL } from "@helpers/regex"
 import { setRedirect } from "@redux/slices/redirect"
 import { useGetDocSearchIndexQuery } from "@redux/slices/firestoreApi"
+import { EMPTY } from "@helpers/constants"
 
 /*****************************************************************
  * INIT                                                          *
@@ -42,7 +43,7 @@ const DOCUMENTATION_ID = "documentationSectionId"
 
 export default function useDocsActions() {
 	const {
-		data: docSearchIndex = { searchIndexes: [] },
+		data: docSearchIndex = { searchIndexes: EMPTY.ARRAY },
 	} = useGetDocSearchIndexQuery(undefined)
 
 	const dispatch = useDispatch()

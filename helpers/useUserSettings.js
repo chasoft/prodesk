@@ -32,6 +32,7 @@ import {
 	DEFAULT_STAFF_SETTINGS,
 	DEFAULT_ADMIN_SETTINGS,
 	DEFAULT_SUPERADMIN_SETTINGS,
+	EMPTY
 } from "./constants"
 
 /*****************************************************************
@@ -40,11 +41,11 @@ import {
 
 export default function useUserSettings(username, settingName) {
 	const {
-		permissions = {},
+		permissions = EMPTY.OBJECT,
 		group
 	} = useGetProfileByUsername(username)
 
-	let defaultPermissions = {}
+	let defaultPermissions = EMPTY.OBJECT
 
 	switch (group) {
 		case USERGROUP.SUPERADMIN.code:

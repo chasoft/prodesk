@@ -44,7 +44,7 @@ import useAdmin from "@helpers/useAdmin"
 import useProfilesGroup from "@helpers/useProfilesGroup"
 import { addNewNotification } from "@helpers/realtimeApi"
 import { getPlainTextFromMarkDown } from "@helpers/utils"
-import { CODE, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "@helpers/constants"
+import { CODE, EMPTY, REDIRECT_URL, STATUS_FILTER, USERGROUP } from "@helpers/constants"
 
 import { setRedirect } from "@redux/slices/redirect"
 import { ACTIONS, TYPE } from "@redux/slices/firestoreApiConstants"
@@ -106,7 +106,7 @@ export function useGetNewTicketData() {
 	} = useGetTicketDetails()
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery()
 
 	useEffect(() => {
@@ -157,7 +157,7 @@ function StepperControlButtons() {
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = EMPTY.ARRAY, isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup(
 		[
 			USERGROUP.SUPERADMIN.code,

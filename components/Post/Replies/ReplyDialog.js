@@ -23,7 +23,7 @@
  *****************************************************************/
 
 import PropTypes from "prop-types"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 
 // MATERIAL-UI
 import { useTheme } from "@mui/material/styles"
@@ -60,21 +60,21 @@ const ReplyDialog = ({ children }) => {
 	const editorData = useSelector(s => s.textEditorState.editorData)
 	const [addTicketReply] = useAddTicketReplyMutation()
 
-	const handleClose = () => { setOpen(false) }
-	const handleClickOpen = () => { setOpen(true) }
-	const loadLocalStorage = () => { return localStorage.getItem("NewReply") ?? "" }
+	const handleClose = useCallback(() => { setOpen(false) }, [])
+	const handleClickOpen = useCallback(() => { setOpen(true) }, [])
+	const loadLocalStorage = useCallback(() => { return localStorage.getItem("NewReply") ?? "" }, [])
 
-	const handleGetEditorData = (data) => {
+	const handleGetEditorData = useCallback((data) => {
 		localStorage.setItem("NewReply", data)
 		console.log(data)
-	}
+	}, [])
 
-	const handleCancelReply = () => {
+	const handleCancelReply = useCallback(() => {
 		setOpen(false)
 		localStorage.removeItem("NewReply")
-	}
+	}, [])
 
-	const handleSubmitReply = () => {
+	const handleSubmitReply = useCallback(() => {
 		setOpen(false)
 		const trid = nanoid()
 		addTicketReply({
@@ -90,7 +90,7 @@ const ReplyDialog = ({ children }) => {
 			}
 		})
 		localStorage.removeItem("NewReply")
-	}
+	}, [addTicketReply, currentUser.username, editorData, ticketId])
 
 	const descriptionElementRef = useRef(null)
 	useEffect(() => {

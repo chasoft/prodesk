@@ -35,7 +35,7 @@ import { Box, Button, CircularProgress, Container, Typography } from "@mui/mater
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
 import TicketContent from "@components/Ticket/TicketContent"
-import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { EMPTY, REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import TicketReplies from "@components/Ticket/TicketReplies"
 import TicketActionButtons from "@components/Ticket/TicketCloseReplyButtons"
 import { useGetTicketsForAdminQuery } from "@redux/slices/firestoreApi"
@@ -60,12 +60,12 @@ function AdminSingleTicket() {
 	const { slug } = router.query
 
 	const {
-		data: tickets = [],
+		data: tickets = EMPTY.ARRAY,
 		isLoading: isLoadingTickets
 	} = useGetTicketsForAdminQuery(undefined)
 
 	const {
-		userList: allAdminProfiles = [],
+		userList: allAdminProfiles = EMPTY.ARRAY,
 		isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,

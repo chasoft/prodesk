@@ -30,7 +30,7 @@ import { useDeepCompareEffect } from "react-use"
 import { filter, groupBy, isEqual, orderBy, pickBy, size } from "lodash"
 
 //PROJECT IMPORT
-import { STATUS_FILTER } from "./constants"
+import { EMPTY, STATUS_FILTER } from "./constants"
 import { useGetTicketsForUserQuery } from "@redux/slices/firestoreApi"
 
 //ASSETS
@@ -88,7 +88,7 @@ function useFilteredTicketsForUser() {
 		]
 	)
 
-	if (isLoadingTickets) { return ({ data: [], isLoading: true }) }
+	if (isLoadingTickets) { return ({ data: EMPTY.ARRAY, isLoading: true }) }
 
 	return ({ data: res, isLoading: false })
 }

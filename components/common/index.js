@@ -32,7 +32,7 @@ import { Avatar, Box, CircularProgress, Collapse, Grid, LinearProgress, TextFiel
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { APP_SETTINGS, REDIRECT_URL, LOGO_TYPE } from "@helpers/constants"
+import { APP_SETTINGS, EMPTY, REDIRECT_URL, LOGO_TYPE } from "@helpers/constants"
 import useAppSettings from "@helpers/useAppSettings"
 
 //ASSETS
@@ -91,7 +91,7 @@ function SignUpLink() {
 	return <Typography>Not yet a member? <Link href="/signup">Sign up</Link></Typography>
 }
 
-function Logo({ isSmall = false, theme = "light", height = "30px", style = {} }) {
+function Logo({ isSmall = false, theme = "light", height = "30px", style = EMPTY.OBJECT }) {
 
 	const {
 		data: siteMetaInfo = {

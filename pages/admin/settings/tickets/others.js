@@ -137,7 +137,7 @@ const PageStatuses = ({ backBtnClick }) => {
 
 				<ContentHelperText>
 
-					<Typography paragraphp>
+					<Typography paragraph>
 						Prodesk only support 4 default ticket statuses:
 					</Typography>
 

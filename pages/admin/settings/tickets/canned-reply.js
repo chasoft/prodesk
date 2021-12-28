@@ -38,6 +38,7 @@ import { useGetDepartmentsQuery } from "@redux/slices/firestoreApi"
 import CannedRepliesGroup from "@components/Settings/CannedReplies/CannedRepliesGroup"
 import CannedRepliesAddNew from "@components/Settings/CannedReplies/CannedRepliesAddNew"
 import CannedRepliesOverview from "@components/Settings/CannedReplies/CannedRepliesOverview"
+import { EMPTY } from "@helpers/constants"
 
 import {
 	getLayout,
@@ -96,7 +97,7 @@ function TicketSettingsCannedReply() {
 	const isAddNewPanel = useSelector(s => s.uiSettingsState.isAddNewPanel)
 
 	const {
-		data: departments = [],
+		data: departments = EMPTY.ARRAY,
 		isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 

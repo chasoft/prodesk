@@ -114,6 +114,9 @@ function AdminLayout({ children }) {
 
 	usePrefetchImmediately("getProfiles", undefined)
 
+
+	console.log("AdminLayout - re-render")
+
 	return (
 		<KBarProvider actions={defaultAdminActions} >
 			<AuthCheck>

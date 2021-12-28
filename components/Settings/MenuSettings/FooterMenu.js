@@ -53,7 +53,8 @@ import {
 
 import {
 	APP_SETTINGS,
-	CODE
+	CODE,
+	EMPTY
 } from "@helpers/constants"
 
 import {
@@ -1032,7 +1033,7 @@ export default function FooterMenu({ themeSettings }) {
 	const [showDrawer, setShowDrawer] = useState(false)
 
 	const {
-		data: { footerMenu = {} },
+		data: { footerMenu = EMPTY.OBJECT },
 		isLoading: isLoadingFooterMenu
 	} = useAppSettings(null, APP_SETTINGS.footerMenu)
 

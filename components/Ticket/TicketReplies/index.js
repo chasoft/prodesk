@@ -43,6 +43,7 @@ import useUserSettings from "@helpers/useUserSettings"
 
 import {
 	DATE_FORMAT,
+	EMPTY,
 	REDIRECT_URL,
 	SETTINGS_NAME,
 	USERGROUP
@@ -77,7 +78,7 @@ export function ReplyButton({ ticket, tooltip = "", disabled = false, sx }) {
 	const [isSubmitingCannedReply, setIsSubmitingCannedReply] = useState(false)
 
 	const {
-		userList: allAdminProfiles = [],
+		userList: allAdminProfiles = EMPTY.ARRAY,
 		// isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
@@ -87,7 +88,7 @@ export function ReplyButton({ ticket, tooltip = "", disabled = false, sx }) {
 	])
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const [
@@ -97,7 +98,7 @@ export function ReplyButton({ ticket, tooltip = "", disabled = false, sx }) {
 	] = useMenuContainer()
 
 	const {
-		data: cannedReplies = [], isLoading: isLoadingCannedReplies
+		data: cannedReplies = EMPTY.ARRAY, isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const filterCannedReplies = cannedReplies.filter(

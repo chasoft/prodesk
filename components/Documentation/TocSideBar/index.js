@@ -22,7 +22,7 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React, { useEffect, useRef } from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 // import PropTypes from "prop-types"
 
 // MATERIAL-UI
@@ -56,13 +56,11 @@ import {
 import {
 	CODE,
 	DOC_TYPE,
+	EMPTY,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
 
-import {
-	setActiveDocId,
-	setActiveDocIdOfTocSideBarDetails
-} from "@redux/slices/docsCenter"
+import { setActiveDocIdOfTocSideBarDetails } from "@redux/slices/docsCenter"
 
 import {
 	docItemNewCategory,
@@ -496,41 +494,17 @@ function TocSideBar() {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
 	const {
-		data: docs = [], //grouped docs
+		data: docs = EMPTY.ARRAY, //grouped docs
 		isLoading: isLoadingDocs
 	} = useGetDocsGrouped()
 
-	console.log("TocSideBar => ", { docs })
-
-	const activeDocId = useSelector(s => s.docsCenterState.activeDocId)
-
-	const handleCloseDetails = () => {
+	const handleCloseDetails = useCallback(() => {
 		reduxBatch(() => {
 			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setShowTocSideBarDetails(false))
 			dispatch(setActiveDocIdOfTocSideBarDetails(null))
 		})
-	}
-
-	const handleOpenDetails = (docId) => {
-		if (docId === undefined)
-			return
-		reduxBatch(() => {
-			if (activeDocId !== docId) {
-				dispatch(setActiveDocId(null))
-			}
-			dispatch(setShowTocSideBarDetails(true))
-			dispatch(setActiveDocIdOfTocSideBarDetails(docId))
-		})
-	}
-
-	const loadDocContent = (docId) => {
-		reduxBatch(() => {
-			dispatch(setActiveDocId(docId))
-			dispatch(setShowTocSideBarDetails(false))
-			dispatch(setActiveDocIdOfTocSideBarDetails(null))
-		})
-	}
+	}, [dispatch])
 
 	useEffect(() => {
 		const updateSideBarLeft = () => {
@@ -584,7 +558,6 @@ function TocSideBar() {
 								return (
 									<TocSideBarCategory
 										key={catDetail.docId}
-										handleOpen={() => { handleOpenDetails(catDetail.docId) }}
 										targetDocItem={catDetail}
 									>
 										{Object.entries(cat[1]).map((subCat) => {
@@ -602,25 +575,16 @@ function TocSideBar() {
 																return (
 																	<TocSideBarDoc
 																		key={item.docId}
-																		onClick={() => { loadDocContent(item.docId) }}
-																		active={item.docId === activeDocId}
-																		handleOpen={() => handleOpenDetails(item.docId)}
 																		targetDocItem={item}
-																	>
-																		{item.title}
-																	</TocSideBarDoc>
+																	/>
 																)
 
 															if (item.type === DOC_TYPE.EXTERNAL)
 																return (
 																	<TocSideBarExternal
 																		key={item.docId}
-																		url={item.url}
-																		handleOpen={() => handleOpenDetails(item.docId)}
 																		targetDocItem={item}
-																	>
-																		{item.title}
-																	</TocSideBarExternal>
+																	/>
 																)
 														})}
 													</div>
@@ -641,9 +605,6 @@ function TocSideBar() {
 											return (
 												<TocSideBarSubCategory
 													key={subcatDetail.docId}
-													handleOpen={() => {
-														handleOpenDetails(subcatDetail.docId)
-													}}
 													targetDocItem={subcatDetail}
 												>
 													{subCat[1].map((item, idx) => {
@@ -657,25 +618,16 @@ function TocSideBar() {
 															return (
 																<TocSideBarDoc
 																	key={item.docId}
-																	onClick={() => { loadDocContent(item.docId) }}
-																	active={item.docId === activeDocId}
-																	handleOpen={() => handleOpenDetails(item.docId)}
 																	targetDocItem={item}
-																>
-																	{item.title}
-																</TocSideBarDoc>
+																/>
 															)
 
 														if (item.type === DOC_TYPE.EXTERNAL)
 															return (
 																<TocSideBarExternal
 																	key={item.docId}
-																	url={item.url}
-																	handleOpen={() => handleOpenDetails(item.docId)}
 																	targetDocItem={item}
-																>
-																	{item.title}
-																</TocSideBarExternal>
+																/>
 															)
 													})}
 

@@ -4,6 +4,11 @@ import LaunchIcon from "@mui/icons-material/Launch"
 
 export const redirectAfterLogin = "redirectAfterLogin"
 
+export const EMPTY = {
+	ARRAY: [],
+	OBJECT: {}
+}
+
 export const LINK_TYPE = {
 	/*
 		Set the link based on ID

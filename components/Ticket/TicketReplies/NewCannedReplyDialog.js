@@ -48,7 +48,7 @@ import {
 	useGetDepartmentsQuery
 } from "@redux/slices/firestoreApi"
 import { setEditorData } from "@redux/slices/textEditor"
-import { CODE } from "@helpers/constants"
+import { CODE, EMPTY } from "@helpers/constants"
 import { TYPE } from "@redux/slices/firestoreApiConstants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 
@@ -78,7 +78,7 @@ function NewCannedReplyDialog({
 	const [addCannedReply] = useAddCannedReplyMutation()
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	useEffect(() => {

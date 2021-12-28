@@ -36,7 +36,7 @@ import TicketFilters from "@components/Ticket/TicketFilters"
 import TicketListItem from "@components/Ticket/TicketListItem"
 import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
 
-import { REDIRECT_URL } from "@helpers/constants"
+import { EMPTY, REDIRECT_URL } from "@helpers/constants"
 import useFilteredTicketsForUser from "@helpers/useFilteredTicketsForUser"
 
 import { resetTicketFilters } from "@redux/slices/uiSettings"
@@ -78,7 +78,7 @@ FilterDrawer.propTypes = {
 function TicketList() {
 	const dispatch = useDispatch()
 	const [showFilter, setShowFilter] = useState(false)
-	const { data: tickets = [], isLoading } = useFilteredTicketsForUser()
+	const { data: tickets = EMPTY.ARRAY, isLoading } = useFilteredTicketsForUser()
 	const handleResetSearchCriteria = () => { dispatch(resetTicketFilters()) }
 
 	if (isLoading) {

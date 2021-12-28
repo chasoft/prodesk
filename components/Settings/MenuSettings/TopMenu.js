@@ -52,7 +52,8 @@ import {
 
 import {
 	APP_SETTINGS,
-	CODE
+	CODE,
+	EMPTY
 } from "@helpers/constants"
 
 import {
@@ -430,7 +431,7 @@ export default function TopMenu({ themeSettings }) {
 	const [showDrawer, setShowDrawer] = useState(false)
 
 	const {
-		data: { topMenu = {} },
+		data: { topMenu = EMPTY.OBJECT },
 		isLoading: isLoadingTopMenu
 	} = useAppSettings(null, APP_SETTINGS.topMenu)
 

@@ -45,7 +45,7 @@ import {
 	SettingsContentHeader
 } from "@components/common/Settings"
 
-import { CODE } from "@helpers/constants"
+import { CODE, EMPTY } from "@helpers/constants"
 import { requestSilentRefetching } from "@helpers/realtimeApi"
 
 import { TYPE } from "@redux/slices/firestoreApiConstants"
@@ -79,7 +79,7 @@ function CannedRepliesGroup({ backBtnClick }) {
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		data: cannedReplies = [], isLoading: isLoadingCannedReplies
+		data: cannedReplies = EMPTY.ARRAY, isLoading: isLoadingCannedReplies
 	} = useGetCannedRepliesQuery(undefined)
 
 	const [deleteCannedReply] = useDeleteCannedReplyMutation()

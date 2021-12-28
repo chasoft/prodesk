@@ -92,7 +92,7 @@ CollapseIconButton.propTypes = {
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
+const TocSideBarCategory = React.memo(function _TocSideBarCategory({ targetDocItem, children }) {
 	const ref = useRef(null)
 	const [updateDoc] = useUpdateDocMutation()
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
@@ -149,7 +149,6 @@ function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 	])
 
 	const [expanded, setExpanded] = useState(true)
-	const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
 
 	const [
 		AddNewPopupMenu, open, anchorRef, {
@@ -162,16 +161,15 @@ function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 	const isActive = canDrop && isOver
 	const opacity = isDragging ? 0.4 : 1
 
+	console.log("TocSideBarCategory => ", targetDocItem.docId)
+
 	return (
 		<div id={targetDocItem.slug} style={{ order: targetDocItem.position, marginTop: "30px" }}>
 			<TocSideBarItemBase
 				ref={ref}
 				id={targetDocItem.slug + "-button"}
-				onClick={() => {
-					handleOpen()
-				}}
-				handleOpen={handleOpen}
 				showDetailsButton={false}
+				docId={targetDocItem.docId}
 				published={targetDocItem.status === DOC_STATUS.PUBLISHED}
 				additionalButton={<>
 					<TocSideBarAddNew
@@ -195,9 +193,6 @@ function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 				</>}
 				sx={{
 					border: "2px solid transparent",
-					backgroundColor: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-						? "action.hover"
-						: "initial",
 					opacity,
 					...(isActive ? { backgroundColor: "primary.light", color: "primary.contrastText" } : {})
 				}}
@@ -208,9 +203,7 @@ function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 					textTransform: "uppercase",
 					color: isActive
 						? "primary.contrastText"
-						: (activeDocIdOfTocSideBarDetails === targetDocItem.docId)
-							? "primary.main"
-							: "grey.500",
+						: null,
 					fontWeight: "bold",
 					":hover": { color: "primary.main" },
 				}}>
@@ -230,9 +223,8 @@ function TocSideBarCategory({ handleOpen, targetDocItem, children }) {
 			</Box>
 		</div>
 	)
-}
+})
 TocSideBarCategory.propTypes = {
-	handleOpen: PropTypes.func,
 	targetDocItem: PropTypes.object,
 	children: PropTypes.node
 }

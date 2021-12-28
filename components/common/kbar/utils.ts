@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { Action } from "./types";
+import { EMPTY } from "@helpers/constants";
 
 export function swallowEvent(event: any) {
 	event.stopPropagation();
@@ -99,7 +100,7 @@ export function shouldRejectKeystrokes(
 		ignoreWhenFocused,
 	}: {
 		ignoreWhenFocused: string[];
-	} = { ignoreWhenFocused: [] }
+	} = { ignoreWhenFocused: EMPTY.ARRAY }
 ) {
 	const inputs = ["input", "textarea", ...ignoreWhenFocused].map((el) =>
 		el.toLowerCase()

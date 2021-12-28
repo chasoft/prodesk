@@ -48,6 +48,7 @@ import useFilteredTicketsForAdmin from "@helpers/useFilteredTicketsForAdmin"
 import {
 	CODE,
 	DATE_FORMAT,
+	EMPTY,
 	REDIRECT_URL,
 	STATUS_FILTER,
 	TICKET_INBOXES,
@@ -117,7 +118,7 @@ function AssignButton({ departments }) {
 	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
 
 	const {
-		userList: allAdminProfiles = [], isLoading: isLoadingAllAdminProfiles
+		userList: allAdminProfiles = EMPTY.ARRAY, isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
 		USERGROUP.ADMIN.code,
@@ -126,7 +127,7 @@ function AssignButton({ departments }) {
 	])
 
 	const {
-		data: profiles = [], isLoading: isLoadingProfiles
+		data: profiles = EMPTY.ARRAY, isLoading: isLoadingProfiles
 	} = useGetProfilesQuery()
 
 	const [
@@ -636,7 +637,7 @@ function AdminTicketList() {
 	const filteredByInbox = useSelector(s => s.uiSettingsState.filteredByInbox)
 
 	const {
-		data: tickets = [],
+		data: tickets = EMPTY.ARRAY,
 		counter,
 		isLoading: isLoadingTickets
 	} = useFilteredTicketsForAdmin()

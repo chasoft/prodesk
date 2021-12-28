@@ -33,6 +33,7 @@ import { COLUMN_TYPE } from "@components/Settings/MenuSettings"
 
 import {
 	APP_SETTINGS,
+	EMPTY
 } from "@helpers/constants"
 
 //ASSETS
@@ -192,7 +193,7 @@ export function FooterBase({ isPreview = false }) {
 	const sortedList = useRef([])
 
 	const {
-		data: { footerMenu = {} },
+		data: { footerMenu = EMPTY.OBJECT },
 		isLoading: isLoadingFooterMenu
 	} = useAppSettings(null, APP_SETTINGS.footerMenu)
 

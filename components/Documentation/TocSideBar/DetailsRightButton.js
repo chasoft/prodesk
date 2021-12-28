@@ -55,11 +55,7 @@ function DetailsRightButton({ handleOpen }) {
 					fill: (theme) => theme.palette.primary.main
 				}
 			}}
-			onClick={(e) => {
-				e.stopPropagation()
-				handleOpen()
-				console.log("details clicked")
-			}} />
+			onClick={handleOpen} />
 	)
 }
 DetailsRightButton.propTypes = {

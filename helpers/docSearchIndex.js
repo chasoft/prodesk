@@ -35,6 +35,7 @@ import {
 	CODE,
 	DOC_TYPE,
 	DOC_STATUS,
+	EMPTY,
 	RESERVED_KEYWORDS
 } from "@helpers/constants"
 
@@ -91,7 +92,7 @@ export function useCreateDocSearchIndex() {
 	 * total progress = docs.length + 2
 	 */
 
-	const createSearchIndex = useCallback(async (docs = [], username) => {
+	const createSearchIndex = useCallback(async (docs = EMPTY.ARRAY, username) => {
 
 		setIsCreating(true)
 		const progressIncrement = Math.floor(100 / (docs.length + 2))

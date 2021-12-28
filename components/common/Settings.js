@@ -24,7 +24,7 @@
 
 import Link from "next/link"
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 
 // MATERIAL-UI
 import { Alert, Box, Button, ButtonBase, CircularProgress, Collapse, Container, FormControlLabel, IconButton, Paper, Switch, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material"
@@ -43,7 +43,7 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
  * INIT                                                          *
  *****************************************************************/
 
-export function SettingsSwitch({
+export const SettingsSwitch = React.memo(function _SettingsSwitch({
 	title, state, setState, stateDescription, description
 }) {
 	return (
@@ -72,7 +72,7 @@ export function SettingsSwitch({
 				</Typography>}
 		</>
 	)
-}
+}, (prevProps, nextProps) => prevProps.state === nextProps.state)
 SettingsSwitch.propTypes = {
 	title: PropTypes.string,
 	state: PropTypes.bool,
@@ -451,9 +451,14 @@ ContentHeader.propTypes = {
 	children: PropTypes.node
 }
 
-export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () => { }, rightButton, children }) {
+export const SettingsContentHeader = React.memo(function _SettingsContentHeader({ hasBackBtn = true, backBtnOnClick, rightButton, children }) {
 	const theme = useTheme()
 	const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"))
+
+	const handleBackButton = useCallback(() => {
+		if (typeof backBtnOnClick === "function")
+			backBtnOnClick()
+	}, [backBtnOnClick])
 
 	if (isSmallScreen && hasBackBtn) {
 		return (
@@ -470,7 +475,7 @@ export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () =
 						flexGrow: 1
 					}}>
 						<Tooltip title="Go back" placement="top">
-							<IconButton size="small" onClick={() => backBtnOnClick()} style={{ marginRight: "5px" }}>
+							<IconButton size="small" onClick={handleBackButton} style={{ marginRight: "5px" }}>
 								<NavigateBeforeIcon />
 							</IconButton>
 						</Tooltip>
@@ -499,7 +504,7 @@ export function SettingsContentHeader({ hasBackBtn = true, backBtnOnClick = () =
 			{rightButton}
 		</ContentHeader>
 	)
-}
+})
 SettingsContentHeader.propTypes = {
 	hasBackBtn: PropTypes.bool,
 	backBtnOnClick: PropTypes.func,
@@ -569,6 +574,7 @@ export function SettingsContentHelperLearnMore({ target, action = () => { } }) {
 	if (target) {
 		return (
 			<Box
+				component="span"
 				onClick={action}
 				sx={{
 					display: "inline-block",
@@ -577,15 +583,17 @@ export function SettingsContentHelperLearnMore({ target, action = () => { } }) {
 			>
 				<Link href={target ?? ""} passHref>
 					<a href="just-a-placeholder">
-						<Box sx={{
-							display: "flex",
-							alignItems: "center",
-							color: "primary.main",
-							cursor: "pointer",
-							":hover": {
-								textDecoration: "underline",
-							}
-						}}>
+						<Box
+							component="span"
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								color: "primary.main",
+								cursor: "pointer",
+								":hover": {
+									textDecoration: "underline",
+								}
+							}}>
 							Learn more <LaunchIcon style={{ fontSize: 16, marginLeft: "2px" }} />
 						</Box>
 					</a>

@@ -32,7 +32,7 @@ import { Avatar, AvatarGroup } from "@mui/material"
 import { useDeepCompareEffect } from "react-use"
 
 //PROJECT IMPORT
-import { USERGROUP } from "@helpers/constants"
+import { EMPTY, USERGROUP } from "@helpers/constants"
 import { CircularProgressBox } from "@components/common"
 import useProfilesGroup from "@helpers/useProfilesGroup"
 
@@ -46,7 +46,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
 function AvatarList({ members }) {
 	const [membersProfile, setMembersProfile] = useState([])
 	const {
-		userList: staffList = [],
+		userList: staffList = EMPTY.ARRAY,
 		isLoading: isLoadingStaffList
 	} = useProfilesGroup([USERGROUP.STAFF.code])
 

@@ -27,7 +27,7 @@ import { useRef } from "react"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import { APP_SETTINGS } from "./constants"
+import { APP_SETTINGS, EMPTY } from "./constants"
 import { THEME_NAME } from "@components/Themes/themeInfo"
 
 import { useGetAppSettingsQuery } from "@redux/slices/firestoreApi"
@@ -50,7 +50,7 @@ const defaultAppSettings = {
 // 	const [localDocName, setLocalDocName] = useState(docName ?? APP_SETTINGS.defaultDocName)
 
 // 	const {
-// 		data: appSettingsFromDB = {},
+// 		data: appSettingsFromDB = EMPTY.OBJECT,
 // 		isLoading: isLoadingAppSettings
 // 	} = useGetAppSettingsQuery(localDocName)
 
@@ -76,7 +76,7 @@ export default function useAppSettings(settingName, docName) {
 	const appSettings = useRef()
 
 	const {
-		data: appSettingsFromDB = {},
+		data: appSettingsFromDB = EMPTY.OBJECT,
 		isLoading: isLoadingAppSettings
 	} = useGetAppSettingsQuery(docName)
 

@@ -58,7 +58,8 @@ import {
 import {
 	APP_SETTINGS,
 	CODE,
-	DATE_FORMAT
+	DATE_FORMAT,
+	EMPTY
 } from "@helpers/constants"
 
 import {
@@ -188,7 +189,7 @@ function DocTheme() {
 
 function DocSearchIndex() {
 	const {
-		data: docs = [],
+		data: docs = EMPTY.ARRAY,
 		isLoading: isLoadingDocs
 	} = useGetDocsQuery(undefined)
 

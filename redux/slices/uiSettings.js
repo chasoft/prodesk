@@ -19,7 +19,7 @@
  ************************************************************************/
 
 import { createSlice } from "@reduxjs/toolkit"
-import { GROUPBY, PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "@helpers/constants"
+import { EMPTY, GROUPBY, PRIORITY, STATUS_FILTER, TICKET_INBOXES, TICKET_STATUS } from "@helpers/constants"
 
 const defaultBackground = {
 	top: 0,
@@ -90,7 +90,7 @@ export const initialState = {
 
 	/* Ticket management for Admin */
 	//keep selected tid
-	selectedTickets: [],
+	selectedTickets: EMPTY.ARRAY,
 
 	/* Notification Inbox */
 	notificationInbox: STATUS_FILTER.ALL,

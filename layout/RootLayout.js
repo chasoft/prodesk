@@ -33,7 +33,7 @@ import { auth } from "@helpers/firebase"
 import { regAdminURL } from "@helpers/regex"
 import { ReduxRedirect } from "@components/AuthCheck"
 import { getUserProfile } from "@redux/slices/firestoreApiBase"
-import { APP_SETTINGS, REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { APP_SETTINGS, EMPTY, REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import useAppSettings from "@helpers/useAppSettings"
 
 import {
@@ -60,7 +60,7 @@ function RootLayout({ children }) {
 	const dispatch = useDispatch()
 
 	const {
-		data: siteMetaInfo = {},
+		data: siteMetaInfo = EMPTY.OBJECT,
 		// isLoading: isLoadingSiteMetaInfo
 	} = useAppSettings(null, APP_SETTINGS.siteMetaInfo)
 

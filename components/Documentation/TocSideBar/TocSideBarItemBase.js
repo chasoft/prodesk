@@ -22,16 +22,23 @@
  * IMPORTING                                                     *
  *****************************************************************/
 
-import React from "react"
+import React, { useCallback } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { Box, ButtonBase } from "@mui/material"
 
 //THIRD-PARTY
+// import { isEqual } from "lodash"
+import { batch as reduxBatch, useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import DetailsRightButton from "./DetailsRightButton"
+import { setShowTocSideBarDetails } from "@redux/slices/uiSettings"
+import {
+	setActiveDocId,
+	setActiveDocIdOfTocSideBarDetails
+} from "@redux/slices/docsCenter"
 
 //ASSETS
 
@@ -46,26 +53,47 @@ import DetailsRightButton from "./DetailsRightButton"
 const TocSideBarItemBase = React.forwardRef(
 	(
 		{
-			active,
+			docId,
+			activeDocId,
 			additionalButton,
 			children,
 			handleOpen,
-			onClick,
 			showDetailsButton = true,
 			published = true,
 			sx,
 			...otherProps
-
 		},
 		ref
 	) => {
+		const dispatch = useDispatch()
+
+		const activeDocIdOfTocSideBarDetails = useSelector(s => s.docsCenterState.activeDocIdOfTocSideBarDetails)
+
+		const handleOpenDetail = useCallback((e) => {
+			e.stopPropagation()
+			reduxBatch(() => {
+				if (activeDocId !== docId) {
+					dispatch(setActiveDocId(null))
+				}
+				dispatch(setShowTocSideBarDetails(true))
+				dispatch(setActiveDocIdOfTocSideBarDetails(docId))
+			})
+		}, [dispatch, docId, activeDocId])
+
+		const _handleOpen = useCallback((e) => {
+			e.stopPropagation()
+			if (typeof handleOpen === "function")
+				handleOpen(e)
+			else
+				handleOpenDetail(e)
+		}, [handleOpen, handleOpenDetail])
+
+		console.log("TocSideBarItemBase -> ", docId)
+
 		return (
 			<ButtonBase
 				ref={ref}
-				onClick={(e) => {
-					e.stopPropagation()
-					onClick()
-				}}
+				onClick={_handleOpen}
 				sx={{
 					display: "block",
 					width: "100%",
@@ -78,11 +106,15 @@ const TocSideBarItemBase = React.forwardRef(
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "space-between",
-						backgroundColor: active ? "#FFF" : "transparent",
+						backgroundColor: (activeDocIdOfTocSideBarDetails === docId)
+							? "action.hover"
+							: (docId === activeDocId)
+								? "#FFF"
+								: "transparent",
 						borderTop: "1px solid transparent",
 						borderBottom: "1px solid transparent",
-						borderColor: active ? "divider" : "transparent",
-						color: active ? "primary.main" : "initial",
+						borderColor: (docId === activeDocId) ? "divider" : "transparent",
+						color: (activeDocIdOfTocSideBarDetails === docId || docId === activeDocId) ? "primary.main" : "initial",
 						":hover": {
 							backgroundColor: "action.hover",
 							color: "primary.main"
@@ -111,22 +143,21 @@ const TocSideBarItemBase = React.forwardRef(
 						alignItems: "center",
 					}}>
 						{additionalButton}
-						{showDetailsButton && <DetailsRightButton handleOpen={handleOpen} />}
+						{showDetailsButton && <DetailsRightButton handleOpen={handleOpenDetail} />}
 					</Box>
 				</Box>
 			</ButtonBase>
 		)
 	}
 )
-
 TocSideBarItemBase.displayName = "TocSideBarItemBase"
 
 TocSideBarItemBase.propTypes = {
-	active: PropTypes.bool,
+	docId: PropTypes.string,
+	activeDocId: PropTypes.string,
 	additionalButton: PropTypes.node,
 	children: PropTypes.node,
 	handleOpen: PropTypes.func,
-	onClick: PropTypes.func,
 	otherProps: PropTypes.any,
 	showDetailsButton: PropTypes.bool,
 	published: PropTypes.bool,

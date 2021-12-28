@@ -37,6 +37,7 @@ import TextEditor from "@components/common/TextEditor"
 import { useGetDocContentQuery } from "@redux/slices/firestoreApi"
 import useScrollSpy from "@helpers/useScrollSpy"
 import SimplicityLayout from "@components/Themes/Simplicity/layout"
+import { EMPTY } from "@helpers/constants"
 
 //ASSETS
 import MoreVertIcon from "@mui/icons-material/MoreVert"
@@ -195,7 +196,7 @@ BreadcrumbsBox.propTypes = {
 function Article({ docItem }) {
 
 	const {
-		data: docItemContent = {},
+		data: docItemContent = EMPTY.OBJECT,
 		isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(docItem?.docId)
 
@@ -353,7 +354,7 @@ function ArticleSideBar({ docItem }) {
 	const [showFloatButton, setShowFloatButton] = useState(false)
 
 	const {
-		data: docItemContent = { headings: [], text: "" },
+		data: docItemContent = { headings: EMPTY.ARRAY, text: "" },
 		isLoading: isLoadingDocItemContent
 	} = useGetDocContentQuery(docItem?.docId)
 
@@ -485,7 +486,7 @@ ArticleSideBar.propTypes = {
 
 const ThemeSimplicityArticles = React.memo(function ThemeSimplicityArticles({ slug }) {
 	const {
-		data: docItem = {},
+		data: docItem = EMPTY.OBJECT,
 		isLoading: isLoadingDoc
 	} = useGetDoc(undefined, slug)
 

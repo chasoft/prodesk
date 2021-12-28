@@ -63,6 +63,7 @@ import { getStaffInCharge } from "@helpers/utils"
 import useGetProfileByUsername from "@helpers/useGetProfileByUsername"
 import {
 	DATE_FORMAT,
+	EMPTY,
 	REDIRECT_URL,
 	STATUS_FILTER
 } from "@helpers/constants"
@@ -106,7 +107,7 @@ function PopupMenu({ ticket, allAdminProfiles }) {
 	] = useMenuContainer()
 
 	const {
-		data: departments = [], isLoading: isLoadingDepartments
+		data: departments = EMPTY.ARRAY, isLoading: isLoadingDepartments
 	} = useGetDepartmentsQuery(undefined)
 
 	const handleCloseTicket = async () => {

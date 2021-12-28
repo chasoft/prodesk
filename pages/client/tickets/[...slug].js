@@ -34,7 +34,7 @@ import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/ClientLayout"
-import { REDIRECT_URL, USERGROUP } from "@helpers/constants"
+import { EMPTY, REDIRECT_URL, USERGROUP } from "@helpers/constants"
 import TicketReplies from "@components/Ticket/TicketReplies"
 import TicketContent from "@components/Ticket/TicketContent"
 import useUiSettings from "@helpers/useUiSettings"
@@ -63,12 +63,12 @@ function SingleTicket() {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	//
 	const {
-		data: tickets = [],
+		data: tickets = EMPTY.ARRAY,
 		isLoading: isLoadingTickets
 	} = useGetTicketsForUserQuery(currentUser.username)
 
 	const {
-		userList: allAdminProfiles = [],
+		userList: allAdminProfiles = EMPTY.ARRAY,
 		isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,

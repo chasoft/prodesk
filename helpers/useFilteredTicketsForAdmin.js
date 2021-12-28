@@ -36,6 +36,7 @@ import useProfilesGroup from "@helpers/useProfilesGroup"
 import useUserSettings from "./useUserSettings"
 
 import {
+	EMPTY,
 	SETTINGS_NAME,
 	STATUS_FILTER,
 	TICKET_INBOXES,
@@ -54,24 +55,24 @@ import {
 export default function useFilteredTicketsForAdmin() {
 	const dispatch = useDispatch()
 	const [res, setRes] = useState({
-		tickets: [],
+		tickets: EMPTY.ARRAY,
 		counter: 0
 	})
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 	const [availableTicketsByInbox, setAvailableTicketsByInbox] = useState({})
 
 	const {
-		data: departments = [],
+		data: departments = EMPTY.ARRAY,
 		isLoading: isLoadingDepartment
 	} = useGetDepartmentsQuery(undefined)
 
 	const {
-		data: tickets = [],
+		data: tickets = EMPTY.ARRAY,
 		isLoading: isLoadingTickets
 	} = useGetTicketsForAdminQuery(undefined)
 
 	const {
-		userList: allAdminProfiles = [],
+		userList: allAdminProfiles = EMPTY.ARRAY,
 		isLoading: isLoadingAllAdminProfiles
 	} = useProfilesGroup([
 		USERGROUP.SUPERADMIN.code,
@@ -219,7 +220,7 @@ export default function useFilteredTicketsForAdmin() {
 		currentUser.username,
 	])
 
-	if (isLoadingTickets || isLoadingDepartment || isLoadingAllAdminProfiles) { return ({ data: [], isLoading: true }) }
+	if (isLoadingTickets || isLoadingDepartment || isLoadingAllAdminProfiles) { return ({ data: EMPTY.ARRAY, isLoading: true }) }
 
 	return ({ data: res.tickets, counter: res.counter, isLoading: false })
 }

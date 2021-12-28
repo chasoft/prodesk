@@ -111,7 +111,7 @@ function SignupForm() {
 		},
 		validationSchema: validationSchema,
 		onSubmit: async (values) => {
-			if (AppSettings.restrictedUsernames.indexOf(values.username.toLowerCase()) !== -1) {
+			if (AppSettings?.restrictedUsernames && AppSettings?.restrictedUsernames?.indexOf(values.username.toLowerCase()) !== -1) {
 				enqueueSnackbar("Your provided username is restricted", { variant: "error" })
 				return
 			}
