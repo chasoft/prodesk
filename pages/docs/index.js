@@ -24,12 +24,10 @@ import React from "react"
 import { Container, Grid } from "@mui/material"
 
 //THIRD-PARTY
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import useUiSettings from "@helpers/useUiSettings"
 import AskNowFrame from "@components/Docs/AskNowFrame"
-import FeaturedDocs from "@components/Themes/Google/FeaturedDocs"
 import { getLayout, FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
 import ListAllCategories from "@components/Category/ListAllCategories"
 

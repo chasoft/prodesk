@@ -281,7 +281,7 @@ function TicketListItem({ ticket, isFirst = false, isLast = false }) {
 							/>
 							<TicketCategory
 								departmentId={ticket.departmentId}
-								category={ticket.categoryId}
+								category={ticket.category}
 								subCategory={ticket.subCategory}
 							/>
 							{(ticket.createdBy !== ticket.username && isSmallScreen) &&

@@ -24,7 +24,6 @@ import React from "react"
 import { Container, Grid } from "@mui/material"
 
 //THIRD-PART
-import { useDispatch } from "react-redux"
 
 //PROJECT IMPORT
 import useUiSettings from "@helpers/useUiSettings"
@@ -41,7 +40,7 @@ import { getLayout, FRONT_PAGE_TABS_NAME } from "@layout/EntryLayout"
  *****************************************************************/
 
 function Docs() {
-	const dispatch = useDispatch()
+
 	useUiSettings({
 		activeTab: FRONT_PAGE_TABS_NAME.TROUBLESHOOT,
 	})

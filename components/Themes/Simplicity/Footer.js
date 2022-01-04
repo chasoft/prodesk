@@ -122,7 +122,7 @@ function LogoAndSocial({ column }) {
 		>
 			<Link href="/">
 				<a href="just-a-placeholder">
-					<img
+					<Box component="img"
 						style={{
 							maxWidth: column?.maxWidth ?? "200px"
 						}}

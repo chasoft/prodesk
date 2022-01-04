@@ -350,7 +350,7 @@ function TicketsTable() {
 									return (
 										<TableRow
 											hover
-											onClick={(event) => {
+											onClick={() => {
 												// handleClick(event, row.name)
 											}}
 											role="checkbox"

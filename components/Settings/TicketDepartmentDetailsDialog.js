@@ -25,7 +25,7 @@ import PropTypes from "prop-types"
 
 // MATERIAL-UI
 import { useTheme } from "@mui/styles"
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -52,7 +52,7 @@ function TicketDepartmentDetailsDialog({ department, children }) {
 	}
 	return (
 		<div>
-			<div onClick={handleClickOpen}>{children}</div>
+			<Box onClick={handleClickOpen}>{children}</Box>
 			<Dialog
 				open={open}
 				onClose={handleClose}

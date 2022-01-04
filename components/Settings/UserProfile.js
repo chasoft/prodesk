@@ -78,7 +78,7 @@ function CountrySelect() {
 			getOptionLabel={(option) => option.label}
 			renderOption={(props, option) => (
 				<Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
-					<img
+					<Box component="img"
 						loading="lazy"
 						width="20"
 						src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}

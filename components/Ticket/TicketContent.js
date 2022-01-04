@@ -329,7 +329,7 @@ function TicketContent({ ticket, allAdminProfiles }) {
 				/>
 				<TicketCategory
 					departmentId={ticket.departmentId}
-					category={ticket.categoryId}
+					category={ticket.category}
 					subCategory={ticket.subCategory}
 				/>
 				<TicketReplyCount

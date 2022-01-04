@@ -126,7 +126,7 @@ function GeneralListItem({ link, content, extraContent }) {
 
 				<div className={classes.paper}>
 
-					<Link href={link}>
+					<Link href={link} passHref>
 						<div id="content" className={`${classes.content} ${classes.content_addon}`}>
 
 							{content}

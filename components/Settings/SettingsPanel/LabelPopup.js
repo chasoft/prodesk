@@ -54,7 +54,7 @@ export function LabelPopupModifyColor({ labelColor, btnAction, children }) {
 
 	return (
 		<>
-			<span onClick={handleClick}>{children}</span>
+			<Box component="span" onClick={handleClick}>{children}</Box>
 			<Popover
 				id={id}
 				open={open}
@@ -125,7 +125,7 @@ export default function LabelPopupAddOrModify({ labelName, labelColor, btnCaptio
 
 	return (
 		<>
-			<span onClick={handleClick}>{children}</span>
+			<Box component="span" onClick={handleClick}>{children}</Box>
 			<Popover
 				id={id}
 				open={open}

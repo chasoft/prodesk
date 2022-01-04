@@ -25,8 +25,8 @@
 import React from "react"
 import Link from "next/link"
 import PropTypes from "prop-types"
-
 import makeStyles from "@mui/styles/makeStyles"
+import { Box } from "@mui/material"
 
 /*****************************************************************
  * INIT                                                          *
@@ -128,15 +128,15 @@ function SimpleListItem({ link, onClick = () => { }, content, extraContent }) {
 				{
 					link
 						?
-						<Link href={link}>
-							<div id="content" className={`${classes.content} ${classes.content_addon}`} onClick={onClick}>
+						<Link href={link} passHref>
+							<Box id="content" className={`${classes.content} ${classes.content_addon}`} onClick={onClick}>
 								{content}
-							</div>
+							</Box>
 						</Link>
 						:
-						<div id="content" className={`${classes.content} ${classes.content_addon}`} onClick={onClick}>
+						<Box id="content" className={`${classes.content} ${classes.content_addon}`} onClick={onClick}>
 							{content}
-						</div>
+						</Box>
 				}
 
 

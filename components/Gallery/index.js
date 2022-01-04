@@ -117,7 +117,7 @@ function Gallery({ children }) {
 
 	return (
 		<>
-			<span onClick={() => setShowGallery(true)}>{children}</span>
+			<Box component="span" onClick={() => setShowGallery(true)}>{children}</Box>
 
 			<Dialog open={showGallery} onClose={handleClose} fullScreen={fullScreen}>
 				<DialogTitle id="responsive-dialog-title" style={{ padding: 0 }}>

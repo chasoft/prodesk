@@ -1,35 +1,25 @@
-import { Box, Typography } from "@mui/material";
-import { ActionImpl, getListboxItemId, KBAR_LISTBOX, useKBar } from "kbar";
-import * as React from "react";
-import { useVirtual } from "react-virtual";
-import { usePointerMovedSinceMount } from "./utils";
+import { Box, Typography } from "@mui/material"
+import PropTypes from "prop-types"
+import { getListboxItemId, KBAR_LISTBOX, useKBar } from "kbar"
+import * as React from "react"
+import { useVirtual } from "react-virtual"
+import { usePointerMovedSinceMount } from "./utils"
 
-const START_INDEX = 0;
+const START_INDEX = 0
 
-interface RenderParams<T = ActionImpl | string> {
-	item: T;
-	active: boolean;
-}
-
-interface KBarResultsProps {
-	items: any[];
-	onRender: (params: RenderParams) => React.ReactElement;
-	maxHeight?: number;
-}
-
-const KBarResults: React.FC<KBarResultsProps> = (props) => {
-	const activeRef = React.useRef<HTMLDivElement>(null);
-	const parentRef = React.useRef(null);
+const KBarResults = (props) => {
+	const activeRef = React.useRef(null)
+	const parentRef = React.useRef(null)
 
 	// store a ref to all items so we do not have to pass
 	// them as a dependency when setting up event listeners.
-	const itemsRef = React.useRef(props.items);
-	itemsRef.current = props.items;
+	const itemsRef = React.useRef(props.items)
+	itemsRef.current = props.items
 
 	const rowVirtualizer = useVirtual({
 		size: itemsRef.current.length,
 		parentRef,
-	});
+	})
 
 	const { query, search, currentRootActionId, activeIndex, options } = useKBar(
 		(state) => ({
@@ -37,60 +27,60 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 			currentRootActionId: state.currentRootActionId,
 			activeIndex: state.activeIndex,
 		})
-	);
+	)
 
 	React.useEffect(() => {
-		const handler = (event: any) => {
+		const handler = (event) => {
 			if (event.key === "ArrowUp" || (event.ctrlKey && event.key === "p")) {
-				event.preventDefault();
+				event.preventDefault()
 				query.setActiveIndex((index) => {
-					let nextIndex = index > START_INDEX ? index - 1 : index;
+					let nextIndex = index > START_INDEX ? index - 1 : index
 					// avoid setting active index on a group
 					if (typeof itemsRef.current[nextIndex] === "string") {
-						if (nextIndex === 0) return index;
-						nextIndex -= 1;
+						if (nextIndex === 0) return index
+						nextIndex -= 1
 					}
-					return nextIndex;
-				});
+					return nextIndex
+				})
 			} else if (
 				event.key === "ArrowDown" ||
 				(event.ctrlKey && event.key === "n")
 			) {
-				event.preventDefault();
+				event.preventDefault()
 				query.setActiveIndex((index) => {
 					let nextIndex =
-						index < itemsRef.current.length - 1 ? index + 1 : index;
+						index < itemsRef.current.length - 1 ? index + 1 : index
 					// avoid setting active index on a group
 					if (typeof itemsRef.current[nextIndex] === "string") {
-						if (nextIndex === itemsRef.current.length - 1) return index;
-						nextIndex += 1;
+						if (nextIndex === itemsRef.current.length - 1) return index
+						nextIndex += 1
 					}
-					return nextIndex;
-				});
+					return nextIndex
+				})
 			} else if (event.key === "Enter") {
-				event.preventDefault();
+				event.preventDefault()
 				// storing the active dom element in a ref prevents us from
 				// having to calculate the current action to perform based
 				// on the `activeIndex`, which we would have needed to add
 				// as part of the dependencies array.
-				activeRef.current?.click();
+				activeRef.current?.click()
 			}
-		};
-		window.addEventListener("keydown", handler);
-		return () => window.removeEventListener("keydown", handler);
-	}, [query]);
+		}
+		window.addEventListener("keydown", handler)
+		return () => window.removeEventListener("keydown", handler)
+	}, [activeRef, query])
 
 	// destructuring here to prevent linter warning to pass
 	// entire rowVirtualizer in the dependencies array.
-	const { scrollToIndex } = rowVirtualizer;
+	const { scrollToIndex } = rowVirtualizer
 	React.useEffect(() => {
 		scrollToIndex(activeIndex, {
 			// ensure that if the first item in the list is a group
 			// name and we are focused on the second item, to not
 			// scroll past that group, hiding it.
 			align: activeIndex <= 1 ? "end" : "auto",
-		});
-	}, [activeIndex, scrollToIndex]);
+		})
+	}, [activeIndex, scrollToIndex])
 
 	React.useEffect(() => {
 		// TODO(tim): fix scenario where async actions load in
@@ -103,25 +93,25 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 			typeof props.items[START_INDEX] === "string"
 				? START_INDEX + 1
 				: START_INDEX
-		);
-	}, [search, currentRootActionId, props.items, query]);
+		)
+	}, [search, currentRootActionId, props.items, query])
 
 	const execute = React.useCallback(
-		(item: RenderParams["item"]) => {
-			if (typeof item === "string") return;
+		(item) => {
+			if (typeof item === "string") return
 			if (item.command) {
-				item.command.perform(item);
-				query.toggle();
+				item.command.perform(item)
+				query.toggle()
 			} else {
-				query.setSearch("");
-				query.setCurrentRootAction(item.id);
+				query.setSearch("")
+				query.setCurrentRootAction(item.id)
 			}
-			options.callbacks?.onSelectAction?.(item);
+			options.callbacks?.onSelectAction?.(item)
 		},
 		[query, options]
-	);
+	)
 
-	const pointerMoved = usePointerMovedSinceMount();
+	const pointerMoved = usePointerMovedSinceMount()
 
 	return (
 		<Box
@@ -141,7 +131,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 				}}
 			>
 				{rowVirtualizer.virtualItems.map((virtualRow) => {
-					const item = itemsRef.current[virtualRow.index];
+					const item = itemsRef.current[virtualRow.index]
 					const handlers = typeof item !== "string" && {
 						onPointerMove: () =>
 							pointerMoved &&
@@ -149,8 +139,8 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 							query.setActiveIndex(virtualRow.index),
 						onPointerDown: () => query.setActiveIndex(virtualRow.index),
 						onClick: () => execute(item),
-					};
-					const active = virtualRow.index === activeIndex;
+					}
+					const active = virtualRow.index === activeIndex
 
 					return (
 
@@ -180,7 +170,7 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 							)}
 						</Box>
 
-					);
+					)
 				})}
 			</Box>
 
@@ -192,7 +182,12 @@ const KBarResults: React.FC<KBarResultsProps> = (props) => {
 				</Box>
 			}
 		</Box>
-	);
-};
+	)
+}
+KBarResults.propTypes = {
+	items: PropTypes.any,
+	maxHeight: PropTypes.number,
+	onRender: PropTypes.func
+}
 
-export default KBarResults;
+export default KBarResults

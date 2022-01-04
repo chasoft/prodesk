@@ -104,7 +104,7 @@ const ReplyDialog = ({ children }) => {
 
 	return (
 		<>
-			<span onClick={handleClickOpen}>{children}</span>
+			<Box component="span" onClick={handleClickOpen}>{children}</Box>
 			<Dialog
 				open={open}
 				onClose={handleClose}
