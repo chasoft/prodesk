@@ -724,7 +724,7 @@ function AdminTicketList() {
 								<ClearSelectedTicketsButton />
 							</div>
 						</Box>
-						: <Link href={REDIRECT_URL.ADMIN.NEW_TICKETS} passHref>
+						: <Link href={REDIRECT_URL.ADMIN.NEW_TICKET} passHref>
 							<span>
 								<Button variant="outlined" sx={{ display: { xs: "none", sm: "block" } }}>
 									New ticket
@@ -756,13 +756,22 @@ function AdminTicketList() {
 			</Box>
 
 			{(tickets.length === 0) &&
-				<Box sx={{ ml: 3, mt: "0.5rem" }}>
+				<Box sx={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					minHeight: "200px",
+					backgroundColor: "grey.100",
+					textAlign: "center",
+					p: 2
+				}}>
 
 					<Typography variant="h2">
 						There are no tickets that matched your criteria
 					</Typography>
 
-					<Typography variant="body">
+					<Typography variant="body" color="grey.500">
 						Try again by using other search criteria or click &quot;
 						<Box component="span" onClick={() => { dispatch(resetTicketFilters()) }} sx={{
 							cursor: "pointer",

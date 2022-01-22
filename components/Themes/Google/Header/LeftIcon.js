@@ -60,7 +60,7 @@ function LeftIcon() {
 				edge="start" size="large" sx={{ mr: { xs: 0, sm: 2 } }}
 				onClick={() => { setShowMenu(true) }}
 			>
-				<MenuIcon sx={{ fontSize: 24 }} />
+				<Box component={MenuIcon} sx={{ fontSize: 24 }} />
 			</IconButton>
 			<Drawer
 				anchor="left"

@@ -69,7 +69,7 @@ function AdminViewUser() {
 	if (profile === undefined) return <DefaultErrorPage statusCode={404} />
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 
 			<BreadcrumbsBox>
 				<IconBreadcrumbs

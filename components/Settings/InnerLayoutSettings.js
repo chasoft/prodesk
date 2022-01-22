@@ -58,7 +58,7 @@ export const APPLICATION_SETTINGS_TABS = [
 
 function InnerLayoutSettings({ children }) {
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)", marginTop: "1rem" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1, marginTop: "1rem" }}>
 
 			<Typography variant="h1" style={{ color: "white" }}>Application Settings</Typography>
 

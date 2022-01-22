@@ -141,7 +141,7 @@ export function UserTicketListItemShorten({ subject, link }) {
 }
 UserTicketListItemShorten.propTypes = { subject: PropTypes.string, link: PropTypes.string }
 
-function TicketDateTimeSmallScreen({ ticket }) {
+export function TicketDateTimeSmallScreen({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
@@ -182,7 +182,7 @@ function TicketDateTimeSmallScreen({ ticket }) {
 }
 TicketDateTimeSmallScreen.propTypes = { ticket: PropTypes.object }
 
-function TicketDateTime({ ticket }) {
+export function TicketDateTime({ ticket }) {
 
 	dayjs.extend(relativeTime)
 
@@ -544,13 +544,14 @@ TicketNote.propTypes = {
 	ticket: PropTypes.object,
 }
 
-export function TicketCreatedBy({ createdBy }) {
+export function TicketCreatedBy({ tooltip, createdBy }) {
 	const dispatch = useDispatch()
+	const tooltipText = tooltip ?? <span>This ticket is created<br /> by {createdBy}</span>
 	return (
 		<Tooltip
 			arrow
 			placement="top"
-			title={<span>This ticket is created<br /> by {createdBy}</span>}
+			title={tooltipText}
 		>
 			<Chip
 				size="small"
@@ -567,6 +568,7 @@ export function TicketCreatedBy({ createdBy }) {
 	)
 }
 TicketCreatedBy.propTypes = {
+	tooltip: PropTypes.string,
 	createdBy: PropTypes.string.isRequired
 }
 

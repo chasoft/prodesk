@@ -48,7 +48,7 @@ import { useRouter } from "next/router"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function HomeButton({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) {
+const HomeButton = React.memo(function _HomeButton({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) {
 	const router = useRouter()
 	const anchorRef = useRef(null)
 	const [open, setOpen] = useState(false)
@@ -218,7 +218,7 @@ function HomeButton({ homeUrl, settingsUrl, settingsTooltip, isExpanded }) {
 			</ButtonBase>
 		</Tooltip>
 	)
-}
+})
 
 HomeButton.propTypes = {
 	homeUrl: PropTypes.string,

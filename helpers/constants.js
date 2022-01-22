@@ -54,7 +54,9 @@ export const REDIRECT_URL = {
 		INDEX: "/admin",
 		EDIT_PROFILE: "/admin/edit-profile",
 		TICKETS: "/admin/tickets",
-		NEW_TICKETS: "/admin/tickets/new-ticket",
+		NEW_TICKET: "/admin/tickets/new-ticket",
+		PAGES: "/admin/settings/pages",
+		NEW_PAGE: "/admin/settings/pages/new-page",
 		USERS: "/admin/users",
 	},
 
@@ -117,7 +119,9 @@ export const STATUS_FILTER = {
 	UNLOCKED: "Unlocked",
 	PRIVATE: "Private",
 	AVAILABLE: "Available",
-	UNAVAILABLE: "Unavailable"
+	UNAVAILABLE: "Unavailable",
+	PUBLISHED: "Published",
+	DRAFT: "Draft",
 }
 
 export const PRIORITY = {

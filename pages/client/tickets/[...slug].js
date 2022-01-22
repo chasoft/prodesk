@@ -91,7 +91,7 @@ function SingleTicket() {
 
 	if (isLoadingTickets || isLoadingAllAdminProfiles) {
 		return (
-			<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+			<Container maxWidth="md" style={{ flexGrow: 1 }}>
 				<Box sx={{
 					display: "flex",
 					height: "70%",
@@ -105,7 +105,7 @@ function SingleTicket() {
 	}
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 
 			<BreadcrumbsBox>
 				<IconBreadcrumbs

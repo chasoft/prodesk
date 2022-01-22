@@ -64,7 +64,7 @@ function InnerLayoutTickets({ children }) {
 	// useUiSettings(dispatch,TICKET_SETTINGS_NAMES.GENERAL)
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 
 			<Typography variant="h1" style={{ color: "white" }}>Tickets Settings</Typography>
 

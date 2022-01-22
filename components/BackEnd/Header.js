@@ -107,7 +107,7 @@ function Header() {
 							dispatch(setShowSideBar(true))
 					}}
 				>
-					<MenuIcon sx={{ fill: "white" }} />
+					<Box component={MenuIcon} sx={{ fill: "white" }} />
 				</IconButton>
 
 				<Typography variant="subtitle2">ProDesk</Typography>

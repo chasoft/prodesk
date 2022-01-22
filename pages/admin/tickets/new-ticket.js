@@ -77,7 +77,7 @@ function AdminNewTicket() {
 	}, [dispatch])
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 
 			<Box sx={{ display: "flex" }}>
 

@@ -24,7 +24,7 @@
 
 import dynamic from "next/dynamic"
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 // MATERIAL-UI
 import { emphasize, styled } from "@mui/material/styles"
@@ -116,7 +116,6 @@ const TypographyHeader = styled(Typography)(({ theme }) => ({
 
 function PublishStatusSwitch({ status, setStatus }) {
 	const isPublished = status === DOC_STATUS.PUBLISHED
-	dayjs.extend(relativeTime)
 	return (
 		<SettingsSwitch
 			state={isPublished}
@@ -134,32 +133,51 @@ PublishStatusSwitch.propTypes = {
 	setStatus: PropTypes.func.isRequired,
 }
 
-const AutoGenerateSlugSwitch = React.memo(function _AutoGenerateSlugSwitch() {
-
-	console.log("AutoGenerateSlugSwitch re-render")
-
+export const AutoGenerateSlugSwitch = React.memo(function _AutoGenerateSlugSwitch({ callback }) {
 	const [updateAppSettings] = useUpdateAppSettingsMutation()
 
+	//this component use it own state
+	const [checked, setChecked] = useState(false)
+
 	const {
-		data: autoGenerateSlugFromTitle, isLoading: isLoadingAutoGenerateSlugFromTitle
+		data: autoGenerateSlugFromTitle = false, isLoading: isLoadingAutoGenerateSlugFromTitle
 	} = useAppSettings(SETTINGS_NAME.autoGenerateSlugFromTitle)
+
+	//state would be updated according to result of autoGenerateSlugFromTitle
+	useEffect(() => {
+		setChecked(autoGenerateSlugFromTitle)
+		console.log("useEffect AutoGenerateSlugSwitch")
+	}, [autoGenerateSlugFromTitle])
+
+	console.log("AutoGenerateSlugSwitch - re-render")
 
 	if (isLoadingAutoGenerateSlugFromTitle) return null
 
-
 	return (
 		<FormControlLabel label="Auto-generate" labelPlacement="start"
-			control={<Switch
-				checked={autoGenerateSlugFromTitle}
-				onChange={async () => {
-					await updateAppSettings({
-						data: {
-							[SETTINGS_NAME.autoGenerateSlugFromTitle]: !autoGenerateSlugFromTitle
+			control={
+				<Switch
+					checked={checked}
+					onChange={() => {
+						const newState = !checked
+						setChecked(newState)
+						updateAppSettings({
+							data: {
+								[SETTINGS_NAME.autoGenerateSlugFromTitle]: newState
+							}
+						})
+						if (typeof callback === "function") {
+							callback(newState)
 						}
-					})
-				}} />} />
+					}}
+				/>
+			}
+		/>
 	)
 })
+AutoGenerateSlugSwitch.propTypes = {
+	callback: PropTypes.func
+}
 
 const Tags = React.memo(function _Tags({ tags, setTags }) {
 	const [inputText, setInputText] = useState("")
@@ -228,6 +246,7 @@ Tags.propTypes = {
 
 const PublishStatusSection = React.memo(function _PublishStatusSection({ localCache, setLocalCache }) {
 	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+	dayjs.extend(relativeTime)
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
 			<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

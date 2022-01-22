@@ -26,7 +26,7 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Box, Collapse, Typography } from "@mui/material"
+import { Box, Collapse, Fade, Typography } from "@mui/material"
 
 //THIRD-PARTY
 
@@ -96,25 +96,27 @@ function NavCollapse({ title, description, children, isExpanded = false }) {
 							{expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 						</div>
 					</div>
-					<Typography
-						noWrap
-						variant="caption"
-						sx={{
-							fontSize: "0.75rem",
-							color: "#ffffff80",
-							width: "90%",
-							display: expanded ? "none" : "block"
-						}}
-					>
-						{description}
-					</Typography>
+					<Fade in={!expanded} timeout={{ enter: 1000, exit: 0 }}					>
+						<Typography
+							noWrap
+							variant="caption"
+							sx={{
+								fontSize: "0.75rem",
+								color: "#ffffff80",
+								width: "90%",
+								display: expanded ? "none" : "block",
+							}}
+						>
+							{description}
+						</Typography>
+					</Fade>
 				</div>
 			</Box>
 
 			<Collapse in={expanded} timeout="auto" style={{ color: "#ffffffcc" }} unmountOnExit>
 				{children}
 			</Collapse>
-		</Box>
+		</Box >
 	)
 }
 NavCollapse.propTypes = {

@@ -109,7 +109,7 @@ export function Header() {
 						}}
 					>
 						<IconButton>
-							<MenuIcon />
+							<Box component={MenuIcon} />
 						</IconButton>
 					</Box>
 

@@ -23,41 +23,123 @@
  *****************************************************************/
 
 import React from "react"
+import PropTypes from "prop-types"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 
 //THIRD-PARTY
+import dayjs from "dayjs"
+import { isEqual, keyBy, size } from "lodash"
+import { useDispatch, useSelector } from "react-redux"
 
 //PROJECT IMPORT
+import IconBreadcrumbs from "@components/BackEnd/IconBreadcrumbs"
 import { getLayout } from "@layout/AdminLayout"
-import useUiSettings from "@helpers/useUiSettings"
+import PageForm from "./PageForm"
+import { setRedirect } from "@redux/slices/redirect"
+import { EMPTY, REDIRECT_URL } from "@helpers/constants"
+import { useGetPagesQuery, useUpdatePageMutation } from "@redux/slices/firestoreApi"
 
 //ASSETS
+import HomeIcon from "@mui/icons-material/Home"
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function CategoriesDC() {
+function EditPage({ slug }) {
+	const dispatch = useDispatch()
+	const [updatePage] = useUpdatePageMutation()
+	const currentUser = useSelector(s => s.authState.currentUser, isEqual)
 
-	useUiSettings({
-		background: {
-			backgroundImage: ""
-		}
-	})
+	const {
+		data: pageList = EMPTY.ARRAY,
+		isLoading: isLoadingPages
+	} = useGetPagesQuery(undefined)
+
+	const pages = keyBy(pageList, "slug")
+	const page = size(pages) ? pages[slug] : undefined
+
+	const handleOnUpdate = async (data) => {
+		await updatePage({
+			pid: data.pid,
+			title: data.title,
+			slug: data.slug,
+			status: data.status,
+			content: data.content,
+			updatedBy: currentUser.username,
+			updatedAt: dayjs().valueOf(),
+		})
+	}
+
+	const handleOnCancel = () => {
+		dispatch(setRedirect(REDIRECT_URL.ADMIN.PAGES))
+	}
 
 	return (
-		<Container maxWidth="md" style={{ flexGrow: 1 }}>
-			<Typography variant="h1">DC Category (Documentation)</Typography>
-		</Container>
+		<Box sx={{
+			display: "flex",
+			flexDirection: "column",
+			minWidth: 0,
+			height: "100%",
+		}}>
+			<Box sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "flex-start",
+				pl: { xs: 0, sm: 3 },
+				pt: { xs: 3, sm: 6, md: 8, lg: 10 },
+				pb: 2
+			}}>
+				<IconBreadcrumbs
+					icon={null}
+					title={isLoadingPages ? "Loading..." : page?.title ?? "Page Not Found"}
+					items={[
+						{
+							icon: <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Home",
+							url: REDIRECT_URL.ADMIN.INDEX
+						},
+						{
+							icon: <LayersOutlinedIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+							title: "Pages",
+							url: REDIRECT_URL.ADMIN.PAGES
+						}
+					]}
+				/>
+			</Box>
+
+			{(!isLoadingPages && page) &&
+				<PageForm
+					isCreateNew={false}
+					page={page}
+					onSave={handleOnUpdate}
+					onCancel={handleOnCancel}
+				/>}
+
+			{(!isLoadingPages && !page) &&
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					minHeight: "200px",
+					backgroundColor: "grey.100"
+				}}>
+					Page Not Found
+				</Box>}
+		</Box>
 	)
 }
+EditPage.propTypes = {
+	slug: PropTypes.string
+}
 
-CategoriesDC.getLayout = getLayout
-export default CategoriesDC
+EditPage.getLayout = getLayout
+
+export default EditPage

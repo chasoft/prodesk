@@ -82,7 +82,7 @@ const IconLib = {
 	[IconName.application]: <AppsOutlinedIcon />,
 	[IconName.documentation]: <ArticleOutlinedIcon />,
 	[IconName.users]: <CardMembershipOutlinedIcon />,
-	[IconName.menu]: <MenuIcon />,
+	[IconName.menu]: <Box component={MenuIcon} />,
 	[IconName.newTicket]: <AddIcon />,
 	[IconName.pages]: <LayersOutlinedIcon />,
 	[IconName.profile]: <AccountCircleOutlinedIcon />,

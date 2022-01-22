@@ -104,7 +104,7 @@ function AdminLayout({ children }) {
 	const backgroundForLoggedinPage = useSelector(s => s.uiSettingsState.backgroundForLoggedinPage, isEqual)
 
 	const dispatch = useDispatch()
-	const isSmallScreen = useMediaQuery("(max-width:600px)")
+	const isSmallScreen = useMediaQuery("(max-width:900px)")
 
 	const { defaultAdminActions } = useDefaultKbarActions()
 
@@ -143,7 +143,9 @@ function AdminLayout({ children }) {
 						}}
 					>
 						<Header />
+
 						{children}
+
 						<Footer />
 					</Box>
 				</Box>

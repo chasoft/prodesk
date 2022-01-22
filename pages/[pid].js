@@ -47,7 +47,7 @@ function SinglePage() {
 	if (router.isFallback || !pid) return null
 
 	return (
-		<Container style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container style={{ flexGrow: 1 }}>
 			{pid}
 		</Container>
 	)

@@ -1095,30 +1095,25 @@ export const firestoreApi = createApi({
 					: [{ type: TYPE.PAGES, id: "LIST" }]
 			},
 			keepUnusedDataFor: 60 * 60,
-			transformResponse: (response) => fix_datetime_list(response)
+			// transformResponse: (response) => fix_datetime_list(response)
 		}),
 
 		getPage: builder.query({
 			query: (pid) => ({ action: ACTIONS.GET_PAGE, pid }),	//body: pid
 			providesTags: (result, error, pid) => { return [{ type: TYPE.PAGES, id: pid }] },
-			transformResponse: (response) => fix_datetime_single(response)
-		}),
-
-		getPageContent: builder.query({
-			query: (pid) => ({ action: ACTIONS.GET_PAGE_CONTENT, pid }), //body: pid
-			providesTags: (result, error, pid) => [{ type: TYPE.PAGES, id: pid.concat("_content") }],
+			// transformResponse: (response) => fix_datetime_single(response)
 		}),
 
 		addPage: builder.mutation({
-			query: (body) => ({ action: ACTIONS.ADD_PAGE, body }), // body: {pageItem, content: {text: string} }
-			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pageItem.pid }],
+			query: (body) => ({ action: ACTIONS.ADD_PAGE, body }), // body: {...pageDetails }
+			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pid }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
 					firestoreApi.util.updateQueryData(
 						ACTIONS.GET_PAGES,
 						undefined,
 						(draft) => {
-							draft.push(body.pageItem)
+							draft.push(body)
 						}
 					)
 				)
@@ -1128,7 +1123,7 @@ export const firestoreApi = createApi({
 		}),
 
 		updatePage: builder.mutation({
-			query: (body) => ({ action: ACTIONS.UPDATE_PAGE, body }), //body: {...pageItem}
+			query: (body) => ({ action: ACTIONS.UPDATE_PAGE, body }), //body: { ...pageDetails }
 			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pid }],
 			async onQueryStarted(body, { dispatch, queryFulfilled }) {
 				const patchResult = dispatch(
@@ -1139,22 +1134,6 @@ export const firestoreApi = createApi({
 							let obj = draft.find(e => e.pid === body.pid)
 							Object.assign(obj, body)
 						}
-					)
-				)
-				try { await queryFulfilled }
-				catch { patchResult.undo() }
-			},
-		}),
-
-		updatePageContent: builder.mutation({
-			query: (body) => ({ action: ACTIONS.UPDATE_PAGE_CONTENT, body }), //body: {pageItem: object, content: { text: <string> } }
-			invalidatesTags: (result, error, body) => [{ type: TYPE.PAGES, id: body.pageItem.pid.concat("_content") }],
-			async onQueryStarted(body, { dispatch, queryFulfilled }) {
-				const patchResult = dispatch(
-					firestoreApi.util.updateQueryData(
-						ACTIONS.GET_PAGE_CONTENT,
-						body.pageItem.pid.concat("_content"),
-						(draft) => { Object.assign(draft, body.content) }
 					)
 				)
 				try { await queryFulfilled }
@@ -1391,10 +1370,8 @@ export const {
 	/* PAGES */
 	useGetPagesQuery,
 	useGetPageQuery,
-	useGetPageContentQuery,
 	useAddPageMutation,
 	useUpdatePageMutation,
-	useUpdatePageContentMutation,
 	useDeletePageMutation,
 
 	/* BLOG */

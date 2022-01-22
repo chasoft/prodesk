@@ -23,41 +23,80 @@
  *****************************************************************/
 
 import React from "react"
+import { useRouter } from "next/router"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Box, CircularProgress, Container } from "@mui/material"
 
 //THIRD-PARTY
+// import { isEqual } from "lodash"
+// import { useSelector } from "react-redux"
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
+import { EMPTY, USERGROUP } from "@helpers/constants"
 
 //ASSETS
+import useProfilesGroup from "@helpers/useProfilesGroup"
+import EditPage from "@components/Settings/Pages/EditPage"
 
 /*****************************************************************
  * INIT                                                          *
  *****************************************************************/
 
-
 /*****************************************************************
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function CategoriesDC() {
+function AdminEditPage() {
+	const router = useRouter()
+	const { pageSlug } = router.query
+	// const currentUser = useSelector(s => s.authState.currentUser, isEqual)
+
+	const {
+		userList: allAdminProfiles = EMPTY.ARRAY,
+		isLoading: isLoadingAllAdminProfiles
+	} = useProfilesGroup([
+		USERGROUP.SUPERADMIN.code,
+		USERGROUP.ADMIN.code,
+		USERGROUP.STAFF.code,
+		USERGROUP.AGENT.code
+	])
 
 	useUiSettings({
+		title: "Edit Page",
 		background: {
 			backgroundImage: ""
 		}
 	})
 
+	if (router.isFallback || !pageSlug) return null
+
+	if (isLoadingAllAdminProfiles) {
+		return (
+			<Container maxWidth="md" style={{ flexGrow: 1 }}>
+				<Box sx={{
+					display: "flex",
+					height: "70%",
+					alignItems: "center",
+					justifyContent: "center"
+				}}>
+					<CircularProgress />
+				</Box >
+			</Container>
+		)
+	}
+
 	return (
 		<Container maxWidth="md" style={{ flexGrow: 1 }}>
-			<Typography variant="h1">DC Category (Documentation)</Typography>
+
+			<EditPage slug={pageSlug} />
+
 		</Container>
 	)
 }
 
-CategoriesDC.getLayout = getLayout
-export default CategoriesDC
+AdminEditPage.getLayout = getLayout
+
+export default AdminEditPage

@@ -212,7 +212,7 @@ function DefaultAvatarPanel({ size = 45, callback }) {
 }
 DefaultAvatarPanel.propTypes = { size: PropTypes.number, callback: PropTypes.func, defaultAvatar: PropTypes.string }
 
-function CircularProgressBox({ text, minHeight = "200px", sx }) {
+function CircularProgressBox({ text, size = 40, minHeight = "200px", sx }) {
 	return (
 		<Box sx={{
 			display: "flex",
@@ -222,13 +222,14 @@ function CircularProgressBox({ text, minHeight = "200px", sx }) {
 			...sx
 		}}>
 			<Box sx={{ display: "flex", alignItems: "center" }}>
-				<CircularProgress />{text ? <Typography ml={2}>{text}</Typography> : null}
+				<CircularProgress size={size} />{text ? <Typography ml={2}>{text}</Typography> : null}
 			</Box>
 		</Box>
 	)
 }
 CircularProgressBox.propTypes = {
 	text: PropTypes.string,
+	size: PropTypes.number,
 	minHeight: PropTypes.string,
 	sx: PropTypes.object
 }

@@ -79,9 +79,9 @@ function PopupMenuItemBase({
 				display: "flex",
 				alignItems: "center",
 			}}>
-				{<MenuIcon
+				<Box component={MenuIcon}
 					fontSize="small"
-					sx={{ fill: (theme) => theme.palette.grey[500] }} />}
+					sx={{ fill: (theme) => theme.palette.grey[500] }} />
 
 				<Typography sx={{
 					ml: 1,

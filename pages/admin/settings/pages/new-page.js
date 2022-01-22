@@ -25,14 +25,14 @@
 import React from "react"
 
 // MATERIAL-UI
-import { Container, Typography } from "@mui/material"
+import { Container } from "@mui/material"
 
 //THIRD-PARTY
 
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
-
+import AddNewPage from "@components/Settings/Pages/AddNewPage"
 //ASSETS
 
 /*****************************************************************
@@ -44,7 +44,7 @@ import useUiSettings from "@helpers/useUiSettings"
  * EXPORT DEFAULT                                                *
  *****************************************************************/
 
-function CategoriesDC() {
+function AdminAddNewPage() {
 
 	useUiSettings({
 		background: {
@@ -54,10 +54,12 @@ function CategoriesDC() {
 
 	return (
 		<Container maxWidth="md" style={{ flexGrow: 1 }}>
-			<Typography variant="h1">DC Category (Documentation)</Typography>
+
+			<AddNewPage />
+
 		</Container>
 	)
 }
 
-CategoriesDC.getLayout = getLayout
-export default CategoriesDC
+AdminAddNewPage.getLayout = getLayout
+export default AdminAddNewPage

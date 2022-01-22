@@ -53,7 +53,7 @@ function TagsDC() {
 	})
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 			<Typography variant="h1">Tag (Documentation Center)</Typography>
 		</Container>
 	)

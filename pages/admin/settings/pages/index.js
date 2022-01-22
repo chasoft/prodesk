@@ -32,7 +32,7 @@ import { Container } from "@mui/material"
 //PROJECT IMPORT
 import { getLayout } from "@layout/AdminLayout"
 import useUiSettings from "@helpers/useUiSettings"
-import PageSettings from "@components/Settings/PageSettings"
+import PageSettings from "@components/Settings/Pages/PageSettings"
 //ASSETS
 
 /*****************************************************************
@@ -53,7 +53,7 @@ function AdminPageSettings() {
 	})
 
 	return (
-		<Container maxWidth="md" style={{ minHeight: "calc(100vh - 150px)" }}>
+		<Container maxWidth="md" style={{ flexGrow: 1 }}>
 
 			<PageSettings />
 

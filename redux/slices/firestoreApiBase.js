@@ -1752,56 +1752,43 @@ export async function getPageContent(args) {
 }
 
 export async function addPage(args) {
-	// body: {pageItem, content: {text: string} }
 	try {
 		const batch = writeBatch(db)
 		batch.set(
-			doc(db, COLLECTION.PAGES, args.body.pageItem.pid),
-			{
-				...args.body.pageItem,
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp()
-			}
-		)
-		batch.set(
-			doc(db,
-				COLLECTION.PAGES, args.body.pageItem.pid,
-				"content", "current"
-			),
-			args.body.content
+			doc(db, COLLECTION.PAGES, args.body.pid),
+			args.body
 		)
 		await batch.commit()
 		return {
 			data: {
 				code: CODE.SUCCESS,
 				action: ACTIONS.ADD_PAGE,
-				pid: args.body.pageItem.pid,
+				pid: args.body.pid,
 				message: "Page added successfully"
 			}
 		}
 	} catch (e) {
 		return throwError(CODE.FAILED, ACTIONS.ADD_PAGE, e, {
-			pid: args.body.pageItem.pid
+			pid: args.body.pid
 		})
 	}
 }
 
 export async function updatePage(args) {
-	//body: {...pageItem}
 	try {
-		await updateDoc(
+		const batch = writeBatch(db)
+		batch.update(
 			doc(db, COLLECTION.PAGES, args.body.pid),
-			{
-				...args.body,
-				updatedAt: serverTimestamp()
-			}
+			args.body
 		)
+		await batch.commit()
+
 		return {
 			data: {
 				code: CODE.SUCCESS,
 				action: ACTIONS.UPDATE_PAGE,
 				pid: args.body.pid,
-				message: "Page properties updated successfully"
+				message: "Page updated successfully"
 			}
 		}
 	} catch (e) {
@@ -1811,42 +1798,10 @@ export async function updatePage(args) {
 	}
 }
 
-export async function updatePageContent(args) {
-	//body: {pageItem, content: {text:string} }
-	try {
-		const batch = writeBatch(db)
-		batch.update(
-			doc(db,
-				COLLECTION.PAGES, args.body.pageItem.pid,
-				"content", "current"
-			),
-			args.body.content
-		)
-		batch.update(
-			doc(db, COLLECTION.PAGES, args.body.pageItem.pid),
-			{ updatedAt: serverTimestamp() }
-		)
-		await batch.commit()
-		return {
-			data: {
-				code: CODE.SUCCESS,
-				action: ACTIONS.UPDATE_PAGE_CONTENT,
-				pid: args.body.pageItem.pid,
-				message: "Page content updated successfully"
-			}
-		}
-	} catch (e) {
-		return throwError(CODE.FAILED, ACTIONS.UPDATE_PAGE_CONTENT, e, {
-			pid: args.body.pageItem.pid
-		})
-	}
-}
-
 export async function deletePage(args) {
 	//body: pid
 	try {
 		const batch = writeBatch(db)
-		batch.delete(doc(db, COLLECTION.PAGES, args.body, "content", "current"))
 		batch.delete(doc(db, COLLECTION.PAGES, args.body))
 		await batch.commit()
 		return {

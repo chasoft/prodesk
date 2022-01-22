@@ -139,8 +139,11 @@ const TextEditor = React.memo(React.forwardRef((props, ref) => {
 			{uploading && <LinearProgressWithLabel value={progress} />}
 		</>
 	)
-}))
+}), (prevProps, nextProps) => isEqual(prevProps, nextProps))
+
 TextEditor.displayName = "TextEditor"
+
+TextEditor.whyDidYouRender = true
 
 TextEditor.propTypes = {
 	defaultValue: PropTypes.any,
