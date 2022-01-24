@@ -22,7 +22,7 @@
 import { ACTIONS } from "./firestoreApiConstants"
 import { CODE } from "@helpers/constants"
 
-import { _addDoc, createAdminAccount, finalizeInstallation, getInstallStatus, getProfile, getProfileByEmail, getProfileByUsername, getProfiles, requestRefetching, signInWithEmail, signInWithGoogle, signUpCreateProfile, signUpSurvey, signUpViaGoogle, signUpWithEmail, updateProfile, _getDoc, _getDocs, _updateDoc, getDocSearchIndex, getDocContent, updateDocSearchIndex, updateDocContent, updateDocDnd, _deleteDoc, updateDepartment, addDepartment, getDepartments, updateUserSettings, getUserSettings, updateAppSettings, getAppSettings, deleteCannedReply, updateCannedReply, addCannedReply, getCannedReplies, deleteDepartment, updateLabel, addLabel, getLabels, getPages, deleteTicketReply, deleteTicketTemp, deleteTicket, updateTicketReply, updateTicket, addTicketReply, addTicket, getTicketReplies, getTicketsForAdmin, getTicketsForUser, deleteCategory, updateCategory, addCategory, getCategories, deleteLabel, updateThemeSettings, getThemeSettings, deleteBlogPost, updateBlogPostContent, updateBlogPost, addBlogPost, getBlogPostContent, getBlogPost, getBlogPosts, deletePage, updatePageContent, updatePage, addPage, getPageContent, getPage, throwError } from "./firestoreApiBase"
+import { _addDoc, createAdminAccount, finalizeInstallation, getInstallStatus, getProfile, getProfileByEmail, getProfileByUsername, getProfiles, requestRefetching, signInWithEmail, signInWithGoogle, signUpCreateProfile, signUpSurvey, signUpViaGoogle, signUpWithEmail, updateProfile, _getDoc, _getDocs, _updateDoc, getDocSearchIndex, getDocContent, updateDocSearchIndex, updateDocContent, updateDocDnd, _deleteDoc, updateDepartment, addDepartment, getDepartments, updateUserSettings, getUserSettings, updateAppSettings, getAppSettings, deleteCannedReply, updateCannedReply, addCannedReply, getCannedReplies, deleteDepartment, updateLabel, addLabel, getLabels, getPages, deleteTicketReply, deleteTicketTemp, deleteTicket, updateTicketReply, updateTicket, addTicketReply, addTicket, getTicketReplies, getTicketsForAdmin, getTicketsForUser, deleteCategory, updateCategory, addCategory, getCategories, deleteLabel, updateThemeSettings, getThemeSettings, deleteBlogPost, updateBlogPostContent, updateBlogPost, addBlogPost, getBlogPostContent, getBlogPost, getBlogPosts, deletePage, updatePage, addPage, getPageContent, getPage, throwError } from "./firestoreApiBase"
 
 /*****************************************************************
  * INIT                                                          *
@@ -123,7 +123,6 @@ async function fireStoreBaseQuery(args) {
 		case ACTIONS.GET_PAGE_CONTENT: return getPageContent(args)
 		case ACTIONS.GET_PAGE: return getPage(args)
 		case ACTIONS.GET_PAGES: return getPages()
-		case ACTIONS.UPDATE_PAGE_CONTENT: return updatePageContent(args)
 		case ACTIONS.UPDATE_PAGE: return updatePage(args)
 
 		//BLOG => bid

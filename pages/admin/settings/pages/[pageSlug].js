@@ -71,6 +71,8 @@ function AdminEditPage() {
 		}
 	})
 
+	console.log(allAdminProfiles)
+
 	if (router.isFallback || !pageSlug) return null
 
 	if (isLoadingAllAdminProfiles) {

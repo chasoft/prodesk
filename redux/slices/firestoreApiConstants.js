@@ -126,7 +126,7 @@ export const ACTIONS = {
 	GET_PAGE_CONTENT: "getPageContent",
 	GET_PAGE: "getPage",
 	GET_PAGES: "getPages",
-	UPDATE_PAGE_CONTENT: "updatePageContent",
+	// UPDATE_PAGE_CONTENT: "updatePageContent",
 	UPDATE_PAGE: "updatePage",
 
 	/* BLOG => bid */

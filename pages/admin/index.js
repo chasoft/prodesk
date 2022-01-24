@@ -48,8 +48,6 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft"
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"
-import FirstPageIcon from "@mui/icons-material/FirstPage"
-import LastPageIcon from "@mui/icons-material/LastPage"
 
 /*****************************************************************
  * INIT                                                          *
