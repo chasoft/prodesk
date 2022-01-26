@@ -30,7 +30,7 @@ import { Box, Container, Grid } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Banner from "@components/widget/Banner"
+import Banner from "@components/Widget/Banner"
 import useUiSettings from "@helpers/useUiSettings"
 import ProBreadcrumbs from "@components/Themes/Google/ProBreadcrumbs"
 import SingleCategory from "@components/Category/SingleCategory"

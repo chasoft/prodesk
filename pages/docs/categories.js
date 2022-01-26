@@ -30,7 +30,7 @@ import { Box, Container, Grid } from "@mui/material"
 //THIRD-PARTY
 
 //PROJECT IMPORT
-import Banner from "@components/widget/Banner"
+import Banner from "@components/Widget/Banner"
 import Category from "@components/Category"
 import useUiSettings from "@helpers/useUiSettings"
 import { FRONT_PAGE_TABS_NAME, getLayout } from "@layout/EntryLayout"
