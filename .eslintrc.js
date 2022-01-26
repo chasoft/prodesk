@@ -44,7 +44,6 @@ module.exports = {
 			"version": "detect"
 		},
 		"import/resolver": {
-			typescript: {},
 			"alias": {
 				"map": [
 					["@redux", "./redux"],
