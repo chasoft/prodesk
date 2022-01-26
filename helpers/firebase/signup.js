@@ -1,6 +1,6 @@
 /*************************************************************************
  * ╔═══════════════════════════════════════════════════════════════════╗ *
- * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.0     ║ *
+ * ║     ProDesk - Your Elegant & Powerful Support System  | 1.0.1     ║ *
  * ╠═══════════════════════════════════════════════════════════════════╣ *
  * ║                                                                   ║ *
  * ║   @author     A. Cao <cao@anh.pw>                                 ║ *
@@ -121,7 +121,7 @@
 // 			photoURL: photoURL,
 // 		})
 // 		batch.set(doc(db, "usernames", username), {
-// 			uid: uid,	
+// 			uid: uid,
 // 			username: username,
 // 			email: email,
 // 			group: "user", //default usergroup
